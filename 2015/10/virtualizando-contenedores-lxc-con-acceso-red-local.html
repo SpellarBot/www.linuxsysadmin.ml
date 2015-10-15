@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>Virtualizando contenedores LXC con acceso a la red local - Linux Sysadmin</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html">
+
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="linux,debian,jessie,lxc,bridge,firehol" />
+        <meta name="description" content="En este tutorial se propone montar un servidor de contenedores LXC, de forma que todos los contenedores queden expuestos a la misma red que el servidor que los aloja. Evidentemente, todas quedan protegidas por un firewall ante los ataques de dicha red. Para conseguir este objetivo, se van a usar ..." />
+
+        <meta property="og:site_name" content="Linux Sysadmin" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Virtualizando contenedores LXC con acceso a la red local"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html"/>
+        <meta property="og:description" content="En este tutorial se propone montar un servidor de contenedores LXC, de forma que todos los contenedores queden expuestos a la misma red que el servidor que los aloja. Evidentemente, todas quedan protegidas por un firewall ante los ataques de dicha red. Para conseguir este objetivo, se van a usar ..."/>
+        <meta property="article:published_time" content="2015-10-15" />
+            <meta property="article:section" content="Virtualización" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="debian" />
+            <meta property="article:tag" content="jessie" />
+            <meta property="article:tag" content="lxc" />
+            <meta property="article:tag" content="bridge" />
+            <meta property="article:tag" content="firehol" />
+            <meta property="article:author" content="Gerard" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="http://www.linuxsysadmin.tk/theme/css/bootstrap.cosmo.min.css" type="text/css"/>
+    <link href="http://www.linuxsysadmin.tk/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="http://www.linuxsysadmin.tk/theme/css/pygments/vim.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://www.linuxsysadmin.tk/theme/css/style.css" type="text/css"/>
+        <link href="http://www.linuxsysadmin.tk/static/custom.css" rel="stylesheet">
+
+        <link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin ATOM Feed"/>
+
+
+
+        <link href="http://www.linuxsysadmin.tk/feeds/virtualizacion.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Virtualización ATOM Feed"/>
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://www.linuxsysadmin.tk/" class="navbar-brand">
+Linux Sysadmin            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                         <li><a href="http://www.linuxsysadmin.tk/about.html">
+                             Sobre mí
+                          </a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/virtualizacion.html" title="Virtualización">Virtualización</a></li>
+                <li class="active">Virtualizando contenedores LXC con acceso a la red local</li>
+            </ol>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html"
+                       rel="bookmark"
+                       title="Permalink to Virtualizando contenedores LXC con acceso a la red local">
+                        Virtualizando contenedores LXC con acceso a la red local
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-10-15T12:00:00+02:00"> 2015-10-15</time>
+    </span>
+
+
+            <span class="label label-default">By</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Category</span>
+        <a href="http://www.linuxsysadmin.tk/category/virtualizacion.html">Virtualización</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/debian.html">debian</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/jessie.html">jessie</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/lxc.html">lxc</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/bridge.html">bridge</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/firehol.html">firehol</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>En este tutorial se propone montar un servidor de contenedores LXC,
+de forma que todos los contenedores queden expuestos a la misma red
+que el servidor que los aloja. Evidentemente, todas quedan protegidas
+por un firewall ante los ataques de dicha red.</p>
+<p>Para conseguir este objetivo, se van a usar las siguientes tecnologías:</p>
+<ul>
+<li><strong>Debian jessie</strong>: Es necesario usar alguna distribución de linux para hacer funcionar LXC</li>
+<li><strong>LXC</strong>: Tecnología que permite aislar los contenedores entre sí y darles entidad propia</li>
+<li><strong>Bridges</strong>: Un bridge es en software el equivalente a un switch hardware</li>
+<li><strong>Firehol</strong>: Una serie de scripts para construir firewalls basados en iptables de forma fácil</li>
+</ul>
+<p>En cuanto a las capacidades hardware, vamos a hacer el tutorial con un equipo
+de capacidades modestas, virtualizado en una máquina virtual VirtualBox.</p>
+<ul>
+<li><strong>CPUs</strong>: 1</li>
+<li><strong>Memoria</strong>: 256 Mb</li>
+<li><strong>Disco</strong>: 2 Gb</li>
+<li><strong>Red</strong>: 1 interfaz (<em>eth0</em>) <em>host-only</em> o <em>bridged</em> con IP fija</li>
+</ul>
+<p>Partimos de una distribución <em>Debian jessie</em> instalada con un CD <em>netinstall</em>
+y con el único paquete instalado <em>openssh-server</em>, para mi comodidad.</p>
+<h2>Preparar el servidor</h2>
+<p>El primer paso consiste en instalar las tecnologías usadas:</p>
+<div class="highlight"><pre>root@lxc:~# apt-get install bridge-utils firehol lxc
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias       
+Leyendo la información de estado... Hecho
+...
+Configurando lxc <span class="o">(</span>1:1.0.6-6+deb8u1<span class="o">)</span> ...
+Configurando dh-python <span class="o">(</span>1.20141111-2<span class="o">)</span> ...
+Procesando disparadores para libc-bin <span class="o">(</span>2.19-18+deb8u1<span class="o">)</span> ...
+Procesando disparadores para systemd <span class="o">(</span>215-17+deb8u2<span class="o">)</span> ...
+root@lxc:~# 
+</pre></div>
+
+
+<p>Acto seguido debemos modificar la configuración de red, para que la interfaz
+de red de la máquina represente la salida de todas las IPs que maneja el bridge
+y para que el host obtenga una dirección de red en el bridge.</p>
+<p><strong>ANTES</strong>:</p>
+<div class="highlight"><pre>root@lxc:~# cat /etc/network/interfaces
+<span class="nb">source</span> /etc/network/interfaces.d/*
+
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet static
+    address 192.168.56.4
+    netmask 255.255.255.0
+    gateway 192.168.56.1
+root@lxc:~# 
+</pre></div>
+
+
+<p><strong>DESPUES</strong>:</p>
+<div class="highlight"><pre>root@lxc:~# cat /etc/network/interfaces
+<span class="nb">source</span> /etc/network/interfaces.d/*
+
+auto lo
+iface lo inet loopback
+
+auto lxc0
+iface lxc0 inet static
+    bridge_ports eth0
+    address 192.168.56.4
+    netmask 255.255.255.0
+    gateway 192.168.56.1
+root@lxc:~# 
+</pre></div>
+
+
+<p>En este punto es necesario reconfigurar la red, siendo especialmente importante
+que <em>eth0</em> quede sin dirección IP asignada (en mi caso tuve que reiniciar la máquina).</p>
+<div class="highlight"><pre>root@lxc:~# ip addr
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu <span class="m">65536</span> qdisc noqueue state UNKNOWN group default 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span class="m">1500</span> qdisc pfifo_fast master lxc0 state UP group default qlen 1000
+    link/ether 08:00:27:e4:0a:60 brd ff:ff:ff:ff:ff:ff
+3: lxc0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span class="m">1500</span> qdisc noqueue state UP group default 
+    link/ether 08:00:27:e4:0a:60 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.4/24 brd 192.168.56.255 scope global lxc0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fee4:a60/64 scope link 
+       valid_lft forever preferred_lft forever
+root@lxc:~# 
+</pre></div>
+
+
+<p>El último paso consiste en activar el firewall con unas reglas básicas,
+para proteger el equipo anfitrión de posibles ataques o intrusiones, dejando
+solamente el acceso a SSH. Con firehol es posible combinar el demonio <em>knockd</em>
+para ocultar el puerto tras una secuencia de port knocking; en principio
+sería suficiente con forzar la entrada SSH por claves RSA.</p>
+<div class="highlight"><pre>root@lxc:~# cat /etc/firehol/firehol.conf 
+interface lxc0 world
+    policy drop
+    protection strong
+    server ssh accept
+    client all accept
+root@lxc:~# 
+</pre></div>
+
+
+<p>Hay que modificar otro fichero para permitir el inicio del firewall:</p>
+<p><strong>ANTES</strong>:</p>
+<div class="highlight"><pre>root@lxc:~# grep START /etc/default/firehol 
+<span class="c">#To enable firehol at startup set START_FIREHOL=YES</span>
+<span class="nv">START_FIREHOL</span><span class="o">=</span>NO
+root@lxc:~# 
+</pre></div>
+
+
+<p><strong>DESPUES</strong>:</p>
+<div class="highlight"><pre>root@lxc:~# grep START /etc/default/firehol 
+<span class="c">#To enable firehol at startup set START_FIREHOL=YES</span>
+<span class="nv">START_FIREHOL</span><span class="o">=</span>YES
+root@lxc:~# 
+</pre></div>
+
+
+<p>Y para acabar, (re)iniciamos el servicio firehol.</p>
+<div class="highlight"><pre>root@lxc:~# service firehol restart
+
+Broadcast message from systemd-journald@lxc <span class="o">(</span>Wed 2015-10-14 16:59:30 CEST<span class="o">)</span>:
+
+FireHOL<span class="o">[</span>620<span class="o">]</span>: Firewall has been stopped. Policy is ACCEPT EVERYTHING!
+
+
+Message from syslogd@lxc at Oct <span class="m">14</span> 16:59:30 ...
+ FireHOL<span class="o">[</span>493<span class="o">]</span>: Firewall has been stopped. Policy is ACCEPT EVERYTHING!
+root@lxc:~# 
+</pre></div>
+
+
+<h2>Creación de contenedores</h2>
+<p>La creación de contenedores pasa por usar las herramientas estándar
+de la distribución, a lo solo tendremos que modificar algunas
+configuraciones propias de nuestra red.</p>
+<p>Creamos un contenedor <em>webserver</em> como demostración. La primera que se
+crea es un poco lenta porque hace un <em>debootstrap</em> de una distribución
+debian estable para crear una cache en <em>/var/cache/lxc</em>; las siguientes
+se benefician de esta caché y solo la actualizan, acelerando el proceso.</p>
+<div class="highlight"><pre>root@lxc:~# lxc-create -n webserver -t debian
+debootstrap is /usr/sbin/debootstrap
+Checking cache download in /var/cache/lxc/debian/rootfs-jessie-i386 ... 
+Downloading debian minimal ...
+...
+I: Base system installed successfully.
+Download complete.
+Copying rootfs to /var/lib/lxc/webserver/rootfs...
+...
+Current default <span class="nb">time </span>zone: <span class="s1">&#39;Europe/Madrid&#39;</span>
+Local <span class="nb">time </span>is now:      Wed Oct <span class="m">14</span> 17:26:37 CEST 2015.
+Universal Time is now:  Wed Oct <span class="m">14</span> 15:26:37 UTC 2015.
+
+Root password is <span class="s1">&#39;sFj7Jm9N&#39;</span>, please change !
+root@lxc:~# 
+</pre></div>
+
+
+<p>Acabada la generación del contenedor, vamos a configurarle algunos
+parámetros; que tenga una interfaz <em>eth0</em> activa y enchufada al bridge
+<em>lxc0</em>, y que el contenedor se autoinicie en cada reinicio del anfitrión.</p>
+<div class="highlight"><pre>root@lxc:~# cat /var/lib/lxc/webserver/config 
+...
+lxc.start.auto <span class="o">=</span> 1
+lxc.network.type <span class="o">=</span> veth
+lxc.network.flags <span class="o">=</span> up
+lxc.network.link <span class="o">=</span> lxc0
+lxc.network.name <span class="o">=</span> eth0
+root@lxc:~# 
+</pre></div>
+
+
+<p>Y para que su interfaz de red sea funcional, vamos a configurarle una
+dirección IP. Todo esto se hace en los ficheros habituales, teniendo
+en cuenta que un contenedor es una jaula, y que esta se encuentra en
+<em>/var/lib/lxc/webserver/rootfs/</em></p>
+<div class="highlight"><pre>root@lxc:~# cat /var/lib/lxc/webserver/rootfs/etc/network/interfaces
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet static
+    address 192.168.56.10
+    netmask 255.255.255.0
+    gateway 192.168.56.1
+root@lxc:~# 
+</pre></div>
+
+
+<p>El contenedor ya está funcional, y se puede levantar:</p>
+<div class="highlight"><pre>root@lxc:~# lxc-start -n webserver -d
+root@lxc:~# 
+</pre></div>
+
+
+<p>Sin embargo, el firewall impide que se llegue al mismo; tendremos que
+poner reglas para permitir el flujo de red hacia la nueva dirección IP
+configurada para el contenedor. Esto se consigue con reglas de <em>forward</em>
+que entren por el bridge y salgan por el mismo hacia nuestro contenedor.</p>
+<p>Ya de paso habilitamos reglas para que todo lo que pase por el bridge
+hacia internet se permita. Como particularidad de nuestra red, el
+servidor anfitrión tiene un servidor DNS <em>dnsmasq</em>; así que añadimos
+también esa ruta.</p>
+<p>Por ejemplo, suponiendo que queremos habilitar el servicio <em>SSH</em> (tcp 22)
+y el puerto del servicio <em>HTTP</em> (tcp 80), pondremos lo siguiente en la
+configuración del firewall (tras lo cual lo reiniciaremos):</p>
+<div class="highlight"><pre>root@lxc:~# cat /etc/firehol/firehol.conf 
+interface lxc0 world
+    policy drop
+    protection strong
+    server ssh accept
+    client all accept
+
+router internal inface lxc0 outface lxc0
+    policy drop
+    client all accept
+    group with dst not <span class="s2">&quot;</span><span class="si">${</span><span class="nv">UNROUTABLE_IPS</span><span class="si">}</span><span class="s2">&quot;</span>
+        route all accept
+    group end
+    group with dst 192.168.56.1
+        route dns accept
+    group end
+    group with dst 192.168.56.10
+        route ssh accept
+        route http accept
+    group end
+root@lxc:~# service firehol restart
+
+Broadcast message from systemd-journald@lxc <span class="o">(</span>Wed 2015-10-14 17:43:38 CEST<span class="o">)</span>:
+
+FireHOL<span class="o">[</span>8690<span class="o">]</span>: Firewall has been stopped. Policy is ACCEPT EVERYTHING!
+
+
+Message from syslogd@lxc at Oct <span class="m">14</span> 17:43:38 ...
+ FireHOL<span class="o">[</span>8565<span class="o">]</span>: Firewall has been stopped. Policy is ACCEPT EVERYTHING!
+root@lxc:~# 
+</pre></div>
+
+
+<p>Y solamente queda entrar al contenedor, por ejemplo por <em>SSH</em> para
+instalar lo que se necesite; en este caso con un <em>nginx</em> sería
+suficiente como demostración.</p>
+<div class="highlight"><pre>gerard@workstation:~<span class="nv">$ </span>ssh root@192.168.56.10
+root@192.168.56.10<span class="err">&#39;</span>s password: 
+
+The programs included with the Debian GNU/Linux system are free software<span class="p">;</span>
+the exact distribution terms <span class="k">for</span> each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+root@webserver:~# apt-get install nginx-light
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias... Hecho
+Se instalarán los siguientes paquetes extras:
+  nginx-common
+Paquetes sugeridos:
+  fcgiwrap nginx-doc ssl-cert
+Se instalarán los siguientes paquetes NUEVOS:
+  nginx-common nginx-light
+<span class="m">0</span> actualizados, <span class="m">2</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar <span class="m">439</span> kB de archivos.
+Se utilizarán 1.040 kB de espacio de disco adicional después de esta operación.
+¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
+...
+Configurando nginx-common <span class="o">(</span>1.6.2-5<span class="o">)</span> ...
+Configurando nginx-light <span class="o">(</span>1.6.2-5<span class="o">)</span> ...
+Procesando disparadores para systemd <span class="o">(</span>215-17+deb8u2<span class="o">)</span> ...
+root@webserver:~# 
+</pre></div>
+
+
+<p>Y con esto ya tenemos nuestro contenedor en marcha y ofreciendo
+servicios en nuestra red local de forma segura.</p>
+            </div>
+            <!-- /.entry-content -->
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'virtualizando-contenedores-lxc-con-acceso-red-local';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+              <ul class="list-group" id="social">
+                <li class="list-group-item"><a href="https://github.com/sirtea"><i class="fa fa-github-square fa-lg"></i> GitHub</a></li>
+              </ul>
+            </li>
+
+
+            <li class="list-group-item"><a href="http://www.linuxsysadmin.tk/categories.html"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Categories</span></h4></a>
+                <ul class="list-group" id="categories">
+                    <li class="list-group-item">
+                        <a href="http://www.linuxsysadmin.tk/category/virtualizacion.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Virtualización
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="list-group-item"><a href="http://www.linuxsysadmin.tk/tags.html"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                <ul class="list-group list-inline tagcloud" id="tags">
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/bridge.html">
+                            bridge
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/debian.html">
+                            debian
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/firehol.html">
+                            firehol
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/jessie.html">
+                            jessie
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/linux.html">
+                            linux
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/lxc.html">
+                            lxc
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2015 Gerard
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="http://www.linuxsysadmin.tk/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="http://www.linuxsysadmin.tk/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="http://www.linuxsysadmin.tk/theme/js/respond.min.js"></script>
+
+    <!-- Disqus -->
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function () {
+            var s = document.createElement('script');
+            s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+    </script>
+    <!-- End Disqus Code -->
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-68486572-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    <!-- End Google Analytics Code -->
+
+</body>
+</html>
