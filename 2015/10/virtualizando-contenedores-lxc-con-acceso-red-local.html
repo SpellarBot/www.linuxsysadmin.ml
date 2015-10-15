@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,debian,jessie,lxc,bridge,firehol" />
-        <meta name="description" content="En este tutorial se propone montar un servidor de contenedores LXC, de forma que todos los contenedores queden expuestos a la misma red que el servidor que los aloja. Evidentemente, todas quedan protegidas por un firewall ante los ataques de dicha red. Para conseguir este objetivo, se van a usar ..." />
+        <meta name="description" content="En este tutorial se propone montar un servidor de contenedores LXC, de forma que todos los contenedores queden expuestos a la misma red que el servidor que los aloja. Para protegerlos de posibles ataques de esta red, pondremos un firewall basado en iptables mediante una capa de abstracción llamada firehol ..." />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Virtualizando contenedores LXC con acceso a la red local"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html"/>
-        <meta property="og:description" content="En este tutorial se propone montar un servidor de contenedores LXC, de forma que todos los contenedores queden expuestos a la misma red que el servidor que los aloja. Evidentemente, todas quedan protegidas por un firewall ante los ataques de dicha red. Para conseguir este objetivo, se van a usar ..."/>
+        <meta property="og:description" content="En este tutorial se propone montar un servidor de contenedores LXC, de forma que todos los contenedores queden expuestos a la misma red que el servidor que los aloja. Para protegerlos de posibles ataques de esta red, pondremos un firewall basado en iptables mediante una capa de abstracción llamada firehol ..."/>
         <meta property="article:published_time" content="2015-10-15" />
             <meta property="article:section" content="Virtualización" />
             <meta property="article:tag" content="linux" />
@@ -130,8 +130,9 @@ Linux Sysadmin            </a>
                 </div>
                 <p>En este tutorial se propone montar un servidor de contenedores LXC,
 de forma que todos los contenedores queden expuestos a la misma red
-que el servidor que los aloja. Evidentemente, todas quedan protegidas
-por un firewall ante los ataques de dicha red.</p>
+que el servidor que los aloja. Para protegerlos de posibles ataques
+de esta red, pondremos un firewall basado en <em>iptables</em> mediante una
+capa de abstracción llamada <em>firehol</em>.</p>
 <p>Para conseguir este objetivo, se van a usar las siguientes tecnologías:</p>
 <ul>
 <li><strong>Debian jessie</strong>: Es necesario usar alguna distribución de linux para hacer funcionar LXC</li>

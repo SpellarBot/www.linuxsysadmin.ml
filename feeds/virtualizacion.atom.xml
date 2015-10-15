@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/virtualizacion.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-10-15T12:00:00+02:00</updated><entry><title>Virtualizando contenedores LXC con acceso a la red local</title><link href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html" rel="alternate"></link><updated>2015-10-15T12:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-10-15:2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html</id><summary type="html">&lt;p&gt;En este tutorial se propone montar un servidor de contenedores LXC,
 de forma que todos los contenedores queden expuestos a la misma red
-que el servidor que los aloja. Evidentemente, todas quedan protegidas
-por un firewall ante los ataques de dicha red.&lt;/p&gt;
+que el servidor que los aloja. Para protegerlos de posibles ataques
+de esta red, pondremos un firewall basado en &lt;em&gt;iptables&lt;/em&gt; mediante una
+capa de abstracción llamada &lt;em&gt;firehol&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Para conseguir este objetivo, se van a usar las siguientes tecnologías:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Debian jessie&lt;/strong&gt;: Es necesario usar alguna distribución de linux para hacer funcionar LXC&lt;/li&gt;
