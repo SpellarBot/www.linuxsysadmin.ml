@@ -1,5 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-10-15T12:00:00+02:00</updated><entry><title>Virtualizando contenedores LXC con acceso a la red local</title><link href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html" rel="alternate"></link><updated>2015-10-15T12:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-10-15:2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html</id><summary type="html">&lt;p&gt;En este tutorial se propone montar un servidor de contenedores LXC,
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-10-29T11:30:00+01:00</updated><entry><title>Ocultando puertos con port knocking</title><link href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html" rel="alternate"></link><updated>2015-10-29T11:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-10-29:2015/10/ocultando-puertos-con-port-knocking.html</id><summary type="html">&lt;p&gt;En este artículo vamos a enseñar como ocultar un puerto tras el firewall,
+de forma que solamente se abra tras utilizar el protocolo &lt;em&gt;port knocking&lt;/em&gt;.
+Las tecnologías usadas van a ser &lt;em&gt;firehol&lt;/em&gt; como firewall y el demonio
+&lt;em&gt;knockd&lt;/em&gt; ocultando el &lt;em&gt;SSH&lt;/em&gt;, aunque vamos a permitir acceder al puerto
+de HTTP.&lt;/p&gt;
+&lt;p&gt;El protocolo de &lt;em&gt;port knocking&lt;/em&gt; es un sistema en el que para abrir la
+conectividad en un puerto se debe primero abrir una secuencia concreta
+a otros puertos, sean &lt;em&gt;TCP&lt;/em&gt; o &lt;em&gt;UDP&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Para conseguir este objetivo, se van a usar las siguientes tecnologías:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Debian jessie&lt;/strong&gt;: Como distribución base; podría ser cualquier otra&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Firehol&lt;/strong&gt;: Scripts para levantar un firewall basado en &lt;em&gt;iptables&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;El hardware va a ser uno con capacidades limitadas, virtualizado en VirtualBox.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;CPUs&lt;/strong&gt;: 1&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Memoria&lt;/strong&gt;: 256 Mb&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Disco&lt;/strong&gt;: 2 Gb&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Red&lt;/strong&gt;: 1 interfaz (&lt;em&gt;eth0&lt;/em&gt;) &lt;em&gt;host-only&lt;/em&gt; o &lt;em&gt;bridged&lt;/em&gt; con IP fija&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;La instalación base es una &lt;em&gt;Debian&lt;/em&gt; mínima instalada con el CD netinstall,
+con todo desmarcado y con el servidor de &lt;em&gt;SSH&lt;/em&gt; previamente instalado.&lt;/p&gt;
+&lt;h2&gt;Instalación del servidor&lt;/h2&gt;
+&lt;p&gt;Para empezar, vamos a instalar los dos servicios implicados:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# apt-get install firehol knockd
+...
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Configuramos las reglas del firewall, de acuerdo a la documentación
+relacionada con &lt;em&gt;port knocking&lt;/em&gt;. Se define un nivel de protección máximo,
+ya que se trata de la interfaz que deberá estar accesible desde internet;
+esto nos evita la mayoría de ataques conocidos en la capa 3 y 4.&lt;/p&gt;
+&lt;p&gt;En cuanto a las conectividad, vamos a permitir que este servidor acceda
+a servicios &lt;em&gt;DNS&lt;/em&gt; y &lt;em&gt;HTTP&lt;/em&gt;, que es lo justo para actualizarse. Como
+servidor vamos a permitir el acceso a &lt;em&gt;HTTP&lt;/em&gt; (ya que en el ejemplo, esta
+máquina va a servir como servidor &lt;em&gt;HTTP&lt;/em&gt;) y a &lt;em&gt;SSH&lt;/em&gt; siempre y cuando se
+cumpla con el protocolo de seguridad.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/firehol/firehol.conf 
+version 5
+
+interface any world
+    protection strong
+    client &lt;span class="s2"&gt;&amp;quot;dns http&amp;quot;&lt;/span&gt; accept
+    server http accept
+    server ssh accept with knock hidden
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Acto seguido vamos a definir las reglas para que se abra el &lt;em&gt;knock hidden&lt;/em&gt;
+(que corresponde con el puerto &lt;em&gt;SSH&lt;/em&gt;) si se completa la secuencia de &lt;em&gt;knock&lt;/em&gt;.
+En este caso concreto, se indica una secuencia de los puertos &lt;em&gt;TCP&lt;/em&gt; 123,
+456 y 789; aunque es posible definir puertos &lt;em&gt;UDP&lt;/em&gt;, dejamos sin indicarlo,
+que nos los va a definir como &lt;em&gt;TCP&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Como medida de seguridad vamos a indicar un tiempo máximo de 10 segundos
+para completar la secuencia de &lt;em&gt;knock&lt;/em&gt; y un autocierre del puerto a los
+5 segundos (aunque firehol va a permitir las conexiones que se hayan
+establecido en esos 5 segundos).&lt;/p&gt;
+&lt;p&gt;Es especialmente interesante ver que la regla incluye la dirección
+origen, con lo que la apertura de puerto solo será visible desde la
+máquina que completó la secuencia de &lt;em&gt;knock&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/knockd.conf 
+&lt;span class="o"&gt;[&lt;/span&gt;options&lt;span class="o"&gt;]&lt;/span&gt;
+    UseSyslog
+
+&lt;span class="o"&gt;[&lt;/span&gt;SSH&lt;span class="o"&gt;]&lt;/span&gt;
+    &lt;span class="nv"&gt;sequence&lt;/span&gt;      &lt;span class="o"&gt;=&lt;/span&gt; 123,456,789
+    &lt;span class="nv"&gt;seq_timeout&lt;/span&gt;   &lt;span class="o"&gt;=&lt;/span&gt; 10
+    &lt;span class="nv"&gt;start_command&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; iptables -A knock_hidden -s %IP% -j ACCEPT
+    &lt;span class="nv"&gt;cmd_timeout&lt;/span&gt;   &lt;span class="o"&gt;=&lt;/span&gt; 5
+    &lt;span class="nv"&gt;stop_command&lt;/span&gt;  &lt;span class="o"&gt;=&lt;/span&gt; iptables -D knock_hidden -s %IP% -j ACCEPT
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como medida de seguridad, &lt;em&gt;Debian&lt;/em&gt; tiene una protección para levantar
+ambos servicios, así que tenemos que indicarle que queremos que se
+puedan levantar, editando otros ficheros de configuración.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/default/knockd 
+...
+&lt;span class="nv"&gt;START_KNOCKD&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1
+...
+root@server:~# cat /etc/default/firehol 
+...
+&lt;span class="nv"&gt;START_FIREHOL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;YES
+...
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finalmente podemos levantar los servicios de &lt;em&gt;port knocking&lt;/em&gt; y de
+&lt;em&gt;firewall&lt;/em&gt;, usando las herramientas estándares que nos ofrece la distribución.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# service knockd restart
+root@server:~# service firehol restart
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Comprobación de funcionamiento&lt;/h2&gt;
+&lt;p&gt;Para comprobar el funcionamiento basta con comprobar que el puerto está
+normalmente cerrado. Personalmente he usado &lt;em&gt;nmap&lt;/em&gt;, aunque se podría usar
+&lt;em&gt;netcat&lt;/em&gt; o &lt;em&gt;telnet&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;nmap -PN 192.168.56.3 -p 22
+
+Starting Nmap 5.21 &lt;span class="o"&gt;(&lt;/span&gt; http://nmap.org &lt;span class="o"&gt;)&lt;/span&gt; at 2015-10-28 17:33 CET
+Nmap scan report &lt;span class="k"&gt;for&lt;/span&gt; server &lt;span class="o"&gt;(&lt;/span&gt;192.168.56.3&lt;span class="o"&gt;)&lt;/span&gt;
+Host is up.
+PORT   STATE    SERVICE
+22/tcp filtered ssh
+
+Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&gt; IP address &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; host up&lt;span class="o"&gt;)&lt;/span&gt; scanned in 2.13 seconds
+gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vemos que sale &lt;strong&gt;filtered&lt;/strong&gt;, que significa que el firewall lo está
+bloqueando. Ahora vamos a lanzar la secuencia de &lt;em&gt;knock&lt;/em&gt; usando el
+helper &lt;strong&gt;knock&lt;/strong&gt;, que en &lt;em&gt;Debian&lt;/em&gt; se encuentra en el mismo paquete
+&lt;em&gt;knockd&lt;/em&gt;. Acto seguido, el puerto de &lt;em&gt;SSH&lt;/em&gt; queda abierto (en otras
+palabras: escuchando). Ahora sería posible iniciar sesión por &lt;em&gt;SSH&lt;/em&gt; en
+la máquina.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;knock 192.168.56.3 &lt;span class="m"&gt;123&lt;/span&gt; &lt;span class="m"&gt;456&lt;/span&gt; 789
+gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;nmap -PN 192.168.56.3 -p 22
+
+Starting Nmap 5.21 &lt;span class="o"&gt;(&lt;/span&gt; http://nmap.org &lt;span class="o"&gt;)&lt;/span&gt; at 2015-10-28 17:34 CET
+Nmap scan report &lt;span class="k"&gt;for&lt;/span&gt; server &lt;span class="o"&gt;(&lt;/span&gt;192.168.56.3&lt;span class="o"&gt;)&lt;/span&gt;
+Host is up &lt;span class="o"&gt;(&lt;/span&gt;0.0011s latency&lt;span class="o"&gt;)&lt;/span&gt;.
+PORT   STATE SERVICE
+22/tcp open  ssh
+
+Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&gt; IP address &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; host up&lt;span class="o"&gt;)&lt;/span&gt; scanned in 0.07 seconds
+gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finalmente comprobamos que, transcurridos los 5 segundos configurados,
+el puerto vuelve a verse como &lt;strong&gt;filtrado&lt;/strong&gt;, con lo que no se puede
+establecer nuevas conexiones en este puerto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;nmap -PN 192.168.56.3 -p 22
+
+Starting Nmap 5.21 &lt;span class="o"&gt;(&lt;/span&gt; http://nmap.org &lt;span class="o"&gt;)&lt;/span&gt; at 2015-10-28 17:34 CET
+Nmap scan report &lt;span class="k"&gt;for&lt;/span&gt; server &lt;span class="o"&gt;(&lt;/span&gt;192.168.56.3&lt;span class="o"&gt;)&lt;/span&gt;
+Host is up.
+PORT   STATE    SERVICE
+22/tcp filtered ssh
+
+Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&gt; IP address &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; host up&lt;span class="o"&gt;)&lt;/span&gt; scanned in 2.08 seconds
+gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto queda protegido el acceso por &lt;em&gt;SSH&lt;/em&gt; a la máquina.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="firehol"></category><category term="port knocking"></category><category term="ssh"></category><category term="nmap"></category></entry><entry><title>Virtualizando contenedores LXC con acceso a la red local</title><link href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html" rel="alternate"></link><updated>2015-10-15T12:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-10-15:2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html</id><summary type="html">&lt;p&gt;En este tutorial se propone montar un servidor de contenedores LXC,
 de forma que todos los contenedores queden expuestos a la misma red
 que el servidor que los aloja. Para protegerlos de posibles ataques
 de esta red, pondremos un firewall basado en &lt;em&gt;iptables&lt;/em&gt; mediante una
