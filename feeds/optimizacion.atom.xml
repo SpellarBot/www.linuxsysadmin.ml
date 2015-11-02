@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/optimizacion.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-11-02T14:00:00+01:00</updated><entry><title>Liberando memoria caché</title><link href="http://www.linuxsysadmin.tk/2015/11/liberando-memoria-cache.html" rel="alternate"></link><updated>2015-11-02T14:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-02:2015/11/liberando-memoria-cache.html</id><summary type="html">&lt;p&gt;A veces nos encontramos que nuestro sistema linux parece tener la
+memoria &lt;em&gt;virtual&lt;/em&gt; ocupada, cuando no tenemos nada de memoria &lt;em&gt;RSS&lt;/em&gt;;
+esto no es un problema, ya que por la forma de funcionar del
+&lt;em&gt;memory manager&lt;/em&gt; de linux, se conserva "por si acaso" y se libera
+cuando realmente se necesita.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;free -m
+             total       used       free     shared    buffers     cached
+Mem:          &lt;span class="m"&gt;3858&lt;/span&gt;       &lt;span class="m"&gt;3226&lt;/span&gt;        &lt;span class="m"&gt;632&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;        &lt;span class="m"&gt;114&lt;/span&gt;       2545
+-/+ buffers/cache:        &lt;span class="m"&gt;566&lt;/span&gt;       3291
+Swap:         &lt;span class="m"&gt;2381&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;       2381
+gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Sin embargo este detalle nos puede resultar molesto y puede que queramos
+&lt;strong&gt;liberar&lt;/strong&gt; esa memoria de verdad, por ejemplo, para comparar memoria
+real ocupada por el sistema o sencillamente porque así lo queremos.&lt;/p&gt;
+&lt;p&gt;En este caso no tenemos mas remedio que solicitar el &lt;em&gt;memory manager&lt;/em&gt;
+que la libere, escribiendo en el fichero de control habilitado para ello,
+de acuerdo a la &lt;a href="https://www.kernel.org/doc/Documentation/sysctl/vm.txt"&gt;documentación del &lt;em&gt;kernel&lt;/em&gt; de linux&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;drop_caches
+
+Writing to this will cause the kernel to drop clean caches, as well as
+reclaimable slab objects like dentries and inodes.  Once dropped, their
+memory becomes free.
+
+To free pagecache:
+    &lt;span class="nb"&gt;echo &lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; &amp;gt; /proc/sys/vm/drop_caches
+To free reclaimable slab objects &lt;span class="o"&gt;(&lt;/span&gt;includes dentries and inodes&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="nb"&gt;echo &lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; &amp;gt; /proc/sys/vm/drop_caches
+To free slab objects and pagecache:
+    &lt;span class="nb"&gt;echo &lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt; &amp;gt; /proc/sys/vm/drop_caches
+
+This is a non-destructive operation and will not free any dirty objects.
+To increase the number of objects freed by this operation, the user may run
+&lt;span class="sb"&gt;`&lt;/span&gt;sync&lt;span class="err"&gt;&amp;#39;&lt;/span&gt; prior to writing to /proc/sys/vm/drop_caches.  This will minimize the
+number of dirty objects on the system and create more candidates to be
+dropped.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Este fichero viene por defecto con permisos de escritura solamente para
+el usuario &lt;strong&gt;root&lt;/strong&gt; y no se puede escribir sin el mismo. Como no queremos
+trabajar con el usuario &lt;strong&gt;root&lt;/strong&gt;, vamos a usar el comando &lt;em&gt;sudo&lt;/em&gt; con un
+usuario normal:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;sudo bash -c &lt;span class="s2"&gt;&amp;quot;echo 3 &amp;gt; /proc/sys/vm/drop_caches&amp;quot;&lt;/span&gt;
+gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Alternativamente, podemos utilizar el comando &lt;em&gt;tee&lt;/em&gt; para realizar la
+misma operación, sin el envoltorio de &lt;em&gt;bash&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;echo &lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee /proc/sys/vm/drop_caches
+3
+gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y finalmente nuestra memoria queda vacía de todo aquello que no era
+indispensable para la ejecución del sistema.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;free -m
+             total       used       free     shared    buffers     cached
+Mem:          &lt;span class="m"&gt;3858&lt;/span&gt;        &lt;span class="m"&gt;752&lt;/span&gt;       &lt;span class="m"&gt;3105&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;          &lt;span class="m"&gt;2&lt;/span&gt;        207
+-/+ buffers/cache:        &lt;span class="m"&gt;542&lt;/span&gt;       3315
+Swap:         &lt;span class="m"&gt;2381&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;       2381
+gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;¡Acabamos de liberar 2 gigabytes de memoria!&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;CUIDADO&lt;/strong&gt;: Esta operación puede afectar el rendimiento puntual del
+sistema, ya que en caso de volver a necesitar la información &lt;em&gt;cacheada&lt;/em&gt;,
+deberá volver a recargar la memoria, probablemente desde disco.&lt;/p&gt;</summary><category term="linux"></category><category term="kernel"></category><category term="memory manager"></category><category term="drop caches"></category></entry></feed>
