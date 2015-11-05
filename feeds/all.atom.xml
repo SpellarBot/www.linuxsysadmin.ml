@@ -1,5 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-11-02T14:00:00+01:00</updated><entry><title>Liberando memoria caché</title><link href="http://www.linuxsysadmin.tk/2015/11/liberando-memoria-cache.html" rel="alternate"></link><updated>2015-11-02T14:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-02:2015/11/liberando-memoria-cache.html</id><summary type="html">&lt;p&gt;A veces nos encontramos que nuestro sistema linux parece tener la
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-11-05T22:30:00+01:00</updated><entry><title>Restart automático de servicios con systemd</title><link href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html" rel="alternate"></link><updated>2015-11-05T22:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-05:2015/11/restart-automatico-de-servicios-con-systemd.html</id><summary type="html">&lt;p&gt;Cuando estamos gestionando un servidor, es posible que se caiga alguno
+de sus servicios. Esto es especialmente molesto cuando nos interesa tener
+un &lt;em&gt;uptime&lt;/em&gt; elevado. Para conseguirlo, se han utilizado diferentes maneras,
+desde poner personas a monitorizar en modo 24x7 hasta herramientas auxiliares
+como gestores tipo &lt;em&gt;runit&lt;/em&gt;, &lt;em&gt;supervisor&lt;/em&gt; o &lt;em&gt;monit&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Con la entrada en escena de &lt;em&gt;systemd&lt;/em&gt; en la mayoría de distribuciones grandes
+de &lt;em&gt;linux&lt;/em&gt; este problema se ha acabado; el mismo proceso que hace de &lt;strong&gt;init&lt;/strong&gt;
+puede encargarse de mantener los procesos levantados, y reiniciarlos en caso
+de caída.&lt;/p&gt;
+&lt;p&gt;En este tutorial pretendo hacer que un servicio estándar se vea beneficiado de
+un &lt;strong&gt;override&lt;/strong&gt;, que permita el inicio automático de un servicio cuando se cae,
+sin tener que reescribir la &lt;strong&gt;unit&lt;/strong&gt; que se encarga del servicio o proceso.&lt;/p&gt;
+&lt;p&gt;Partimos de un servidor básico &lt;em&gt;Linux&lt;/em&gt; con &lt;em&gt;systemd&lt;/em&gt;. En este caso vamos a
+utilizar la última versión estable de &lt;em&gt;Debian&lt;/em&gt;, a la que le vamos a instalar
+un servicio estándar como &lt;em&gt;nginx&lt;/em&gt; que nos va a servir como conejillo de indias.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# apt-get install nginx-light
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Procedimiento&lt;/h2&gt;
+&lt;p&gt;Como comprobación previa, observemos como este &lt;strong&gt;restart&lt;/strong&gt; automático no
+funciona; tenemos el servicio en ejecución, lo matamos y observamos que no
+se levanta de nuevo, por mucho que esperemos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# ps faux &lt;span class="p"&gt;|&lt;/span&gt; grep nginx
+root       &lt;span class="m"&gt;685&lt;/span&gt;  0.0  0.8   &lt;span class="m"&gt;4556&lt;/span&gt;  &lt;span class="m"&gt;2240&lt;/span&gt; pts/0    S+   11:41   0:00          &lt;span class="se"&gt;\_&lt;/span&gt; grep nginx
+root       &lt;span class="m"&gt;662&lt;/span&gt;  0.0  0.7   &lt;span class="m"&gt;6356&lt;/span&gt;  &lt;span class="m"&gt;1856&lt;/span&gt; ?        Ss   11:41   0:00 nginx: master process /usr/sbin/nginx -g daemon on&lt;span class="p"&gt;;&lt;/span&gt; master_process on&lt;span class="p"&gt;;&lt;/span&gt;
+www-data   &lt;span class="m"&gt;663&lt;/span&gt;  0.1  0.9   &lt;span class="m"&gt;6504&lt;/span&gt;  &lt;span class="m"&gt;2456&lt;/span&gt; ?        S    11:41   0:00  &lt;span class="se"&gt;\_&lt;/span&gt; nginx: worker process                           
+www-data   &lt;span class="m"&gt;664&lt;/span&gt;  0.0  0.9   &lt;span class="m"&gt;6504&lt;/span&gt;  &lt;span class="m"&gt;2456&lt;/span&gt; ?        S    11:41   0:00  &lt;span class="se"&gt;\_&lt;/span&gt; nginx: worker process                           
+www-data   &lt;span class="m"&gt;665&lt;/span&gt;  0.0  0.9   &lt;span class="m"&gt;6504&lt;/span&gt;  &lt;span class="m"&gt;2456&lt;/span&gt; ?        S    11:41   0:00  &lt;span class="se"&gt;\_&lt;/span&gt; nginx: worker process                           
+www-data   &lt;span class="m"&gt;666&lt;/span&gt;  0.1  0.9   &lt;span class="m"&gt;6504&lt;/span&gt;  &lt;span class="m"&gt;2456&lt;/span&gt; ?        S    11:41   0:00  &lt;span class="se"&gt;\_&lt;/span&gt; nginx: worker process                           
+root@server:~# &lt;span class="nb"&gt;kill &lt;/span&gt;662
+root@server:~# ps faux &lt;span class="p"&gt;|&lt;/span&gt; grep nginx
+root       &lt;span class="m"&gt;691&lt;/span&gt;  0.0  0.8   &lt;span class="m"&gt;4556&lt;/span&gt;  &lt;span class="m"&gt;2220&lt;/span&gt; pts/0    S+   11:41   0:00          &lt;span class="se"&gt;\_&lt;/span&gt; grep nginx
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora necesitamos localizar el nombre de la &lt;strong&gt;unit&lt;/strong&gt; que se encarga de ese
+servicio, puesto que la carpeta de &lt;strong&gt;overrides&lt;/strong&gt; debe llamarse igual.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# systemctl list-units -a &lt;span class="p"&gt;|&lt;/span&gt; grep nginx
+  nginx.service    loaded    inactive dead    A high performance web server and a reverse proxy server
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como curiosidad, este fichero se encuentra en &lt;em&gt;/lib/systemd/system/&lt;/em&gt;,
+siguiendo las convenciones del empaquetado de &lt;em&gt;Debian&lt;/em&gt;. Alternativamente,
+podemos localizar los ficheros instalados por un paquete con el
+comando &lt;em&gt;dpkg -L nginx-light&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# ls -lh /lib/systemd/system/nginx.service 
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; root root &lt;span class="m"&gt;986&lt;/span&gt; dic  &lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="m"&gt;2014&lt;/span&gt; /lib/systemd/system/nginx.service
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En caso de ser una &lt;strong&gt;unit&lt;/strong&gt; escrita por nosotros, se encontraría en
+&lt;em&gt;/etc/systemd/system/&lt;/em&gt;. Esta es la convención:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;/lib/systemd/system/&lt;/em&gt; &amp;rarr; &lt;strong&gt;units&lt;/strong&gt; de sistema, puestas por los paquetes instalados&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;/lib/systemd/system/&lt;/em&gt; &amp;rarr; &lt;strong&gt;units&lt;/strong&gt; o &lt;strong&gt;overrides&lt;/strong&gt; puestos por el usuario (nosotros)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Para añadir nuevas directivas (&lt;strong&gt;overrides&lt;/strong&gt;) a una &lt;strong&gt;unit&lt;/strong&gt; sin reescribirla
+entera, basta con crear una carpeta con su mismo nombre, concatenando &lt;strong&gt;.d&lt;/strong&gt;.
+Dentro podemos poner tantos ficheros &lt;em&gt;.conf&lt;/em&gt; como creamos necesarios, añadiendo
+las directivas que queramos añadir o modificar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mkdir /etc/systemd/system/nginx.service.d
+root@server:~# cat /etc/systemd/system/nginx.service.d/autorestart.conf
+&lt;span class="o"&gt;[&lt;/span&gt;Service&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;Restart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;always
+&lt;span class="nv"&gt;RestartSec&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso, se ha indicado que queremos un &lt;strong&gt;restart&lt;/strong&gt; siempre, sean cuales
+sean las circunstancias en las que se cayó el proceso, y que espere 1 segundo
+antes de intentarlo. Por como está hecho &lt;em&gt;systemd&lt;/em&gt;, &lt;strong&gt;no&lt;/strong&gt; va a levantar un
+servicio que hemos parado invocando el comando &lt;em&gt;systemctl&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Para que los cambios en el fichero de configuración se apliquen es necesario
+recargar las configuraciones, indicando a &lt;em&gt;systemd&lt;/em&gt; que tienen que recargarlas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# systemctl daemon-reload
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Comprobación&lt;/h2&gt;
+&lt;p&gt;Básicamente vamos a repetir el paso de la comprobación; se localiza el
+proceso &lt;strong&gt;master&lt;/strong&gt; y se finaliza (por ejemplo, con un &lt;strong&gt;SIGTERM&lt;/strong&gt; normal).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# ps faux &lt;span class="p"&gt;|&lt;/span&gt; grep nginx
+root       &lt;span class="m"&gt;782&lt;/span&gt;  0.0  0.8   &lt;span class="m"&gt;4556&lt;/span&gt;  &lt;span class="m"&gt;2252&lt;/span&gt; pts/0    S+   11:56   0:00          &lt;span class="se"&gt;\_&lt;/span&gt; grep nginx
+root       &lt;span class="m"&gt;776&lt;/span&gt;  0.0  0.7   &lt;span class="m"&gt;6356&lt;/span&gt;  &lt;span class="m"&gt;1936&lt;/span&gt; ?        Ss   11:56   0:00 nginx: master process /usr/sbin/nginx -g daemon on&lt;span class="p"&gt;;&lt;/span&gt; master_process on&lt;span class="p"&gt;;&lt;/span&gt;
+www-data   &lt;span class="m"&gt;777&lt;/span&gt;  0.0  1.0   &lt;span class="m"&gt;6504&lt;/span&gt;  &lt;span class="m"&gt;2536&lt;/span&gt; ?        S    11:56   0:00  &lt;span class="se"&gt;\_&lt;/span&gt; nginx: worker process                           
+www-data   &lt;span class="m"&gt;778&lt;/span&gt;  0.0  1.0   &lt;span class="m"&gt;6504&lt;/span&gt;  &lt;span class="m"&gt;2536&lt;/span&gt; ?        S    11:56   0:00  &lt;span class="se"&gt;\_&lt;/span&gt; nginx: worker process                           
+www-data   &lt;span class="m"&gt;779&lt;/span&gt;  0.0  1.0   &lt;span class="m"&gt;6504&lt;/span&gt;  &lt;span class="m"&gt;2536&lt;/span&gt; ?        S    11:56   0:00  &lt;span class="se"&gt;\_&lt;/span&gt; nginx: worker process                           
+www-data   &lt;span class="m"&gt;780&lt;/span&gt;  0.0  1.0   &lt;span class="m"&gt;6504&lt;/span&gt;  &lt;span class="m"&gt;2536&lt;/span&gt; ?        S    11:56   0:00  &lt;span class="se"&gt;\_&lt;/span&gt; nginx: worker process                           
+root@server:~# &lt;span class="nb"&gt;kill &lt;/span&gt;776
+root@server:~# ps faux &lt;span class="p"&gt;|&lt;/span&gt; grep nginx
+root       &lt;span class="m"&gt;787&lt;/span&gt;  0.0  0.9   &lt;span class="m"&gt;4556&lt;/span&gt;  &lt;span class="m"&gt;2280&lt;/span&gt; pts/0    S+   11:56   0:00          &lt;span class="se"&gt;\_&lt;/span&gt; grep nginx
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora solo hay que esperar el paso de los segundos configurados, y volver a
+ver si el servicio está corriendo; aunque en este esperé algo menos de lo
+configurado; la paciencia no es una de mis virtudes...&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# ps faux &lt;span class="p"&gt;|&lt;/span&gt; grep nginx
+root       &lt;span class="m"&gt;789&lt;/span&gt;  0.0  0.8   &lt;span class="m"&gt;4556&lt;/span&gt;  &lt;span class="m"&gt;2192&lt;/span&gt; pts/0    S+   11:56   0:00          &lt;span class="se"&gt;\_&lt;/span&gt; grep nginx
+root@server:~# ps faux &lt;span class="p"&gt;|&lt;/span&gt; grep nginx
+root       &lt;span class="m"&gt;791&lt;/span&gt;  0.0  0.9   &lt;span class="m"&gt;4556&lt;/span&gt;  &lt;span class="m"&gt;2280&lt;/span&gt; pts/0    S+   11:56   0:00          &lt;span class="se"&gt;\_&lt;/span&gt; grep nginx
+root@server:~# ps faux &lt;span class="p"&gt;|&lt;/span&gt; grep nginx
+root       &lt;span class="m"&gt;802&lt;/span&gt;  0.0  0.8   &lt;span class="m"&gt;4556&lt;/span&gt;  &lt;span class="m"&gt;2236&lt;/span&gt; pts/0    S+   11:56   0:00          &lt;span class="se"&gt;\_&lt;/span&gt; grep nginx
+root       &lt;span class="m"&gt;796&lt;/span&gt;  0.0  0.7   &lt;span class="m"&gt;6356&lt;/span&gt;  &lt;span class="m"&gt;1932&lt;/span&gt; ?        Ss   11:56   0:00 nginx: master process /usr/sbin/nginx -g daemon on&lt;span class="p"&gt;;&lt;/span&gt; master_process on&lt;span class="p"&gt;;&lt;/span&gt;
+www-data   &lt;span class="m"&gt;797&lt;/span&gt;  0.0  1.0   &lt;span class="m"&gt;6504&lt;/span&gt;  &lt;span class="m"&gt;2592&lt;/span&gt; ?        S    11:56   0:00  &lt;span class="se"&gt;\_&lt;/span&gt; nginx: worker process                           
+www-data   &lt;span class="m"&gt;798&lt;/span&gt;  0.0  1.0   &lt;span class="m"&gt;6504&lt;/span&gt;  &lt;span class="m"&gt;2592&lt;/span&gt; ?        S    11:56   0:00  &lt;span class="se"&gt;\_&lt;/span&gt; nginx: worker process                           
+www-data   &lt;span class="m"&gt;799&lt;/span&gt;  0.0  1.0   &lt;span class="m"&gt;6504&lt;/span&gt;  &lt;span class="m"&gt;2592&lt;/span&gt; ?        S    11:56   0:00  &lt;span class="se"&gt;\_&lt;/span&gt; nginx: worker process                           
+www-data   &lt;span class="m"&gt;800&lt;/span&gt;  0.0  1.0   &lt;span class="m"&gt;6504&lt;/span&gt;  &lt;span class="m"&gt;2532&lt;/span&gt; ?        S    11:56   0:00  &lt;span class="se"&gt;\_&lt;/span&gt; nginx: worker process                           
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos nuestro &lt;strong&gt;autorestart&lt;/strong&gt; para este servicio.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="systemd"></category><category term="nginx"></category></entry><entry><title>Liberando memoria caché</title><link href="http://www.linuxsysadmin.tk/2015/11/liberando-memoria-cache.html" rel="alternate"></link><updated>2015-11-02T14:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-02:2015/11/liberando-memoria-cache.html</id><summary type="html">&lt;p&gt;A veces nos encontramos que nuestro sistema linux parece tener la
 memoria &lt;em&gt;virtual&lt;/em&gt; ocupada, cuando no tenemos nada de memoria &lt;em&gt;RSS&lt;/em&gt;;
 esto no es un problema, ya que por la forma de funcionar del
 &lt;em&gt;memory manager&lt;/em&gt; de linux, se conserva "por si acaso" y se libera
