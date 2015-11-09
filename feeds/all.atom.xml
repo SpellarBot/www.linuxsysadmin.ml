@@ -1,5 +1,199 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-11-05T22:30:00+01:00</updated><entry><title>Restart automático de servicios con systemd</title><link href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html" rel="alternate"></link><updated>2015-11-05T22:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-05:2015/11/restart-automatico-de-servicios-con-systemd.html</id><summary type="html">&lt;p&gt;Cuando estamos gestionando un servidor, es posible que se caiga alguno
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-11-09T22:30:00+01:00</updated><entry><title>Escribiendo units en systemd</title><link href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html" rel="alternate"></link><updated>2015-11-09T22:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-09:2015/11/escribiendo-units-en-systemd.html</id><summary type="html">&lt;p&gt;Cuando se anunció &lt;em&gt;systemd&lt;/em&gt; me llamó la atención que además de las funciones
+estándares de otros sistemas de &lt;em&gt;init&lt;/em&gt; (por ejemplo &lt;em&gt;sysvinit&lt;/em&gt;), también se
+ofrecían otras funcionalidades normalmente delegadas a otros procesos, como por
+ejemplo, la posibilidad de reiniciar procesos automáticamente o de lanzar
+procesos temporales al estilo de &lt;em&gt;cron&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;En este artículo se explica como escribir estos ficheros que rigen las tareas
+propias del sistema &lt;em&gt;init&lt;/em&gt; para iniciar procesos que no disponen de tales
+facilidades. Adicionalmente, vamos a ver como beneficiarnos del sistema de
+plantillas de estos mismos ficheros para evitarnos tener que repetirnos, de
+acuerdo con el principio &lt;a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself"&gt;DRY (don't repeat yourself)&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Como ejemplo, vamos a utilizar un sistema básico de &lt;em&gt;Linux&lt;/em&gt; con &lt;em&gt;systemd&lt;/em&gt;; que
+podría ser &lt;em&gt;RedHat 7&lt;/em&gt;, &lt;em&gt;ArchLinux&lt;/em&gt; o &lt;em&gt;Debian 8&lt;/em&gt;. En este caso, se va a utilizar
+un sistema &lt;em&gt;Debian Jessie&lt;/em&gt; con una instalación básica &lt;em&gt;netinstall&lt;/em&gt; con &lt;em&gt;SSH&lt;/em&gt; y
+nada mas.&lt;/p&gt;
+&lt;p&gt;Vamos a suponer que queremos montar un servidor con 2 instancias de &lt;em&gt;MongoDB&lt;/em&gt;,
+escuchando en los puertos 27001 y 27002. Empecemos con montar una estructura
+en &lt;em&gt;/opt/&lt;/em&gt; para contener todo lo relacionado con este despliegue. La idea es
+que vamos a levantar el binario &lt;em&gt;mongod&lt;/em&gt; con dos configuraciones distintas.
+Por eso, de momento basta con poner el binario &lt;em&gt;mongod&lt;/em&gt;, las dos configuraciones
+y las dos carpetas de datos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# tree /opt/
+/opt/
+└── mongodb
+    ├── bin
+    │   └── mongod
+    ├── conf
+    │   ├── mongo1.conf
+    │   └── mongo2.conf
+    ├── data
+    │   ├── mongo1
+    │   └── mongo2
+    └── logs
+
+&lt;span class="m"&gt;7&lt;/span&gt; directories, &lt;span class="m"&gt;3&lt;/span&gt; files
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La configuración de ambos procesos va a ser la mínima necesaria para que los
+procesos no entren en conflicto entre ellos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /opt/mongodb/conf/mongo1.conf 
+systemLog:
+    path: /opt/mongodb/logs/mongo1.log
+    logAppend: &lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="nb"&gt;    &lt;/span&gt;destination: file
+
+net:
+    port: 27001
+
+storage:
+    dbPath: /opt/mongodb/data/mongo1
+    smallFiles: &lt;span class="nb"&gt;true&lt;/span&gt;
+root@server:~# cat /opt/mongodb/conf/mongo2.conf 
+systemLog:
+    path: /opt/mongodb/logs/mongo2.log
+    logAppend: &lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="nb"&gt;    &lt;/span&gt;destination: file
+
+net:
+    port: 27002
+
+storage:
+    dbPath: /opt/mongodb/data/mongo2
+    smallFiles: &lt;span class="nb"&gt;true&lt;/span&gt;
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como apunte importante, no se ha definido un archivo para guardar el &lt;em&gt;PID&lt;/em&gt; del
+proceso; &lt;em&gt;systemd&lt;/em&gt; no lo necesita y conoce el &lt;em&gt;PID&lt;/em&gt; de los procesos que levanta.&lt;/p&gt;
+&lt;p&gt;Siguiendo las directivas de seguridad mínimas, los dos procesos &lt;em&gt;mongod&lt;/em&gt; van a
+levantarse con un usuario estándar que no sea &lt;em&gt;root&lt;/em&gt;. En este caso, toda la
+carpeta &lt;em&gt;/opt/mongodb/&lt;/em&gt; pertenece al usuario &lt;em&gt;mongo&lt;/em&gt;, aunque bastaría con la
+carpeta de datos y la de logs.&lt;/p&gt;
+&lt;p&gt;Ponemos la definición de nuestras &lt;strong&gt;units&lt;/strong&gt; en la carpeta designada según el
+estándar, que es &lt;em&gt;/etc/systemd/system/&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/systemd/system/mongo1.service 
+&lt;span class="o"&gt;[&lt;/span&gt;Unit&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;MongoDB
+
+&lt;span class="o"&gt;[&lt;/span&gt;Service&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;User&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;mongo
+&lt;span class="nv"&gt;LimitFSIZE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitCPU&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitAS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitNOFILE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;64000
+&lt;span class="nv"&gt;LimitNPROC&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;64000
+&lt;span class="nv"&gt;ExecStartPre&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/bin/rm -f /opt/mongodb/data/mongo1/mongod.lock
+&lt;span class="nv"&gt;ExecStart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/opt/mongodb/bin/mongod -f /opt/mongodb/conf/mongo1.conf
+
+&lt;span class="o"&gt;[&lt;/span&gt;Install&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;WantedBy&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;multi-user.target
+root@server:~# cat /etc/systemd/system/mongo2.service 
+&lt;span class="o"&gt;[&lt;/span&gt;Unit&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;MongoDB
+
+&lt;span class="o"&gt;[&lt;/span&gt;Service&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;User&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;mongo
+&lt;span class="nv"&gt;LimitFSIZE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitCPU&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitAS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitNOFILE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;64000
+&lt;span class="nv"&gt;LimitNPROC&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;64000
+&lt;span class="nv"&gt;ExecStartPre&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/bin/rm -f /opt/mongodb/data/mongo2/mongod.lock
+&lt;span class="nv"&gt;ExecStart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/opt/mongodb/bin/mongod -f /opt/mongodb/conf/mongo2.conf
+
+&lt;span class="o"&gt;[&lt;/span&gt;Install&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;WantedBy&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;multi-user.target
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es especialmente interesante ver que el lenguaje de la &lt;strong&gt;units&lt;/strong&gt; de &lt;em&gt;systemd&lt;/em&gt;
+es declarativo, y que no son &lt;em&gt;init scripts&lt;/em&gt;; &lt;em&gt;systemd&lt;/em&gt; se encarga de todo por
+nosotros. Basta con declarar el comando con el que levantar el servicio y el
+usuario con el que hacerlo.&lt;/p&gt;
+&lt;p&gt;La directiva &lt;strong&gt;WantedBy&lt;/strong&gt; indica que se tiene que levantar con el &lt;strong&gt;target&lt;/strong&gt;
+&lt;em&gt;multi-user&lt;/em&gt;, que es el que usa &lt;em&gt;Debian&lt;/em&gt; por defecto. Un &lt;strong&gt;target&lt;/strong&gt; viene
+a ser el equivalente a un &lt;em&gt;runlevel&lt;/em&gt; de &lt;em&gt;sysvinit&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Hay una directiva &lt;strong&gt;ExecStartPre&lt;/strong&gt; que se encarga de eliminar el &lt;em&gt;lock file&lt;/em&gt;
+de &lt;em&gt;MongoDB&lt;/em&gt; por si el proceso hubiera acabado de forma inesperada. El
+binario &lt;em&gt;mongod&lt;/em&gt; no levanta si este fichero existe, ya que cree que ya hay
+una instancia de &lt;em&gt;mongod&lt;/em&gt; usando la carpeta de datos.&lt;/p&gt;
+&lt;p&gt;El resto de directivas se limitan a modificar los límites de los procesos a
+levantar, de acuerdo a la documentación de &lt;em&gt;MongoDB&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;A partir de ahora, son &lt;strong&gt;units&lt;/strong&gt; normales del sistema y se pueden activar
+e iniciar. Si ya estuvieran cargados, habría que recargar la configuración
+de &lt;em&gt;systemd&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# systemctl &lt;span class="nb"&gt;enable &lt;/span&gt;mongo1
+root@server:~# systemctl &lt;span class="nb"&gt;enable &lt;/span&gt;mongo2
+root@server:~# systemctl start mongo1
+root@server:~# systemctl start mongo2
+root@server:~# systemctl daemon-reload
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Uso de plantillas para evitar repetirnos&lt;/h2&gt;
+&lt;p&gt;Toda &lt;strong&gt;unit&lt;/strong&gt; cuyo nombre acabe en &lt;strong&gt;arroba&lt;/strong&gt; seguido por &lt;em&gt;.service&lt;/em&gt; o
+cualquier otro tipo de &lt;strong&gt;unit&lt;/strong&gt;, es por convención, una &lt;strong&gt;plantilla&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;La idea es que vamos a crear un &lt;em&gt;link&lt;/em&gt; a la &lt;strong&gt;plantilla&lt;/strong&gt;, que ponga un texto
+detrás de la &lt;strong&gt;arroba&lt;/strong&gt;. Este texto va a estar disponible en la plantilla
+como &lt;strong&gt;%i&lt;/strong&gt;. De esta forma podemos "pasar un parámetro" a la plantilla, usando
+ese parámetro como diferenciador de los dos procesos.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Veamos un ejemplo:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Creamos dos &lt;em&gt;links&lt;/em&gt; a la &lt;strong&gt;plantilla&lt;/strong&gt; &lt;em&gt;mongodb@.service&lt;/em&gt;, con los nombres
+&lt;em&gt;mongodb@mongo1.service&lt;/em&gt; y &lt;em&gt;mongodb@mongo2.service&lt;/em&gt;, que son nuestras
+instancias. Estas instancias se rigen con las directivas de la &lt;strong&gt;plantilla&lt;/strong&gt;,
+con la variable &lt;strong&gt;%i&lt;/strong&gt; conteniendo los valores &lt;em&gt;mongo1&lt;/em&gt; y &lt;em&gt;mongo2&lt;/em&gt;
+respectivamente.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# ls -l /etc/systemd/system/mongodb&lt;span class="se"&gt;\@&lt;/span&gt;*
+lrwxrwxrwx &lt;span class="m"&gt;1&lt;/span&gt; root root  &lt;span class="m"&gt;16&lt;/span&gt; nov  &lt;span class="m"&gt;3&lt;/span&gt; 12:46 /etc/systemd/system/mongodb@mongo1.service -&amp;gt; mongodb@.service
+lrwxrwxrwx &lt;span class="m"&gt;1&lt;/span&gt; root root  &lt;span class="m"&gt;16&lt;/span&gt; nov  &lt;span class="m"&gt;3&lt;/span&gt; 12:46 /etc/systemd/system/mongodb@mongo2.service -&amp;gt; mongodb@.service
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; root root &lt;span class="m"&gt;207&lt;/span&gt; nov  &lt;span class="m"&gt;3&lt;/span&gt; 12:45 /etc/systemd/system/mongodb@.service
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora redactamos la plantilla, teniendo en cuenta los valores que se van a
+cambiarse por la variable &lt;strong&gt;%i&lt;/strong&gt;, que vamos a usar para identificar el fichero
+de configuración de cada instancia. También es posible poner otras variables
+en la &lt;strong&gt;plantilla&lt;/strong&gt;, como por ejemplo, el nombre de la máquina o la versión
+del &lt;em&gt;kernel&lt;/em&gt; de la máquina.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/systemd/system/mongodb&lt;span class="se"&gt;\@&lt;/span&gt;.service 
+&lt;span class="o"&gt;[&lt;/span&gt;Unit&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;MongoDB
+
+&lt;span class="o"&gt;[&lt;/span&gt;Service&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;User&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;mongo
+&lt;span class="nv"&gt;LimitFSIZE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitCPU&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitAS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitNOFILE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;64000
+&lt;span class="nv"&gt;LimitNPROC&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;64000
+&lt;span class="nv"&gt;ExecStartPre&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/bin/rm -f /opt/mongodb/data/%i/mongod.lock
+&lt;span class="nv"&gt;ExecStart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/opt/mongodb/bin/mongod -f /opt/mongodb/conf/%i.conf
+
+&lt;span class="o"&gt;[&lt;/span&gt;Install&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;WantedBy&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;multi-user.target
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora solo falta activar las instancias e iniciarlas, con los comandos
+habituales del demonio &lt;em&gt;systemd&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# systemctl &lt;span class="nb"&gt;enable &lt;/span&gt;mongodb@mongo1
+Created symlink from /etc/systemd/system/multi-user.target.wants/mongodb@mongo1.service to /etc/systemd/system/mongodb@.service.
+root@server:~# systemctl &lt;span class="nb"&gt;enable &lt;/span&gt;mongodb@mongo2
+Created symlink from /etc/systemd/system/multi-user.target.wants/mongodb@mongo2.service to /etc/systemd/system/mongodb@.service.
+root@server:~# systemctl start mongodb@mongo1
+root@server:~# systemctl start mongodb@mongo2
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto lo hemos conseguido.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="systemd"></category><category term="mongodb"></category></entry><entry><title>Restart automático de servicios con systemd</title><link href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html" rel="alternate"></link><updated>2015-11-05T22:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-05:2015/11/restart-automatico-de-servicios-con-systemd.html</id><summary type="html">&lt;p&gt;Cuando estamos gestionando un servidor, es posible que se caiga alguno
 de sus servicios. Esto es especialmente molesto cuando nos interesa tener
 un &lt;em&gt;uptime&lt;/em&gt; elevado. Para conseguirlo, se han utilizado diferentes maneras,
 desde poner personas a monitorizar en modo 24x7 hasta herramientas auxiliares

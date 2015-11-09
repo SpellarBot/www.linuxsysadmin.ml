@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Ocultando puertos con port knocking - Linux Sysadmin</title>
+    <title>Escribiendo units en systemd - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,26 +9,24 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="keywords" content="linux,debian,jessie,firehol,port knocking,ssh,nmap" />
-        <meta name="description" content="En este artículo vamos a enseñar como ocultar un puerto tras el firewall, de forma que solamente se abra tras utilizar el protocolo port knocking. Las tecnologías usadas van a ser firehol como firewall y el demonio knockd ocultando el SSH, aunque vamos a permitir acceder al puerto de HTTP ..." />
+        <meta name="keywords" content="linux,debian,jessie,systemd,mongodb" />
+        <meta name="description" content="Cuando se anunció systemd me llamó la atención que además de las funciones estándares de otros sistemas de init (por ejemplo sysvinit), también se ofrecían otras funcionalidades normalmente delegadas a otros procesos, como por ejemplo, la posibilidad de reiniciar procesos automáticamente o de lanzar procesos temporales al estilo de cron ..." />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Ocultando puertos con port knocking"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html"/>
-        <meta property="og:description" content="En este artículo vamos a enseñar como ocultar un puerto tras el firewall, de forma que solamente se abra tras utilizar el protocolo port knocking. Las tecnologías usadas van a ser firehol como firewall y el demonio knockd ocultando el SSH, aunque vamos a permitir acceder al puerto de HTTP ..."/>
-        <meta property="article:published_time" content="2015-10-29" />
-            <meta property="article:section" content="Seguridad" />
+        <meta property="og:title" content="Escribiendo units en systemd"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html"/>
+        <meta property="og:description" content="Cuando se anunció systemd me llamó la atención que además de las funciones estándares de otros sistemas de init (por ejemplo sysvinit), también se ofrecían otras funcionalidades normalmente delegadas a otros procesos, como por ejemplo, la posibilidad de reiniciar procesos automáticamente o de lanzar procesos temporales al estilo de cron ..."/>
+        <meta property="article:published_time" content="2015-11-09" />
+            <meta property="article:section" content="Operaciones" />
             <meta property="article:tag" content="linux" />
             <meta property="article:tag" content="debian" />
             <meta property="article:tag" content="jessie" />
-            <meta property="article:tag" content="firehol" />
-            <meta property="article:tag" content="port knocking" />
-            <meta property="article:tag" content="ssh" />
-            <meta property="article:tag" content="nmap" />
+            <meta property="article:tag" content="systemd" />
+            <meta property="article:tag" content="mongodb" />
             <meta property="article:author" content="Gerard" />
 
 
@@ -45,8 +43,8 @@
 
 
 
-        <link href="http://www.linuxsysadmin.tk/feeds/seguridad.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Seguridad ATOM Feed"/>
+        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -90,17 +88,17 @@ Linux Sysadmin            </a>
         <div class="col-sm-9">
             <ol class="breadcrumb">
                 <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.tk/category/seguridad.html" title="Seguridad">Seguridad</a></li>
-                <li class="active">Ocultando puertos con port knocking</li>
+                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
+                <li class="active">Escribiendo units en systemd</li>
             </ol>
     <section id="content">
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html"
+                    <a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html"
                        rel="bookmark"
-                       title="Permalink to Ocultando puertos con port knocking">
-                        Ocultando puertos con port knocking
+                       title="Permalink to Escribiendo units en systemd">
+                        Escribiendo units en systemd
                     </a>
                 </h1>
             </header>
@@ -110,7 +108,7 @@ Linux Sysadmin            </a>
 <footer class="post-info">
     <span class="label label-default">Fecha</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2015-10-29T11:30:00+01:00"> 2015-10-29</time>
+        <i class="fa fa-calendar"></i><time datetime="2015-11-09T22:30:00+01:00"> 2015-11-09</time>
     </span>
 
 
@@ -118,7 +116,7 @@ Linux Sysadmin            </a>
             <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
 
         <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.tk/category/seguridad.html">Seguridad</a>
+        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
 
 
 <span class="label label-default">Tags</span>
@@ -128,178 +126,215 @@ Linux Sysadmin            </a>
         /
 	<a href="http://www.linuxsysadmin.tk/tag/jessie.html">jessie</a>
         /
-	<a href="http://www.linuxsysadmin.tk/tag/firehol.html">firehol</a>
+	<a href="http://www.linuxsysadmin.tk/tag/systemd.html">systemd</a>
         /
-	<a href="http://www.linuxsysadmin.tk/tag/port-knocking.html">port knocking</a>
-        /
-	<a href="http://www.linuxsysadmin.tk/tag/ssh.html">ssh</a>
-        /
-	<a href="http://www.linuxsysadmin.tk/tag/nmap.html">nmap</a>
+	<a href="http://www.linuxsysadmin.tk/tag/mongodb.html">mongodb</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>En este artículo vamos a enseñar como ocultar un puerto tras el firewall,
-de forma que solamente se abra tras utilizar el protocolo <em>port knocking</em>.
-Las tecnologías usadas van a ser <em>firehol</em> como firewall y el demonio
-<em>knockd</em> ocultando el <em>SSH</em>, aunque vamos a permitir acceder al puerto
-de HTTP.</p>
-<p>El protocolo de <em>port knocking</em> es un sistema en el que para abrir la
-conectividad en un puerto se debe primero abrir una secuencia concreta
-a otros puertos, sean <em>TCP</em> o <em>UDP</em>.</p>
-<p>Para conseguir este objetivo, se van a usar las siguientes tecnologías:</p>
-<ul>
-<li><strong>Debian jessie</strong>: Como distribución base; podría ser cualquier otra</li>
-<li><strong>Firehol</strong>: Scripts para levantar un firewall basado en <em>iptables</em></li>
-</ul>
-<p>El hardware va a ser uno con capacidades limitadas, virtualizado en VirtualBox.</p>
-<ul>
-<li><strong>CPUs</strong>: 1</li>
-<li><strong>Memoria</strong>: 256 Mb</li>
-<li><strong>Disco</strong>: 2 Gb</li>
-<li><strong>Red</strong>: 1 interfaz (<em>eth0</em>) <em>host-only</em> o <em>bridged</em> con IP fija</li>
-</ul>
-<p>La instalación base es una <em>Debian</em> mínima instalada con el CD netinstall,
-con todo desmarcado y con el servidor de <em>SSH</em> previamente instalado.</p>
-<h2>Instalación del servidor</h2>
-<p>Para empezar, vamos a instalar los dos servicios implicados:</p>
-<div class="highlight"><pre>root@server:~# apt-get install firehol knockd
-...
+                <p>Cuando se anunció <em>systemd</em> me llamó la atención que además de las funciones
+estándares de otros sistemas de <em>init</em> (por ejemplo <em>sysvinit</em>), también se
+ofrecían otras funcionalidades normalmente delegadas a otros procesos, como por
+ejemplo, la posibilidad de reiniciar procesos automáticamente o de lanzar
+procesos temporales al estilo de <em>cron</em>.</p>
+<p>En este artículo se explica como escribir estos ficheros que rigen las tareas
+propias del sistema <em>init</em> para iniciar procesos que no disponen de tales
+facilidades. Adicionalmente, vamos a ver como beneficiarnos del sistema de
+plantillas de estos mismos ficheros para evitarnos tener que repetirnos, de
+acuerdo con el principio <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY (don't repeat yourself)</a>.</p>
+<p>Como ejemplo, vamos a utilizar un sistema básico de <em>Linux</em> con <em>systemd</em>; que
+podría ser <em>RedHat 7</em>, <em>ArchLinux</em> o <em>Debian 8</em>. En este caso, se va a utilizar
+un sistema <em>Debian Jessie</em> con una instalación básica <em>netinstall</em> con <em>SSH</em> y
+nada mas.</p>
+<p>Vamos a suponer que queremos montar un servidor con 2 instancias de <em>MongoDB</em>,
+escuchando en los puertos 27001 y 27002. Empecemos con montar una estructura
+en <em>/opt/</em> para contener todo lo relacionado con este despliegue. La idea es
+que vamos a levantar el binario <em>mongod</em> con dos configuraciones distintas.
+Por eso, de momento basta con poner el binario <em>mongod</em>, las dos configuraciones
+y las dos carpetas de datos.</p>
+<div class="highlight"><pre>root@server:~# tree /opt/
+/opt/
+└── mongodb
+    ├── bin
+    │   └── mongod
+    ├── conf
+    │   ├── mongo1.conf
+    │   └── mongo2.conf
+    ├── data
+    │   ├── mongo1
+    │   └── mongo2
+    └── logs
+
+<span class="m">7</span> directories, <span class="m">3</span> files
 root@server:~# 
 </pre></div>
 
 
-<p>Configuramos las reglas del firewall, de acuerdo a la documentación
-relacionada con <em>port knocking</em>. Se define un nivel de protección máximo,
-ya que se trata de la interfaz que deberá estar accesible desde internet;
-esto nos evita la mayoría de ataques conocidos en la capa 3 y 4.</p>
-<p>En cuanto a las conectividad, vamos a permitir que este servidor acceda
-a servicios <em>DNS</em> y <em>HTTP</em>, que es lo justo para actualizarse. Como
-servidor vamos a permitir el acceso a <em>HTTP</em> (ya que en el ejemplo, esta
-máquina va a servir como servidor <em>HTTP</em>) y a <em>SSH</em> siempre y cuando se
-cumpla con el protocolo de seguridad.</p>
-<div class="highlight"><pre>root@server:~# cat /etc/firehol/firehol.conf 
-version 5
+<p>La configuración de ambos procesos va a ser la mínima necesaria para que los
+procesos no entren en conflicto entre ellos.</p>
+<div class="highlight"><pre>root@server:~# cat /opt/mongodb/conf/mongo1.conf 
+systemLog:
+    path: /opt/mongodb/logs/mongo1.log
+    logAppend: <span class="nb">true</span>
+<span class="nb">    </span>destination: file
 
-interface any world
-    protection strong
-    client <span class="s2">&quot;dns http&quot;</span> accept
-    server http accept
-    server ssh accept with knock hidden
+net:
+    port: 27001
+
+storage:
+    dbPath: /opt/mongodb/data/mongo1
+    smallFiles: <span class="nb">true</span>
+root@server:~# cat /opt/mongodb/conf/mongo2.conf 
+systemLog:
+    path: /opt/mongodb/logs/mongo2.log
+    logAppend: <span class="nb">true</span>
+<span class="nb">    </span>destination: file
+
+net:
+    port: 27002
+
+storage:
+    dbPath: /opt/mongodb/data/mongo2
+    smallFiles: <span class="nb">true</span>
 root@server:~# 
 </pre></div>
 
 
-<p>Acto seguido vamos a definir las reglas para que se abra el <em>knock hidden</em>
-(que corresponde con el puerto <em>SSH</em>) si se completa la secuencia de <em>knock</em>.
-En este caso concreto, se indica una secuencia de los puertos <em>TCP</em> 123,
-456 y 789; aunque es posible definir puertos <em>UDP</em>, dejamos sin indicarlo,
-que nos los va a definir como <em>TCP</em>.</p>
-<p>Como medida de seguridad vamos a indicar un tiempo máximo de 10 segundos
-para completar la secuencia de <em>knock</em> y un autocierre del puerto a los
-5 segundos (aunque firehol va a permitir las conexiones que se hayan
-establecido en esos 5 segundos).</p>
-<p>Es especialmente interesante ver que la regla incluye la dirección
-origen, con lo que la apertura de puerto solo será visible desde la
-máquina que completó la secuencia de <em>knock</em>.</p>
-<div class="highlight"><pre>root@server:~# cat /etc/knockd.conf 
-<span class="o">[</span>options<span class="o">]</span>
-    UseSyslog
+<p>Como apunte importante, no se ha definido un archivo para guardar el <em>PID</em> del
+proceso; <em>systemd</em> no lo necesita y conoce el <em>PID</em> de los procesos que levanta.</p>
+<p>Siguiendo las directivas de seguridad mínimas, los dos procesos <em>mongod</em> van a
+levantarse con un usuario estándar que no sea <em>root</em>. En este caso, toda la
+carpeta <em>/opt/mongodb/</em> pertenece al usuario <em>mongo</em>, aunque bastaría con la
+carpeta de datos y la de logs.</p>
+<p>Ponemos la definición de nuestras <strong>units</strong> en la carpeta designada según el
+estándar, que es <em>/etc/systemd/system/</em>.</p>
+<div class="highlight"><pre>root@server:~# cat /etc/systemd/system/mongo1.service 
+<span class="o">[</span>Unit<span class="o">]</span>
+<span class="nv">Description</span><span class="o">=</span>MongoDB
 
-<span class="o">[</span>SSH<span class="o">]</span>
-    <span class="nv">sequence</span>      <span class="o">=</span> 123,456,789
-    <span class="nv">seq_timeout</span>   <span class="o">=</span> 10
-    <span class="nv">start_command</span> <span class="o">=</span> iptables -A knock_hidden -s %IP% -j ACCEPT
-    <span class="nv">cmd_timeout</span>   <span class="o">=</span> 5
-    <span class="nv">stop_command</span>  <span class="o">=</span> iptables -D knock_hidden -s %IP% -j ACCEPT
+<span class="o">[</span>Service<span class="o">]</span>
+<span class="nv">User</span><span class="o">=</span>mongo
+<span class="nv">LimitFSIZE</span><span class="o">=</span>infinity
+<span class="nv">LimitCPU</span><span class="o">=</span>infinity
+<span class="nv">LimitAS</span><span class="o">=</span>infinity
+<span class="nv">LimitNOFILE</span><span class="o">=</span>64000
+<span class="nv">LimitNPROC</span><span class="o">=</span>64000
+<span class="nv">ExecStartPre</span><span class="o">=</span>/bin/rm -f /opt/mongodb/data/mongo1/mongod.lock
+<span class="nv">ExecStart</span><span class="o">=</span>/opt/mongodb/bin/mongod -f /opt/mongodb/conf/mongo1.conf
+
+<span class="o">[</span>Install<span class="o">]</span>
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+root@server:~# cat /etc/systemd/system/mongo2.service 
+<span class="o">[</span>Unit<span class="o">]</span>
+<span class="nv">Description</span><span class="o">=</span>MongoDB
+
+<span class="o">[</span>Service<span class="o">]</span>
+<span class="nv">User</span><span class="o">=</span>mongo
+<span class="nv">LimitFSIZE</span><span class="o">=</span>infinity
+<span class="nv">LimitCPU</span><span class="o">=</span>infinity
+<span class="nv">LimitAS</span><span class="o">=</span>infinity
+<span class="nv">LimitNOFILE</span><span class="o">=</span>64000
+<span class="nv">LimitNPROC</span><span class="o">=</span>64000
+<span class="nv">ExecStartPre</span><span class="o">=</span>/bin/rm -f /opt/mongodb/data/mongo2/mongod.lock
+<span class="nv">ExecStart</span><span class="o">=</span>/opt/mongodb/bin/mongod -f /opt/mongodb/conf/mongo2.conf
+
+<span class="o">[</span>Install<span class="o">]</span>
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
 root@server:~# 
 </pre></div>
 
 
-<p>Como medida de seguridad, <em>Debian</em> tiene una protección para levantar
-ambos servicios, así que tenemos que indicarle que queremos que se
-puedan levantar, editando otros ficheros de configuración.</p>
-<div class="highlight"><pre>root@server:~# cat /etc/default/knockd 
-...
-<span class="nv">START_KNOCKD</span><span class="o">=</span>1
-...
-root@server:~# cat /etc/default/firehol 
-...
-<span class="nv">START_FIREHOL</span><span class="o">=</span>YES
-...
+<p>Es especialmente interesante ver que el lenguaje de la <strong>units</strong> de <em>systemd</em>
+es declarativo, y que no son <em>init scripts</em>; <em>systemd</em> se encarga de todo por
+nosotros. Basta con declarar el comando con el que levantar el servicio y el
+usuario con el que hacerlo.</p>
+<p>La directiva <strong>WantedBy</strong> indica que se tiene que levantar con el <strong>target</strong>
+<em>multi-user</em>, que es el que usa <em>Debian</em> por defecto. Un <strong>target</strong> viene
+a ser el equivalente a un <em>runlevel</em> de <em>sysvinit</em>.</p>
+<p>Hay una directiva <strong>ExecStartPre</strong> que se encarga de eliminar el <em>lock file</em>
+de <em>MongoDB</em> por si el proceso hubiera acabado de forma inesperada. El
+binario <em>mongod</em> no levanta si este fichero existe, ya que cree que ya hay
+una instancia de <em>mongod</em> usando la carpeta de datos.</p>
+<p>El resto de directivas se limitan a modificar los límites de los procesos a
+levantar, de acuerdo a la documentación de <em>MongoDB</em>.</p>
+<p>A partir de ahora, son <strong>units</strong> normales del sistema y se pueden activar
+e iniciar. Si ya estuvieran cargados, habría que recargar la configuración
+de <em>systemd</em>.</p>
+<div class="highlight"><pre>root@server:~# systemctl <span class="nb">enable </span>mongo1
+root@server:~# systemctl <span class="nb">enable </span>mongo2
+root@server:~# systemctl start mongo1
+root@server:~# systemctl start mongo2
+root@server:~# systemctl daemon-reload
 root@server:~# 
 </pre></div>
 
 
-<p>Finalmente podemos levantar los servicios de <em>port knocking</em> y de
-<em>firewall</em>, usando las herramientas estándares que nos ofrece la distribución.</p>
-<div class="highlight"><pre>root@server:~# service knockd restart
-root@server:~# service firehol restart
+<h2>Uso de plantillas para evitar repetirnos</h2>
+<p>Toda <strong>unit</strong> cuyo nombre acabe en <strong>arroba</strong> seguido por <em>.service</em> o
+cualquier otro tipo de <strong>unit</strong>, es por convención, una <strong>plantilla</strong>.</p>
+<p>La idea es que vamos a crear un <em>link</em> a la <strong>plantilla</strong>, que ponga un texto
+detrás de la <strong>arroba</strong>. Este texto va a estar disponible en la plantilla
+como <strong>%i</strong>. De esta forma podemos "pasar un parámetro" a la plantilla, usando
+ese parámetro como diferenciador de los dos procesos.</p>
+<p><strong>Veamos un ejemplo:</strong></p>
+<p>Creamos dos <em>links</em> a la <strong>plantilla</strong> <em>mongodb@.service</em>, con los nombres
+<em>mongodb@mongo1.service</em> y <em>mongodb@mongo2.service</em>, que son nuestras
+instancias. Estas instancias se rigen con las directivas de la <strong>plantilla</strong>,
+con la variable <strong>%i</strong> conteniendo los valores <em>mongo1</em> y <em>mongo2</em>
+respectivamente.</p>
+<div class="highlight"><pre>root@server:~# ls -l /etc/systemd/system/mongodb<span class="se">\@</span>*
+lrwxrwxrwx <span class="m">1</span> root root  <span class="m">16</span> nov  <span class="m">3</span> 12:46 /etc/systemd/system/mongodb@mongo1.service -&gt; mongodb@.service
+lrwxrwxrwx <span class="m">1</span> root root  <span class="m">16</span> nov  <span class="m">3</span> 12:46 /etc/systemd/system/mongodb@mongo2.service -&gt; mongodb@.service
+-rw-r--r-- <span class="m">1</span> root root <span class="m">207</span> nov  <span class="m">3</span> 12:45 /etc/systemd/system/mongodb@.service
+</pre></div>
+
+
+<p>Ahora redactamos la plantilla, teniendo en cuenta los valores que se van a
+cambiarse por la variable <strong>%i</strong>, que vamos a usar para identificar el fichero
+de configuración de cada instancia. También es posible poner otras variables
+en la <strong>plantilla</strong>, como por ejemplo, el nombre de la máquina o la versión
+del <em>kernel</em> de la máquina.</p>
+<div class="highlight"><pre>root@server:~# cat /etc/systemd/system/mongodb<span class="se">\@</span>.service 
+<span class="o">[</span>Unit<span class="o">]</span>
+<span class="nv">Description</span><span class="o">=</span>MongoDB
+
+<span class="o">[</span>Service<span class="o">]</span>
+<span class="nv">User</span><span class="o">=</span>mongo
+<span class="nv">LimitFSIZE</span><span class="o">=</span>infinity
+<span class="nv">LimitCPU</span><span class="o">=</span>infinity
+<span class="nv">LimitAS</span><span class="o">=</span>infinity
+<span class="nv">LimitNOFILE</span><span class="o">=</span>64000
+<span class="nv">LimitNPROC</span><span class="o">=</span>64000
+<span class="nv">ExecStartPre</span><span class="o">=</span>/bin/rm -f /opt/mongodb/data/%i/mongod.lock
+<span class="nv">ExecStart</span><span class="o">=</span>/opt/mongodb/bin/mongod -f /opt/mongodb/conf/%i.conf
+
+<span class="o">[</span>Install<span class="o">]</span>
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
 root@server:~# 
 </pre></div>
 
 
-<h2>Comprobación de funcionamiento</h2>
-<p>Para comprobar el funcionamiento basta con comprobar que el puerto está
-normalmente cerrado. Personalmente he usado <em>nmap</em>, aunque se podría usar
-<em>netcat</em> o <em>telnet</em>.</p>
-<div class="highlight"><pre>gerard@workstation:~<span class="nv">$ </span>nmap -PN 192.168.56.3 -p 22
-
-Starting Nmap 5.21 <span class="o">(</span> http://nmap.org <span class="o">)</span> at 2015-10-28 17:33 CET
-Nmap scan report <span class="k">for</span> server <span class="o">(</span>192.168.56.3<span class="o">)</span>
-Host is up.
-PORT   STATE    SERVICE
-22/tcp filtered ssh
-
-Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span class="o">(</span><span class="m">1</span> host up<span class="o">)</span> scanned in 2.13 seconds
-gerard@workstation:~<span class="nv">$ </span>
+<p>Ahora solo falta activar las instancias e iniciarlas, con los comandos
+habituales del demonio <em>systemd</em>.</p>
+<div class="highlight"><pre>root@server:~# systemctl <span class="nb">enable </span>mongodb@mongo1
+Created symlink from /etc/systemd/system/multi-user.target.wants/mongodb@mongo1.service to /etc/systemd/system/mongodb@.service.
+root@server:~# systemctl <span class="nb">enable </span>mongodb@mongo2
+Created symlink from /etc/systemd/system/multi-user.target.wants/mongodb@mongo2.service to /etc/systemd/system/mongodb@.service.
+root@server:~# systemctl start mongodb@mongo1
+root@server:~# systemctl start mongodb@mongo2
+root@server:~# 
 </pre></div>
 
 
-<p>Vemos que sale <strong>filtered</strong>, que significa que el firewall lo está
-bloqueando. Ahora vamos a lanzar la secuencia de <em>knock</em> usando el
-helper <strong>knock</strong>, que en <em>Debian</em> se encuentra en el mismo paquete
-<em>knockd</em>. Acto seguido, el puerto de <em>SSH</em> queda abierto (en otras
-palabras: escuchando). Ahora sería posible iniciar sesión por <em>SSH</em> en
-la máquina.</p>
-<div class="highlight"><pre>gerard@workstation:~<span class="nv">$ </span>knock 192.168.56.3 <span class="m">123</span> <span class="m">456</span> 789
-gerard@workstation:~<span class="nv">$ </span>nmap -PN 192.168.56.3 -p 22
-
-Starting Nmap 5.21 <span class="o">(</span> http://nmap.org <span class="o">)</span> at 2015-10-28 17:34 CET
-Nmap scan report <span class="k">for</span> server <span class="o">(</span>192.168.56.3<span class="o">)</span>
-Host is up <span class="o">(</span>0.0011s latency<span class="o">)</span>.
-PORT   STATE SERVICE
-22/tcp open  ssh
-
-Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span class="o">(</span><span class="m">1</span> host up<span class="o">)</span> scanned in 0.07 seconds
-gerard@workstation:~<span class="nv">$ </span>
-</pre></div>
-
-
-<p>Finalmente comprobamos que, transcurridos los 5 segundos configurados,
-el puerto vuelve a verse como <strong>filtrado</strong>, con lo que no se puede
-establecer nuevas conexiones en este puerto.</p>
-<div class="highlight"><pre>gerard@workstation:~<span class="nv">$ </span>nmap -PN 192.168.56.3 -p 22
-
-Starting Nmap 5.21 <span class="o">(</span> http://nmap.org <span class="o">)</span> at 2015-10-28 17:34 CET
-Nmap scan report <span class="k">for</span> server <span class="o">(</span>192.168.56.3<span class="o">)</span>
-Host is up.
-PORT   STATE    SERVICE
-22/tcp filtered ssh
-
-Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span class="o">(</span><span class="m">1</span> host up<span class="o">)</span> scanned in 2.08 seconds
-gerard@workstation:~<span class="nv">$ </span>
-</pre></div>
-
-
-<p>Y con esto queda protegido el acceso por <em>SSH</em> a la máquina.</p>
+<p>Y con esto lo hemos conseguido.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html">Virtualizando contenedores LXC con acceso a la red local</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Restart automático de servicios con systemd</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Escribiendo units en systemd</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html">Virtualizando contenedores LXC con acceso a la red local</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
     </ul>
 </section>
     <hr/>
@@ -311,8 +346,8 @@ gerard@workstation:~<span class="nv">$ </span>
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'ocultando-puertos-con-port-knocking';
-                var disqus_url = 'http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html';
+                    var disqus_identifier = 'escribiendo-units-en-systemd';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html';
 
             var disqus_config = function () {
                 this.language = "es";
