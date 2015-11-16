@@ -1,5 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-11-09T22:30:00+01:00</updated><entry><title>Escribiendo units en systemd</title><link href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html" rel="alternate"></link><updated>2015-11-09T22:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-09:2015/11/escribiendo-units-en-systemd.html</id><summary type="html">&lt;p&gt;Cuando se anunció &lt;em&gt;systemd&lt;/em&gt; me llamó la atención que además de las funciones
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-11-16T23:15:00+01:00</updated><entry><title>Creando sistemas de ficheros temporales con tmpfs</title><link href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html" rel="alternate"></link><updated>2015-11-16T23:15:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-16:2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html</id><summary type="html">&lt;p&gt;A veces nos podemos encontrar con un sistema de ficheros lleno que no nos
+permite completar alguna acción por falta de espacio en disco. En un caso
+así, existe la posibilidad de sacar un sistema de ficheros completo de
+memoria, de una forma temporal, usando el sistema de ficheros &lt;em&gt;tmpfs&lt;/em&gt;.
+Otra opción es la de tener un sistema de ficheros temporal, en donde podamos
+dejar ficheros cuya persistencia no sea necesaria entre reinicios.&lt;/p&gt;
+&lt;p&gt;El primer paso es tener un &lt;em&gt;punto de montaje&lt;/em&gt;, que sea la carpeta en la que
+se va a montar el nuevo sistema de fichero. Por ejemplo podemos usar el punto
+de montaje &lt;em&gt;/mnt/auxiliar&lt;/em&gt;; empezaremos creándolo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mkdir /mnt/auxiliar
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Observemos como la carpeta creada se construye sobre el mismo dispositivo
+que la partición raíz:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# df -h /mnt/auxiliar/
+S.ficheros     Tamaño Usados  Disp Uso% Montado en
+/dev/sda1        2,0G   640M  1,2G  35% /
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Creando el sistema de ficheros de forma temporal&lt;/h2&gt;
+&lt;p&gt;Como prueba de concepto, podemos crear este sistema de ficheros de forma
+temporal. En caso de no salir bien, los efectos no serían permanentes.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mount -o &lt;span class="nv"&gt;size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;100M -t tmpfs auxiliar /mnt/auxiliar/
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver como la carpeta pertenece ahora a un sistema de ficheros nuevo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# df -h /mnt/auxiliar/
+S.ficheros     Tamaño Usados  Disp Uso% Montado en
+auxiliar            100M      &lt;span class="m"&gt;0&lt;/span&gt;  100M   0% /mnt/auxiliar
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Cuando nos cansemos del nuevo sistema de ficheros, haya cumplido con su
+utilidad y ya no necesitemos su contenido, la podemos desmontar; vamos a
+perder todos los ficheros dentro del sistema de ficheros temporal.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# umount /mnt/auxiliar/
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Haciendo el cambio permanente&lt;/h2&gt;
+&lt;p&gt;Si nos interesa que este sistema de fichero se &lt;em&gt;monte&lt;/em&gt; y se &lt;em&gt;desmonte&lt;/em&gt; cada
+vez que la máquina se inicie y se apague, basta con usar el mecanismo
+estándar de todo sistema de ficheros &lt;em&gt;Linux&lt;/em&gt;: el fichero &lt;em&gt;/etc/fstab&lt;/em&gt;.
+Basta con añadir una línea nueva con las especificaciones de este punto de
+montaje, por ejemplo en el final del mismo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# tail -1 /etc/fstab 
+auxiliar /mnt/auxiliar tmpfs &lt;span class="nv"&gt;size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;100M &lt;span class="m"&gt;0&lt;/span&gt; 0
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Con este cambio es suficiente para las sesiones venideras. En caso de querer
+disponer inmediatamente del sistema de ficheros podemos solicitar el montaje
+con un comando &lt;em&gt;mount&lt;/em&gt; normal, comando que va a usar las especificaciones
+del fichero &lt;em&gt;/etc/fstab&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mount /mnt/auxiliar
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto queda completado nuestro objetivo.&lt;/p&gt;</summary><category term="linux"></category><category term="tmpfs"></category></entry><entry><title>Escribiendo units en systemd</title><link href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html" rel="alternate"></link><updated>2015-11-09T22:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-09:2015/11/escribiendo-units-en-systemd.html</id><summary type="html">&lt;p&gt;Cuando se anunció &lt;em&gt;systemd&lt;/em&gt; me llamó la atención que además de las funciones
 estándares de otros sistemas de &lt;em&gt;init&lt;/em&gt; (por ejemplo &lt;em&gt;sysvinit&lt;/em&gt;), también se
 ofrecían otras funcionalidades normalmente delegadas a otros procesos, como por
 ejemplo, la posibilidad de reiniciar procesos automáticamente o de lanzar
