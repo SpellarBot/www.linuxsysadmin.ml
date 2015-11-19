@@ -136,11 +136,7 @@ Linux Sysadmin            </a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>En este tutorial se propone montar un servidor de contenedores LXC,
-de forma que todos los contenedores queden expuestos a la misma red
-que el servidor que los aloja. Para protegerlos de posibles ataques
-de esta red, pondremos un firewall basado en <em>iptables</em> mediante una
-capa de abstracción llamada <em>firehol</em>.</p>
+                <p>En este tutorial se propone montar un servidor de contenedores LXC, de forma que todos los contenedores queden expuestos a la misma red que el servidor que los aloja. Para protegerlos de posibles ataques de esta red, pondremos un firewall basado en <em>iptables</em> mediante una capa de abstracción llamada <em>firehol</em>.</p>
 <p>Para conseguir este objetivo, se van a usar las siguientes tecnologías:</p>
 <ul>
 <li><strong>Debian jessie</strong>: Es necesario usar alguna distribución de linux para hacer funcionar LXC</li>
@@ -148,16 +144,14 @@ capa de abstracción llamada <em>firehol</em>.</p>
 <li><strong>Bridges</strong>: Un bridge es en software el equivalente a un switch hardware</li>
 <li><strong>Firehol</strong>: Una serie de scripts para construir firewalls basados en iptables de forma fácil</li>
 </ul>
-<p>En cuanto a las capacidades hardware, vamos a hacer el tutorial con un equipo
-de capacidades modestas, virtualizado en una máquina virtual VirtualBox.</p>
+<p>En cuanto a las capacidades hardware, vamos a hacer el tutorial con un equipo de capacidades modestas, virtualizado en una máquina virtual VirtualBox.</p>
 <ul>
 <li><strong>CPUs</strong>: 1</li>
 <li><strong>Memoria</strong>: 256 Mb</li>
 <li><strong>Disco</strong>: 2 Gb</li>
 <li><strong>Red</strong>: 1 interfaz (<em>eth0</em>) <em>host-only</em> o <em>bridged</em> con IP fija</li>
 </ul>
-<p>Partimos de una distribución <em>Debian jessie</em> instalada con un CD <em>netinstall</em>
-y con el único paquete instalado <em>openssh-server</em>, para mi comodidad.</p>
+<p>Partimos de una distribución <em>Debian jessie</em> instalada con un CD <em>netinstall</em> y con el único paquete instalado <em>openssh-server</em>, para mi comodidad.</p>
 <h2>Preparar el servidor</h2>
 <p>El primer paso consiste en instalar las tecnologías usadas:</p>
 <div class="highlight"><pre>root@lxc:~# apt-get install bridge-utils firehol lxc
@@ -173,9 +167,7 @@ root@lxc:~#
 </pre></div>
 
 
-<p>Acto seguido debemos modificar la configuración de red, para que la interfaz
-de red de la máquina represente la salida de todas las IPs que maneja el bridge
-y para que el host obtenga una dirección de red en el bridge.</p>
+<p>Acto seguido debemos modificar la configuración de red, para que la interfaz de red de la máquina represente la salida de todas las IPs que maneja el bridge y para que el host obtenga una dirección de red en el bridge.</p>
 <p><strong>ANTES</strong>:</p>
 <div class="highlight"><pre>root@lxc:~# cat /etc/network/interfaces
 <span class="nb">source</span> /etc/network/interfaces.d/*
@@ -209,8 +201,7 @@ root@lxc:~#
 </pre></div>
 
 
-<p>En este punto es necesario reconfigurar la red, siendo especialmente importante
-que <em>eth0</em> quede sin dirección IP asignada (en mi caso tuve que reiniciar la máquina).</p>
+<p>En este punto es necesario reconfigurar la red, siendo especialmente importante que <em>eth0</em> quede sin dirección IP asignada (en mi caso tuve que reiniciar la máquina).</p>
 <div class="highlight"><pre>root@lxc:~# ip addr
 1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu <span class="m">65536</span> qdisc noqueue state UNKNOWN group default 
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -230,11 +221,7 @@ root@lxc:~#
 </pre></div>
 
 
-<p>El último paso consiste en activar el firewall con unas reglas básicas,
-para proteger el equipo anfitrión de posibles ataques o intrusiones, dejando
-solamente el acceso a SSH. Con firehol es posible combinar el demonio <em>knockd</em>
-para ocultar el puerto tras una secuencia de port knocking; en principio
-sería suficiente con forzar la entrada SSH por claves RSA.</p>
+<p>El último paso consiste en activar el firewall con unas reglas básicas, para proteger el equipo anfitrión de posibles ataques o intrusiones, dejando solamente el acceso a SSH. Con firehol es posible combinar el demonio <em>knockd</em> para ocultar el puerto tras una secuencia de port knocking; en principio sería suficiente con forzar la entrada SSH por claves RSA.</p>
 <div class="highlight"><pre>root@lxc:~# cat /etc/firehol/firehol.conf 
 interface lxc0 world
     policy drop
@@ -277,13 +264,8 @@ root@lxc:~#
 
 
 <h2>Creación de contenedores</h2>
-<p>La creación de contenedores pasa por usar las herramientas estándar
-de la distribución, a lo solo tendremos que modificar algunas
-configuraciones propias de nuestra red.</p>
-<p>Creamos un contenedor <em>webserver</em> como demostración. La primera que se
-crea es un poco lenta porque hace un <em>debootstrap</em> de una distribución
-debian estable para crear una cache en <em>/var/cache/lxc</em>; las siguientes
-se benefician de esta caché y solo la actualizan, acelerando el proceso.</p>
+<p>La creación de contenedores pasa por usar las herramientas estándar de la distribución, a lo solo tendremos que modificar algunas configuraciones propias de nuestra red.</p>
+<p>Creamos un contenedor <em>webserver</em> como demostración. La primera que se crea es un poco lenta porque hace un <em>debootstrap</em> de una distribución debian estable para crear una cache en <em>/var/cache/lxc</em>; las siguientes se benefician de esta caché y solo la actualizan, acelerando el proceso.</p>
 <div class="highlight"><pre>root@lxc:~# lxc-create -n webserver -t debian
 debootstrap is /usr/sbin/debootstrap
 Checking cache download in /var/cache/lxc/debian/rootfs-jessie-i386 ... 
@@ -302,9 +284,7 @@ root@lxc:~#
 </pre></div>
 
 
-<p>Acabada la generación del contenedor, vamos a configurarle algunos
-parámetros; que tenga una interfaz <em>eth0</em> activa y enchufada al bridge
-<em>lxc0</em>, y que el contenedor se autoinicie en cada reinicio del anfitrión.</p>
+<p>Acabada la generación del contenedor, vamos a configurarle algunos parámetros; que tenga una interfaz <em>eth0</em> activa y enchufada al bridge <em>lxc0</em>, y que el contenedor se autoinicie en cada reinicio del anfitrión.</p>
 <div class="highlight"><pre>root@lxc:~# cat /var/lib/lxc/webserver/config 
 ...
 lxc.start.auto <span class="o">=</span> 1
@@ -316,10 +296,7 @@ root@lxc:~#
 </pre></div>
 
 
-<p>Y para que su interfaz de red sea funcional, vamos a configurarle una
-dirección IP. Todo esto se hace en los ficheros habituales, teniendo
-en cuenta que un contenedor es una jaula, y que esta se encuentra en
-<em>/var/lib/lxc/webserver/rootfs/</em></p>
+<p>Y para que su interfaz de red sea funcional, vamos a configurarle una dirección IP. Todo esto se hace en los ficheros habituales, teniendo en cuenta que un contenedor es una jaula, y que esta se encuentra en <em>/var/lib/lxc/webserver/rootfs/</em></p>
 <div class="highlight"><pre>root@lxc:~# cat /var/lib/lxc/webserver/rootfs/etc/network/interfaces
 auto lo
 iface lo inet loopback
@@ -339,17 +316,9 @@ root@lxc:~#
 </pre></div>
 
 
-<p>Sin embargo, el firewall impide que se llegue al mismo; tendremos que
-poner reglas para permitir el flujo de red hacia la nueva dirección IP
-configurada para el contenedor. Esto se consigue con reglas de <em>forward</em>
-que entren por el bridge y salgan por el mismo hacia nuestro contenedor.</p>
-<p>Ya de paso habilitamos reglas para que todo lo que pase por el bridge
-hacia internet se permita. Como particularidad de nuestra red, el
-servidor anfitrión tiene un servidor DNS <em>dnsmasq</em>; así que añadimos
-también esa ruta.</p>
-<p>Por ejemplo, suponiendo que queremos habilitar el servicio <em>SSH</em> (tcp 22)
-y el puerto del servicio <em>HTTP</em> (tcp 80), pondremos lo siguiente en la
-configuración del firewall (tras lo cual lo reiniciaremos):</p>
+<p>Sin embargo, el firewall impide que se llegue al mismo; tendremos que poner reglas para permitir el flujo de red hacia la nueva dirección IP configurada para el contenedor. Esto se consigue con reglas de <em>forward</em> que entren por el bridge y salgan por el mismo hacia nuestro contenedor.</p>
+<p>Ya de paso habilitamos reglas para que todo lo que pase por el bridge hacia internet se permita. Como particularidad de nuestra red, el servidor anfitrión tiene un servidor DNS <em>dnsmasq</em>; así que añadimos también esa ruta.</p>
+<p>Por ejemplo, suponiendo que queremos habilitar el servicio <em>SSH</em> (tcp 22) y el puerto del servicio <em>HTTP</em> (tcp 80), pondremos lo siguiente en la configuración del firewall (tras lo cual lo reiniciaremos):</p>
 <div class="highlight"><pre>root@lxc:~# cat /etc/firehol/firehol.conf 
 interface lxc0 world
     policy drop
@@ -383,9 +352,7 @@ root@lxc:~#
 </pre></div>
 
 
-<p>Y solamente queda entrar al contenedor, por ejemplo por <em>SSH</em> para
-instalar lo que se necesite; en este caso con un <em>nginx</em> sería
-suficiente como demostración.</p>
+<p>Y solamente queda entrar al contenedor, por ejemplo por <em>SSH</em> para instalar lo que se necesite; en este caso con un <em>nginx</em> sería suficiente como demostración.</p>
 <div class="highlight"><pre>gerard@workstation:~<span class="nv">$ </span>ssh root@192.168.56.10
 root@192.168.56.10<span class="err">&#39;</span>s password: 
 
@@ -416,16 +383,15 @@ root@webserver:~#
 </pre></div>
 
 
-<p>Y con esto ya tenemos nuestro contenedor en marcha y ofreciendo
-servicios en nuestra red local de forma segura.</p>
+<p>Y con esto ya tenemos nuestro contenedor en marcha y ofreciendo servicios en nuestra red local de forma segura.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Escribiendo units en systemd</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Restart automático de servicios con systemd</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Escribiendo units en systemd</a></li>
     </ul>
 </section>
     <hr/>

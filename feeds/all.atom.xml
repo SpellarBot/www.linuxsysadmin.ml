@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-11-16T23:15:00+01:00</updated><entry><title>Creando sistemas de ficheros temporales con tmpfs</title><link href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html" rel="alternate"></link><updated>2015-11-16T23:15:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-16:2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html</id><summary type="html">&lt;p&gt;A veces nos podemos encontrar con un sistema de ficheros lleno que no nos
-permite completar alguna acción por falta de espacio en disco. En un caso
-así, existe la posibilidad de sacar un sistema de ficheros completo de
-memoria, de una forma temporal, usando el sistema de ficheros &lt;em&gt;tmpfs&lt;/em&gt;.
-Otra opción es la de tener un sistema de ficheros temporal, en donde podamos
-dejar ficheros cuya persistencia no sea necesaria entre reinicios.&lt;/p&gt;
-&lt;p&gt;El primer paso es tener un &lt;em&gt;punto de montaje&lt;/em&gt;, que sea la carpeta en la que
-se va a montar el nuevo sistema de fichero. Por ejemplo podemos usar el punto
-de montaje &lt;em&gt;/mnt/auxiliar&lt;/em&gt;; empezaremos creándolo.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-11-16T23:15:00+01:00</updated><entry><title>Creando sistemas de ficheros temporales con tmpfs</title><link href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html" rel="alternate"></link><updated>2015-11-16T23:15:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-16:2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html</id><summary type="html">&lt;p&gt;A veces nos podemos encontrar con un sistema de ficheros lleno que no nos permite completar alguna acción por falta de espacio en disco. En un caso así, existe la posibilidad de sacar un sistema de ficheros completo de memoria, de una forma temporal, usando el sistema de ficheros &lt;em&gt;tmpfs&lt;/em&gt;. Otra opción es la de tener un sistema de ficheros temporal, en donde podamos dejar ficheros cuya persistencia no sea necesaria entre reinicios.&lt;/p&gt;
+&lt;p&gt;El primer paso es tener un &lt;em&gt;punto de montaje&lt;/em&gt;, que sea la carpeta en la que se va a montar el nuevo sistema de fichero. Por ejemplo podemos usar el punto de montaje &lt;em&gt;/mnt/auxiliar&lt;/em&gt;; empezaremos creándolo.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mkdir /mnt/auxiliar
 root@server:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Observemos como la carpeta creada se construye sobre el mismo dispositivo
-que la partición raíz:&lt;/p&gt;
+&lt;p&gt;Observemos como la carpeta creada se construye sobre el mismo dispositivo que la partición raíz:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# df -h /mnt/auxiliar/
 S.ficheros     Tamaño Usados  Disp Uso% Montado en
 /dev/sda1        2,0G   640M  1,2G  35% /
@@ -23,8 +15,7 @@ root@server:~#
 
 
 &lt;h2&gt;Creando el sistema de ficheros de forma temporal&lt;/h2&gt;
-&lt;p&gt;Como prueba de concepto, podemos crear este sistema de ficheros de forma
-temporal. En caso de no salir bien, los efectos no serían permanentes.&lt;/p&gt;
+&lt;p&gt;Como prueba de concepto, podemos crear este sistema de ficheros de forma temporal. En caso de no salir bien, los efectos no serían permanentes.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mount -o &lt;span class="nv"&gt;size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;100M -t tmpfs auxiliar /mnt/auxiliar/
 root@server:~# 
 &lt;/pre&gt;&lt;/div&gt;
@@ -38,55 +29,30 @@ root@server:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Cuando nos cansemos del nuevo sistema de ficheros, haya cumplido con su
-utilidad y ya no necesitemos su contenido, la podemos desmontar; vamos a
-perder todos los ficheros dentro del sistema de ficheros temporal.&lt;/p&gt;
+&lt;p&gt;Cuando nos cansemos del nuevo sistema de ficheros, haya cumplido con su utilidad y ya no necesitemos su contenido, la podemos desmontar; vamos a perder todos los ficheros dentro del sistema de ficheros temporal.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# umount /mnt/auxiliar/
 root@server:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;h2&gt;Haciendo el cambio permanente&lt;/h2&gt;
-&lt;p&gt;Si nos interesa que este sistema de fichero se &lt;em&gt;monte&lt;/em&gt; y se &lt;em&gt;desmonte&lt;/em&gt; cada
-vez que la máquina se inicie y se apague, basta con usar el mecanismo
-estándar de todo sistema de ficheros &lt;em&gt;Linux&lt;/em&gt;: el fichero &lt;em&gt;/etc/fstab&lt;/em&gt;.
-Basta con añadir una línea nueva con las especificaciones de este punto de
-montaje, por ejemplo en el final del mismo.&lt;/p&gt;
+&lt;p&gt;Si nos interesa que este sistema de fichero se &lt;em&gt;monte&lt;/em&gt; y se &lt;em&gt;desmonte&lt;/em&gt; cada vez que la máquina se inicie y se apague, basta con usar el mecanismo estándar de todo sistema de ficheros &lt;em&gt;Linux&lt;/em&gt;: el fichero &lt;em&gt;/etc/fstab&lt;/em&gt;. Basta con añadir una línea nueva con las especificaciones de este punto de montaje, por ejemplo en el final del mismo.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# tail -1 /etc/fstab 
 auxiliar /mnt/auxiliar tmpfs &lt;span class="nv"&gt;size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;100M &lt;span class="m"&gt;0&lt;/span&gt; 0
 root@server:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Con este cambio es suficiente para las sesiones venideras. En caso de querer
-disponer inmediatamente del sistema de ficheros podemos solicitar el montaje
-con un comando &lt;em&gt;mount&lt;/em&gt; normal, comando que va a usar las especificaciones
-del fichero &lt;em&gt;/etc/fstab&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Con este cambio es suficiente para las sesiones venideras. En caso de querer disponer inmediatamente del sistema de ficheros podemos solicitar el montaje con un comando &lt;em&gt;mount&lt;/em&gt; normal, comando que va a usar las especificaciones del fichero &lt;em&gt;/etc/fstab&lt;/em&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mount /mnt/auxiliar
 root@server:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y con esto queda completado nuestro objetivo.&lt;/p&gt;</summary><category term="linux"></category><category term="tmpfs"></category></entry><entry><title>Escribiendo units en systemd</title><link href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html" rel="alternate"></link><updated>2015-11-09T22:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-09:2015/11/escribiendo-units-en-systemd.html</id><summary type="html">&lt;p&gt;Cuando se anunció &lt;em&gt;systemd&lt;/em&gt; me llamó la atención que además de las funciones
-estándares de otros sistemas de &lt;em&gt;init&lt;/em&gt; (por ejemplo &lt;em&gt;sysvinit&lt;/em&gt;), también se
-ofrecían otras funcionalidades normalmente delegadas a otros procesos, como por
-ejemplo, la posibilidad de reiniciar procesos automáticamente o de lanzar
-procesos temporales al estilo de &lt;em&gt;cron&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;En este artículo se explica como escribir estos ficheros que rigen las tareas
-propias del sistema &lt;em&gt;init&lt;/em&gt; para iniciar procesos que no disponen de tales
-facilidades. Adicionalmente, vamos a ver como beneficiarnos del sistema de
-plantillas de estos mismos ficheros para evitarnos tener que repetirnos, de
-acuerdo con el principio &lt;a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself"&gt;DRY (don't repeat yourself)&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Como ejemplo, vamos a utilizar un sistema básico de &lt;em&gt;Linux&lt;/em&gt; con &lt;em&gt;systemd&lt;/em&gt;; que
-podría ser &lt;em&gt;RedHat 7&lt;/em&gt;, &lt;em&gt;ArchLinux&lt;/em&gt; o &lt;em&gt;Debian 8&lt;/em&gt;. En este caso, se va a utilizar
-un sistema &lt;em&gt;Debian Jessie&lt;/em&gt; con una instalación básica &lt;em&gt;netinstall&lt;/em&gt; con &lt;em&gt;SSH&lt;/em&gt; y
-nada mas.&lt;/p&gt;
-&lt;p&gt;Vamos a suponer que queremos montar un servidor con 2 instancias de &lt;em&gt;MongoDB&lt;/em&gt;,
-escuchando en los puertos 27001 y 27002. Empecemos con montar una estructura
-en &lt;em&gt;/opt/&lt;/em&gt; para contener todo lo relacionado con este despliegue. La idea es
-que vamos a levantar el binario &lt;em&gt;mongod&lt;/em&gt; con dos configuraciones distintas.
-Por eso, de momento basta con poner el binario &lt;em&gt;mongod&lt;/em&gt;, las dos configuraciones
-y las dos carpetas de datos.&lt;/p&gt;
+&lt;p&gt;Y con esto queda completado nuestro objetivo.&lt;/p&gt;</summary><category term="linux"></category><category term="tmpfs"></category></entry><entry><title>Escribiendo units en systemd</title><link href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html" rel="alternate"></link><updated>2015-11-09T22:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-09:2015/11/escribiendo-units-en-systemd.html</id><summary type="html">&lt;p&gt;Cuando se anunció &lt;em&gt;systemd&lt;/em&gt; me llamó la atención que además de las funciones estándares de otros sistemas de &lt;em&gt;init&lt;/em&gt; (por ejemplo &lt;em&gt;sysvinit&lt;/em&gt;), también se ofrecían otras funcionalidades normalmente delegadas a otros procesos, como por ejemplo, la posibilidad de reiniciar procesos automáticamente o de lanzar procesos temporales al estilo de &lt;em&gt;cron&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;En este artículo se explica como escribir estos ficheros que rigen las tareas propias del sistema &lt;em&gt;init&lt;/em&gt; para iniciar procesos que no disponen de tales facilidades. Adicionalmente, vamos a ver como beneficiarnos del sistema de plantillas de estos mismos ficheros para evitarnos tener que repetirnos, de acuerdo con el principio &lt;a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself"&gt;DRY (don't repeat yourself)&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Como ejemplo, vamos a utilizar un sistema básico de &lt;em&gt;Linux&lt;/em&gt; con &lt;em&gt;systemd&lt;/em&gt;; que podría ser &lt;em&gt;RedHat 7&lt;/em&gt;, &lt;em&gt;ArchLinux&lt;/em&gt; o &lt;em&gt;Debian 8&lt;/em&gt;. En este caso, se va a utilizar un sistema &lt;em&gt;Debian Jessie&lt;/em&gt; con una instalación básica &lt;em&gt;netinstall&lt;/em&gt; con &lt;em&gt;SSH&lt;/em&gt; y nada mas.&lt;/p&gt;
+&lt;p&gt;Vamos a suponer que queremos montar un servidor con 2 instancias de &lt;em&gt;MongoDB&lt;/em&gt;, escuchando en los puertos 27001 y 27002. Empecemos con montar una estructura en &lt;em&gt;/opt/&lt;/em&gt; para contener todo lo relacionado con este despliegue. La idea es que vamos a levantar el binario &lt;em&gt;mongod&lt;/em&gt; con dos configuraciones distintas. Por eso, de momento basta con poner el binario &lt;em&gt;mongod&lt;/em&gt;, las dos configuraciones y las dos carpetas de datos.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# tree /opt/
 /opt/
 └── mongodb
@@ -105,8 +71,7 @@ root@server:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;La configuración de ambos procesos va a ser la mínima necesaria para que los
-procesos no entren en conflicto entre ellos.&lt;/p&gt;
+&lt;p&gt;La configuración de ambos procesos va a ser la mínima necesaria para que los procesos no entren en conflicto entre ellos.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /opt/mongodb/conf/mongo1.conf 
 systemLog:
     path: /opt/mongodb/logs/mongo1.log
@@ -135,14 +100,9 @@ root@server:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Como apunte importante, no se ha definido un archivo para guardar el &lt;em&gt;PID&lt;/em&gt; del
-proceso; &lt;em&gt;systemd&lt;/em&gt; no lo necesita y conoce el &lt;em&gt;PID&lt;/em&gt; de los procesos que levanta.&lt;/p&gt;
-&lt;p&gt;Siguiendo las directivas de seguridad mínimas, los dos procesos &lt;em&gt;mongod&lt;/em&gt; van a
-levantarse con un usuario estándar que no sea &lt;em&gt;root&lt;/em&gt;. En este caso, toda la
-carpeta &lt;em&gt;/opt/mongodb/&lt;/em&gt; pertenece al usuario &lt;em&gt;mongo&lt;/em&gt;, aunque bastaría con la
-carpeta de datos y la de logs.&lt;/p&gt;
-&lt;p&gt;Ponemos la definición de nuestras &lt;strong&gt;units&lt;/strong&gt; en la carpeta designada según el
-estándar, que es &lt;em&gt;/etc/systemd/system/&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Como apunte importante, no se ha definido un archivo para guardar el &lt;em&gt;PID&lt;/em&gt; del proceso; &lt;em&gt;systemd&lt;/em&gt; no lo necesita y conoce el &lt;em&gt;PID&lt;/em&gt; de los procesos que levanta.&lt;/p&gt;
+&lt;p&gt;Siguiendo las directivas de seguridad mínimas, los dos procesos &lt;em&gt;mongod&lt;/em&gt; van a levantarse con un usuario estándar que no sea &lt;em&gt;root&lt;/em&gt;. En este caso, toda la carpeta &lt;em&gt;/opt/mongodb/&lt;/em&gt; pertenece al usuario &lt;em&gt;mongo&lt;/em&gt;, aunque bastaría con la carpeta de datos y la de logs.&lt;/p&gt;
+&lt;p&gt;Ponemos la definición de nuestras &lt;strong&gt;units&lt;/strong&gt; en la carpeta designada según el estándar, que es &lt;em&gt;/etc/systemd/system/&lt;/em&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/systemd/system/mongo1.service 
 &lt;span class="o"&gt;[&lt;/span&gt;Unit&lt;span class="o"&gt;]&lt;/span&gt;
 &lt;span class="nv"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;MongoDB
@@ -179,22 +139,11 @@ root@server:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Es especialmente interesante ver que el lenguaje de la &lt;strong&gt;units&lt;/strong&gt; de &lt;em&gt;systemd&lt;/em&gt;
-es declarativo, y que no son &lt;em&gt;init scripts&lt;/em&gt;; &lt;em&gt;systemd&lt;/em&gt; se encarga de todo por
-nosotros. Basta con declarar el comando con el que levantar el servicio y el
-usuario con el que hacerlo.&lt;/p&gt;
-&lt;p&gt;La directiva &lt;strong&gt;WantedBy&lt;/strong&gt; indica que se tiene que levantar con el &lt;strong&gt;target&lt;/strong&gt;
-&lt;em&gt;multi-user&lt;/em&gt;, que es el que usa &lt;em&gt;Debian&lt;/em&gt; por defecto. Un &lt;strong&gt;target&lt;/strong&gt; viene
-a ser el equivalente a un &lt;em&gt;runlevel&lt;/em&gt; de &lt;em&gt;sysvinit&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;Hay una directiva &lt;strong&gt;ExecStartPre&lt;/strong&gt; que se encarga de eliminar el &lt;em&gt;lock file&lt;/em&gt;
-de &lt;em&gt;MongoDB&lt;/em&gt; por si el proceso hubiera acabado de forma inesperada. El
-binario &lt;em&gt;mongod&lt;/em&gt; no levanta si este fichero existe, ya que cree que ya hay
-una instancia de &lt;em&gt;mongod&lt;/em&gt; usando la carpeta de datos.&lt;/p&gt;
-&lt;p&gt;El resto de directivas se limitan a modificar los límites de los procesos a
-levantar, de acuerdo a la documentación de &lt;em&gt;MongoDB&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;A partir de ahora, son &lt;strong&gt;units&lt;/strong&gt; normales del sistema y se pueden activar
-e iniciar. Si ya estuvieran cargados, habría que recargar la configuración
-de &lt;em&gt;systemd&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Es especialmente interesante ver que el lenguaje de la &lt;strong&gt;units&lt;/strong&gt; de &lt;em&gt;systemd&lt;/em&gt; es declarativo, y que no son &lt;em&gt;init scripts&lt;/em&gt;; &lt;em&gt;systemd&lt;/em&gt; se encarga de todo por nosotros. Basta con declarar el comando con el que levantar el servicio y el usuario con el que hacerlo.&lt;/p&gt;
+&lt;p&gt;La directiva &lt;strong&gt;WantedBy&lt;/strong&gt; indica que se tiene que levantar con el &lt;strong&gt;target&lt;/strong&gt; &lt;em&gt;multi-user&lt;/em&gt;, que es el que usa &lt;em&gt;Debian&lt;/em&gt; por defecto. Un &lt;strong&gt;target&lt;/strong&gt; viene a ser el equivalente a un &lt;em&gt;runlevel&lt;/em&gt; de &lt;em&gt;sysvinit&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Hay una directiva &lt;strong&gt;ExecStartPre&lt;/strong&gt; que se encarga de eliminar el &lt;em&gt;lock file&lt;/em&gt; de &lt;em&gt;MongoDB&lt;/em&gt; por si el proceso hubiera acabado de forma inesperada. El binario &lt;em&gt;mongod&lt;/em&gt; no levanta si este fichero existe, ya que cree que ya hay una instancia de &lt;em&gt;mongod&lt;/em&gt; usando la carpeta de datos.&lt;/p&gt;
+&lt;p&gt;El resto de directivas se limitan a modificar los límites de los procesos a levantar, de acuerdo a la documentación de &lt;em&gt;MongoDB&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;A partir de ahora, son &lt;strong&gt;units&lt;/strong&gt; normales del sistema y se pueden activar e iniciar. Si ya estuvieran cargados, habría que recargar la configuración de &lt;em&gt;systemd&lt;/em&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# systemctl &lt;span class="nb"&gt;enable &lt;/span&gt;mongo1
 root@server:~# systemctl &lt;span class="nb"&gt;enable &lt;/span&gt;mongo2
 root@server:~# systemctl start mongo1
@@ -205,18 +154,10 @@ root@server:~#
 
 
 &lt;h2&gt;Uso de plantillas para evitar repetirnos&lt;/h2&gt;
-&lt;p&gt;Toda &lt;strong&gt;unit&lt;/strong&gt; cuyo nombre acabe en &lt;strong&gt;arroba&lt;/strong&gt; seguido por &lt;em&gt;.service&lt;/em&gt; o
-cualquier otro tipo de &lt;strong&gt;unit&lt;/strong&gt;, es por convención, una &lt;strong&gt;plantilla&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;La idea es que vamos a crear un &lt;em&gt;link&lt;/em&gt; a la &lt;strong&gt;plantilla&lt;/strong&gt;, que ponga un texto
-detrás de la &lt;strong&gt;arroba&lt;/strong&gt;. Este texto va a estar disponible en la plantilla
-como &lt;strong&gt;%i&lt;/strong&gt;. De esta forma podemos "pasar un parámetro" a la plantilla, usando
-ese parámetro como diferenciador de los dos procesos.&lt;/p&gt;
+&lt;p&gt;Toda &lt;strong&gt;unit&lt;/strong&gt; cuyo nombre acabe en &lt;strong&gt;arroba&lt;/strong&gt; seguido por &lt;em&gt;.service&lt;/em&gt; o cualquier otro tipo de &lt;strong&gt;unit&lt;/strong&gt;, es por convención, una &lt;strong&gt;plantilla&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;La idea es que vamos a crear un &lt;em&gt;link&lt;/em&gt; a la &lt;strong&gt;plantilla&lt;/strong&gt;, que ponga un texto detrás de la &lt;strong&gt;arroba&lt;/strong&gt;. Este texto va a estar disponible en la plantilla como &lt;strong&gt;%i&lt;/strong&gt;. De esta forma podemos "pasar un parámetro" a la plantilla, usando ese parámetro como diferenciador de los dos procesos.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Veamos un ejemplo:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Creamos dos &lt;em&gt;links&lt;/em&gt; a la &lt;strong&gt;plantilla&lt;/strong&gt; &lt;em&gt;mongodb@.service&lt;/em&gt;, con los nombres
-&lt;em&gt;mongodb@mongo1.service&lt;/em&gt; y &lt;em&gt;mongodb@mongo2.service&lt;/em&gt;, que son nuestras
-instancias. Estas instancias se rigen con las directivas de la &lt;strong&gt;plantilla&lt;/strong&gt;,
-con la variable &lt;strong&gt;%i&lt;/strong&gt; conteniendo los valores &lt;em&gt;mongo1&lt;/em&gt; y &lt;em&gt;mongo2&lt;/em&gt;
-respectivamente.&lt;/p&gt;
+&lt;p&gt;Creamos dos &lt;em&gt;links&lt;/em&gt; a la &lt;strong&gt;plantilla&lt;/strong&gt; &lt;em&gt;mongodb@.service&lt;/em&gt;, con los nombres &lt;em&gt;mongodb@mongo1.service&lt;/em&gt; y &lt;em&gt;mongodb@mongo2.service&lt;/em&gt;, que son nuestras instancias. Estas instancias se rigen con las directivas de la &lt;strong&gt;plantilla&lt;/strong&gt;, con la variable &lt;strong&gt;%i&lt;/strong&gt; conteniendo los valores &lt;em&gt;mongo1&lt;/em&gt; y &lt;em&gt;mongo2&lt;/em&gt; respectivamente.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# ls -l /etc/systemd/system/mongodb&lt;span class="se"&gt;\@&lt;/span&gt;*
 lrwxrwxrwx &lt;span class="m"&gt;1&lt;/span&gt; root root  &lt;span class="m"&gt;16&lt;/span&gt; nov  &lt;span class="m"&gt;3&lt;/span&gt; 12:46 /etc/systemd/system/mongodb@mongo1.service -&amp;gt; mongodb@.service
 lrwxrwxrwx &lt;span class="m"&gt;1&lt;/span&gt; root root  &lt;span class="m"&gt;16&lt;/span&gt; nov  &lt;span class="m"&gt;3&lt;/span&gt; 12:46 /etc/systemd/system/mongodb@mongo2.service -&amp;gt; mongodb@.service
@@ -224,11 +165,7 @@ lrwxrwxrwx &lt;span class="m"&gt;1&lt;/span&gt; root root  &lt;span class="m"&gt
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Ahora redactamos la plantilla, teniendo en cuenta los valores que se van a
-cambiarse por la variable &lt;strong&gt;%i&lt;/strong&gt;, que vamos a usar para identificar el fichero
-de configuración de cada instancia. También es posible poner otras variables
-en la &lt;strong&gt;plantilla&lt;/strong&gt;, como por ejemplo, el nombre de la máquina o la versión
-del &lt;em&gt;kernel&lt;/em&gt; de la máquina.&lt;/p&gt;
+&lt;p&gt;Ahora redactamos la plantilla, teniendo en cuenta los valores que se van a cambiarse por la variable &lt;strong&gt;%i&lt;/strong&gt;, que vamos a usar para identificar el fichero de configuración de cada instancia. También es posible poner otras variables en la &lt;strong&gt;plantilla&lt;/strong&gt;, como por ejemplo, el nombre de la máquina o la versión del &lt;em&gt;kernel&lt;/em&gt; de la máquina.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/systemd/system/mongodb&lt;span class="se"&gt;\@&lt;/span&gt;.service 
 &lt;span class="o"&gt;[&lt;/span&gt;Unit&lt;span class="o"&gt;]&lt;/span&gt;
 &lt;span class="nv"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;MongoDB
@@ -249,8 +186,7 @@ root@server:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Ahora solo falta activar las instancias e iniciarlas, con los comandos
-habituales del demonio &lt;em&gt;systemd&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Ahora solo falta activar las instancias e iniciarlas, con los comandos habituales del demonio &lt;em&gt;systemd&lt;/em&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# systemctl &lt;span class="nb"&gt;enable &lt;/span&gt;mongodb@mongo1
 Created symlink from /etc/systemd/system/multi-user.target.wants/mongodb@mongo1.service to /etc/systemd/system/mongodb@.service.
 root@server:~# systemctl &lt;span class="nb"&gt;enable &lt;/span&gt;mongodb@mongo2
@@ -261,30 +197,17 @@ root@server:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y con esto lo hemos conseguido.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="systemd"></category><category term="mongodb"></category></entry><entry><title>Restart automático de servicios con systemd</title><link href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html" rel="alternate"></link><updated>2015-11-05T22:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-05:2015/11/restart-automatico-de-servicios-con-systemd.html</id><summary type="html">&lt;p&gt;Cuando estamos gestionando un servidor, es posible que se caiga alguno
-de sus servicios. Esto es especialmente molesto cuando nos interesa tener
-un &lt;em&gt;uptime&lt;/em&gt; elevado. Para conseguirlo, se han utilizado diferentes maneras,
-desde poner personas a monitorizar en modo 24x7 hasta herramientas auxiliares
-como gestores tipo &lt;em&gt;runit&lt;/em&gt;, &lt;em&gt;supervisor&lt;/em&gt; o &lt;em&gt;monit&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;Con la entrada en escena de &lt;em&gt;systemd&lt;/em&gt; en la mayoría de distribuciones grandes
-de &lt;em&gt;linux&lt;/em&gt; este problema se ha acabado; el mismo proceso que hace de &lt;strong&gt;init&lt;/strong&gt;
-puede encargarse de mantener los procesos levantados, y reiniciarlos en caso
-de caída.&lt;/p&gt;
-&lt;p&gt;En este tutorial pretendo hacer que un servicio estándar se vea beneficiado de
-un &lt;strong&gt;override&lt;/strong&gt;, que permita el inicio automático de un servicio cuando se cae,
-sin tener que reescribir la &lt;strong&gt;unit&lt;/strong&gt; que se encarga del servicio o proceso.&lt;/p&gt;
-&lt;p&gt;Partimos de un servidor básico &lt;em&gt;Linux&lt;/em&gt; con &lt;em&gt;systemd&lt;/em&gt;. En este caso vamos a
-utilizar la última versión estable de &lt;em&gt;Debian&lt;/em&gt;, a la que le vamos a instalar
-un servicio estándar como &lt;em&gt;nginx&lt;/em&gt; que nos va a servir como conejillo de indias.&lt;/p&gt;
+&lt;p&gt;Y con esto lo hemos conseguido.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="systemd"></category><category term="mongodb"></category></entry><entry><title>Restart automático de servicios con systemd</title><link href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html" rel="alternate"></link><updated>2015-11-05T22:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-05:2015/11/restart-automatico-de-servicios-con-systemd.html</id><summary type="html">&lt;p&gt;Cuando estamos gestionando un servidor, es posible que se caiga alguno de sus servicios. Esto es especialmente molesto cuando nos interesa tener un &lt;em&gt;uptime&lt;/em&gt; elevado. Para conseguirlo, se han utilizado diferentes maneras, desde poner personas a monitorizar en modo 24x7 hasta herramientas auxiliares como gestores tipo &lt;em&gt;runit&lt;/em&gt;, &lt;em&gt;supervisor&lt;/em&gt; o &lt;em&gt;monit&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Con la entrada en escena de &lt;em&gt;systemd&lt;/em&gt; en la mayoría de distribuciones grandes de &lt;em&gt;linux&lt;/em&gt; este problema se ha acabado; el mismo proceso que hace de &lt;strong&gt;init&lt;/strong&gt; puede encargarse de mantener los procesos levantados, y reiniciarlos en caso de caída.&lt;/p&gt;
+&lt;p&gt;En este tutorial pretendo hacer que un servicio estándar se vea beneficiado de un &lt;strong&gt;override&lt;/strong&gt;, que permita el inicio automático de un servicio cuando se cae, sin tener que reescribir la &lt;strong&gt;unit&lt;/strong&gt; que se encarga del servicio o proceso.&lt;/p&gt;
+&lt;p&gt;Partimos de un servidor básico &lt;em&gt;Linux&lt;/em&gt; con &lt;em&gt;systemd&lt;/em&gt;. En este caso vamos a utilizar la última versión estable de &lt;em&gt;Debian&lt;/em&gt;, a la que le vamos a instalar un servicio estándar como &lt;em&gt;nginx&lt;/em&gt; que nos va a servir como conejillo de indias.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# apt-get install nginx-light
 root@server:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;h2&gt;Procedimiento&lt;/h2&gt;
-&lt;p&gt;Como comprobación previa, observemos como este &lt;strong&gt;restart&lt;/strong&gt; automático no
-funciona; tenemos el servicio en ejecución, lo matamos y observamos que no
-se levanta de nuevo, por mucho que esperemos.&lt;/p&gt;
+&lt;p&gt;Como comprobación previa, observemos como este &lt;strong&gt;restart&lt;/strong&gt; automático no funciona; tenemos el servicio en ejecución, lo matamos y observamos que no se levanta de nuevo, por mucho que esperemos.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# ps faux &lt;span class="p"&gt;|&lt;/span&gt; grep nginx
 root       &lt;span class="m"&gt;685&lt;/span&gt;  0.0  0.8   &lt;span class="m"&gt;4556&lt;/span&gt;  &lt;span class="m"&gt;2240&lt;/span&gt; pts/0    S+   11:41   0:00          &lt;span class="se"&gt;\_&lt;/span&gt; grep nginx
 root       &lt;span class="m"&gt;662&lt;/span&gt;  0.0  0.7   &lt;span class="m"&gt;6356&lt;/span&gt;  &lt;span class="m"&gt;1856&lt;/span&gt; ?        Ss   11:41   0:00 nginx: master process /usr/sbin/nginx -g daemon on&lt;span class="p"&gt;;&lt;/span&gt; master_process on&lt;span class="p"&gt;;&lt;/span&gt;
@@ -299,34 +222,26 @@ root@server:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Ahora necesitamos localizar el nombre de la &lt;strong&gt;unit&lt;/strong&gt; que se encarga de ese
-servicio, puesto que la carpeta de &lt;strong&gt;overrides&lt;/strong&gt; debe llamarse igual.&lt;/p&gt;
+&lt;p&gt;Ahora necesitamos localizar el nombre de la &lt;strong&gt;unit&lt;/strong&gt; que se encarga de ese servicio, puesto que la carpeta de &lt;strong&gt;overrides&lt;/strong&gt; debe llamarse igual.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# systemctl list-units -a &lt;span class="p"&gt;|&lt;/span&gt; grep nginx
   nginx.service    loaded    inactive dead    A high performance web server and a reverse proxy server
 root@server:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Como curiosidad, este fichero se encuentra en &lt;em&gt;/lib/systemd/system/&lt;/em&gt;,
-siguiendo las convenciones del empaquetado de &lt;em&gt;Debian&lt;/em&gt;. Alternativamente,
-podemos localizar los ficheros instalados por un paquete con el
-comando &lt;em&gt;dpkg -L nginx-light&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Como curiosidad, este fichero se encuentra en &lt;em&gt;/lib/systemd/system/&lt;/em&gt;, siguiendo las convenciones del empaquetado de &lt;em&gt;Debian&lt;/em&gt;. Alternativamente, podemos localizar los ficheros instalados por un paquete con el comando &lt;em&gt;dpkg -L nginx-light&lt;/em&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# ls -lh /lib/systemd/system/nginx.service 
 -rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; root root &lt;span class="m"&gt;986&lt;/span&gt; dic  &lt;span class="m"&gt;1&lt;/span&gt;  &lt;span class="m"&gt;2014&lt;/span&gt; /lib/systemd/system/nginx.service
 root@server:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;En caso de ser una &lt;strong&gt;unit&lt;/strong&gt; escrita por nosotros, se encontraría en
-&lt;em&gt;/etc/systemd/system/&lt;/em&gt;. Esta es la convención:&lt;/p&gt;
+&lt;p&gt;En caso de ser una &lt;strong&gt;unit&lt;/strong&gt; escrita por nosotros, se encontraría en &lt;em&gt;/etc/systemd/system/&lt;/em&gt;. Esta es la convención:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;em&gt;/lib/systemd/system/&lt;/em&gt; &amp;rarr; &lt;strong&gt;units&lt;/strong&gt; de sistema, puestas por los paquetes instalados&lt;/li&gt;
 &lt;li&gt;&lt;em&gt;/lib/systemd/system/&lt;/em&gt; &amp;rarr; &lt;strong&gt;units&lt;/strong&gt; o &lt;strong&gt;overrides&lt;/strong&gt; puestos por el usuario (nosotros)&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Para añadir nuevas directivas (&lt;strong&gt;overrides&lt;/strong&gt;) a una &lt;strong&gt;unit&lt;/strong&gt; sin reescribirla
-entera, basta con crear una carpeta con su mismo nombre, concatenando &lt;strong&gt;.d&lt;/strong&gt;.
-Dentro podemos poner tantos ficheros &lt;em&gt;.conf&lt;/em&gt; como creamos necesarios, añadiendo
-las directivas que queramos añadir o modificar.&lt;/p&gt;
+&lt;p&gt;Para añadir nuevas directivas (&lt;strong&gt;overrides&lt;/strong&gt;) a una &lt;strong&gt;unit&lt;/strong&gt; sin reescribirla entera, basta con crear una carpeta con su mismo nombre, concatenando &lt;strong&gt;.d&lt;/strong&gt;. Dentro podemos poner tantos ficheros &lt;em&gt;.conf&lt;/em&gt; como creamos necesarios, añadiendo las directivas que queramos añadir o modificar.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mkdir /etc/systemd/system/nginx.service.d
 root@server:~# cat /etc/systemd/system/nginx.service.d/autorestart.conf
 &lt;span class="o"&gt;[&lt;/span&gt;Service&lt;span class="o"&gt;]&lt;/span&gt;
@@ -336,20 +251,15 @@ root@server:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;En este caso, se ha indicado que queremos un &lt;strong&gt;restart&lt;/strong&gt; siempre, sean cuales
-sean las circunstancias en las que se cayó el proceso, y que espere 1 segundo
-antes de intentarlo. Por como está hecho &lt;em&gt;systemd&lt;/em&gt;, &lt;strong&gt;no&lt;/strong&gt; va a levantar un
-servicio que hemos parado invocando el comando &lt;em&gt;systemctl&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;Para que los cambios en el fichero de configuración se apliquen es necesario
-recargar las configuraciones, indicando a &lt;em&gt;systemd&lt;/em&gt; que tienen que recargarlas.&lt;/p&gt;
+&lt;p&gt;En este caso, se ha indicado que queremos un &lt;strong&gt;restart&lt;/strong&gt; siempre, sean cuales sean las circunstancias en las que se cayó el proceso, y que espere 1 segundo antes de intentarlo. Por como está hecho &lt;em&gt;systemd&lt;/em&gt;, &lt;strong&gt;no&lt;/strong&gt; va a levantar un servicio que hemos parado invocando el comando &lt;em&gt;systemctl&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Para que los cambios en el fichero de configuración se apliquen es necesario recargar las configuraciones, indicando a &lt;em&gt;systemd&lt;/em&gt; que tienen que recargarlas.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# systemctl daemon-reload
 root@server:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;h2&gt;Comprobación&lt;/h2&gt;
-&lt;p&gt;Básicamente vamos a repetir el paso de la comprobación; se localiza el
-proceso &lt;strong&gt;master&lt;/strong&gt; y se finaliza (por ejemplo, con un &lt;strong&gt;SIGTERM&lt;/strong&gt; normal).&lt;/p&gt;
+&lt;p&gt;Básicamente vamos a repetir el paso de la comprobación; se localiza el proceso &lt;strong&gt;master&lt;/strong&gt; y se finaliza (por ejemplo, con un &lt;strong&gt;SIGTERM&lt;/strong&gt; normal).&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# ps faux &lt;span class="p"&gt;|&lt;/span&gt; grep nginx
 root       &lt;span class="m"&gt;782&lt;/span&gt;  0.0  0.8   &lt;span class="m"&gt;4556&lt;/span&gt;  &lt;span class="m"&gt;2252&lt;/span&gt; pts/0    S+   11:56   0:00          &lt;span class="se"&gt;\_&lt;/span&gt; grep nginx
 root       &lt;span class="m"&gt;776&lt;/span&gt;  0.0  0.7   &lt;span class="m"&gt;6356&lt;/span&gt;  &lt;span class="m"&gt;1936&lt;/span&gt; ?        Ss   11:56   0:00 nginx: master process /usr/sbin/nginx -g daemon on&lt;span class="p"&gt;;&lt;/span&gt; master_process on&lt;span class="p"&gt;;&lt;/span&gt;
@@ -364,9 +274,7 @@ root@server:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Ahora solo hay que esperar el paso de los segundos configurados, y volver a
-ver si el servicio está corriendo; aunque en este esperé algo menos de lo
-configurado; la paciencia no es una de mis virtudes...&lt;/p&gt;
+&lt;p&gt;Ahora solo hay que esperar el paso de los segundos configurados, y volver a ver si el servicio está corriendo; aunque en este esperé algo menos de lo configurado; la paciencia no es una de mis virtudes...&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# ps faux &lt;span class="p"&gt;|&lt;/span&gt; grep nginx
 root       &lt;span class="m"&gt;789&lt;/span&gt;  0.0  0.8   &lt;span class="m"&gt;4556&lt;/span&gt;  &lt;span class="m"&gt;2192&lt;/span&gt; pts/0    S+   11:56   0:00          &lt;span class="se"&gt;\_&lt;/span&gt; grep nginx
 root@server:~# ps faux &lt;span class="p"&gt;|&lt;/span&gt; grep nginx
@@ -382,11 +290,7 @@ root@server:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y con esto tenemos nuestro &lt;strong&gt;autorestart&lt;/strong&gt; para este servicio.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="systemd"></category><category term="nginx"></category></entry><entry><title>Liberando memoria caché</title><link href="http://www.linuxsysadmin.tk/2015/11/liberando-memoria-cache.html" rel="alternate"></link><updated>2015-11-02T14:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-02:2015/11/liberando-memoria-cache.html</id><summary type="html">&lt;p&gt;A veces nos encontramos que nuestro sistema linux parece tener la
-memoria &lt;em&gt;virtual&lt;/em&gt; ocupada, cuando no tenemos nada de memoria &lt;em&gt;RSS&lt;/em&gt;;
-esto no es un problema, ya que por la forma de funcionar del
-&lt;em&gt;memory manager&lt;/em&gt; de linux, se conserva "por si acaso" y se libera
-cuando realmente se necesita.&lt;/p&gt;
+&lt;p&gt;Y con esto tenemos nuestro &lt;strong&gt;autorestart&lt;/strong&gt; para este servicio.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="systemd"></category><category term="nginx"></category></entry><entry><title>Liberando memoria caché</title><link href="http://www.linuxsysadmin.tk/2015/11/liberando-memoria-cache.html" rel="alternate"></link><updated>2015-11-02T14:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-02:2015/11/liberando-memoria-cache.html</id><summary type="html">&lt;p&gt;A veces nos encontramos que nuestro sistema linux parece tener la memoria &lt;em&gt;virtual&lt;/em&gt; ocupada, cuando no tenemos nada de memoria &lt;em&gt;RSS&lt;/em&gt;; esto no es un problema, ya que por la forma de funcionar del &lt;em&gt;memory manager&lt;/em&gt; de linux, se conserva "por si acaso" y se libera cuando realmente se necesita.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;free -m
              total       used       free     shared    buffers     cached
 Mem:          &lt;span class="m"&gt;3858&lt;/span&gt;       &lt;span class="m"&gt;3226&lt;/span&gt;        &lt;span class="m"&gt;632&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;        &lt;span class="m"&gt;114&lt;/span&gt;       2545
@@ -396,12 +300,8 @@ gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Sin embargo este detalle nos puede resultar molesto y puede que queramos
-&lt;strong&gt;liberar&lt;/strong&gt; esa memoria de verdad, por ejemplo, para comparar memoria
-real ocupada por el sistema o sencillamente porque así lo queremos.&lt;/p&gt;
-&lt;p&gt;En este caso no tenemos mas remedio que solicitar el &lt;em&gt;memory manager&lt;/em&gt;
-que la libere, escribiendo en el fichero de control habilitado para ello,
-de acuerdo a la &lt;a href="https://www.kernel.org/doc/Documentation/sysctl/vm.txt"&gt;documentación del &lt;em&gt;kernel&lt;/em&gt; de linux&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Sin embargo este detalle nos puede resultar molesto y puede que queramos &lt;strong&gt;liberar&lt;/strong&gt; esa memoria de verdad, por ejemplo, para comparar memoria real ocupada por el sistema o sencillamente porque así lo queremos.&lt;/p&gt;
+&lt;p&gt;En este caso no tenemos mas remedio que solicitar el &lt;em&gt;memory manager&lt;/em&gt; que la libere, escribiendo en el fichero de control habilitado para ello, de acuerdo a la &lt;a href="https://www.kernel.org/doc/Documentation/sysctl/vm.txt"&gt;documentación del &lt;em&gt;kernel&lt;/em&gt; de linux&lt;/a&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;drop_caches
 
 Writing to this will cause the kernel to drop clean caches, as well as
@@ -423,25 +323,20 @@ dropped.
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Este fichero viene por defecto con permisos de escritura solamente para
-el usuario &lt;strong&gt;root&lt;/strong&gt; y no se puede escribir sin el mismo. Como no queremos
-trabajar con el usuario &lt;strong&gt;root&lt;/strong&gt;, vamos a usar el comando &lt;em&gt;sudo&lt;/em&gt; con un
-usuario normal:&lt;/p&gt;
+&lt;p&gt;Este fichero viene por defecto con permisos de escritura solamente para el usuario &lt;strong&gt;root&lt;/strong&gt; y no se puede escribir sin el mismo. Como no queremos trabajar con el usuario &lt;strong&gt;root&lt;/strong&gt;, vamos a usar el comando &lt;em&gt;sudo&lt;/em&gt; con un usuario normal:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;sudo bash -c &lt;span class="s2"&gt;&amp;quot;echo 3 &amp;gt; /proc/sys/vm/drop_caches&amp;quot;&lt;/span&gt;
 gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Alternativamente, podemos utilizar el comando &lt;em&gt;tee&lt;/em&gt; para realizar la
-misma operación, sin el envoltorio de &lt;em&gt;bash&lt;/em&gt;:&lt;/p&gt;
+&lt;p&gt;Alternativamente, podemos utilizar el comando &lt;em&gt;tee&lt;/em&gt; para realizar la misma operación, sin el envoltorio de &lt;em&gt;bash&lt;/em&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;echo &lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee /proc/sys/vm/drop_caches
 3
 gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y finalmente nuestra memoria queda vacía de todo aquello que no era
-indispensable para la ejecución del sistema.&lt;/p&gt;
+&lt;p&gt;Y finalmente nuestra memoria queda vacía de todo aquello que no era indispensable para la ejecución del sistema.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;free -m
              total       used       free     shared    buffers     cached
 Mem:          &lt;span class="m"&gt;3858&lt;/span&gt;        &lt;span class="m"&gt;752&lt;/span&gt;       &lt;span class="m"&gt;3105&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;          &lt;span class="m"&gt;2&lt;/span&gt;        207
@@ -452,16 +347,8 @@ gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;
 
 
 &lt;p&gt;¡Acabamos de liberar 2 gigabytes de memoria!&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;CUIDADO&lt;/strong&gt;: Esta operación puede afectar el rendimiento puntual del
-sistema, ya que en caso de volver a necesitar la información &lt;em&gt;cacheada&lt;/em&gt;,
-deberá volver a recargar la memoria, probablemente desde disco.&lt;/p&gt;</summary><category term="linux"></category><category term="kernel"></category><category term="memory manager"></category><category term="drop caches"></category></entry><entry><title>Ocultando puertos con port knocking</title><link href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html" rel="alternate"></link><updated>2015-10-29T11:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-10-29:2015/10/ocultando-puertos-con-port-knocking.html</id><summary type="html">&lt;p&gt;En este artículo vamos a enseñar como ocultar un puerto tras el firewall,
-de forma que solamente se abra tras utilizar el protocolo &lt;em&gt;port knocking&lt;/em&gt;.
-Las tecnologías usadas van a ser &lt;em&gt;firehol&lt;/em&gt; como firewall y el demonio
-&lt;em&gt;knockd&lt;/em&gt; ocultando el &lt;em&gt;SSH&lt;/em&gt;, aunque vamos a permitir acceder al puerto
-de HTTP.&lt;/p&gt;
-&lt;p&gt;El protocolo de &lt;em&gt;port knocking&lt;/em&gt; es un sistema en el que para abrir la
-conectividad en un puerto se debe primero abrir una secuencia concreta
-a otros puertos, sean &lt;em&gt;TCP&lt;/em&gt; o &lt;em&gt;UDP&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;CUIDADO&lt;/strong&gt;: Esta operación puede afectar el rendimiento puntual del sistema, ya que en caso de volver a necesitar la información &lt;em&gt;cacheada&lt;/em&gt;, deberá volver a recargar la memoria, probablemente desde disco.&lt;/p&gt;</summary><category term="linux"></category><category term="kernel"></category><category term="memory manager"></category><category term="drop caches"></category></entry><entry><title>Ocultando puertos con port knocking</title><link href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html" rel="alternate"></link><updated>2015-10-29T11:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-10-29:2015/10/ocultando-puertos-con-port-knocking.html</id><summary type="html">&lt;p&gt;En este artículo vamos a enseñar como ocultar un puerto tras el firewall, de forma que solamente se abra tras utilizar el protocolo &lt;em&gt;port knocking&lt;/em&gt;. Las tecnologías usadas van a ser &lt;em&gt;firehol&lt;/em&gt; como firewall y el demonio &lt;em&gt;knockd&lt;/em&gt; ocultando el &lt;em&gt;SSH&lt;/em&gt;, aunque vamos a permitir acceder al puerto de HTTP.&lt;/p&gt;
+&lt;p&gt;El protocolo de &lt;em&gt;port knocking&lt;/em&gt; es un sistema en el que para abrir la conectividad en un puerto se debe primero abrir una secuencia concreta a otros puertos, sean &lt;em&gt;TCP&lt;/em&gt; o &lt;em&gt;UDP&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Para conseguir este objetivo, se van a usar las siguientes tecnologías:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Debian jessie&lt;/strong&gt;: Como distribución base; podría ser cualquier otra&lt;/li&gt;
@@ -474,8 +361,7 @@ a otros puertos, sean &lt;em&gt;TCP&lt;/em&gt; o &lt;em&gt;UDP&lt;/em&gt;.&lt;/p
 &lt;li&gt;&lt;strong&gt;Disco&lt;/strong&gt;: 2 Gb&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Red&lt;/strong&gt;: 1 interfaz (&lt;em&gt;eth0&lt;/em&gt;) &lt;em&gt;host-only&lt;/em&gt; o &lt;em&gt;bridged&lt;/em&gt; con IP fija&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;La instalación base es una &lt;em&gt;Debian&lt;/em&gt; mínima instalada con el CD netinstall,
-con todo desmarcado y con el servidor de &lt;em&gt;SSH&lt;/em&gt; previamente instalado.&lt;/p&gt;
+&lt;p&gt;La instalación base es una &lt;em&gt;Debian&lt;/em&gt; mínima instalada con el CD netinstall, con todo desmarcado y con el servidor de &lt;em&gt;SSH&lt;/em&gt; previamente instalado.&lt;/p&gt;
 &lt;h2&gt;Instalación del servidor&lt;/h2&gt;
 &lt;p&gt;Para empezar, vamos a instalar los dos servicios implicados:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# apt-get install firehol knockd
@@ -484,15 +370,8 @@ root@server:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Configuramos las reglas del firewall, de acuerdo a la documentación
-relacionada con &lt;em&gt;port knocking&lt;/em&gt;. Se define un nivel de protección máximo,
-ya que se trata de la interfaz que deberá estar accesible desde internet;
-esto nos evita la mayoría de ataques conocidos en la capa 3 y 4.&lt;/p&gt;
-&lt;p&gt;En cuanto a las conectividad, vamos a permitir que este servidor acceda
-a servicios &lt;em&gt;DNS&lt;/em&gt; y &lt;em&gt;HTTP&lt;/em&gt;, que es lo justo para actualizarse. Como
-servidor vamos a permitir el acceso a &lt;em&gt;HTTP&lt;/em&gt; (ya que en el ejemplo, esta
-máquina va a servir como servidor &lt;em&gt;HTTP&lt;/em&gt;) y a &lt;em&gt;SSH&lt;/em&gt; siempre y cuando se
-cumpla con el protocolo de seguridad.&lt;/p&gt;
+&lt;p&gt;Configuramos las reglas del firewall, de acuerdo a la documentación relacionada con &lt;em&gt;port knocking&lt;/em&gt;. Se define un nivel de protección máximo, ya que se trata de la interfaz que deberá estar accesible desde internet; esto nos evita la mayoría de ataques conocidos en la capa 3 y 4.&lt;/p&gt;
+&lt;p&gt;En cuanto a las conectividad, vamos a permitir que este servidor acceda a servicios &lt;em&gt;DNS&lt;/em&gt; y &lt;em&gt;HTTP&lt;/em&gt;, que es lo justo para actualizarse. Como servidor vamos a permitir el acceso a &lt;em&gt;HTTP&lt;/em&gt; (ya que en el ejemplo, esta máquina va a servir como servidor &lt;em&gt;HTTP&lt;/em&gt;) y a &lt;em&gt;SSH&lt;/em&gt; siempre y cuando se cumpla con el protocolo de seguridad.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/firehol/firehol.conf 
 version 5
 
@@ -505,18 +384,9 @@ root@server:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Acto seguido vamos a definir las reglas para que se abra el &lt;em&gt;knock hidden&lt;/em&gt;
-(que corresponde con el puerto &lt;em&gt;SSH&lt;/em&gt;) si se completa la secuencia de &lt;em&gt;knock&lt;/em&gt;.
-En este caso concreto, se indica una secuencia de los puertos &lt;em&gt;TCP&lt;/em&gt; 123,
-456 y 789; aunque es posible definir puertos &lt;em&gt;UDP&lt;/em&gt;, dejamos sin indicarlo,
-que nos los va a definir como &lt;em&gt;TCP&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;Como medida de seguridad vamos a indicar un tiempo máximo de 10 segundos
-para completar la secuencia de &lt;em&gt;knock&lt;/em&gt; y un autocierre del puerto a los
-5 segundos (aunque firehol va a permitir las conexiones que se hayan
-establecido en esos 5 segundos).&lt;/p&gt;
-&lt;p&gt;Es especialmente interesante ver que la regla incluye la dirección
-origen, con lo que la apertura de puerto solo será visible desde la
-máquina que completó la secuencia de &lt;em&gt;knock&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Acto seguido vamos a definir las reglas para que se abra el &lt;em&gt;knock hidden&lt;/em&gt; (que corresponde con el puerto &lt;em&gt;SSH&lt;/em&gt;) si se completa la secuencia de &lt;em&gt;knock&lt;/em&gt;. En este caso concreto, se indica una secuencia de los puertos &lt;em&gt;TCP&lt;/em&gt; 123, 456 y 789; aunque es posible definir puertos &lt;em&gt;UDP&lt;/em&gt;, dejamos sin indicarlo, que nos los va a definir como &lt;em&gt;TCP&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Como medida de seguridad vamos a indicar un tiempo máximo de 10 segundos para completar la secuencia de &lt;em&gt;knock&lt;/em&gt; y un autocierre del puerto a los 5 segundos (aunque firehol va a permitir las conexiones que se hayan establecido en esos 5 segundos).&lt;/p&gt;
+&lt;p&gt;Es especialmente interesante ver que la regla incluye la dirección origen, con lo que la apertura de puerto solo será visible desde la máquina que completó la secuencia de &lt;em&gt;knock&lt;/em&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/knockd.conf 
 &lt;span class="o"&gt;[&lt;/span&gt;options&lt;span class="o"&gt;]&lt;/span&gt;
     UseSyslog
@@ -531,9 +401,7 @@ root@server:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Como medida de seguridad, &lt;em&gt;Debian&lt;/em&gt; tiene una protección para levantar
-ambos servicios, así que tenemos que indicarle que queremos que se
-puedan levantar, editando otros ficheros de configuración.&lt;/p&gt;
+&lt;p&gt;Como medida de seguridad, &lt;em&gt;Debian&lt;/em&gt; tiene una protección para levantar ambos servicios, así que tenemos que indicarle que queremos que se puedan levantar, editando otros ficheros de configuración.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/default/knockd 
 ...
 &lt;span class="nv"&gt;START_KNOCKD&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1
@@ -546,8 +414,7 @@ root@server:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Finalmente podemos levantar los servicios de &lt;em&gt;port knocking&lt;/em&gt; y de
-&lt;em&gt;firewall&lt;/em&gt;, usando las herramientas estándares que nos ofrece la distribución.&lt;/p&gt;
+&lt;p&gt;Finalmente podemos levantar los servicios de &lt;em&gt;port knocking&lt;/em&gt; y de &lt;em&gt;firewall&lt;/em&gt;, usando las herramientas estándares que nos ofrece la distribución.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# service knockd restart
 root@server:~# service firehol restart
 root@server:~# 
@@ -555,9 +422,7 @@ root@server:~#
 
 
 &lt;h2&gt;Comprobación de funcionamiento&lt;/h2&gt;
-&lt;p&gt;Para comprobar el funcionamiento basta con comprobar que el puerto está
-normalmente cerrado. Personalmente he usado &lt;em&gt;nmap&lt;/em&gt;, aunque se podría usar
-&lt;em&gt;netcat&lt;/em&gt; o &lt;em&gt;telnet&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Para comprobar el funcionamiento basta con comprobar que el puerto está normalmente cerrado. Personalmente he usado &lt;em&gt;nmap&lt;/em&gt;, aunque se podría usar &lt;em&gt;netcat&lt;/em&gt; o &lt;em&gt;telnet&lt;/em&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;nmap -PN 192.168.56.3 -p 22
 
 Starting Nmap 5.21 &lt;span class="o"&gt;(&lt;/span&gt; http://nmap.org &lt;span class="o"&gt;)&lt;/span&gt; at 2015-10-28 17:33 CET
@@ -571,12 +436,7 @@ gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Vemos que sale &lt;strong&gt;filtered&lt;/strong&gt;, que significa que el firewall lo está
-bloqueando. Ahora vamos a lanzar la secuencia de &lt;em&gt;knock&lt;/em&gt; usando el
-helper &lt;strong&gt;knock&lt;/strong&gt;, que en &lt;em&gt;Debian&lt;/em&gt; se encuentra en el mismo paquete
-&lt;em&gt;knockd&lt;/em&gt;. Acto seguido, el puerto de &lt;em&gt;SSH&lt;/em&gt; queda abierto (en otras
-palabras: escuchando). Ahora sería posible iniciar sesión por &lt;em&gt;SSH&lt;/em&gt; en
-la máquina.&lt;/p&gt;
+&lt;p&gt;Vemos que sale &lt;strong&gt;filtered&lt;/strong&gt;, que significa que el firewall lo está bloqueando. Ahora vamos a lanzar la secuencia de &lt;em&gt;knock&lt;/em&gt; usando el helper &lt;strong&gt;knock&lt;/strong&gt;, que en &lt;em&gt;Debian&lt;/em&gt; se encuentra en el mismo paquete &lt;em&gt;knockd&lt;/em&gt;. Acto seguido, el puerto de &lt;em&gt;SSH&lt;/em&gt; queda abierto (en otras palabras: escuchando). Ahora sería posible iniciar sesión por &lt;em&gt;SSH&lt;/em&gt; en la máquina.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;knock 192.168.56.3 &lt;span class="m"&gt;123&lt;/span&gt; &lt;span class="m"&gt;456&lt;/span&gt; 789
 gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;nmap -PN 192.168.56.3 -p 22
 
@@ -591,9 +451,7 @@ gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Finalmente comprobamos que, transcurridos los 5 segundos configurados,
-el puerto vuelve a verse como &lt;strong&gt;filtrado&lt;/strong&gt;, con lo que no se puede
-establecer nuevas conexiones en este puerto.&lt;/p&gt;
+&lt;p&gt;Finalmente comprobamos que, transcurridos los 5 segundos configurados, el puerto vuelve a verse como &lt;strong&gt;filtrado&lt;/strong&gt;, con lo que no se puede establecer nuevas conexiones en este puerto.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;nmap -PN 192.168.56.3 -p 22
 
 Starting Nmap 5.21 &lt;span class="o"&gt;(&lt;/span&gt; http://nmap.org &lt;span class="o"&gt;)&lt;/span&gt; at 2015-10-28 17:34 CET
@@ -607,11 +465,7 @@ gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y con esto queda protegido el acceso por &lt;em&gt;SSH&lt;/em&gt; a la máquina.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="firehol"></category><category term="port knocking"></category><category term="ssh"></category><category term="nmap"></category></entry><entry><title>Virtualizando contenedores LXC con acceso a la red local</title><link href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html" rel="alternate"></link><updated>2015-10-15T12:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-10-15:2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html</id><summary type="html">&lt;p&gt;En este tutorial se propone montar un servidor de contenedores LXC,
-de forma que todos los contenedores queden expuestos a la misma red
-que el servidor que los aloja. Para protegerlos de posibles ataques
-de esta red, pondremos un firewall basado en &lt;em&gt;iptables&lt;/em&gt; mediante una
-capa de abstracción llamada &lt;em&gt;firehol&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Y con esto queda protegido el acceso por &lt;em&gt;SSH&lt;/em&gt; a la máquina.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="firehol"></category><category term="port knocking"></category><category term="ssh"></category><category term="nmap"></category></entry><entry><title>Virtualizando contenedores LXC con acceso a la red local</title><link href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html" rel="alternate"></link><updated>2015-10-15T12:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-10-15:2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html</id><summary type="html">&lt;p&gt;En este tutorial se propone montar un servidor de contenedores LXC, de forma que todos los contenedores queden expuestos a la misma red que el servidor que los aloja. Para protegerlos de posibles ataques de esta red, pondremos un firewall basado en &lt;em&gt;iptables&lt;/em&gt; mediante una capa de abstracción llamada &lt;em&gt;firehol&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Para conseguir este objetivo, se van a usar las siguientes tecnologías:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Debian jessie&lt;/strong&gt;: Es necesario usar alguna distribución de linux para hacer funcionar LXC&lt;/li&gt;
@@ -619,16 +473,14 @@ capa de abstracción llamada &lt;em&gt;firehol&lt;/em&gt;.&lt;/p&gt;
 &lt;li&gt;&lt;strong&gt;Bridges&lt;/strong&gt;: Un bridge es en software el equivalente a un switch hardware&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Firehol&lt;/strong&gt;: Una serie de scripts para construir firewalls basados en iptables de forma fácil&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;En cuanto a las capacidades hardware, vamos a hacer el tutorial con un equipo
-de capacidades modestas, virtualizado en una máquina virtual VirtualBox.&lt;/p&gt;
+&lt;p&gt;En cuanto a las capacidades hardware, vamos a hacer el tutorial con un equipo de capacidades modestas, virtualizado en una máquina virtual VirtualBox.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;CPUs&lt;/strong&gt;: 1&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Memoria&lt;/strong&gt;: 256 Mb&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Disco&lt;/strong&gt;: 2 Gb&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Red&lt;/strong&gt;: 1 interfaz (&lt;em&gt;eth0&lt;/em&gt;) &lt;em&gt;host-only&lt;/em&gt; o &lt;em&gt;bridged&lt;/em&gt; con IP fija&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Partimos de una distribución &lt;em&gt;Debian jessie&lt;/em&gt; instalada con un CD &lt;em&gt;netinstall&lt;/em&gt;
-y con el único paquete instalado &lt;em&gt;openssh-server&lt;/em&gt;, para mi comodidad.&lt;/p&gt;
+&lt;p&gt;Partimos de una distribución &lt;em&gt;Debian jessie&lt;/em&gt; instalada con un CD &lt;em&gt;netinstall&lt;/em&gt; y con el único paquete instalado &lt;em&gt;openssh-server&lt;/em&gt;, para mi comodidad.&lt;/p&gt;
 &lt;h2&gt;Preparar el servidor&lt;/h2&gt;
 &lt;p&gt;El primer paso consiste en instalar las tecnologías usadas:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# apt-get install bridge-utils firehol lxc
@@ -644,9 +496,7 @@ root@lxc:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Acto seguido debemos modificar la configuración de red, para que la interfaz
-de red de la máquina represente la salida de todas las IPs que maneja el bridge
-y para que el host obtenga una dirección de red en el bridge.&lt;/p&gt;
+&lt;p&gt;Acto seguido debemos modificar la configuración de red, para que la interfaz de red de la máquina represente la salida de todas las IPs que maneja el bridge y para que el host obtenga una dirección de red en el bridge.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;ANTES&lt;/strong&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/network/interfaces
 &lt;span class="nb"&gt;source&lt;/span&gt; /etc/network/interfaces.d/*
@@ -680,8 +530,7 @@ root@lxc:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;En este punto es necesario reconfigurar la red, siendo especialmente importante
-que &lt;em&gt;eth0&lt;/em&gt; quede sin dirección IP asignada (en mi caso tuve que reiniciar la máquina).&lt;/p&gt;
+&lt;p&gt;En este punto es necesario reconfigurar la red, siendo especialmente importante que &lt;em&gt;eth0&lt;/em&gt; quede sin dirección IP asignada (en mi caso tuve que reiniciar la máquina).&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# ip addr
 1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;65536&lt;/span&gt; qdisc noqueue state UNKNOWN group default 
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -701,11 +550,7 @@ root@lxc:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;El último paso consiste en activar el firewall con unas reglas básicas,
-para proteger el equipo anfitrión de posibles ataques o intrusiones, dejando
-solamente el acceso a SSH. Con firehol es posible combinar el demonio &lt;em&gt;knockd&lt;/em&gt;
-para ocultar el puerto tras una secuencia de port knocking; en principio
-sería suficiente con forzar la entrada SSH por claves RSA.&lt;/p&gt;
+&lt;p&gt;El último paso consiste en activar el firewall con unas reglas básicas, para proteger el equipo anfitrión de posibles ataques o intrusiones, dejando solamente el acceso a SSH. Con firehol es posible combinar el demonio &lt;em&gt;knockd&lt;/em&gt; para ocultar el puerto tras una secuencia de port knocking; en principio sería suficiente con forzar la entrada SSH por claves RSA.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
 interface lxc0 world
     policy drop
@@ -748,13 +593,8 @@ root@lxc:~#
 
 
 &lt;h2&gt;Creación de contenedores&lt;/h2&gt;
-&lt;p&gt;La creación de contenedores pasa por usar las herramientas estándar
-de la distribución, a lo solo tendremos que modificar algunas
-configuraciones propias de nuestra red.&lt;/p&gt;
-&lt;p&gt;Creamos un contenedor &lt;em&gt;webserver&lt;/em&gt; como demostración. La primera que se
-crea es un poco lenta porque hace un &lt;em&gt;debootstrap&lt;/em&gt; de una distribución
-debian estable para crear una cache en &lt;em&gt;/var/cache/lxc&lt;/em&gt;; las siguientes
-se benefician de esta caché y solo la actualizan, acelerando el proceso.&lt;/p&gt;
+&lt;p&gt;La creación de contenedores pasa por usar las herramientas estándar de la distribución, a lo solo tendremos que modificar algunas configuraciones propias de nuestra red.&lt;/p&gt;
+&lt;p&gt;Creamos un contenedor &lt;em&gt;webserver&lt;/em&gt; como demostración. La primera que se crea es un poco lenta porque hace un &lt;em&gt;debootstrap&lt;/em&gt; de una distribución debian estable para crear una cache en &lt;em&gt;/var/cache/lxc&lt;/em&gt;; las siguientes se benefician de esta caché y solo la actualizan, acelerando el proceso.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# lxc-create -n webserver -t debian
 debootstrap is /usr/sbin/debootstrap
 Checking cache download in /var/cache/lxc/debian/rootfs-jessie-i386 ... 
@@ -773,9 +613,7 @@ root@lxc:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Acabada la generación del contenedor, vamos a configurarle algunos
-parámetros; que tenga una interfaz &lt;em&gt;eth0&lt;/em&gt; activa y enchufada al bridge
-&lt;em&gt;lxc0&lt;/em&gt;, y que el contenedor se autoinicie en cada reinicio del anfitrión.&lt;/p&gt;
+&lt;p&gt;Acabada la generación del contenedor, vamos a configurarle algunos parámetros; que tenga una interfaz &lt;em&gt;eth0&lt;/em&gt; activa y enchufada al bridge &lt;em&gt;lxc0&lt;/em&gt;, y que el contenedor se autoinicie en cada reinicio del anfitrión.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /var/lib/lxc/webserver/config 
 ...
 lxc.start.auto &lt;span class="o"&gt;=&lt;/span&gt; 1
@@ -787,10 +625,7 @@ root@lxc:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y para que su interfaz de red sea funcional, vamos a configurarle una
-dirección IP. Todo esto se hace en los ficheros habituales, teniendo
-en cuenta que un contenedor es una jaula, y que esta se encuentra en
-&lt;em&gt;/var/lib/lxc/webserver/rootfs/&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Y para que su interfaz de red sea funcional, vamos a configurarle una dirección IP. Todo esto se hace en los ficheros habituales, teniendo en cuenta que un contenedor es una jaula, y que esta se encuentra en &lt;em&gt;/var/lib/lxc/webserver/rootfs/&lt;/em&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /var/lib/lxc/webserver/rootfs/etc/network/interfaces
 auto lo
 iface lo inet loopback
@@ -810,17 +645,9 @@ root@lxc:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Sin embargo, el firewall impide que se llegue al mismo; tendremos que
-poner reglas para permitir el flujo de red hacia la nueva dirección IP
-configurada para el contenedor. Esto se consigue con reglas de &lt;em&gt;forward&lt;/em&gt;
-que entren por el bridge y salgan por el mismo hacia nuestro contenedor.&lt;/p&gt;
-&lt;p&gt;Ya de paso habilitamos reglas para que todo lo que pase por el bridge
-hacia internet se permita. Como particularidad de nuestra red, el
-servidor anfitrión tiene un servidor DNS &lt;em&gt;dnsmasq&lt;/em&gt;; así que añadimos
-también esa ruta.&lt;/p&gt;
-&lt;p&gt;Por ejemplo, suponiendo que queremos habilitar el servicio &lt;em&gt;SSH&lt;/em&gt; (tcp 22)
-y el puerto del servicio &lt;em&gt;HTTP&lt;/em&gt; (tcp 80), pondremos lo siguiente en la
-configuración del firewall (tras lo cual lo reiniciaremos):&lt;/p&gt;
+&lt;p&gt;Sin embargo, el firewall impide que se llegue al mismo; tendremos que poner reglas para permitir el flujo de red hacia la nueva dirección IP configurada para el contenedor. Esto se consigue con reglas de &lt;em&gt;forward&lt;/em&gt; que entren por el bridge y salgan por el mismo hacia nuestro contenedor.&lt;/p&gt;
+&lt;p&gt;Ya de paso habilitamos reglas para que todo lo que pase por el bridge hacia internet se permita. Como particularidad de nuestra red, el servidor anfitrión tiene un servidor DNS &lt;em&gt;dnsmasq&lt;/em&gt;; así que añadimos también esa ruta.&lt;/p&gt;
+&lt;p&gt;Por ejemplo, suponiendo que queremos habilitar el servicio &lt;em&gt;SSH&lt;/em&gt; (tcp 22) y el puerto del servicio &lt;em&gt;HTTP&lt;/em&gt; (tcp 80), pondremos lo siguiente en la configuración del firewall (tras lo cual lo reiniciaremos):&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
 interface lxc0 world
     policy drop
@@ -854,9 +681,7 @@ root@lxc:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y solamente queda entrar al contenedor, por ejemplo por &lt;em&gt;SSH&lt;/em&gt; para
-instalar lo que se necesite; en este caso con un &lt;em&gt;nginx&lt;/em&gt; sería
-suficiente como demostración.&lt;/p&gt;
+&lt;p&gt;Y solamente queda entrar al contenedor, por ejemplo por &lt;em&gt;SSH&lt;/em&gt; para instalar lo que se necesite; en este caso con un &lt;em&gt;nginx&lt;/em&gt; sería suficiente como demostración.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;ssh root@192.168.56.10
 root@192.168.56.10&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
 
@@ -887,5 +712,4 @@ root@webserver:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y con esto ya tenemos nuestro contenedor en marcha y ofreciendo
-servicios en nuestra red local de forma segura.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="lxc"></category><category term="bridge"></category><category term="firehol"></category></entry></feed>
+&lt;p&gt;Y con esto ya tenemos nuestro contenedor en marcha y ofreciendo servicios en nuestra red local de forma segura.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="lxc"></category><category term="bridge"></category><category term="firehol"></category></entry></feed>
