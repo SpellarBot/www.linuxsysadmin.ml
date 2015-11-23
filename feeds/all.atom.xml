@@ -1,5 +1,232 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-11-16T23:15:00+01:00</updated><entry><title>Creando sistemas de ficheros temporales con tmpfs</title><link href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html" rel="alternate"></link><updated>2015-11-16T23:15:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-16:2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html</id><summary type="html">&lt;p&gt;A veces nos podemos encontrar con un sistema de ficheros lleno que no nos permite completar alguna acción por falta de espacio en disco. En un caso así, existe la posibilidad de sacar un sistema de ficheros completo de memoria, de una forma temporal, usando el sistema de ficheros &lt;em&gt;tmpfs&lt;/em&gt;. Otra opción es la de tener un sistema de ficheros temporal, en donde podamos dejar ficheros cuya persistencia no sea necesaria entre reinicios.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-11-23T23:30:00+01:00</updated><entry><title>Virtualizando contenedores LXC tras bridge interno</title><link href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html" rel="alternate"></link><updated>2015-11-23T23:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-23:2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html</id><summary type="html">&lt;p&gt;En un artículo anterior propusimos virtualizar contenedores en la red de la máquina &lt;em&gt;host&lt;/em&gt;. Sin embargo, puede ser mas interesante esconder los contenedores detrás de una máquina que haga las funciones de &lt;em&gt;host&lt;/em&gt; y de &lt;em&gt;firewall&lt;/em&gt;. Expondremos una serie de puertos tras la misma dirección &lt;em&gt;IP&lt;/em&gt; mediante el protocolo &lt;em&gt;NAT&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Para conseguir este objetivo, se van a usar las siguientes tecnologías:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Debian jessie&lt;/strong&gt;: Es necesario usar alguna distribución de linux para hacer funcionar LXC&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;LXC&lt;/strong&gt;: Tecnología que permite aislar los contenedores entre sí y darles entidad propia&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Bridges&lt;/strong&gt;: Un bridge es en software el equivalente a un switch hardware&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Firehol&lt;/strong&gt;: Una serie de scripts para construir firewalls basados en iptables de forma fácil&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;En cuanto a las capacidades hardware, vamos a hacer el tutorial con un equipo de capacidades modestas, virtualizado en una máquina virtual VirtualBox.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;CPUs&lt;/strong&gt;: 1&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Memoria&lt;/strong&gt;: 256 Mb&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Disco&lt;/strong&gt;: 2 Gb&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Red&lt;/strong&gt;: 1 interfaz (&lt;em&gt;eth0&lt;/em&gt;) &lt;em&gt;host-only&lt;/em&gt; o &lt;em&gt;bridged&lt;/em&gt; con IP fija&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Partimos de una distribución &lt;em&gt;Debian jessie&lt;/em&gt; instalada con un CD &lt;em&gt;netinstall&lt;/em&gt; y con el único paquete instalado &lt;em&gt;openssh-server&lt;/em&gt;, para mi comodidad.&lt;/p&gt;
+&lt;h2&gt;Preparar el servidor&lt;/h2&gt;
+&lt;p&gt;El primer paso consiste en instalar las tecnologías usadas:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# apt-get install bridge-utils firehol lxc
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias       
+Leyendo la información de estado... Hecho
+...
+Configurando lxc &lt;span class="o"&gt;(&lt;/span&gt;1:1.0.6-6+deb8u2&lt;span class="o"&gt;)&lt;/span&gt; ...
+Configurando dh-python &lt;span class="o"&gt;(&lt;/span&gt;1.20141111-2&lt;span class="o"&gt;)&lt;/span&gt; ...
+Procesando disparadores para libc-bin &lt;span class="o"&gt;(&lt;/span&gt;2.19-18+deb8u1&lt;span class="o"&gt;)&lt;/span&gt; ...
+Procesando disparadores para systemd &lt;span class="o"&gt;(&lt;/span&gt;215-17+deb8u2&lt;span class="o"&gt;)&lt;/span&gt; ...
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora vamos a modificar la configuración de red, para habilitar el &lt;em&gt;bridge&lt;/em&gt; en el que vamos a conectar el resto de contenedores virtualizados. Como dato importante, se define una interfaz falsa en la directiva &lt;em&gt;bridge_ports&lt;/em&gt; para que la &lt;em&gt;unit&lt;/em&gt; de red lo levante automáticamente.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;ANTES&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/network/interfaces
+&lt;span class="nb"&gt;source&lt;/span&gt; /etc/network/interfaces.d/*
+
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet static
+    address 192.168.56.4
+    netmask 255.255.255.0
+    gateway 192.168.56.1
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;DESPUES&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/network/interfaces
+&lt;span class="nb"&gt;source&lt;/span&gt; /etc/network/interfaces.d/*
+
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet static
+    address 192.168.56.4
+    netmask 255.255.255.0
+    gateway 192.168.56.1
+
+auto lxc0
+iface lxc0 inet static
+    bridge_ports dummy
+    address 10.0.0.1
+    netmask 255.255.255.0
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora toca reiniciar el servicio de red, para que el nuevo &lt;em&gt;bridge&lt;/em&gt; quede configurado como debe estarlo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# service networking restart
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El siguiente paso consiste en poner las reglas de &lt;em&gt;firewall&lt;/em&gt; necesarias para proteger al equipo anfitrión y para permitirle actuar como &lt;em&gt;gateway&lt;/em&gt; para los contenedores tras el &lt;em&gt;bridge&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
+interface eth0 world
+    policy drop
+    protection strong
+    server ssh accept
+    client all accept
+
+interface lxc0 lan
+    policy drop
+    client all accept
+
+router lan2world inface lxc0 outface eth0
+    masquerade
+    route all accept
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Hay que modificar otro fichero para permitir el inicio del &lt;em&gt;firewall&lt;/em&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;ANTES&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# grep START /etc/default/firehol 
+&lt;span class="c"&gt;#To enable firehol at startup set START_FIREHOL=YES&lt;/span&gt;
+&lt;span class="nv"&gt;START_FIREHOL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;NO
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;DESPUES&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# grep START /etc/default/firehol 
+&lt;span class="c"&gt;#To enable firehol at startup set START_FIREHOL=YES&lt;/span&gt;
+&lt;span class="nv"&gt;START_FIREHOL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;YES
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y para acabar, reiniciamos el servicio &lt;em&gt;firehol&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# service firehol restart
+...
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Creación de contenedores&lt;/h2&gt;
+&lt;p&gt;La creación de contenedores pasa por usar las herramientas estándar de la distribución, a lo solo tendremos que modificar algunas configuraciones propias de nuestra red.&lt;/p&gt;
+&lt;p&gt;Creamos un contenedor &lt;em&gt;webserver&lt;/em&gt; como demostración. La primera que se crea es un poco lenta porque hace un &lt;em&gt;debootstrap&lt;/em&gt; de una distribución &lt;em&gt;Debian estable&lt;/em&gt; para crear una cache en &lt;em&gt;/var/cache/lxc&lt;/em&gt;; las siguientes se benefician de esta caché y solo la actualizan, acelerando el proceso.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# lxc-create -n webserver -t debian
+debootstrap is /usr/sbin/debootstrap
+Checking cache download in /var/cache/lxc/debian/rootfs-jessie-i386 ... 
+Downloading debian minimal ...
+...
+
+I: Base system installed successfully.
+Download complete.
+Copying rootfs to /var/lib/lxc/webserver/rootfs...
+...
+Current default &lt;span class="nb"&gt;time &lt;/span&gt;zone: &lt;span class="s1"&gt;&amp;#39;Europe/Madrid&amp;#39;&lt;/span&gt;
+Local &lt;span class="nb"&gt;time &lt;/span&gt;is now:      Mon Nov &lt;span class="m"&gt;23&lt;/span&gt; 16:29:36 CET 2015.
+Universal Time is now:  Mon Nov &lt;span class="m"&gt;23&lt;/span&gt; 15:29:36 UTC 2015.
+
+Root password is &lt;span class="s1"&gt;&amp;#39;E3+K9SpU&amp;#39;&lt;/span&gt;, please change !
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Acabada la generación del contenedor, vamos a configurarle algunos parámetros; que tenga una interfaz &lt;em&gt;eth0&lt;/em&gt; activa y enchufada al bridge &lt;em&gt;lxc0&lt;/em&gt;, y que el contenedor se inicie automáticamente en cada reinicio del anfitrión.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /var/lib/lxc/webserver/config 
+...
+lxc.start.auto &lt;span class="o"&gt;=&lt;/span&gt; 1
+lxc.network.type &lt;span class="o"&gt;=&lt;/span&gt; veth
+lxc.network.flags &lt;span class="o"&gt;=&lt;/span&gt; up
+lxc.network.link &lt;span class="o"&gt;=&lt;/span&gt; lxc0
+lxc.network.name &lt;span class="o"&gt;=&lt;/span&gt; eth0
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y para que su interfaz de red sea funcional, vamos a configurarle una dirección IP. Todo esto se hace en los ficheros habituales, teniendo en cuenta que un contenedor es una jaula, y que esta se encuentra en &lt;em&gt;/var/lib/lxc/webserver/rootfs/&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /var/lib/lxc/webserver/rootfs/etc/network/interfaces
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet static
+    address 10.0.0.2
+    netmask 255.255.255.0
+    gateway 10.0.0.1
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El contenedor ya está funcional, y se puede levantar:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# lxc-start -n webserver -d
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Supongamos que este nuevo contenedor tiene un servidor web y queremos hacerlo disponible en puerto 80 del &lt;em&gt;host&lt;/em&gt;, mediante el protocolo &lt;em&gt;NAT&lt;/em&gt;. También se necesita definir una regla de &lt;em&gt;forward&lt;/em&gt; para permitir ese tráfico. Se reinicia el servicio &lt;em&gt;firehol&lt;/em&gt; para aplicar las nuevas reglas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
+dnat 10.0.0.2:80 proto tcp dst 192.168.56.4 dport 80
+
+interface eth0 world
+    policy drop
+    protection strong
+    server ssh accept
+    client all accept
+
+interface lxc0 lan
+    policy drop
+    client all accept
+
+router lan2world inface lxc0 outface eth0
+    masquerade
+    route all accept
+
+router world2lan inface eth0 outface lxc0
+    route http accept dst 10.0.0.2
+root@lxc:~# service firehol restart
+...
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora podemos acceder al servidor web instalado en el contenedor &lt;em&gt;webserver&lt;/em&gt; mediante el puerto 80 del &lt;em&gt;host&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Supongamos que tenemos otro contenedor con un servidor de aplicaciones escuchando en el puerto 8080 con dirección 10.0.0.3 y pretendemos que el contenedor original haga de &lt;em&gt;proxy HTTP&lt;/em&gt;. Esta funcionalidad requiere que el contenedor &lt;em&gt;webserver&lt;/em&gt; pueda conectarse al puerto 8080 del nuevo contenedor &lt;em&gt;appserver&lt;/em&gt;. Esta regla de &lt;em&gt;forward&lt;/em&gt; aplica a todas las conexiones que inician y finalizan en el &lt;em&gt;bridge&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
+dnat 10.0.0.2:80 proto tcp dst 192.168.56.4 dport 80
+
+interface eth0 world
+    policy drop
+    protection strong
+    server ssh accept
+    client all accept
+
+interface lxc0 lan
+    policy drop
+    client all accept
+
+router lan2world inface lxc0 outface eth0
+    masquerade
+    route all accept
+
+router world2lan inface eth0 outface lxc0
+    route http accept dst 10.0.0.2
+
+router internal inface lxc0 outface lxc0
+    route webcache accept src 10.0.0.2 dst 10.0.0.3
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con eso tenemos nuestro &lt;em&gt;proxy HTTP&lt;/em&gt; funcionando.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="lxc"></category><category term="bridge"></category><category term="firehol"></category></entry><entry><title>Creando sistemas de ficheros temporales con tmpfs</title><link href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html" rel="alternate"></link><updated>2015-11-16T23:15:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-16:2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html</id><summary type="html">&lt;p&gt;A veces nos podemos encontrar con un sistema de ficheros lleno que no nos permite completar alguna acción por falta de espacio en disco. En un caso así, existe la posibilidad de sacar un sistema de ficheros completo de memoria, de una forma temporal, usando el sistema de ficheros &lt;em&gt;tmpfs&lt;/em&gt;. Otra opción es la de tener un sistema de ficheros temporal, en donde podamos dejar ficheros cuya persistencia no sea necesaria entre reinicios.&lt;/p&gt;
 &lt;p&gt;El primer paso es tener un &lt;em&gt;punto de montaje&lt;/em&gt;, que sea la carpeta en la que se va a montar el nuevo sistema de fichero. Por ejemplo podemos usar el punto de montaje &lt;em&gt;/mnt/auxiliar&lt;/em&gt;; empezaremos creándolo.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mkdir /mnt/auxiliar
 root@server:~# 
