@@ -1,5 +1,219 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-11-23T23:30:00+01:00</updated><entry><title>Virtualizando contenedores LXC tras bridge interno</title><link href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html" rel="alternate"></link><updated>2015-11-23T23:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-23:2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html</id><summary type="html">&lt;p&gt;En un artículo anterior propusimos virtualizar contenedores en la red de la máquina &lt;em&gt;host&lt;/em&gt;. Sin embargo, puede ser mas interesante esconder los contenedores detrás de una máquina que haga las funciones de &lt;em&gt;host&lt;/em&gt; y de &lt;em&gt;firewall&lt;/em&gt;. Expondremos una serie de puertos tras la misma dirección &lt;em&gt;IP&lt;/em&gt; mediante el protocolo &lt;em&gt;NAT&lt;/em&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-12-02T12:30:00+01:00</updated><entry><title>Creación de un livecd con Debian</title><link href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html" rel="alternate"></link><updated>2015-12-02T12:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-12-02:2015/12/creacion-de-un-livecd-con-debian.html</id><summary type="html">&lt;p&gt;Tras ver como las actualizaciones de mis máquinas virtuales &lt;em&gt;VirtualBox&lt;/em&gt; expandían mis discos &lt;em&gt;.vdi&lt;/em&gt; sin control, quise pasar la herramienta &lt;em&gt;zerofree&lt;/em&gt; y un compactado con la herramienta oficial &lt;em&gt;VBoxManage&lt;/em&gt;. No quería instalar &lt;em&gt;zerofree&lt;/em&gt; de forma permanente y no pude encontrar un &lt;em&gt;livecd&lt;/em&gt; que lo tuviera, así que decidí crear uno.&lt;/p&gt;
+&lt;p&gt;Para conseguirlo, se va a usar un sistema de ficheros creado con &lt;em&gt;debootstrap&lt;/em&gt; y compactado mediante &lt;em&gt;SquashFS&lt;/em&gt;; este sistema de ficheros se va a empaquetar en un &lt;em&gt;.iso&lt;/em&gt; junto con un &lt;em&gt;kernel&lt;/em&gt;, un &lt;em&gt;initrd&lt;/em&gt; y el bootloader &lt;em&gt;isolinux&lt;/em&gt;. La herramienta que hace eso es &lt;em&gt;genisoimage&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Este tutorial se ejecutó en una distribución &lt;em&gt;Debian&lt;/em&gt;, pero no hay ningún problema en hacerlo en una &lt;em&gt;Ubuntu&lt;/em&gt; u otra distribución, siempre que sepamos como crear la imagen base para empaquetar.&lt;/p&gt;
+&lt;h2&gt;Preparación del entorno&lt;/h2&gt;
+&lt;p&gt;Todo el proceso va a ser ejecutado con el usuario &lt;em&gt;root&lt;/em&gt; por comodidad.&lt;/p&gt;
+&lt;p&gt;Empezaremos por instalar todas las tecnologías que hemos mencionado:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:~# apt-get install debootstrap isolinux squashfs-tools genisoimage
+...
+root@desktop:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Creamos una carpeta de trabajo para contener todos los ficheros temporales y el producto final, por limpieza:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:~# mkdir live_boot
+root@desktop:~# &lt;span class="nb"&gt;cd &lt;/span&gt;live_boot
+root@desktop:~/live_boot# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Todos los comandos que se detallan a continuación se hacen desde dentro de esta carpeta.&lt;/p&gt;
+&lt;h2&gt;Preparación del sistema de ficheros, el kernel y el initrd&lt;/h2&gt;
+&lt;p&gt;El sistema de ficheros se hace a partir de una jaula estándar de una distribución normal. En este paso, las distribuciones que usan &lt;em&gt;debootstrap&lt;/em&gt; nos facilitan mucho las cosas (aunque esta es la operación mas larga de este tutorial):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:~/live_boot# debootstrap --variant&lt;span class="o"&gt;=&lt;/span&gt;minbase jessie chroot
+I: Retrieving Release 
+I: Retrieving Release.gpg 
+I: Checking Release signature
+I: Valid Release signature &lt;span class="o"&gt;(&lt;/span&gt;key id 75DDC3C4A499F1A18CB5F3C8CBF8D6FD518E17E1&lt;span class="o"&gt;)&lt;/span&gt;
+I: Retrieving Packages 
+I: Validating Packages 
+I: Resolving dependencies of required packages...
+I: Resolving dependencies of base packages...
+...
+I: Base system installed successfully.
+root@desktop:~/live_boot# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora se trata de preparar esta jaula con los paquetes que necesitemos y las configuraciones adecuadas. Vamos a montar los pseudo sistemas de ficheros &lt;em&gt;/proc&lt;/em&gt;, &lt;em&gt;/sys&lt;/em&gt;, &lt;em&gt;/dev&lt;/em&gt; y &lt;em&gt;/dev/pts&lt;/em&gt;, que posiblemente nos van a hacer falta cuando estemos dentro de la jaula.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:~/live_boot# mount -o &lt;span class="nb"&gt;bind&lt;/span&gt; /proc/ chroot/proc/
+root@desktop:~/live_boot# mount -o &lt;span class="nb"&gt;bind&lt;/span&gt; /sys/ chroot/sys/
+root@desktop:~/live_boot# mount -o &lt;span class="nb"&gt;bind&lt;/span&gt; /dev/ chroot/dev/
+root@desktop:~/live_boot# mount -o &lt;span class="nb"&gt;bind&lt;/span&gt; /dev/pts/ chroot/dev/pts/
+root@desktop:~/live_boot# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Entramos en la jaula:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:~/live_boot# chroot chroot
+root@desktop:/# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;CUIDADO&lt;/strong&gt;: A partir de ahora, y hasta nuevo aviso, todos los comandos se hacen &lt;strong&gt;dentro&lt;/strong&gt; de la jaula.&lt;/p&gt;
+&lt;p&gt;Antes de nada, vamos a asignar una password al usuario &lt;em&gt;root&lt;/em&gt;, porque sino, no vamos a poder entrar en el &lt;em&gt;livecd&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:/# passwd    
+Enter new UNIX password: 
+Retype new UNIX password: 
+passwd: password updated successfully
+root@desktop:/# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Asignamos el nombre de máquina que mostrará el &lt;em&gt;livecd&lt;/em&gt; una vez haya hecho el &lt;em&gt;boot&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:/# &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;zerofree&amp;quot;&lt;/span&gt; &amp;gt; /etc/hostname
+root@desktop:/# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para que el &lt;em&gt;livecd&lt;/em&gt; pueda hacer &lt;em&gt;boot&lt;/em&gt;, vamos a necesitar el paquete &lt;strong&gt;live-boot&lt;/strong&gt; y un &lt;em&gt;kernel&lt;/em&gt; adecuado a la máquina que va a usar el &lt;em&gt;livecd&lt;/em&gt;. El paquete del &lt;em&gt;kernel&lt;/em&gt; ya nos va a dotar de un &lt;em&gt;initrd&lt;/em&gt; que también vamos a necesitar para el &lt;em&gt;livecd&lt;/em&gt;. Este paso también tarda un poco.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:/# apt-get install linux-image-486 live-boot
+Reading package lists... Done
+Building dependency tree... Done
+...
+Setting up linux-image-3.16.0-4-586 &lt;span class="o"&gt;(&lt;/span&gt;3.16.7-ckt11-1+deb8u3&lt;span class="o"&gt;)&lt;/span&gt; ...
+...  
+/etc/kernel/postinst.d/initramfs-tools:
+update-initramfs: Generating /boot/initrd.img-3.16.0-4-586
+...
+root@desktop:/# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora vamos a instalar los paquetes que queramos en el &lt;em&gt;livecd&lt;/em&gt;; yo voy a poner &lt;em&gt;zerofree&lt;/em&gt; que es la herramienta que motivó este &lt;em&gt;livecd&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:/# apt-get install zerofree
+...
+Unpacking zerofree &lt;span class="o"&gt;(&lt;/span&gt;1.0.3-1&lt;span class="o"&gt;)&lt;/span&gt; ...
+Setting up zerofree &lt;span class="o"&gt;(&lt;/span&gt;1.0.3-1&lt;span class="o"&gt;)&lt;/span&gt; ...
+root@desktop:/# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;OPCIONAL&lt;/strong&gt;: Para reducir el tamaño final, voy a limpiar todos los archivos temporales que usa &lt;em&gt;apt&lt;/em&gt;, tanto los archivos &lt;em&gt;.deb&lt;/em&gt; en &lt;em&gt;/var/cache/apt&lt;/em&gt;, como las listas de paquetes disponibles en &lt;em&gt;/var/lib/apt&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:/# cat /dev/null &amp;gt; /etc/apt/sources.list
+root@desktop:/# apt-get update
+Reading package lists... Done
+root@desktop:/# apt-get clean 
+root@desktop:/# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y finalmente salimos de la jaula:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:/# &lt;span class="nb"&gt;exit&lt;/span&gt;
+&lt;span class="nb"&gt;exit&lt;/span&gt;
+root@desktop:~/live_boot# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;CUIDADO&lt;/strong&gt;: A partir de ahora, todos los comandos se hacen &lt;strong&gt;fuera&lt;/strong&gt; de la jaula.&lt;/p&gt;
+&lt;p&gt;Vamos a desmontar los pseudo sistemas de ficheros que ya no son necesarios, y que van a molestar cuando compactemos la jaula. Como apunte, la jaula había levantado un proceso &lt;em&gt;/usr/sbin/uuidd&lt;/em&gt; que evitaba desmontar &lt;em&gt;chroot/dev&lt;/em&gt;, por lo que tuve que finalizar el proceso con un &lt;em&gt;kill&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:~/live_boot# umount chroot/dev/pts/
+root@desktop:~/live_boot# umount chroot/dev/
+root@desktop:~/live_boot# umount chroot/sys/
+root@desktop:~/live_boot# umount chroot/proc/
+root@desktop:~/live_boot# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;OPCIONAL&lt;/strong&gt;: Sabiendo que mis máquinas virtuales son clones y el comando que va a correr siempre el comando &lt;em&gt;zerofree&lt;/em&gt; contra el disco &lt;em&gt;/dev/sda1&lt;/em&gt;, se puede poner los comandos en el &lt;em&gt;.bash_history&lt;/em&gt; de &lt;em&gt;root&lt;/em&gt; para poderlos recuperar mediante el uso de flechas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:~/live_boot# cat chroot/root/.bash_history 
+zerofree /dev/sda1
+poweroff
+root@desktop:~/live_boot# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Empaquetando la imagen&lt;/h2&gt;
+&lt;p&gt;Vamos a crear una carpeta contenedora, que va a servir como raíz del &lt;em&gt;livecd&lt;/em&gt;. Dentro le vamos a poner una carpeta &lt;em&gt;live&lt;/em&gt; (para el sistema de ficheros, el &lt;em&gt;kernel&lt;/em&gt; y el &lt;em&gt;initrd&lt;/em&gt;) y una carpeta &lt;em&gt;isolinux&lt;/em&gt; (para todo lo referente al &lt;em&gt;bootloader&lt;/em&gt;).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:~/live_boot# mkdir -p image/&lt;span class="o"&gt;{&lt;/span&gt;live,isolinux&lt;span class="o"&gt;}&lt;/span&gt;
+root@desktop:~/live_boot# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a poner el sistema de ficheros en formato &lt;em&gt;SquashFS&lt;/em&gt;. Como apunte, el &lt;em&gt;kernel&lt;/em&gt; y el &lt;em&gt;initrd&lt;/em&gt; (ambos en la carpeta &lt;em&gt;/boot&lt;/em&gt;) se excluyen porque el &lt;em&gt;bootloader&lt;/em&gt; es incapaz de leerlos de allí; así que los copiamos a la misma carpeta.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:~/live_boot# mksquashfs chroot image/live/filesystem.squashfs -e boot
+Parallel mksquashfs: Using &lt;span class="m"&gt;1&lt;/span&gt; processor
+Creating 4.0 filesystem on image/live/filesystem.squashfs, block size 131072.
+...  
+root@desktop:~/live_boot# cp chroot/boot/vmlinuz-3.16.0-4-586 image/live/vmlinuz
+root@desktop:~/live_boot# cp chroot/boot/initrd.img-3.16.0-4-586 image/live/initrd
+root@desktop:~/live_boot# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora vamos con el &lt;em&gt;bootloader&lt;/em&gt;. Lo primero es poner una configuración para saber qué menú nos va a mostrar:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:~/live_boot# cat image/isolinux/isolinux.cfg 
+UI menu.c32
+
+prompt 0
+menu title Debian Zerofree
+
+timeout 50
+
+label Debian Live 3.16.0-4-586
+menu label ^Debian Live 3.16.0-4-586
+menu default
+kernel /live/vmlinuz
+append &lt;span class="nv"&gt;initrd&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/live/initrd &lt;span class="nv"&gt;boot&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;live
+root@desktop:~/live_boot# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Copiamos la imagen del &lt;em&gt;bootloader&lt;/em&gt; &lt;strong&gt;isolinux&lt;/strong&gt; y los módulos que se necesitan, tanto porque nuestra configuración los usa o porque se usan desde otros módulos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:~/live_boot# cp /usr/lib/ISOLINUX/isolinux.bin image/isolinux/
+root@desktop:~/live_boot# cp /usr/lib/syslinux/modules/bios/ldlinux.c32 image/isolinux/
+root@desktop:~/live_boot# cp /usr/lib/syslinux/modules/bios/menu.c32 image/isolinux/
+root@desktop:~/live_boot# cp /usr/lib/syslinux/modules/bios/libutil.c32 image/isolinux/
+root@desktop:~/live_boot# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finalmente empaquetamos la imagen &lt;em&gt;.iso&lt;/em&gt;. Para ello usaremos la herramienta &lt;em&gt;genisoimage&lt;/em&gt; en la carpeta raíz de lo que sería el &lt;em&gt;livecd&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:~/live_boot# &lt;span class="nb"&gt;cd &lt;/span&gt;image/
+root@desktop:~/live_boot/image# genisoimage -rational-rock -volid &lt;span class="s2"&gt;&amp;quot;Debian Zerofree&amp;quot;&lt;/span&gt; -cache-inodes -joliet -full-iso9660-filenames -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size &lt;span class="m"&gt;4&lt;/span&gt; -boot-info-table -output ../debian-zerofree.iso .
+I: -input-charset not specified, using utf-8 &lt;span class="o"&gt;(&lt;/span&gt;detected in locale settings&lt;span class="o"&gt;)&lt;/span&gt;
+Size of boot image is &lt;span class="m"&gt;4&lt;/span&gt; sectors -&amp;gt; No emulation
+  9.24% &lt;span class="k"&gt;done&lt;/span&gt;, estimate finish Wed Dec  &lt;span class="m"&gt;2&lt;/span&gt; 12:06:43 2015
+ 18.48% &lt;span class="k"&gt;done&lt;/span&gt;, estimate finish Wed Dec  &lt;span class="m"&gt;2&lt;/span&gt; 12:06:38 2015
+ 27.69% &lt;span class="k"&gt;done&lt;/span&gt;, estimate finish Wed Dec  &lt;span class="m"&gt;2&lt;/span&gt; 12:06:36 2015
+ 36.94% &lt;span class="k"&gt;done&lt;/span&gt;, estimate finish Wed Dec  &lt;span class="m"&gt;2&lt;/span&gt; 12:06:38 2015
+ 46.15% &lt;span class="k"&gt;done&lt;/span&gt;, estimate finish Wed Dec  &lt;span class="m"&gt;2&lt;/span&gt; 12:06:37 2015
+ 55.40% &lt;span class="k"&gt;done&lt;/span&gt;, estimate finish Wed Dec  &lt;span class="m"&gt;2&lt;/span&gt; 12:06:36 2015
+ 64.61% &lt;span class="k"&gt;done&lt;/span&gt;, estimate finish Wed Dec  &lt;span class="m"&gt;2&lt;/span&gt; 12:06:37 2015
+ 73.85% &lt;span class="k"&gt;done&lt;/span&gt;, estimate finish Wed Dec  &lt;span class="m"&gt;2&lt;/span&gt; 12:06:37 2015
+ 83.07% &lt;span class="k"&gt;done&lt;/span&gt;, estimate finish Wed Dec  &lt;span class="m"&gt;2&lt;/span&gt; 12:06:37 2015
+ 92.30% &lt;span class="k"&gt;done&lt;/span&gt;, estimate finish Wed Dec  &lt;span class="m"&gt;2&lt;/span&gt; 12:06:38 2015
+Total translation table size: 2048
+Total rockridge attributes bytes: 1335
+Total directory bytes: 4570
+Path table size&lt;span class="o"&gt;(&lt;/span&gt;bytes&lt;span class="o"&gt;)&lt;/span&gt;: 38
+Max brk space used 1a000
+&lt;span class="m"&gt;54178&lt;/span&gt; extents written &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;105&lt;/span&gt; MB&lt;span class="o"&gt;)&lt;/span&gt;
+root@desktop:~/live_boot/image# &lt;span class="nb"&gt;cd&lt;/span&gt; ..
+root@desktop:~/live_boot# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y nuestra imagen &lt;em&gt;.iso&lt;/em&gt; queda en la carpeta de trabajo, junto a la jaula y a la estructura del &lt;em&gt;livecd&lt;/em&gt;. Solo necesitamos la imagen &lt;em&gt;.iso&lt;/em&gt;, pero podemos dejar los ficheros intermedios hasta que estemos satisfechos con la imagen; es mas fácil modificar la jaula, el empaquetado &lt;em&gt;filesystem.squashfs&lt;/em&gt; y la imagen &lt;em&gt;.iso&lt;/em&gt; que volver a hacer un &lt;em&gt;debootstrap&lt;/em&gt; entero...&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@desktop:~/live_boot# ls -lh
+total 106M
+drwxr-xr-x &lt;span class="m"&gt;20&lt;/span&gt; root root 4,0K dic  &lt;span class="m"&gt;2&lt;/span&gt; 11:30 chroot
+-rw-r--r--  &lt;span class="m"&gt;1&lt;/span&gt; root root 106M dic  &lt;span class="m"&gt;2&lt;/span&gt; 12:06 debian-zerofree.iso
+drwxr-xr-x  &lt;span class="m"&gt;4&lt;/span&gt; root root 4,0K dic  &lt;span class="m"&gt;2&lt;/span&gt; 11:53 image
+root@desktop:~/live_boot# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Copiando esta imagen &lt;em&gt;.iso&lt;/em&gt; a mi máquina con &lt;em&gt;VirtualBox&lt;/em&gt; y montándola antes de hacer el &lt;em&gt;boot&lt;/em&gt; de cada máquina, puedo usar la herramienta &lt;em&gt;zerofree&lt;/em&gt; libremente, sin instalarla en las máquinas virtuales. Tras ello, el compactado de los ficheros &lt;em&gt;.vdi&lt;/em&gt; libera los megabytes a cientos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@virtualbox:~/VirtualBox VMs&lt;span class="nv"&gt;$ &lt;/span&gt;VBoxManage modifyvdi Debian/Debian.vdi --compact
+...
+gerard@virtualbox:~/VirtualBox VMs&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso concreto, la máquina &lt;strong&gt;Debian&lt;/strong&gt; (&lt;em&gt;netinstall&lt;/em&gt;) volvió a ocupar 700 mb, que es mucho mas interesante teniendo en cuenta que es la imagen que suelo clonar para hacer otras máquinas virtuales.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="zerofree"></category><category term="debootstrap"></category><category term="squashfs"></category><category term="genisoimage"></category><category term="isolinux"></category><category term="iso"></category><category term="livecd"></category></entry><entry><title>Virtualizando contenedores LXC tras bridge interno</title><link href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html" rel="alternate"></link><updated>2015-11-23T23:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-23:2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html</id><summary type="html">&lt;p&gt;En un artículo anterior propusimos virtualizar contenedores en la red de la máquina &lt;em&gt;host&lt;/em&gt;. Sin embargo, puede ser mas interesante esconder los contenedores detrás de una máquina que haga las funciones de &lt;em&gt;host&lt;/em&gt; y de &lt;em&gt;firewall&lt;/em&gt;. Expondremos una serie de puertos tras la misma dirección &lt;em&gt;IP&lt;/em&gt; mediante el protocolo &lt;em&gt;NAT&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Para conseguir este objetivo, se van a usar las siguientes tecnologías:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Debian jessie&lt;/strong&gt;: Es necesario usar alguna distribución de linux para hacer funcionar LXC&lt;/li&gt;

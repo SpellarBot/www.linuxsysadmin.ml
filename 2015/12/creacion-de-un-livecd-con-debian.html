@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Escribiendo units en systemd - Linux Sysadmin</title>
+    <title>Creación de un livecd con Debian - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,24 +9,29 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="keywords" content="linux,debian,jessie,systemd,mongodb" />
-        <meta name="description" content="Cuando se anunció systemd me llamó la atención que además de las funciones estándares de otros sistemas de init (por ejemplo sysvinit), también se ofrecían otras funcionalidades normalmente delegadas a otros procesos, como por ejemplo, la posibilidad de reiniciar procesos automáticamente o de lanzar procesos temporales al estilo de cron ..." />
+        <meta name="keywords" content="linux,debian,jessie,zerofree,debootstrap,squashfs,genisoimage,isolinux,iso,livecd" />
+        <meta name="description" content="Tras ver como las actualizaciones de mis máquinas virtuales VirtualBox expandían mis discos .vdi sin control, quise pasar la herramienta zerofree y un compactado con la herramienta oficial VBoxManage. No quería instalar zerofree de forma permanente y no pude encontrar un livecd que lo tuviera, así que decidí crear uno ..." />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Escribiendo units en systemd"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html"/>
-        <meta property="og:description" content="Cuando se anunció systemd me llamó la atención que además de las funciones estándares de otros sistemas de init (por ejemplo sysvinit), también se ofrecían otras funcionalidades normalmente delegadas a otros procesos, como por ejemplo, la posibilidad de reiniciar procesos automáticamente o de lanzar procesos temporales al estilo de cron ..."/>
-        <meta property="article:published_time" content="2015-11-09" />
+        <meta property="og:title" content="Creación de un livecd con Debian"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html"/>
+        <meta property="og:description" content="Tras ver como las actualizaciones de mis máquinas virtuales VirtualBox expandían mis discos .vdi sin control, quise pasar la herramienta zerofree y un compactado con la herramienta oficial VBoxManage. No quería instalar zerofree de forma permanente y no pude encontrar un livecd que lo tuviera, así que decidí crear uno ..."/>
+        <meta property="article:published_time" content="2015-12-02" />
             <meta property="article:section" content="Operaciones" />
             <meta property="article:tag" content="linux" />
             <meta property="article:tag" content="debian" />
             <meta property="article:tag" content="jessie" />
-            <meta property="article:tag" content="systemd" />
-            <meta property="article:tag" content="mongodb" />
+            <meta property="article:tag" content="zerofree" />
+            <meta property="article:tag" content="debootstrap" />
+            <meta property="article:tag" content="squashfs" />
+            <meta property="article:tag" content="genisoimage" />
+            <meta property="article:tag" content="isolinux" />
+            <meta property="article:tag" content="iso" />
+            <meta property="article:tag" content="livecd" />
             <meta property="article:author" content="Gerard" />
 
 
@@ -89,16 +94,16 @@ Linux Sysadmin            </a>
             <ol class="breadcrumb">
                 <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
                 <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
-                <li class="active">Escribiendo units en systemd</li>
+                <li class="active">Creación de un livecd con Debian</li>
             </ol>
     <section id="content">
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html"
+                    <a href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html"
                        rel="bookmark"
-                       title="Permalink to Escribiendo units en systemd">
-                        Escribiendo units en systemd
+                       title="Permalink to Creación de un livecd con Debian">
+                        Creación de un livecd con Debian
                     </a>
                 </h1>
             </header>
@@ -108,14 +113,14 @@ Linux Sysadmin            </a>
 <footer class="post-info">
     <span class="label label-default">Fecha</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2015-11-09T22:30:00+01:00"> 2015-11-09</time>
+        <i class="fa fa-calendar"></i><time datetime="2015-12-02T12:30:00+01:00"> 2015-12-02</time>
     </span>
 
 
             <span class="label label-default">Autor</span>
             <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
 
-        <span class="label label-default">Tiempo de lectura</span> 6 minutos
+        <span class="label label-default">Tiempo de lectura</span> 9 minutos
         <span class="label label-default">Categoría</span>
         <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
 
@@ -127,161 +132,237 @@ Linux Sysadmin            </a>
         /
 	<a href="http://www.linuxsysadmin.tk/tag/jessie.html">jessie</a>
         /
-	<a href="http://www.linuxsysadmin.tk/tag/systemd.html">systemd</a>
+	<a href="http://www.linuxsysadmin.tk/tag/zerofree.html">zerofree</a>
         /
-	<a href="http://www.linuxsysadmin.tk/tag/mongodb.html">mongodb</a>
+	<a href="http://www.linuxsysadmin.tk/tag/debootstrap.html">debootstrap</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/squashfs.html">squashfs</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/genisoimage.html">genisoimage</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/isolinux.html">isolinux</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/iso.html">iso</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/livecd.html">livecd</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>Cuando se anunció <em>systemd</em> me llamó la atención que además de las funciones estándares de otros sistemas de <em>init</em> (por ejemplo <em>sysvinit</em>), también se ofrecían otras funcionalidades normalmente delegadas a otros procesos, como por ejemplo, la posibilidad de reiniciar procesos automáticamente o de lanzar procesos temporales al estilo de <em>cron</em>.</p>
-<p>En este artículo se explica como escribir estos ficheros que rigen las tareas propias del sistema <em>init</em> para iniciar procesos que no disponen de tales facilidades. Adicionalmente, vamos a ver como beneficiarnos del sistema de plantillas de estos mismos ficheros para evitarnos tener que repetirnos, de acuerdo con el principio <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY (don't repeat yourself)</a>.</p>
-<p>Como ejemplo, vamos a utilizar un sistema básico de <em>Linux</em> con <em>systemd</em>; que podría ser <em>RedHat 7</em>, <em>ArchLinux</em> o <em>Debian 8</em>. En este caso, se va a utilizar un sistema <em>Debian Jessie</em> con una instalación básica <em>netinstall</em> con <em>SSH</em> y nada mas.</p>
-<p>Vamos a suponer que queremos montar un servidor con 2 instancias de <em>MongoDB</em>, escuchando en los puertos 27001 y 27002. Empecemos con montar una estructura en <em>/opt/</em> para contener todo lo relacionado con este despliegue. La idea es que vamos a levantar el binario <em>mongod</em> con dos configuraciones distintas. Por eso, de momento basta con poner el binario <em>mongod</em>, las dos configuraciones y las dos carpetas de datos.</p>
-<div class="highlight"><pre>root@server:~# tree /opt/
-/opt/
-└── mongodb
-    ├── bin
-    │   └── mongod
-    ├── conf
-    │   ├── mongo1.conf
-    │   └── mongo2.conf
-    ├── data
-    │   ├── mongo1
-    │   └── mongo2
-    └── logs
-
-<span class="m">7</span> directories, <span class="m">3</span> files
-root@server:~# 
+                <p>Tras ver como las actualizaciones de mis máquinas virtuales <em>VirtualBox</em> expandían mis discos <em>.vdi</em> sin control, quise pasar la herramienta <em>zerofree</em> y un compactado con la herramienta oficial <em>VBoxManage</em>. No quería instalar <em>zerofree</em> de forma permanente y no pude encontrar un <em>livecd</em> que lo tuviera, así que decidí crear uno.</p>
+<p>Para conseguirlo, se va a usar un sistema de ficheros creado con <em>debootstrap</em> y compactado mediante <em>SquashFS</em>; este sistema de ficheros se va a empaquetar en un <em>.iso</em> junto con un <em>kernel</em>, un <em>initrd</em> y el bootloader <em>isolinux</em>. La herramienta que hace eso es <em>genisoimage</em>.</p>
+<p>Este tutorial se ejecutó en una distribución <em>Debian</em>, pero no hay ningún problema en hacerlo en una <em>Ubuntu</em> u otra distribución, siempre que sepamos como crear la imagen base para empaquetar.</p>
+<h2>Preparación del entorno</h2>
+<p>Todo el proceso va a ser ejecutado con el usuario <em>root</em> por comodidad.</p>
+<p>Empezaremos por instalar todas las tecnologías que hemos mencionado:</p>
+<div class="highlight"><pre>root@desktop:~# apt-get install debootstrap isolinux squashfs-tools genisoimage
+...
+root@desktop:~# 
 </pre></div>
 
 
-<p>La configuración de ambos procesos va a ser la mínima necesaria para que los procesos no entren en conflicto entre ellos.</p>
-<div class="highlight"><pre>root@server:~# cat /opt/mongodb/conf/mongo1.conf 
-systemLog:
-    path: /opt/mongodb/logs/mongo1.log
-    logAppend: <span class="nb">true</span>
-<span class="nb">    </span>destination: file
-
-net:
-    port: 27001
-
-storage:
-    dbPath: /opt/mongodb/data/mongo1
-    smallFiles: <span class="nb">true</span>
-root@server:~# cat /opt/mongodb/conf/mongo2.conf 
-systemLog:
-    path: /opt/mongodb/logs/mongo2.log
-    logAppend: <span class="nb">true</span>
-<span class="nb">    </span>destination: file
-
-net:
-    port: 27002
-
-storage:
-    dbPath: /opt/mongodb/data/mongo2
-    smallFiles: <span class="nb">true</span>
-root@server:~# 
+<p>Creamos una carpeta de trabajo para contener todos los ficheros temporales y el producto final, por limpieza:</p>
+<div class="highlight"><pre>root@desktop:~# mkdir live_boot
+root@desktop:~# <span class="nb">cd </span>live_boot
+root@desktop:~/live_boot# 
 </pre></div>
 
 
-<p>Como apunte importante, no se ha definido un archivo para guardar el <em>PID</em> del proceso; <em>systemd</em> no lo necesita y conoce el <em>PID</em> de los procesos que levanta.</p>
-<p>Siguiendo las directivas de seguridad mínimas, los dos procesos <em>mongod</em> van a levantarse con un usuario estándar que no sea <em>root</em>. En este caso, toda la carpeta <em>/opt/mongodb/</em> pertenece al usuario <em>mongo</em>, aunque bastaría con la carpeta de datos y la de logs.</p>
-<p>Ponemos la definición de nuestras <strong>units</strong> en la carpeta designada según el estándar, que es <em>/etc/systemd/system/</em>.</p>
-<div class="highlight"><pre>root@server:~# cat /etc/systemd/system/mongo1.service 
-<span class="o">[</span>Unit<span class="o">]</span>
-<span class="nv">Description</span><span class="o">=</span>MongoDB
-
-<span class="o">[</span>Service<span class="o">]</span>
-<span class="nv">User</span><span class="o">=</span>mongo
-<span class="nv">LimitFSIZE</span><span class="o">=</span>infinity
-<span class="nv">LimitCPU</span><span class="o">=</span>infinity
-<span class="nv">LimitAS</span><span class="o">=</span>infinity
-<span class="nv">LimitNOFILE</span><span class="o">=</span>64000
-<span class="nv">LimitNPROC</span><span class="o">=</span>64000
-<span class="nv">ExecStartPre</span><span class="o">=</span>/bin/rm -f /opt/mongodb/data/mongo1/mongod.lock
-<span class="nv">ExecStart</span><span class="o">=</span>/opt/mongodb/bin/mongod -f /opt/mongodb/conf/mongo1.conf
-
-<span class="o">[</span>Install<span class="o">]</span>
-<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
-root@server:~# cat /etc/systemd/system/mongo2.service 
-<span class="o">[</span>Unit<span class="o">]</span>
-<span class="nv">Description</span><span class="o">=</span>MongoDB
-
-<span class="o">[</span>Service<span class="o">]</span>
-<span class="nv">User</span><span class="o">=</span>mongo
-<span class="nv">LimitFSIZE</span><span class="o">=</span>infinity
-<span class="nv">LimitCPU</span><span class="o">=</span>infinity
-<span class="nv">LimitAS</span><span class="o">=</span>infinity
-<span class="nv">LimitNOFILE</span><span class="o">=</span>64000
-<span class="nv">LimitNPROC</span><span class="o">=</span>64000
-<span class="nv">ExecStartPre</span><span class="o">=</span>/bin/rm -f /opt/mongodb/data/mongo2/mongod.lock
-<span class="nv">ExecStart</span><span class="o">=</span>/opt/mongodb/bin/mongod -f /opt/mongodb/conf/mongo2.conf
-
-<span class="o">[</span>Install<span class="o">]</span>
-<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
-root@server:~# 
+<p>Todos los comandos que se detallan a continuación se hacen desde dentro de esta carpeta.</p>
+<h2>Preparación del sistema de ficheros, el kernel y el initrd</h2>
+<p>El sistema de ficheros se hace a partir de una jaula estándar de una distribución normal. En este paso, las distribuciones que usan <em>debootstrap</em> nos facilitan mucho las cosas (aunque esta es la operación mas larga de este tutorial):</p>
+<div class="highlight"><pre>root@desktop:~/live_boot# debootstrap --variant<span class="o">=</span>minbase jessie chroot
+I: Retrieving Release 
+I: Retrieving Release.gpg 
+I: Checking Release signature
+I: Valid Release signature <span class="o">(</span>key id 75DDC3C4A499F1A18CB5F3C8CBF8D6FD518E17E1<span class="o">)</span>
+I: Retrieving Packages 
+I: Validating Packages 
+I: Resolving dependencies of required packages...
+I: Resolving dependencies of base packages...
+...
+I: Base system installed successfully.
+root@desktop:~/live_boot# 
 </pre></div>
 
 
-<p>Es especialmente interesante ver que el lenguaje de la <strong>units</strong> de <em>systemd</em> es declarativo, y que no son <em>init scripts</em>; <em>systemd</em> se encarga de todo por nosotros. Basta con declarar el comando con el que levantar el servicio y el usuario con el que hacerlo.</p>
-<p>La directiva <strong>WantedBy</strong> indica que se tiene que levantar con el <strong>target</strong> <em>multi-user</em>, que es el que usa <em>Debian</em> por defecto. Un <strong>target</strong> viene a ser el equivalente a un <em>runlevel</em> de <em>sysvinit</em>.</p>
-<p>Hay una directiva <strong>ExecStartPre</strong> que se encarga de eliminar el <em>lock file</em> de <em>MongoDB</em> por si el proceso hubiera acabado de forma inesperada. El binario <em>mongod</em> no levanta si este fichero existe, ya que cree que ya hay una instancia de <em>mongod</em> usando la carpeta de datos.</p>
-<p>El resto de directivas se limitan a modificar los límites de los procesos a levantar, de acuerdo a la documentación de <em>MongoDB</em>.</p>
-<p>A partir de ahora, son <strong>units</strong> normales del sistema y se pueden activar e iniciar. Si ya estuvieran cargados, habría que recargar la configuración de <em>systemd</em>.</p>
-<div class="highlight"><pre>root@server:~# systemctl <span class="nb">enable </span>mongo1
-root@server:~# systemctl <span class="nb">enable </span>mongo2
-root@server:~# systemctl start mongo1
-root@server:~# systemctl start mongo2
-root@server:~# systemctl daemon-reload
-root@server:~# 
+<p>Ahora se trata de preparar esta jaula con los paquetes que necesitemos y las configuraciones adecuadas. Vamos a montar los pseudo sistemas de ficheros <em>/proc</em>, <em>/sys</em>, <em>/dev</em> y <em>/dev/pts</em>, que posiblemente nos van a hacer falta cuando estemos dentro de la jaula.</p>
+<div class="highlight"><pre>root@desktop:~/live_boot# mount -o <span class="nb">bind</span> /proc/ chroot/proc/
+root@desktop:~/live_boot# mount -o <span class="nb">bind</span> /sys/ chroot/sys/
+root@desktop:~/live_boot# mount -o <span class="nb">bind</span> /dev/ chroot/dev/
+root@desktop:~/live_boot# mount -o <span class="nb">bind</span> /dev/pts/ chroot/dev/pts/
+root@desktop:~/live_boot# 
 </pre></div>
 
 
-<h2>Uso de plantillas para evitar repetirnos</h2>
-<p>Toda <strong>unit</strong> cuyo nombre acabe en <strong>arroba</strong> seguido por <em>.service</em> o cualquier otro tipo de <strong>unit</strong>, es por convención, una <strong>plantilla</strong>.</p>
-<p>La idea es que vamos a crear un <em>link</em> a la <strong>plantilla</strong>, que ponga un texto detrás de la <strong>arroba</strong>. Este texto va a estar disponible en la plantilla como <strong>%i</strong>. De esta forma podemos "pasar un parámetro" a la plantilla, usando ese parámetro como diferenciador de los dos procesos.</p>
-<p><strong>Veamos un ejemplo:</strong></p>
-<p>Creamos dos <em>links</em> a la <strong>plantilla</strong> <em>mongodb@.service</em>, con los nombres <em>mongodb@mongo1.service</em> y <em>mongodb@mongo2.service</em>, que son nuestras instancias. Estas instancias se rigen con las directivas de la <strong>plantilla</strong>, con la variable <strong>%i</strong> conteniendo los valores <em>mongo1</em> y <em>mongo2</em> respectivamente.</p>
-<div class="highlight"><pre>root@server:~# ls -l /etc/systemd/system/mongodb<span class="se">\@</span>*
-lrwxrwxrwx <span class="m">1</span> root root  <span class="m">16</span> nov  <span class="m">3</span> 12:46 /etc/systemd/system/mongodb@mongo1.service -&gt; mongodb@.service
-lrwxrwxrwx <span class="m">1</span> root root  <span class="m">16</span> nov  <span class="m">3</span> 12:46 /etc/systemd/system/mongodb@mongo2.service -&gt; mongodb@.service
--rw-r--r-- <span class="m">1</span> root root <span class="m">207</span> nov  <span class="m">3</span> 12:45 /etc/systemd/system/mongodb@.service
+<p>Entramos en la jaula:</p>
+<div class="highlight"><pre>root@desktop:~/live_boot# chroot chroot
+root@desktop:/# 
 </pre></div>
 
 
-<p>Ahora redactamos la plantilla, teniendo en cuenta los valores que se van a cambiarse por la variable <strong>%i</strong>, que vamos a usar para identificar el fichero de configuración de cada instancia. También es posible poner otras variables en la <strong>plantilla</strong>, como por ejemplo, el nombre de la máquina o la versión del <em>kernel</em> de la máquina.</p>
-<div class="highlight"><pre>root@server:~# cat /etc/systemd/system/mongodb<span class="se">\@</span>.service 
-<span class="o">[</span>Unit<span class="o">]</span>
-<span class="nv">Description</span><span class="o">=</span>MongoDB
-
-<span class="o">[</span>Service<span class="o">]</span>
-<span class="nv">User</span><span class="o">=</span>mongo
-<span class="nv">LimitFSIZE</span><span class="o">=</span>infinity
-<span class="nv">LimitCPU</span><span class="o">=</span>infinity
-<span class="nv">LimitAS</span><span class="o">=</span>infinity
-<span class="nv">LimitNOFILE</span><span class="o">=</span>64000
-<span class="nv">LimitNPROC</span><span class="o">=</span>64000
-<span class="nv">ExecStartPre</span><span class="o">=</span>/bin/rm -f /opt/mongodb/data/%i/mongod.lock
-<span class="nv">ExecStart</span><span class="o">=</span>/opt/mongodb/bin/mongod -f /opt/mongodb/conf/%i.conf
-
-<span class="o">[</span>Install<span class="o">]</span>
-<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
-root@server:~# 
+<p><strong>CUIDADO</strong>: A partir de ahora, y hasta nuevo aviso, todos los comandos se hacen <strong>dentro</strong> de la jaula.</p>
+<p>Antes de nada, vamos a asignar una password al usuario <em>root</em>, porque sino, no vamos a poder entrar en el <em>livecd</em>.</p>
+<div class="highlight"><pre>root@desktop:/# passwd    
+Enter new UNIX password: 
+Retype new UNIX password: 
+passwd: password updated successfully
+root@desktop:/# 
 </pre></div>
 
 
-<p>Ahora solo falta activar las instancias e iniciarlas, con los comandos habituales del demonio <em>systemd</em>.</p>
-<div class="highlight"><pre>root@server:~# systemctl <span class="nb">enable </span>mongodb@mongo1
-Created symlink from /etc/systemd/system/multi-user.target.wants/mongodb@mongo1.service to /etc/systemd/system/mongodb@.service.
-root@server:~# systemctl <span class="nb">enable </span>mongodb@mongo2
-Created symlink from /etc/systemd/system/multi-user.target.wants/mongodb@mongo2.service to /etc/systemd/system/mongodb@.service.
-root@server:~# systemctl start mongodb@mongo1
-root@server:~# systemctl start mongodb@mongo2
-root@server:~# 
+<p>Asignamos el nombre de máquina que mostrará el <em>livecd</em> una vez haya hecho el <em>boot</em>:</p>
+<div class="highlight"><pre>root@desktop:/# <span class="nb">echo</span> <span class="s2">&quot;zerofree&quot;</span> &gt; /etc/hostname
+root@desktop:/# 
 </pre></div>
 
 
-<p>Y con esto lo hemos conseguido.</p>
+<p>Para que el <em>livecd</em> pueda hacer <em>boot</em>, vamos a necesitar el paquete <strong>live-boot</strong> y un <em>kernel</em> adecuado a la máquina que va a usar el <em>livecd</em>. El paquete del <em>kernel</em> ya nos va a dotar de un <em>initrd</em> que también vamos a necesitar para el <em>livecd</em>. Este paso también tarda un poco.</p>
+<div class="highlight"><pre>root@desktop:/# apt-get install linux-image-486 live-boot
+Reading package lists... Done
+Building dependency tree... Done
+...
+Setting up linux-image-3.16.0-4-586 <span class="o">(</span>3.16.7-ckt11-1+deb8u3<span class="o">)</span> ...
+...  
+/etc/kernel/postinst.d/initramfs-tools:
+update-initramfs: Generating /boot/initrd.img-3.16.0-4-586
+...
+root@desktop:/# 
+</pre></div>
+
+
+<p>Ahora vamos a instalar los paquetes que queramos en el <em>livecd</em>; yo voy a poner <em>zerofree</em> que es la herramienta que motivó este <em>livecd</em>.</p>
+<div class="highlight"><pre>root@desktop:/# apt-get install zerofree
+...
+Unpacking zerofree <span class="o">(</span>1.0.3-1<span class="o">)</span> ...
+Setting up zerofree <span class="o">(</span>1.0.3-1<span class="o">)</span> ...
+root@desktop:/# 
+</pre></div>
+
+
+<p><strong>OPCIONAL</strong>: Para reducir el tamaño final, voy a limpiar todos los archivos temporales que usa <em>apt</em>, tanto los archivos <em>.deb</em> en <em>/var/cache/apt</em>, como las listas de paquetes disponibles en <em>/var/lib/apt</em>.</p>
+<div class="highlight"><pre>root@desktop:/# cat /dev/null &gt; /etc/apt/sources.list
+root@desktop:/# apt-get update
+Reading package lists... Done
+root@desktop:/# apt-get clean 
+root@desktop:/# 
+</pre></div>
+
+
+<p>Y finalmente salimos de la jaula:</p>
+<div class="highlight"><pre>root@desktop:/# <span class="nb">exit</span>
+<span class="nb">exit</span>
+root@desktop:~/live_boot# 
+</pre></div>
+
+
+<p><strong>CUIDADO</strong>: A partir de ahora, todos los comandos se hacen <strong>fuera</strong> de la jaula.</p>
+<p>Vamos a desmontar los pseudo sistemas de ficheros que ya no son necesarios, y que van a molestar cuando compactemos la jaula. Como apunte, la jaula había levantado un proceso <em>/usr/sbin/uuidd</em> que evitaba desmontar <em>chroot/dev</em>, por lo que tuve que finalizar el proceso con un <em>kill</em>.</p>
+<div class="highlight"><pre>root@desktop:~/live_boot# umount chroot/dev/pts/
+root@desktop:~/live_boot# umount chroot/dev/
+root@desktop:~/live_boot# umount chroot/sys/
+root@desktop:~/live_boot# umount chroot/proc/
+root@desktop:~/live_boot# 
+</pre></div>
+
+
+<p><strong>OPCIONAL</strong>: Sabiendo que mis máquinas virtuales son clones y el comando que va a correr siempre el comando <em>zerofree</em> contra el disco <em>/dev/sda1</em>, se puede poner los comandos en el <em>.bash_history</em> de <em>root</em> para poderlos recuperar mediante el uso de flechas.</p>
+<div class="highlight"><pre>root@desktop:~/live_boot# cat chroot/root/.bash_history 
+zerofree /dev/sda1
+poweroff
+root@desktop:~/live_boot# 
+</pre></div>
+
+
+<h2>Empaquetando la imagen</h2>
+<p>Vamos a crear una carpeta contenedora, que va a servir como raíz del <em>livecd</em>. Dentro le vamos a poner una carpeta <em>live</em> (para el sistema de ficheros, el <em>kernel</em> y el <em>initrd</em>) y una carpeta <em>isolinux</em> (para todo lo referente al <em>bootloader</em>).</p>
+<div class="highlight"><pre>root@desktop:~/live_boot# mkdir -p image/<span class="o">{</span>live,isolinux<span class="o">}</span>
+root@desktop:~/live_boot# 
+</pre></div>
+
+
+<p>Vamos a poner el sistema de ficheros en formato <em>SquashFS</em>. Como apunte, el <em>kernel</em> y el <em>initrd</em> (ambos en la carpeta <em>/boot</em>) se excluyen porque el <em>bootloader</em> es incapaz de leerlos de allí; así que los copiamos a la misma carpeta.</p>
+<div class="highlight"><pre>root@desktop:~/live_boot# mksquashfs chroot image/live/filesystem.squashfs -e boot
+Parallel mksquashfs: Using <span class="m">1</span> processor
+Creating 4.0 filesystem on image/live/filesystem.squashfs, block size 131072.
+...  
+root@desktop:~/live_boot# cp chroot/boot/vmlinuz-3.16.0-4-586 image/live/vmlinuz
+root@desktop:~/live_boot# cp chroot/boot/initrd.img-3.16.0-4-586 image/live/initrd
+root@desktop:~/live_boot# 
+</pre></div>
+
+
+<p>Ahora vamos con el <em>bootloader</em>. Lo primero es poner una configuración para saber qué menú nos va a mostrar:</p>
+<div class="highlight"><pre>root@desktop:~/live_boot# cat image/isolinux/isolinux.cfg 
+UI menu.c32
+
+prompt 0
+menu title Debian Zerofree
+
+timeout 50
+
+label Debian Live 3.16.0-4-586
+menu label ^Debian Live 3.16.0-4-586
+menu default
+kernel /live/vmlinuz
+append <span class="nv">initrd</span><span class="o">=</span>/live/initrd <span class="nv">boot</span><span class="o">=</span>live
+root@desktop:~/live_boot# 
+</pre></div>
+
+
+<p>Copiamos la imagen del <em>bootloader</em> <strong>isolinux</strong> y los módulos que se necesitan, tanto porque nuestra configuración los usa o porque se usan desde otros módulos.</p>
+<div class="highlight"><pre>root@desktop:~/live_boot# cp /usr/lib/ISOLINUX/isolinux.bin image/isolinux/
+root@desktop:~/live_boot# cp /usr/lib/syslinux/modules/bios/ldlinux.c32 image/isolinux/
+root@desktop:~/live_boot# cp /usr/lib/syslinux/modules/bios/menu.c32 image/isolinux/
+root@desktop:~/live_boot# cp /usr/lib/syslinux/modules/bios/libutil.c32 image/isolinux/
+root@desktop:~/live_boot# 
+</pre></div>
+
+
+<p>Finalmente empaquetamos la imagen <em>.iso</em>. Para ello usaremos la herramienta <em>genisoimage</em> en la carpeta raíz de lo que sería el <em>livecd</em>.</p>
+<div class="highlight"><pre>root@desktop:~/live_boot# <span class="nb">cd </span>image/
+root@desktop:~/live_boot/image# genisoimage -rational-rock -volid <span class="s2">&quot;Debian Zerofree&quot;</span> -cache-inodes -joliet -full-iso9660-filenames -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size <span class="m">4</span> -boot-info-table -output ../debian-zerofree.iso .
+I: -input-charset not specified, using utf-8 <span class="o">(</span>detected in locale settings<span class="o">)</span>
+Size of boot image is <span class="m">4</span> sectors -&gt; No emulation
+  9.24% <span class="k">done</span>, estimate finish Wed Dec  <span class="m">2</span> 12:06:43 2015
+ 18.48% <span class="k">done</span>, estimate finish Wed Dec  <span class="m">2</span> 12:06:38 2015
+ 27.69% <span class="k">done</span>, estimate finish Wed Dec  <span class="m">2</span> 12:06:36 2015
+ 36.94% <span class="k">done</span>, estimate finish Wed Dec  <span class="m">2</span> 12:06:38 2015
+ 46.15% <span class="k">done</span>, estimate finish Wed Dec  <span class="m">2</span> 12:06:37 2015
+ 55.40% <span class="k">done</span>, estimate finish Wed Dec  <span class="m">2</span> 12:06:36 2015
+ 64.61% <span class="k">done</span>, estimate finish Wed Dec  <span class="m">2</span> 12:06:37 2015
+ 73.85% <span class="k">done</span>, estimate finish Wed Dec  <span class="m">2</span> 12:06:37 2015
+ 83.07% <span class="k">done</span>, estimate finish Wed Dec  <span class="m">2</span> 12:06:37 2015
+ 92.30% <span class="k">done</span>, estimate finish Wed Dec  <span class="m">2</span> 12:06:38 2015
+Total translation table size: 2048
+Total rockridge attributes bytes: 1335
+Total directory bytes: 4570
+Path table size<span class="o">(</span>bytes<span class="o">)</span>: 38
+Max brk space used 1a000
+<span class="m">54178</span> extents written <span class="o">(</span><span class="m">105</span> MB<span class="o">)</span>
+root@desktop:~/live_boot/image# <span class="nb">cd</span> ..
+root@desktop:~/live_boot# 
+</pre></div>
+
+
+<p>Y nuestra imagen <em>.iso</em> queda en la carpeta de trabajo, junto a la jaula y a la estructura del <em>livecd</em>. Solo necesitamos la imagen <em>.iso</em>, pero podemos dejar los ficheros intermedios hasta que estemos satisfechos con la imagen; es mas fácil modificar la jaula, el empaquetado <em>filesystem.squashfs</em> y la imagen <em>.iso</em> que volver a hacer un <em>debootstrap</em> entero...</p>
+<div class="highlight"><pre>root@desktop:~/live_boot# ls -lh
+total 106M
+drwxr-xr-x <span class="m">20</span> root root 4,0K dic  <span class="m">2</span> 11:30 chroot
+-rw-r--r--  <span class="m">1</span> root root 106M dic  <span class="m">2</span> 12:06 debian-zerofree.iso
+drwxr-xr-x  <span class="m">4</span> root root 4,0K dic  <span class="m">2</span> 11:53 image
+root@desktop:~/live_boot# 
+</pre></div>
+
+
+<h2>Conclusión</h2>
+<p>Copiando esta imagen <em>.iso</em> a mi máquina con <em>VirtualBox</em> y montándola antes de hacer el <em>boot</em> de cada máquina, puedo usar la herramienta <em>zerofree</em> libremente, sin instalarla en las máquinas virtuales. Tras ello, el compactado de los ficheros <em>.vdi</em> libera los megabytes a cientos.</p>
+<div class="highlight"><pre>gerard@virtualbox:~/VirtualBox VMs<span class="nv">$ </span>VBoxManage modifyvdi Debian/Debian.vdi --compact
+...
+gerard@virtualbox:~/VirtualBox VMs<span class="nv">$ </span>
+</pre></div>
+
+
+<p>En este caso concreto, la máquina <strong>Debian</strong> (<em>netinstall</em>) volvió a ocupar 700 mb, que es mucho mas interesante teniendo en cuenta que es la imagen que suelo clonar para hacer otras máquinas virtuales.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
@@ -301,8 +382,8 @@ root@server:~#
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'escribiendo-units-en-systemd';
-                var disqus_url = 'http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html';
+                    var disqus_identifier = 'creacion-de-un-livecd-con-debian';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html';
 
             var disqus_config = function () {
                 this.language = "es";
