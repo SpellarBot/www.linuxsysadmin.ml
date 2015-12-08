@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-12-08T12:30:00+01:00</updated><entry><title>Construyendo una replica set en mongodb</title><link href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html" rel="alternate"></link><updated>2015-12-08T12:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-12-08:2015/12/construyendo-una-replica-set-en-mongodb.html</id><summary type="html">&lt;p&gt;Muchas veces nos interesa obtener alta disponibilidad en los servicios que gestionamos. No hay nada mas desagradable que una llamada a las tantas de la noche porque se ha caído un nodo de una base de datos y no damos servicio. Para eso &lt;em&gt;mongodb&lt;/em&gt; nos ofrece el mecanismo de replicación.&lt;/p&gt;
+&lt;p&gt;En este artículo vamos a montar una &lt;em&gt;replica set&lt;/em&gt;, de forma que si se cayera un nodo de la base de datos, otro asumiría su rol, de forma que se seguiría dando servicio.&lt;/p&gt;
+&lt;p&gt;Nuestra &lt;em&gt;replica set&lt;/em&gt; va a tener 3 nodos, que vamos a alojar en 3 máquinas distintas, de forma que la caída de una máquina afecte solamente a 1 proceso de &lt;em&gt;mongodb&lt;/em&gt;. La caonfiguración de 3 nodos nos da una tolerancia a fallos de 1 máquina; mientras queden 2, el clúster va a seguir operativo.&lt;/p&gt;
+&lt;h2&gt;Descripción del entorno&lt;/h2&gt;
+&lt;p&gt;Disponemos de 3 máquinas que vamos a llamar &lt;strong&gt;mongo1&lt;/strong&gt;, &lt;strong&gt;mongo2&lt;/strong&gt; y &lt;strong&gt;mongo3&lt;/strong&gt;. Cada una funciona con un sistema operativo &lt;em&gt;Debian jessie&lt;/em&gt; con &lt;em&gt;systemd&lt;/em&gt; y cuenta 1 gb de disco y con 256 mb de memoria; para esta demostración no se necesita mas.&lt;/p&gt;
+&lt;p&gt;Como pequeño detalle, las máquinas se van referir entre ellas por nombre, pero como no me interesa poner una solución completa de &lt;em&gt;DNS&lt;/em&gt;, he puesto en el fichero &lt;em&gt;/etc/hosts&lt;/em&gt; de todas las máquinas las equivalencias.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# grep mongo /etc/hosts
+10.0.0.2    mongo1
+10.0.0.3    mongo2
+10.0.0.4    mongo3
+root@mongo1:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Consideraciones de seguridad&lt;/h2&gt;
+&lt;p&gt;Estas máquinas se comunican entre sí por el puerto TCP en el que corran sus procesos; para seguir con el puerto "titular" vamos a ponerlos en el puerto 27017. Es importante que las 3 máquinas puedan acceder al puerto de las otras 2. Adicionalmente, la máquina que vaya a usar este clúster también debe pode acceder al puerto 27017 de las 3 máquinas.&lt;/p&gt;
+&lt;h2&gt;Preparación de las máquinas individuales&lt;/h2&gt;
+&lt;p&gt;Queremos una versión de &lt;em&gt;mongodb&lt;/em&gt; un poco reciente, así que no vamos a usar los paquetes oficiales de la distribución, y la empresa de &lt;em&gt;mongodb&lt;/em&gt; no ofrece paquete para &lt;em&gt;Debian jessie&lt;/em&gt;. Por ello vamos a montar un esqueleto de ficheros como se describe en &lt;a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html"&gt;un artículo anterior&lt;/a&gt;. Vamos a describir el proceso en la máquina &lt;strong&gt;mongo1&lt;/strong&gt;, para replicarlo a posteriori en las otras 2.&lt;/p&gt;
+&lt;p&gt;Creamos la estructura de carpetas que van a contener todo lo relativo a &lt;strong&gt;mongodb&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# mkdir -p /opt/mongodb/&lt;span class="o"&gt;{&lt;/span&gt;bin,conf,data/replica,logs&lt;span class="o"&gt;}&lt;/span&gt;
+root@mongo1:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Copiamos el binario &lt;strong&gt;mongod&lt;/strong&gt; que encontraremos en el fichero &lt;em&gt;.tar.gz&lt;/em&gt; de la página de descargas de la página web.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# cp mongod /opt/mongodb/bin/
+root@mongo1:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Creamos un fichero de configuración con el que vamos a levantar el proceso en esta máquina.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# cat /opt/mongodb/conf/replica.conf
+systemLog:
+    path: /opt/mongodb/logs/replica.log
+    logAppend: &lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="nb"&gt;    &lt;/span&gt;destination: file
+
+net:
+    port: 27017
+    bindIp: 0.0.0.0
+
+storage:
+    dbPath: /opt/mongodb/data/replica
+    smallFiles: &lt;span class="nb"&gt;true&lt;/span&gt;
+
+replication:
+    replSetName: replica
+root@mongo1:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Por razones de seguridad vamos a lanzar el servicio con un usuario propio de sistema.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# useradd -s /usr/sbin/nologin -r -M mongo -d /opt/mongodb/
+root@mongo1:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y para ahorrarnos problemas de permisos, lo hacemos propietario de todo lo referente al servicio:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# chown -R mongo:mongo /opt/mongodb/
+root@mongo1:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a crearle una &lt;strong&gt;unit&lt;/strong&gt; para que el sistema se encargue de levantar automáticamente el servicio en caso de reinicio de la máquina:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# cat /etc/systemd/system/mongo.service
+&lt;span class="o"&gt;[&lt;/span&gt;Unit&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;MongoDB
+
+&lt;span class="o"&gt;[&lt;/span&gt;Service&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;User&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;mongo
+&lt;span class="nv"&gt;LimitFSIZE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitCPU&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitAS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitNOFILE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;64000
+&lt;span class="nv"&gt;LimitNPROC&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;64000
+&lt;span class="nv"&gt;ExecStartPre&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/bin/rm -f /opt/mongodb/data/replica/mongod.lock
+&lt;span class="nv"&gt;ExecStart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/opt/mongodb/bin/mongod -f /opt/mongodb/conf/replica.conf
+
+&lt;span class="o"&gt;[&lt;/span&gt;Install&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;WantedBy&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;multi-user.target
+root@mongo1:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finalmente activamos la &lt;strong&gt;unit&lt;/strong&gt; e iniciamos el servicio.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# systemctl &lt;span class="nb"&gt;enable &lt;/span&gt;mongo
+Created symlink from /etc/systemd/system/multi-user.target.wants/mongo.service to /etc/systemd/system/mongo.service.
+root@mongo1:~# systemctl start mongo
+root@mongo1:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora toca repetir el proceso en las otras 2 máquinas, exactamente igual.&lt;/p&gt;
+&lt;h2&gt;Configuración del clúster&lt;/h2&gt;
+&lt;p&gt;Accedemos a una de las máquinas del futuro clúster desde cualquier máquina que pueda hacerlo y que disponga del binario &lt;strong&gt;mongo&lt;/strong&gt; (el mongo shell), que también viene en el archivo &lt;em&gt;.tar.gz&lt;/em&gt; descargado de la página oficial; este shell no es necesario para la aplicación que use el clúster ya que el &lt;strong&gt;driver&lt;/strong&gt; de cada lenguaje suple sus funciones, pero es muy útil tenerlo a mano para tareas de administración y consultas varias.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client:~# ./mongo --host 10.0.0.2
+MongoDB shell version: 3.0.7
+connecting to: 10.0.0.2:27017/test
+Welcome to the MongoDB shell.
+For interactive &lt;span class="nb"&gt;help&lt;/span&gt;, &lt;span class="nb"&gt;type&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;help&amp;quot;&lt;/span&gt;.
+&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Hay dos formas de crear la configuración del clúster: pasando el documento de configuración en el método &lt;em&gt;initiate&lt;/em&gt; o añadir los nodos a posteriori con el método &lt;em&gt;add&lt;/em&gt;. Voy a usar este método por ser mas fácil.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&amp;gt; rs.initiate&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;info2&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;no configuration explicitly specified -- making one&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;me&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;mongo1:27017&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : 1
+&lt;span class="o"&gt;}&lt;/span&gt;
+replica:PRIMARY&amp;gt; rs.add&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;mongo2:27017&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+replica:PRIMARY&amp;gt; rs.add&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;mongo3:27017&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+replica:PRIMARY&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a lanzar el método &lt;em&gt;status&lt;/em&gt; hasta que todos los nodos sean primarios o secundarios, momento en el que la &lt;em&gt;replica&lt;/em&gt; va a quedar correctamente montada.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;replica:PRIMARY&amp;gt; rs.status&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;set&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;replica&amp;quot;&lt;/span&gt;,
+...
+    &lt;span class="s2"&gt;&amp;quot;members&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;[&lt;/span&gt;
+        &lt;span class="o"&gt;{&lt;/span&gt;
+...
+            &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;mongo1:27017&amp;quot;&lt;/span&gt;,
+            &lt;span class="s2"&gt;&amp;quot;stateStr&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;PRIMARY&amp;quot;&lt;/span&gt;,
+            &lt;span class="s2"&gt;&amp;quot;self&amp;quot;&lt;/span&gt; : &lt;span class="nb"&gt;true&lt;/span&gt;
+...
+        &lt;span class="o"&gt;}&lt;/span&gt;,
+        &lt;span class="o"&gt;{&lt;/span&gt;
+...
+            &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;mongo2:27017&amp;quot;&lt;/span&gt;,
+            &lt;span class="s2"&gt;&amp;quot;stateStr&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;SECONDARY&amp;quot;&lt;/span&gt;,
+            &lt;span class="s2"&gt;&amp;quot;syncingTo&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;mongo1:27017&amp;quot;&lt;/span&gt;,
+...
+        &lt;span class="o"&gt;}&lt;/span&gt;,
+        &lt;span class="o"&gt;{&lt;/span&gt;
+...
+            &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;mongo3:27017&amp;quot;&lt;/span&gt;,
+            &lt;span class="s2"&gt;&amp;quot;stateStr&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;SECONDARY&amp;quot;&lt;/span&gt;,
+            &lt;span class="s2"&gt;&amp;quot;syncingTo&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;mongo1:27017&amp;quot;&lt;/span&gt;,
+...
+        &lt;span class="o"&gt;}&lt;/span&gt;
+    &lt;span class="o"&gt;]&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : 1
+&lt;span class="o"&gt;}&lt;/span&gt;
+replica:PRIMARY&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esta salida del método &lt;em&gt;status&lt;/em&gt; ya lo tenemos todo funcionando correctamente.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="mongodb"></category><category term="replica set"></category><category term="systemd"></category></entry></feed>
