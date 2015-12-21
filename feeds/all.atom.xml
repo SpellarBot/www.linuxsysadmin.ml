@@ -1,5 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-12-17T23:00:00+01:00</updated><entry><title>Construyendo un RAID 10 en linux</title><link href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html" rel="alternate"></link><updated>2015-12-17T23:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-12-17:2015/12/construyendo-un-raid-10-en-linux.html</id><summary type="html">&lt;p&gt;El otro día estaba habilitando un servidor de &lt;em&gt;mongodb&lt;/em&gt; para un entorno de producción. Como me interesaba mejorar el rendimiento de los accesos a disco y no disponía de discos SSD con una durabilidad aceptable, me propuse montar un &lt;em&gt;array de discos&lt;/em&gt; en configuración de &lt;strong&gt;RAID 10&lt;/strong&gt;, como se recomienda.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-12-21T10:00:00+01:00</updated><entry><title>Utilizando apt-cacher-ng para agilizar la instalación de paquetes</title><link href="http://www.linuxsysadmin.tk/2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html" rel="alternate"></link><updated>2015-12-21T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-12-21:2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html</id><summary type="html">&lt;p&gt;Hace tiempo veo que tras usar muchas maquinas virtuales &lt;em&gt;Debian&lt;/em&gt; para el uso diario y para las demostraciones de este blog, el ancho de banda usado para bajar los paquetes se dispara. La mayoría de veces se trata de los mismos paquetes, para instalar las mismas aplicaciones, servicios o actualizaciones.&lt;/p&gt;
+&lt;p&gt;En el artículo de hoy, voy a enseñar como usar un &lt;em&gt;proxy&lt;/em&gt; con una &lt;em&gt;caché&lt;/em&gt; para &lt;em&gt;apt-get&lt;/em&gt;, llamado &lt;strong&gt;apt-cacher-ng&lt;/strong&gt;, de forma que los paquetes son descargados por la primera máquina que los pida, guardados en un servidor local y aprovechados por el resto de máquinas.&lt;/p&gt;
+&lt;h2&gt;Preparación de las máquinas&lt;/h2&gt;
+&lt;p&gt;Partimos de la máquina habitual, llamada &lt;strong&gt;aptcacher&lt;/strong&gt;, siendo esta un contenedor LXC con una &lt;em&gt;Debian Jessie&lt;/em&gt; básica, aunque esto se podría haber puesto en una &lt;em&gt;Ubuntu&lt;/em&gt; o cualquier otra distribución que funcione con paquetes &lt;em&gt;.deb&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Otras máquinas que vamos a usar son unas máquinas cliente en donde vamos a instalar paquetes cualesquiera para demostrar el funcionamiento, llamadas &lt;strong&gt;client1&lt;/strong&gt; y &lt;strong&gt;client2&lt;/strong&gt;; estos clientes están en la misma red que la máquina &lt;strong&gt;aptcacher&lt;/strong&gt; y tienen conectividad con ella por el puerto &lt;em&gt;TCP&lt;/em&gt; 3142.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# lxc-ls -f
+NAME       STATE    IPV4      IPV6  AUTOSTART  
+---------------------------------------------
+aptcacher  RUNNING  10.0.0.2  -     YES        
+client1    RUNNING  10.0.0.3  -     YES        
+client2    RUNNING  10.0.0.4  -     YES        
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Empezamos instalando el servicio &lt;strong&gt;apt-cacher-ng&lt;/strong&gt; en la máquina servidor &lt;strong&gt;aptcacher&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@aptcacher:~# apt-get install apt-cacher-ng
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias... Hecho
+...  
+Se instalarán los siguientes paquetes NUEVOS:
+  apt-cacher-ng ed
+&lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;2&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
+Se necesita descargar &lt;span class="m"&gt;500&lt;/span&gt; kB de archivos.
+Se utilizarán 1.168 kB de espacio de disco adicional después de esta operación.
+¿Desea continuar? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
+...
+root@aptcacher:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Las configuraciones que vienen por defecto son bastante adecuadas y no tuve que efectuar ningún cambio.&lt;/p&gt;
+&lt;p&gt;Por otra parte, hay que configurar las máquinas que se quieran beneficiar de este servidor, añadiendo una línea de configuración en su &lt;strong&gt;apt-get&lt;/strong&gt;, por ejemplo, poniendo un fichero adicional en &lt;em&gt;/etc/apt/apt.conf.d/&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@aptcacher:~# cat /etc/apt/apt.conf.d/02proxy 
+Acquire::http &lt;span class="o"&gt;{&lt;/span&gt; Proxy &lt;span class="s2"&gt;&amp;quot;http://10.0.0.2:3142&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+root@aptcacher:~# 
+
+root@client1:~# cat /etc/apt/apt.conf.d/02proxy 
+Acquire::http &lt;span class="o"&gt;{&lt;/span&gt; Proxy &lt;span class="s2"&gt;&amp;quot;http://10.0.0.2:3142&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+root@client1:~# 
+
+root@client2:~# cat /etc/apt/apt.conf.d/02proxy 
+Acquire::http &lt;span class="o"&gt;{&lt;/span&gt; Proxy &lt;span class="s2"&gt;&amp;quot;http://10.0.0.2:3142&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+root@client2:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto queda montado todo el sistema.&lt;/p&gt;
+&lt;h2&gt;Funcionamiento de la caché&lt;/h2&gt;
+&lt;p&gt;El funcionamiento es muy simple: basta con instalar en un cliente un paquete, por ejemplo, &lt;em&gt;python&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client1:~# apt-get install python
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias... Hecho
+...  
+Se instalarán los siguientes paquetes NUEVOS:
+  file libexpat1 libffi6 libmagic1 libpython-stdlib libpython2.7-minimal
+  libpython2.7-stdlib libsqlite3-0 mime-support python python-minimal
+  python2.7 python2.7-minimal
+&lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;13&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
+Se necesita descargar 5.010 kB de archivos.
+Se utilizarán 21,3 MB de espacio de disco adicional después de esta operación.
+¿Desea continuar? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
+...
+Descargados 5.010 kB en 15s &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;327&lt;/span&gt; kB/s&lt;span class="o"&gt;)&lt;/span&gt;                                        
+...
+root@client1:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como estos paquetes no están en la &lt;em&gt;caché&lt;/em&gt; del servidor, se han descargado de internet en 15 segundos, de acuerdo a la velocidad de mi conexión de internet y de la velocidad de respuesta de los repositorios elegidos.&lt;/p&gt;
+&lt;p&gt;Si revisamos la página de estadísticas de &lt;strong&gt;apt-cacher-ng&lt;/strong&gt;, disponible en &lt;em&gt;http://aptcacher:3142/acng-report.html&lt;/em&gt; podemos ver que se han descargado 4,78mb en 13 paquetes; todos son &lt;strong&gt;miss&lt;/strong&gt; de la cache, es decir, se han ido a buscar al repositorio oficial.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Estadísticas web de apt-cacher" src="http://www.linuxsysadmin.tk/images/apt-cacher-ng-1.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;Ahora vamos a instalar &lt;em&gt;python&lt;/em&gt; en otro de los clientes:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client2:~# apt-get install python
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias... Hecho
+...
+Se instalarán los siguientes paquetes NUEVOS:
+  file libexpat1 libffi6 libmagic1 libpython-stdlib libpython2.7-minimal
+  libpython2.7-stdlib libsqlite3-0 mime-support python python-minimal
+  python2.7 python2.7-minimal
+&lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;13&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
+Se necesita descargar 5.010 kB de archivos.
+Se utilizarán 21,3 MB de espacio de disco adicional después de esta operación.
+¿Desea continuar? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
+...
+Descargados 5.010 kB en 1s &lt;span class="o"&gt;(&lt;/span&gt;3.902 kB/s&lt;span class="o"&gt;)&lt;/span&gt;
+root@client2:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Hemos elegido el paquete &lt;em&gt;python&lt;/em&gt; para asegurar que ambas máquinas instalan lo mismo; como se puede ver, se ha descargado la misma cantidad de datos, pero en vez de los 15 segundos anteriores, ahora se ha tardado 1 segundo. Eso es porque los paquetes solicitados estaban en el &lt;em&gt;proxy&lt;/em&gt;, es decir, en el servidor &lt;strong&gt;aptcacher&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Podemos ver en la misma página de administración el resultado: ahora hay 13 &lt;strong&gt;hits&lt;/strong&gt; adicionales, ya que los paquetes solicitados estaban en local.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Estadísticas web de apt-cacher" src="http://www.linuxsysadmin.tk/images/apt-cacher-ng-2.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;De esta forma, si tenemos un elevado número de máquinas del mismo tipo, solo consumiremos el ancho de banda necesario para traerlos de internet &lt;strong&gt;una sola vez&lt;/strong&gt;.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="apt-cacher-ng"></category><category term="cache"></category></entry><entry><title>Construyendo un RAID 10 en linux</title><link href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html" rel="alternate"></link><updated>2015-12-17T23:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-12-17:2015/12/construyendo-un-raid-10-en-linux.html</id><summary type="html">&lt;p&gt;El otro día estaba habilitando un servidor de &lt;em&gt;mongodb&lt;/em&gt; para un entorno de producción. Como me interesaba mejorar el rendimiento de los accesos a disco y no disponía de discos SSD con una durabilidad aceptable, me propuse montar un &lt;em&gt;array de discos&lt;/em&gt; en configuración de &lt;strong&gt;RAID 10&lt;/strong&gt;, como se recomienda.&lt;/p&gt;
 &lt;p&gt;Para este tutorial vamos a tener una máquina virtual (es una &lt;em&gt;Debian&lt;/em&gt;, pero vale cualquier otra distribución) con 5 discos, 1 de sistema y otros 4 para usar en la configuración &lt;strong&gt;RAID 10&lt;/strong&gt;, cada uno con 8gb, a efecto de demostración.&lt;/p&gt;
 &lt;p&gt;En este caso, el sistema operativo estaba en &lt;em&gt;/dev/sda&lt;/em&gt; y sus particiones, mientras que los discos para los datos de &lt;em&gt;mongodb&lt;/em&gt; fueron &lt;em&gt;/dev/sdb&lt;/em&gt;, &lt;em&gt;/dev/sdc&lt;/em&gt;, &lt;em&gt;/dev/sdd&lt;/em&gt;, &lt;em&gt;/dev/sde&lt;/em&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# ls /dev/sd* -1
