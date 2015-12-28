@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>debootstrap - Linux Sysadmin</title>
+    <title>Empaquetando ficheros .deb - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,25 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2015/12/empaquetando-ficheros-punto-deb.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="debootstrap" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="linux,debian,ubuntu,paquete,.deb" />
+        <meta name="description" content="Una de las grandes ventajas de linux es su sistema de paquetes. Con ellos es posible instalar de forma fácil un paquete de forma fácil y confiable. Hoy vamos a hacer un paquete .deb como ejemplo que instale un script cualquiera en la carpeta /usr/bin/ para su uso cotidiano ..." />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Empaquetando ficheros .deb"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2015/12/empaquetando-ficheros-punto-deb.html"/>
+        <meta property="og:description" content="Una de las grandes ventajas de linux es su sistema de paquetes. Con ellos es posible instalar de forma fácil un paquete de forma fácil y confiable. Hoy vamos a hacer un paquete .deb como ejemplo que instale un script cualquiera en la carpeta /usr/bin/ para su uso cotidiano ..."/>
+        <meta property="article:published_time" content="2015-12-28" />
+            <meta property="article:section" content="Operaciones" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="debian" />
+            <meta property="article:tag" content="ubuntu" />
+            <meta property="article:tag" content="paquete" />
+            <meta property="article:tag" content=".deb" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,6 +43,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -75,11 +86,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.tk/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
-        <li class="active">debootstrap</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
+                <li class="active">Empaquetando ficheros .deb</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -92,13 +103,195 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html">Creación de un livecd con Debian</a></h2>
-                <div class="summary"><p>Tras ver como las actualizaciones de mis máquinas virtuales <em>VirtualBox</em> expandían mis discos <em>.vdi</em> sin control, quise pasar la herramienta <em>zerofree</em> y un compactado con la herramienta oficial <em>VBoxManage</em>. No quería instalar <em>zerofree</em> de forma permanente y no pude encontrar un <em>livecd</em> que lo tuviera, así que decidí crear uno ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html">Seguir leyendo</a>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2015/12/empaquetando-ficheros-punto-deb.html"
+                       rel="bookmark"
+                       title="Permalink to Empaquetando ficheros .deb">
+                        Empaquetando ficheros .deb
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-12-28T10:00:00+01:00"> 2015-12-28</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 4 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/debian.html">debian</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/ubuntu.html">ubuntu</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/paquete.html">paquete</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/deb.html">.deb</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 </div>
-            </article>
-            <hr/>
+                <p>Una de las grandes ventajas de <em>linux</em> es su sistema de paquetes. Con ellos es posible instalar de forma fácil un paquete de forma fácil y confiable. Hoy vamos a hacer un paquete <em>.deb</em> como ejemplo que instale un <em>script</em> cualquiera en la carpeta <em>/usr/bin/</em> para su uso cotidiano.</p>
+<p>Por limpieza, vamos a crear una carpeta temporal para hacer el empaquetado, desde donde vamos a ejecutar todo el resto del procedimiento.</p>
+<div class="highlight"><pre>root@packager:~# mkdir workspace
+root@packager:~# <span class="nb">cd </span>workspace/
+root@packager:~/workspace# 
+</pre></div>
+
+
+<h2>Preparación de la estructura del paquete</h2>
+<p>Vamos a poner el <em>script</em> que queramos empaquetar, respetando al estructura que tendrá una vez se instale el paquete. También le damos los permisos que va a tener una vez instalado.</p>
+<div class="highlight"><pre>root@packager:~/workspace# mkdir -p usr/bin
+root@packager:~/workspace# cat usr/bin/welcome
+<span class="c">#!/bin/bash</span>
+
+<span class="nb">echo</span> <span class="s1">&#39;Hello world!&#39;</span>
+root@packager:~/workspace# chmod <span class="m">755</span> usr/bin/welcome
+root@packager:~/workspace# 
+</pre></div>
+
+
+<h2>Empaquetado de la carpeta de trabajo</h2>
+<p>Antes de empaquetar de acuerdo a las políticas de los paquetes <em>.deb</em>, sea en <em>Debian</em> o en <em>Ubuntu</em>, se requiere de una carpeta <strong>DEBIAN</strong> con un fichero <strong>control</strong>, que va a contener los metadatos del paquete.</p>
+<p>Para este fichero nos podemos guiar por la <a href="https://www.debian.org/doc/debian-policy/ch-controlfields.html">documentación oficial</a>. Como vamos a hacer un paquete mínimo, vamos a poner solamente los campos obligatorios y uno de los opcionales, que indicarán las necesidades de nuestro script:</p>
+<ul>
+<li><strong>Obligatorios</strong>:<ul>
+<li>Package</li>
+<li>Version</li>
+<li>Architecture compilado los binarios</li>
+<li>Maintainer</li>
+<li>Description</li>
+</ul>
+</li>
+<li><strong>Opcionales</strong>:<ul>
+<li>Depends</li>
+</ul>
+</li>
+</ul>
+<p>Para que el <em>script</em> pueda funcionar, hay que localizar todo aquello que pueda necesitar, y añadirlo al paquete o declarar los paquetes de los que dependa, para que se puedan instalar automáticamente si no estuvieran en el sistema destino.</p>
+<p>Concretamente, este <em>script</em> necesita dos comandos para funcionar: <strong>bash</strong> y <strong>echo</strong>. Vamos a localizarlos a ver de que paquete provienen. La idea es que nuestro paquete va a necesitar todos los paquetes que contengan los comandos necesarios, sin necesidad de incorporarlos.</p>
+<div class="highlight"><pre>root@packager:~/workspace# which bash
+/bin/bash
+root@packager:~/workspace# dpkg -S /bin/bash
+bash: /bin/bash
+root@packager:~/workspace# which <span class="nb">echo</span>
+/bin/echo
+root@packager:~/workspace# dpkg -S /bin/echo 
+coreutils: /bin/echo
+root@packager:~/workspace# 
+</pre></div>
+
+
+<p>De ahí deducimos que necesitamos los paquetes <strong>bash</strong> y <strong>coreutils</strong>, que aunque suelen venir de serie, vale la pena declararlos por si no fuera el caso. Esto es lo que va en el campo <strong>Depends</strong>.</p>
+<p>Reuniendo estos datos, podemos crear el fichero <strong>control</strong>, por ejemplo, como este:</p>
+<div class="highlight"><pre>root@packager:~/workspace# mkdir -p DEBIAN
+root@packager:~/workspace# cat DEBIAN/control 
+Package: welcome
+Version: 1.0-1
+Architecture: all
+Maintainer: Linux Sysadmin
+Description: A fancy shell script
+ To demonstrate how to package a .deb file
+Depends: bash, coreutils
+root@packager:~/workspace# 
+</pre></div>
+
+
+<p>Adicionalmente, la carpeta <strong>DEBIAN</strong> puede contener otros <em>scripts</em>, como por ejemplo, <strong>preinst</strong>, <strong>postinst</strong>, <strong>prerm</strong> y <strong>postrm</strong>, que podrían, por ejemplo, crear los usuarios necesarios.</p>
+<p>Como último paso, vamos a invocar el comando <strong>dpkg-deb</strong> para empaquetar la carpeta de trabajo.</p>
+<div class="highlight"><pre>root@packager:~/workspace# <span class="nb">cd</span> ..
+root@packager:~# dpkg-deb --build workspace/ welcome_1.0-1_all.deb
+dpkg-deb: construyendo el paquete <span class="sb">`</span>welcome<span class="s1">&#39; en `welcome_1.0-1_all.deb&#39;</span>.
+root@packager:~# 
+</pre></div>
+
+
+<h2>Comprobación de que el paquete funciona</h2>
+<p>Vamos a comprobar que el paquete no está instalado, por ejemplo buscando el <em>script</em> que hemos empaquetado:</p>
+<div class="highlight"><pre>root@packager:~# which welcome
+root@packager:~# welcome 
+bash: /usr/bin/welcome: No existe el fichero o el directorio
+root@packager:~# 
+</pre></div>
+
+
+<p>Efectivamente, no lo está; ahora se trata de invocar <strong>dpkg</strong> para instalar nuestro paquete.</p>
+<div class="highlight"><pre>root@packager:~# dpkg -i welcome_1.0-1_all.deb 
+Seleccionando el paquete welcome previamente no seleccionado.
+<span class="o">(</span>Leyendo la base de datos ... <span class="m">9984</span> ficheros o directorios instalados actualmente.<span class="o">)</span>
+Preparando para desempaquetar welcome_1.0-1_all.deb ...
+Desempaquetando welcome <span class="o">(</span>1.0-1<span class="o">)</span> ...
+Configurando welcome <span class="o">(</span>1.0-1<span class="o">)</span> ...
+root@packager:~# 
+</pre></div>
+
+
+<p>Y finalmente, verificamos que tenemos nuestro <em>script</em> en <em>/usr/bin/</em> como esperábamos:</p>
+<div class="highlight"><pre>root@packager:~# which welcome
+/usr/bin/welcome
+root@packager:~# welcome
+Hello world!
+root@packager:~# 
+</pre></div>
+
+
+<p>Y con esto tenemos nuestro paquete que podemos poner a buen recaudo.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html">Utilizando apt-cacher-ng para agilizar la instalación de paquetes</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'empaquetando-ficheros-punto-deb';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2015/12/empaquetando-ficheros-punto-deb.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
 
         </div>
         <div class="col-sm-3" id="sidebar">

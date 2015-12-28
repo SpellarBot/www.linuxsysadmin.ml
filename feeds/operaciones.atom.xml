@@ -1,5 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-12-02T12:30:00+01:00</updated><entry><title>Creación de un livecd con Debian</title><link href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html" rel="alternate"></link><updated>2015-12-02T12:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-12-02:2015/12/creacion-de-un-livecd-con-debian.html</id><summary type="html">&lt;p&gt;Tras ver como las actualizaciones de mis máquinas virtuales &lt;em&gt;VirtualBox&lt;/em&gt; expandían mis discos &lt;em&gt;.vdi&lt;/em&gt; sin control, quise pasar la herramienta &lt;em&gt;zerofree&lt;/em&gt; y un compactado con la herramienta oficial &lt;em&gt;VBoxManage&lt;/em&gt;. No quería instalar &lt;em&gt;zerofree&lt;/em&gt; de forma permanente y no pude encontrar un &lt;em&gt;livecd&lt;/em&gt; que lo tuviera, así que decidí crear uno.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-12-28T10:00:00+01:00</updated><entry><title>Empaquetando ficheros .deb</title><link href="http://www.linuxsysadmin.tk/2015/12/empaquetando-ficheros-punto-deb.html" rel="alternate"></link><updated>2015-12-28T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-12-28:2015/12/empaquetando-ficheros-punto-deb.html</id><summary type="html">&lt;p&gt;Una de las grandes ventajas de &lt;em&gt;linux&lt;/em&gt; es su sistema de paquetes. Con ellos es posible instalar de forma fácil un paquete de forma fácil y confiable. Hoy vamos a hacer un paquete &lt;em&gt;.deb&lt;/em&gt; como ejemplo que instale un &lt;em&gt;script&lt;/em&gt; cualquiera en la carpeta &lt;em&gt;/usr/bin/&lt;/em&gt; para su uso cotidiano.&lt;/p&gt;
+&lt;p&gt;Por limpieza, vamos a crear una carpeta temporal para hacer el empaquetado, desde donde vamos a ejecutar todo el resto del procedimiento.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@packager:~# mkdir workspace
+root@packager:~# &lt;span class="nb"&gt;cd &lt;/span&gt;workspace/
+root@packager:~/workspace# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Preparación de la estructura del paquete&lt;/h2&gt;
+&lt;p&gt;Vamos a poner el &lt;em&gt;script&lt;/em&gt; que queramos empaquetar, respetando al estructura que tendrá una vez se instale el paquete. También le damos los permisos que va a tener una vez instalado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@packager:~/workspace# mkdir -p usr/bin
+root@packager:~/workspace# cat usr/bin/welcome
+&lt;span class="c"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Hello world!&amp;#39;&lt;/span&gt;
+root@packager:~/workspace# chmod &lt;span class="m"&gt;755&lt;/span&gt; usr/bin/welcome
+root@packager:~/workspace# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Empaquetado de la carpeta de trabajo&lt;/h2&gt;
+&lt;p&gt;Antes de empaquetar de acuerdo a las políticas de los paquetes &lt;em&gt;.deb&lt;/em&gt;, sea en &lt;em&gt;Debian&lt;/em&gt; o en &lt;em&gt;Ubuntu&lt;/em&gt;, se requiere de una carpeta &lt;strong&gt;DEBIAN&lt;/strong&gt; con un fichero &lt;strong&gt;control&lt;/strong&gt;, que va a contener los metadatos del paquete.&lt;/p&gt;
+&lt;p&gt;Para este fichero nos podemos guiar por la &lt;a href="https://www.debian.org/doc/debian-policy/ch-controlfields.html"&gt;documentación oficial&lt;/a&gt;. Como vamos a hacer un paquete mínimo, vamos a poner solamente los campos obligatorios y uno de los opcionales, que indicarán las necesidades de nuestro script:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Obligatorios&lt;/strong&gt;:&lt;ul&gt;
+&lt;li&gt;Package&lt;/li&gt;
+&lt;li&gt;Version&lt;/li&gt;
+&lt;li&gt;Architecture compilado los binarios&lt;/li&gt;
+&lt;li&gt;Maintainer&lt;/li&gt;
+&lt;li&gt;Description&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Opcionales&lt;/strong&gt;:&lt;ul&gt;
+&lt;li&gt;Depends&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Para que el &lt;em&gt;script&lt;/em&gt; pueda funcionar, hay que localizar todo aquello que pueda necesitar, y añadirlo al paquete o declarar los paquetes de los que dependa, para que se puedan instalar automáticamente si no estuvieran en el sistema destino.&lt;/p&gt;
+&lt;p&gt;Concretamente, este &lt;em&gt;script&lt;/em&gt; necesita dos comandos para funcionar: &lt;strong&gt;bash&lt;/strong&gt; y &lt;strong&gt;echo&lt;/strong&gt;. Vamos a localizarlos a ver de que paquete provienen. La idea es que nuestro paquete va a necesitar todos los paquetes que contengan los comandos necesarios, sin necesidad de incorporarlos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@packager:~/workspace# which bash
+/bin/bash
+root@packager:~/workspace# dpkg -S /bin/bash
+bash: /bin/bash
+root@packager:~/workspace# which &lt;span class="nb"&gt;echo&lt;/span&gt;
+/bin/echo
+root@packager:~/workspace# dpkg -S /bin/echo 
+coreutils: /bin/echo
+root@packager:~/workspace# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De ahí deducimos que necesitamos los paquetes &lt;strong&gt;bash&lt;/strong&gt; y &lt;strong&gt;coreutils&lt;/strong&gt;, que aunque suelen venir de serie, vale la pena declararlos por si no fuera el caso. Esto es lo que va en el campo &lt;strong&gt;Depends&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Reuniendo estos datos, podemos crear el fichero &lt;strong&gt;control&lt;/strong&gt;, por ejemplo, como este:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@packager:~/workspace# mkdir -p DEBIAN
+root@packager:~/workspace# cat DEBIAN/control 
+Package: welcome
+Version: 1.0-1
+Architecture: all
+Maintainer: Linux Sysadmin
+Description: A fancy shell script
+ To demonstrate how to package a .deb file
+Depends: bash, coreutils
+root@packager:~/workspace# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Adicionalmente, la carpeta &lt;strong&gt;DEBIAN&lt;/strong&gt; puede contener otros &lt;em&gt;scripts&lt;/em&gt;, como por ejemplo, &lt;strong&gt;preinst&lt;/strong&gt;, &lt;strong&gt;postinst&lt;/strong&gt;, &lt;strong&gt;prerm&lt;/strong&gt; y &lt;strong&gt;postrm&lt;/strong&gt;, que podrían, por ejemplo, crear los usuarios necesarios.&lt;/p&gt;
+&lt;p&gt;Como último paso, vamos a invocar el comando &lt;strong&gt;dpkg-deb&lt;/strong&gt; para empaquetar la carpeta de trabajo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@packager:~/workspace# &lt;span class="nb"&gt;cd&lt;/span&gt; ..
+root@packager:~# dpkg-deb --build workspace/ welcome_1.0-1_all.deb
+dpkg-deb: construyendo el paquete &lt;span class="sb"&gt;`&lt;/span&gt;welcome&lt;span class="s1"&gt;&amp;#39; en `welcome_1.0-1_all.deb&amp;#39;&lt;/span&gt;.
+root@packager:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Comprobación de que el paquete funciona&lt;/h2&gt;
+&lt;p&gt;Vamos a comprobar que el paquete no está instalado, por ejemplo buscando el &lt;em&gt;script&lt;/em&gt; que hemos empaquetado:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@packager:~# which welcome
+root@packager:~# welcome 
+bash: /usr/bin/welcome: No existe el fichero o el directorio
+root@packager:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Efectivamente, no lo está; ahora se trata de invocar &lt;strong&gt;dpkg&lt;/strong&gt; para instalar nuestro paquete.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@packager:~# dpkg -i welcome_1.0-1_all.deb 
+Seleccionando el paquete welcome previamente no seleccionado.
+&lt;span class="o"&gt;(&lt;/span&gt;Leyendo la base de datos ... &lt;span class="m"&gt;9984&lt;/span&gt; ficheros o directorios instalados actualmente.&lt;span class="o"&gt;)&lt;/span&gt;
+Preparando para desempaquetar welcome_1.0-1_all.deb ...
+Desempaquetando welcome &lt;span class="o"&gt;(&lt;/span&gt;1.0-1&lt;span class="o"&gt;)&lt;/span&gt; ...
+Configurando welcome &lt;span class="o"&gt;(&lt;/span&gt;1.0-1&lt;span class="o"&gt;)&lt;/span&gt; ...
+root@packager:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y finalmente, verificamos que tenemos nuestro &lt;em&gt;script&lt;/em&gt; en &lt;em&gt;/usr/bin/&lt;/em&gt; como esperábamos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@packager:~# which welcome
+/usr/bin/welcome
+root@packager:~# welcome
+Hello world!
+root@packager:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos nuestro paquete que podemos poner a buen recaudo.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="ubuntu"></category><category term="paquete"></category><category term=".deb"></category></entry><entry><title>Creación de un livecd con Debian</title><link href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html" rel="alternate"></link><updated>2015-12-02T12:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-12-02:2015/12/creacion-de-un-livecd-con-debian.html</id><summary type="html">&lt;p&gt;Tras ver como las actualizaciones de mis máquinas virtuales &lt;em&gt;VirtualBox&lt;/em&gt; expandían mis discos &lt;em&gt;.vdi&lt;/em&gt; sin control, quise pasar la herramienta &lt;em&gt;zerofree&lt;/em&gt; y un compactado con la herramienta oficial &lt;em&gt;VBoxManage&lt;/em&gt;. No quería instalar &lt;em&gt;zerofree&lt;/em&gt; de forma permanente y no pude encontrar un &lt;em&gt;livecd&lt;/em&gt; que lo tuviera, así que decidí crear uno.&lt;/p&gt;
 &lt;p&gt;Para conseguirlo, se va a usar un sistema de ficheros creado con &lt;em&gt;debootstrap&lt;/em&gt; y compactado mediante &lt;em&gt;SquashFS&lt;/em&gt;; este sistema de ficheros se va a empaquetar en un &lt;em&gt;.iso&lt;/em&gt; junto con un &lt;em&gt;kernel&lt;/em&gt;, un &lt;em&gt;initrd&lt;/em&gt; y el bootloader &lt;em&gt;isolinux&lt;/em&gt;. La herramienta que hace eso es &lt;em&gt;genisoimage&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Este tutorial se ejecutó en una distribución &lt;em&gt;Debian&lt;/em&gt;, pero no hay ningún problema en hacerlo en una &lt;em&gt;Ubuntu&lt;/em&gt; u otra distribución, siempre que sepamos como crear la imagen base para empaquetar.&lt;/p&gt;
 &lt;h2&gt;Preparación del entorno&lt;/h2&gt;
