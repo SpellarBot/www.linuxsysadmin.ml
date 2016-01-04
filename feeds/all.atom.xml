@@ -1,5 +1,271 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-12-28T10:00:00+01:00</updated><entry><title>Empaquetando ficheros .deb</title><link href="http://www.linuxsysadmin.tk/2015/12/empaquetando-ficheros-punto-deb.html" rel="alternate"></link><updated>2015-12-28T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-12-28:2015/12/empaquetando-ficheros-punto-deb.html</id><summary type="html">&lt;p&gt;Una de las grandes ventajas de &lt;em&gt;linux&lt;/em&gt; es su sistema de paquetes. Con ellos es posible instalar de forma fácil un paquete de forma fácil y confiable. Hoy vamos a hacer un paquete &lt;em&gt;.deb&lt;/em&gt; como ejemplo que instale un &lt;em&gt;script&lt;/em&gt; cualquiera en la carpeta &lt;em&gt;/usr/bin/&lt;/em&gt; para su uso cotidiano.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-01-04T10:00:00+01:00</updated><entry><title>Enjaulado de usuarios para uso de rsync</title><link href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html" rel="alternate"></link><updated>2016-01-04T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-01-04:2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html</id><summary type="html">&lt;p&gt;Todos nos hemos encontrado alguna vez con una web, sea en &lt;em&gt;HTML&lt;/em&gt; o en &lt;em&gt;PHP&lt;/em&gt;, que se compone de centenares o miles de ficheros, y que hay que ir actualizando cada vez que cambian unos pocos ficheros. En estos casos la capacidad incremental de la herramienta &lt;strong&gt;rsync&lt;/strong&gt; puede ayudarnos mucho.&lt;/p&gt;
+&lt;p&gt;Sin embargo, la herramienta &lt;strong&gt;rsync&lt;/strong&gt; funciona por el puerto de &lt;em&gt;SSH&lt;/em&gt;, y dar acceso al mismo es un problema desde el punto de vista de la seguridad del sistema. Vamos a crear una jaula para los usuarios que lo necesiten, y vamos a limitar los comandos que puede utilizar, de forma que solo pueda hacer &lt;strong&gt;rsync&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Para poder continuar, necesitamos las 2 herramientas que se van a usar: &lt;strong&gt;rsync&lt;/strong&gt; y &lt;strong&gt;rssh&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# apt-get install rssh rsync
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias       
+Leyendo la información de estado... Hecho
+...
+Se instalarán los siguientes paquetes NUEVOS:
+  libpopt0 rssh rsync
+&lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;3&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
+Se necesita descargar &lt;span class="m"&gt;505&lt;/span&gt; kB de archivos.
+Se utilizarán &lt;span class="m"&gt;962&lt;/span&gt; kB de espacio de disco adicional después de esta operación.
+...
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Preparación del sistema de enjaulado&lt;/h2&gt;
+&lt;p&gt;Como decisión de diseño, he decidido que voy a enjaular todos los usuarios que pertenezcan a un grupo, al que llamaremos &lt;em&gt;restricted&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# groupadd restricted
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora vamos a configurar el demonio &lt;strong&gt;SSH&lt;/strong&gt; para que todos los usuarios del grupo &lt;em&gt;restricted&lt;/em&gt; queden enjaulados en &lt;em&gt;/srv/jails/&lt;/em&gt;, en una carpeta por usuario. La directiva &lt;em&gt;X11Forwarding&lt;/em&gt; y &lt;em&gt;AllowTcpForwarding&lt;/em&gt; son restricciones adicionales y no son necesarias.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# cat /etc/ssh/sshd_config 
+...
+Match group restricted
+    ChrootDirectory /srv/jails/%u
+    X11Forwarding no
+    AllowTcpForwarding no
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y reiniciamos el demonio para que se apliquen las modificaciones en la configuración.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# service ssh restart
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Creando una jaula para el primer usuario&lt;/h2&gt;
+&lt;p&gt;Para tener un usuario enjaulado, necesitamos un usuario, en este caso, el usuario &lt;em&gt;web&lt;/em&gt;. Le vamos a poner &lt;em&gt;rssh&lt;/em&gt; como shell, su carpeta personal como &lt;em&gt;/&lt;/em&gt; y le asignamos el grupo &lt;em&gt;restricted&lt;/em&gt; para que quede enjaulado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# useradd -d / -s /usr/bin/rssh -G restricted web
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para que el usuario &lt;em&gt;web&lt;/em&gt; pueda entrar en esta máquina, necesita una contraseña. Alternativamente, podríamos haber montado una autenticación por claves &lt;em&gt;SSH&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# passwd web
+Introduzca la nueva contraseña de UNIX: 
+Vuelva a escribir la nueva contraseña de UNIX: 
+passwd: contraseña actualizada correctamente
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y ahora vamos a crearle una estructura de carpetas muy básica en donde deberá estar su jaula. Puesto que se trata del usuario &lt;em&gt;web&lt;/em&gt;, la carpeta de la jaula (la que el usuario verá como &lt;em&gt;/&lt;/em&gt;) va a ser &lt;em&gt;/srv/jails/web/&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;IMPORTANTE&lt;/strong&gt;: Esta carpeta y todas las de la ruta deben perteneces al usuario &lt;em&gt;root&lt;/em&gt; y tener permisos de escritura solo por el &lt;em&gt;owner&lt;/em&gt;; de otra manera, el &lt;em&gt;SSH&lt;/em&gt; falla al enjaular.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# mkdir -p /srv/jails/web/&lt;span class="o"&gt;{&lt;/span&gt;usr/bin,etc,lib&lt;span class="o"&gt;}&lt;/span&gt;
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para limitar que el usuario solo pueda hacer &lt;em&gt;rsync&lt;/em&gt; vamos a necesitar la ayuda de &lt;em&gt;rssh&lt;/em&gt;; así pues, vamos a poner ambos binarios en la jaula.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# cp /usr/bin/rssh /srv/jails/web/usr/bin/
+root@webserver:~# cp /usr/bin/rsync /srv/jails/web/usr/bin/
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Estos dos comandos son binarios &lt;em&gt;linkados&lt;/em&gt; dinámicamente que necesitan librerías. Vamos a buscarlos con el comando &lt;strong&gt;ldd&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# ldd /usr/bin/rssh 
+    linux-gate.so.1 &lt;span class="o"&gt;(&lt;/span&gt;0xb7789000&lt;span class="o"&gt;)&lt;/span&gt;
+    libc.so.6 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/i386-linux-gnu/libc.so.6 &lt;span class="o"&gt;(&lt;/span&gt;0xb760a000&lt;span class="o"&gt;)&lt;/span&gt;
+    /lib/ld-linux.so.2 &lt;span class="o"&gt;(&lt;/span&gt;0xb778c000&lt;span class="o"&gt;)&lt;/span&gt;
+root@webserver:~# ldd /usr/bin/rsync 
+    linux-gate.so.1 &lt;span class="o"&gt;(&lt;/span&gt;0xb7741000&lt;span class="o"&gt;)&lt;/span&gt;
+    libattr.so.1 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/i386-linux-gnu/libattr.so.1 &lt;span class="o"&gt;(&lt;/span&gt;0xb76a3000&lt;span class="o"&gt;)&lt;/span&gt;
+    libacl.so.1 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/i386-linux-gnu/libacl.so.1 &lt;span class="o"&gt;(&lt;/span&gt;0xb7699000&lt;span class="o"&gt;)&lt;/span&gt;
+    libpopt.so.0 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/i386-linux-gnu/libpopt.so.0 &lt;span class="o"&gt;(&lt;/span&gt;0xb768a000&lt;span class="o"&gt;)&lt;/span&gt;
+    libc.so.6 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/i386-linux-gnu/libc.so.6 &lt;span class="o"&gt;(&lt;/span&gt;0xb7519000&lt;span class="o"&gt;)&lt;/span&gt;
+    /lib/ld-linux.so.2 &lt;span class="o"&gt;(&lt;/span&gt;0xb7744000&lt;span class="o"&gt;)&lt;/span&gt;
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y las copiamos en la carpeta &lt;em&gt;lib&lt;/em&gt; de la jaula.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# cp /lib/ld-linux.so.2 /srv/jails/web/lib/
+root@webserver:~# cp /lib/i386-linux-gnu/libc.so.6 /srv/jails/web/lib/
+root@webserver:~# cp /lib/i386-linux-gnu/libattr.so.1 /srv/jails/web/lib/
+root@webserver:~# cp /lib/i386-linux-gnu/libacl.so.1 /srv/jails/web/lib/
+root@webserver:~# cp /lib/i386-linux-gnu/libpopt.so.0 /srv/jails/web/lib/
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Voy a quitar los permisos de ejecución de la librería &lt;em&gt;libc&lt;/em&gt; porque no lo necesita.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# chmod &lt;span class="m"&gt;644&lt;/span&gt; /srv/jails/web/lib/libc.so.6 
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora que tenemos las librerías en la jaula, volvemos a mirar que otras librerías puedan necesitar con &lt;strong&gt;ldd&lt;/strong&gt;, para evitar dejarnos ninguna.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# ldd /srv/jails/web/lib/*
+/srv/jails/web/lib/ld-linux.so.2:
+    statically linked
+/srv/jails/web/lib/libacl.so.1:
+    linux-gate.so.1 &lt;span class="o"&gt;(&lt;/span&gt;0xb77b3000&lt;span class="o"&gt;)&lt;/span&gt;
+    libattr.so.1 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/i386-linux-gnu/libattr.so.1 &lt;span class="o"&gt;(&lt;/span&gt;0xb779e000&lt;span class="o"&gt;)&lt;/span&gt;
+    libc.so.6 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/i386-linux-gnu/libc.so.6 &lt;span class="o"&gt;(&lt;/span&gt;0xb762d000&lt;span class="o"&gt;)&lt;/span&gt;
+    /lib/ld-linux.so.2 &lt;span class="o"&gt;(&lt;/span&gt;0xb77b6000&lt;span class="o"&gt;)&lt;/span&gt;
+/srv/jails/web/lib/libattr.so.1:
+    linux-gate.so.1 &lt;span class="o"&gt;(&lt;/span&gt;0xb7756000&lt;span class="o"&gt;)&lt;/span&gt;
+    libc.so.6 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/i386-linux-gnu/libc.so.6 &lt;span class="o"&gt;(&lt;/span&gt;0xb75da000&lt;span class="o"&gt;)&lt;/span&gt;
+    /lib/ld-linux.so.2 &lt;span class="o"&gt;(&lt;/span&gt;0xb7759000&lt;span class="o"&gt;)&lt;/span&gt;
+/srv/jails/web/lib/libc.so.6:
+    /lib/ld-linux.so.2 &lt;span class="o"&gt;(&lt;/span&gt;0xb779f000&lt;span class="o"&gt;)&lt;/span&gt;
+    linux-gate.so.1 &lt;span class="o"&gt;(&lt;/span&gt;0xb779c000&lt;span class="o"&gt;)&lt;/span&gt;
+/srv/jails/web/lib/libpopt.so.0:
+    linux-gate.so.1 &lt;span class="o"&gt;(&lt;/span&gt;0xb7782000&lt;span class="o"&gt;)&lt;/span&gt;
+    libc.so.6 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/i386-linux-gnu/libc.so.6 &lt;span class="o"&gt;(&lt;/span&gt;0xb75fe000&lt;span class="o"&gt;)&lt;/span&gt;
+    /lib/ld-linux.so.2 &lt;span class="o"&gt;(&lt;/span&gt;0xb7785000&lt;span class="o"&gt;)&lt;/span&gt;
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y como no han entrado de nuevas, hemos acabado con esto. Ahora vamos a copiar la configuración de &lt;strong&gt;rssh&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# cp /etc/rssh.conf /srv/jails/web/etc/
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a añadir la directiva &lt;em&gt;allowrsync&lt;/em&gt; ya que, por defecto, no se permite nada:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;ANTES&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# grep allowrsync /srv/jails/web/etc/rssh.conf 
+&lt;span class="c"&gt;#allowrsync&lt;/span&gt;
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;DESPUES&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# grep allowrsync /srv/jails/web/etc/rssh.conf 
+allowrsync
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como estamos esperando que el usuario &lt;em&gt;web&lt;/em&gt; deje sus cosas en una carpeta &lt;em&gt;www&lt;/em&gt;, vamos a crearla, ya que va a ser la única en la que pueda copiar sus cosas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# mkdir /srv/jails/web/www
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y le damos permisos necesarios para que escriba en ella; por ejemplo, le damos la propiedad de la carpeta.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# chown web:web /srv/jails/web/www/
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto queda completa la jaula. Como demostración, muestro la salida del comando &lt;strong&gt;tree&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# tree /srv/jails/web/
+/srv/jails/web/
+├── etc
+│   └── rssh.conf
+├── lib
+│   ├── ld-linux.so.2
+│   ├── libacl.so.1
+│   ├── libattr.so.1
+│   ├── libc.so.6
+│   └── libpopt.so.0
+├── usr
+│   └── bin
+│       ├── rssh
+│       └── rsync
+└── www
+
+&lt;span class="m"&gt;5&lt;/span&gt; directories, &lt;span class="m"&gt;8&lt;/span&gt; files
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Uso de la jaula&lt;/h2&gt;
+&lt;p&gt;Supongamos que tenemos un proyecto web en una máquina &lt;em&gt;developer&lt;/em&gt;, por ejemplo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;tree web/
+web/
+└── index.html
+
+&lt;span class="m"&gt;0&lt;/span&gt; directories, &lt;span class="m"&gt;1&lt;/span&gt; file
+gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Intentamos entrar por &lt;em&gt;SSH&lt;/em&gt; y vemos que falla:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;ssh web@10.0.0.2
+web@10.0.0.2&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+
+The programs included with the Debian GNU/Linux system are free software&lt;span class="p"&gt;;&lt;/span&gt;
+the exact distribution terms &lt;span class="k"&gt;for&lt;/span&gt; each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Wed Dec &lt;span class="m"&gt;30&lt;/span&gt; 21:12:44 &lt;span class="m"&gt;2015&lt;/span&gt; from 10.0.0.3
+
+This account is restricted by rssh.
+Allowed commands: rsync 
+
+If you believe this is in error, please contact your system administrator.
+
+Connection to 10.0.0.2 closed.
+gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a usar &lt;em&gt;rsync&lt;/em&gt; para sincronizar este proyecto con el servidor que acabamos de montar. Para eso, la máquina cliente necesita tener instalado el paquete &lt;strong&gt;rsync&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;rsync -rvzc --delete web/ web@10.0.0.2:/www
+web@10.0.0.2&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+sending incremental file list
+index.html
+
+sent &lt;span class="m"&gt;139&lt;/span&gt; bytes  received &lt;span class="m"&gt;35&lt;/span&gt; bytes  49.71 bytes/sec
+total size is &lt;span class="m"&gt;12&lt;/span&gt;  speedup is 0.07
+gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si repetimos el comando, vemos que la lista de ficheros no incluye el &lt;em&gt;index.html&lt;/em&gt;, porque no ha cambiado respecto a lo que tenemos en el servidor, así que no lo manda.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;rsync -rvzc --delete web/ web@10.0.0.2:/www
+web@10.0.0.2&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+sending incremental file list
+
+sent &lt;span class="m"&gt;83&lt;/span&gt; bytes  received &lt;span class="m"&gt;12&lt;/span&gt; bytes  7.60 bytes/sec
+total size is &lt;span class="m"&gt;12&lt;/span&gt;  speedup is 0.13
+gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;los &lt;em&gt;flags&lt;/em&gt; elegidos son &lt;strong&gt;-r&lt;/strong&gt; (recursivo), &lt;strong&gt;-v&lt;/strong&gt; (verbose), &lt;strong&gt;-z&lt;/strong&gt; (comprimido), &lt;strong&gt;-c&lt;/strong&gt; (diferenciar por &lt;em&gt;checksum&lt;/em&gt;) y &lt;strong&gt;--delete&lt;/strong&gt; (para borrar fichero que estén en el servidor y no deban).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;IMPORTANTE&lt;/strong&gt;: la carpeta origen acaba con &lt;em&gt;/&lt;/em&gt;. Esa es la diferencia entre copiar el contenido de la carpeta y copiar la carpeta misma.&lt;/p&gt;
+&lt;p&gt;Analizamos el resultado y vemos que lo hemos copiado en &lt;em&gt;/www/&lt;/em&gt;, siempre desde el punto de vista de la jaula.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# ls /www
+ls: no se puede acceder a /www: No existe el fichero o el directorio
+root@webserver:~# tree /srv/jails/web/
+/srv/jails/web/
+├── etc
+│   └── rssh.conf
+├── lib
+│   ├── ld-linux.so.2
+│   ├── libacl.so.1
+│   ├── libattr.so.1
+│   ├── libc.so.6
+│   └── libpopt.so.0
+├── usr
+│   └── bin
+│       ├── rssh
+│       └── rsync
+└── www
+    └── index.html
+
+&lt;span class="m"&gt;5&lt;/span&gt; directories, &lt;span class="m"&gt;9&lt;/span&gt; files
+root@webserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto está todo hecho. Solo falta instalar el servidor web, pero eso lo dejo pendiente.&lt;/p&gt;</summary><category term="linux"></category><category term="rsync"></category><category term="rssh"></category><category term="ssh"></category><category term="ldd"></category><category term="jaula"></category></entry><entry><title>Empaquetando ficheros .deb</title><link href="http://www.linuxsysadmin.tk/2015/12/empaquetando-ficheros-punto-deb.html" rel="alternate"></link><updated>2015-12-28T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-12-28:2015/12/empaquetando-ficheros-punto-deb.html</id><summary type="html">&lt;p&gt;Una de las grandes ventajas de &lt;em&gt;linux&lt;/em&gt; es su sistema de paquetes. Con ellos es posible instalar de forma fácil un paquete de forma fácil y confiable. Hoy vamos a hacer un paquete &lt;em&gt;.deb&lt;/em&gt; como ejemplo que instale un &lt;em&gt;script&lt;/em&gt; cualquiera en la carpeta &lt;em&gt;/usr/bin/&lt;/em&gt; para su uso cotidiano.&lt;/p&gt;
 &lt;p&gt;Por limpieza, vamos a crear una carpeta temporal para hacer el empaquetado, desde donde vamos a ejecutar todo el resto del procedimiento.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@packager:~# mkdir workspace
 root@packager:~# &lt;span class="nb"&gt;cd &lt;/span&gt;workspace/

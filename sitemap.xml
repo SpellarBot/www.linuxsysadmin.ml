@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2015-12-28T09:41:41-00:00</lastmod>
+<lastmod>2016-01-04T10:10:40-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2015-12-28T09:41:41-00:00</lastmod>
+<lastmod>2016-01-04T10:10:40-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2015-12-28T09:41:41-00:00</lastmod>
+<lastmod>2016-01-04T10:10:40-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2015-12-28T09:41:41-00:00</lastmod>
+<lastmod>2016-01-04T10:10:40-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2015-12-28T09:41:41-00:00</lastmod>
+<lastmod>2016-01-04T10:10:40-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html</loc>
+<lastmod>2016-01-04T10:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -131,7 +138,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/seguridad.html</loc>
-<lastmod>2015-10-29T11:30:00-00:15</lastmod>
+<lastmod>2016-01-04T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -179,15 +186,15 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/kernel.html</loc>
-<lastmod>2015-11-02T14:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/ldd.html</loc>
+<lastmod>2016-01-04T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/nmap.html</loc>
-<lastmod>2015-10-29T11:30:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/kernel.html</loc>
+<lastmod>2015-11-02T14:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -208,7 +215,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/linux.html</loc>
-<lastmod>2015-12-28T10:00:00-00:15</lastmod>
+<lastmod>2016-01-04T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -221,8 +228,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/systemd.html</loc>
-<lastmod>2015-12-08T12:30:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/rsync.html</loc>
+<lastmod>2016-01-04T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -242,8 +249,22 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/nmap.html</loc>
+<lastmod>2015-10-29T11:30:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/raid.html</loc>
 <lastmod>2015-12-17T23:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/livecd.html</loc>
+<lastmod>2015-12-02T12:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -263,8 +284,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/zerofree.html</loc>
-<lastmod>2015-12-02T12:30:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/systemd.html</loc>
+<lastmod>2015-12-08T12:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -292,7 +313,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/ssh.html</loc>
-<lastmod>2015-10-29T11:30:00-00:15</lastmod>
+<lastmod>2016-01-04T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -312,6 +333,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/jaula.html</loc>
+<lastmod>2016-01-04T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/tmpfs.html</loc>
 <lastmod>2015-11-16T23:15:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -326,7 +354,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/livecd.html</loc>
+<loc>http://www.linuxsysadmin.tk/tag/zerofree.html</loc>
 <lastmod>2015-12-02T12:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -354,6 +382,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/rssh.html</loc>
+<lastmod>2016-01-04T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/deb.html</loc>
 <lastmod>2015-12-28T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -362,7 +397,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2015-12-28T10:00:00-00:15</lastmod>
+<lastmod>2016-01-04T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
