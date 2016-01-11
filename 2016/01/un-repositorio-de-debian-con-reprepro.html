@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Utilizando apt-cacher-ng para agilizar la instalación de paquetes - Linux Sysadmin</title>
+    <title>Un repositorio de Debian con reprepro - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,24 +9,26 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.tk/2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html">
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/01/un-repositorio-de-debian-con-reprepro.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="keywords" content="linux,debian,jessie,apt-cacher-ng,cache" />
-        <meta name="description" content="Hace tiempo veo que tras usar muchas maquinas virtuales Debian para el uso diario y para las demostraciones de este blog, el ancho de banda usado para bajar los paquetes se dispara. La mayoría de veces se trata de los mismos paquetes, para instalar las mismas aplicaciones, servicios o actualizaciones ..." />
+        <meta name="keywords" content="linux,debian,repositorio,reprepro,nginx,gpg,apt" />
+        <meta name="description" content="Una de las grandes facilidades que nos ofrece una distribución de Linux es su sistema de gestor de paquetes. Los paquetes oficiales nos simplifican la instalación y mantenimiento de paquetes; sin embargo, podemos sacar provecho del sistema de paquetes para uso personal, para automatizar instalaciones y actualizaciones que queramos hacer ..." />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Utilizando apt-cacher-ng para agilizar la instalación de paquetes"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk/2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html"/>
-        <meta property="og:description" content="Hace tiempo veo que tras usar muchas maquinas virtuales Debian para el uso diario y para las demostraciones de este blog, el ancho de banda usado para bajar los paquetes se dispara. La mayoría de veces se trata de los mismos paquetes, para instalar las mismas aplicaciones, servicios o actualizaciones ..."/>
-        <meta property="article:published_time" content="2015-12-21" />
+        <meta property="og:title" content="Un repositorio de Debian con reprepro"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/01/un-repositorio-de-debian-con-reprepro.html"/>
+        <meta property="og:description" content="Una de las grandes facilidades que nos ofrece una distribución de Linux es su sistema de gestor de paquetes. Los paquetes oficiales nos simplifican la instalación y mantenimiento de paquetes; sin embargo, podemos sacar provecho del sistema de paquetes para uso personal, para automatizar instalaciones y actualizaciones que queramos hacer ..."/>
+        <meta property="article:published_time" content="2016-01-11" />
             <meta property="article:section" content="Sistemas" />
             <meta property="article:tag" content="linux" />
             <meta property="article:tag" content="debian" />
-            <meta property="article:tag" content="jessie" />
-            <meta property="article:tag" content="apt-cacher-ng" />
-            <meta property="article:tag" content="cache" />
+            <meta property="article:tag" content="repositorio" />
+            <meta property="article:tag" content="reprepro" />
+            <meta property="article:tag" content="nginx" />
+            <meta property="article:tag" content="gpg" />
+            <meta property="article:tag" content="apt" />
             <meta property="article:author" content="Gerard" />
 
 
@@ -89,7 +91,7 @@ Linux Sysadmin            </a>
             <ol class="breadcrumb">
                 <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
                 <li><a href="http://www.linuxsysadmin.tk/category/sistemas.html" title="Sistemas">Sistemas</a></li>
-                <li class="active">Utilizando apt-cacher-ng para agilizar la instalación de paquetes</li>
+                <li class="active">Un repositorio de Debian con reprepro</li>
             </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -107,10 +109,10 @@ Linux Sysadmin            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://www.linuxsysadmin.tk/2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html"
+                    <a href="http://www.linuxsysadmin.tk/2016/01/un-repositorio-de-debian-con-reprepro.html"
                        rel="bookmark"
-                       title="Permalink to Utilizando apt-cacher-ng para agilizar la instalación de paquetes">
-                        Utilizando apt-cacher-ng para agilizar la instalación de paquetes
+                       title="Permalink to Un repositorio de Debian con reprepro">
+                        Un repositorio de Debian con reprepro
                     </a>
                 </h1>
             </header>
@@ -120,14 +122,14 @@ Linux Sysadmin            </a>
 <footer class="post-info">
     <span class="label label-default">Fecha</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2015-12-21T10:00:00+01:00"> 2015-12-21</time>
+        <i class="fa fa-calendar"></i><time datetime="2016-01-11T08:00:00+01:00"> 2016-01-11</time>
     </span>
 
 
             <span class="label label-default">Autor</span>
             <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
 
-        <span class="label label-default">Tiempo de lectura</span> 5 minutos
+        <span class="label label-default">Tiempo de lectura</span> 7 minutos
         <span class="label label-default">Categoría</span>
         <a href="http://www.linuxsysadmin.tk/category/sistemas.html">Sistemas</a>
 
@@ -137,117 +139,225 @@ Linux Sysadmin            </a>
         /
 	<a href="http://www.linuxsysadmin.tk/tag/debian.html">debian</a>
         /
-	<a href="http://www.linuxsysadmin.tk/tag/jessie.html">jessie</a>
+	<a href="http://www.linuxsysadmin.tk/tag/repositorio.html">repositorio</a>
         /
-	<a href="http://www.linuxsysadmin.tk/tag/apt-cacher-ng.html">apt-cacher-ng</a>
+	<a href="http://www.linuxsysadmin.tk/tag/reprepro.html">reprepro</a>
         /
-	<a href="http://www.linuxsysadmin.tk/tag/cache.html">cache</a>
+	<a href="http://www.linuxsysadmin.tk/tag/nginx.html">nginx</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/gpg.html">gpg</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/apt.html">apt</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>Hace tiempo veo que tras usar muchas maquinas virtuales <em>Debian</em> para el uso diario y para las demostraciones de este blog, el ancho de banda usado para bajar los paquetes se dispara. La mayoría de veces se trata de los mismos paquetes, para instalar las mismas aplicaciones, servicios o actualizaciones.</p>
-<p>En el artículo de hoy, voy a enseñar como usar un <em>proxy</em> con una <em>caché</em> para <em>apt-get</em>, llamado <strong>apt-cacher-ng</strong>, de forma que los paquetes son descargados por la primera máquina que los pida, guardados en un servidor local y aprovechados por el resto de máquinas.</p>
-<h2>Preparación de las máquinas</h2>
-<p>Partimos de la máquina habitual, llamada <strong>aptcacher</strong>, siendo esta un contenedor LXC con una <em>Debian Jessie</em> básica, aunque esto se podría haber puesto en una <em>Ubuntu</em> o cualquier otra distribución que funcione con paquetes <em>.deb</em>.</p>
-<p>Otras máquinas que vamos a usar son unas máquinas cliente en donde vamos a instalar paquetes cualesquiera para demostrar el funcionamiento, llamadas <strong>client1</strong> y <strong>client2</strong>; estos clientes están en la misma red que la máquina <strong>aptcacher</strong> y tienen conectividad con ella por el puerto <em>TCP</em> 3142.</p>
+                <p>Una de las grandes facilidades que nos ofrece una distribución de Linux es su sistema de gestor de paquetes. Los paquetes oficiales nos simplifican la instalación y mantenimiento de paquetes; sin embargo, podemos sacar provecho del sistema de paquetes para uso personal, para automatizar instalaciones y actualizaciones que queramos hacer.</p>
+<p>En este artículo vamos a crear un repositorio en el que podemos poner paquetes, sean sacados del repositorio oficial (para hacer de caché), o sean paquetes creados por nosotros con aplicativos propios o empaquetados a partir de paquetes no libres.</p>
+<p>Para hacerlo, necesitamos una máquina en donde pondremos el repositorio, y a efectos de demostración, una máquina en donde instalaremos paquetes de dicho repositorio. En este caso, usaremos como <em>LXC</em> tecnología para crear las máquina virtuales.</p>
 <div class="highlight"><pre>root@lxc:~# lxc-ls -f
-NAME       STATE    IPV4      IPV6  AUTOSTART  
----------------------------------------------
-aptcacher  RUNNING  10.0.0.2  -     YES        
-client1    RUNNING  10.0.0.3  -     YES        
-client2    RUNNING  10.0.0.4  -     YES        
+NAME        STATE    IPV4      IPV6  AUTOSTART  
+----------------------------------------------
+client      RUNNING  10.0.0.3  -     YES        
+repository  RUNNING  10.0.0.2  -     YES        
 root@lxc:~# 
 </pre></div>
 
 
-<p>Empezamos instalando el servicio <strong>apt-cacher-ng</strong> en la máquina servidor <strong>aptcacher</strong>:</p>
-<div class="highlight"><pre>root@aptcacher:~# apt-get install apt-cacher-ng
+<h2>Montando el repositorio</h2>
+<p>Un repositorio <em>Debian</em> no es mas que un servidor web sirviendo una estructura de ficheros con una forma concreta, que vamos a crear con <strong>reprepro</strong> y vamos a servir con <strong>nginx</strong>. Aís pues, los instalamos.</p>
+<div class="highlight"><pre>root@repository:~# apt-get install reprepro nginx-light
 Leyendo lista de paquetes... Hecho
-Creando árbol de dependencias... Hecho
-...  
-Se instalarán los siguientes paquetes NUEVOS:
-  apt-cacher-ng ed
-<span class="m">0</span> actualizados, <span class="m">2</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
-Se necesita descargar <span class="m">500</span> kB de archivos.
-Se utilizarán 1.168 kB de espacio de disco adicional después de esta operación.
-¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
-...
-root@aptcacher:~# 
-</pre></div>
-
-
-<p>Las configuraciones que vienen por defecto son bastante adecuadas y no tuve que efectuar ningún cambio.</p>
-<p>Por otra parte, hay que configurar las máquinas que se quieran beneficiar de este servidor, añadiendo una línea de configuración en su <strong>apt-get</strong>, por ejemplo, poniendo un fichero adicional en <em>/etc/apt/apt.conf.d/</em></p>
-<div class="highlight"><pre>root@aptcacher:~# cat /etc/apt/apt.conf.d/02proxy 
-Acquire::http <span class="o">{</span> Proxy <span class="s2">&quot;http://10.0.0.2:3142&quot;</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-root@aptcacher:~# 
-
-root@client1:~# cat /etc/apt/apt.conf.d/02proxy 
-Acquire::http <span class="o">{</span> Proxy <span class="s2">&quot;http://10.0.0.2:3142&quot;</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-root@client1:~# 
-
-root@client2:~# cat /etc/apt/apt.conf.d/02proxy 
-Acquire::http <span class="o">{</span> Proxy <span class="s2">&quot;http://10.0.0.2:3142&quot;</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-root@client2:~# 
-</pre></div>
-
-
-<p>Y con esto queda montado todo el sistema.</p>
-<h2>Funcionamiento de la caché</h2>
-<p>El funcionamiento es muy simple: basta con instalar en un cliente un paquete, por ejemplo, <em>python</em>.</p>
-<div class="highlight"><pre>root@client1:~# apt-get install python
-Leyendo lista de paquetes... Hecho
-Creando árbol de dependencias... Hecho
-...  
-Se instalarán los siguientes paquetes NUEVOS:
-  file libexpat1 libffi6 libmagic1 libpython-stdlib libpython2.7-minimal
-  libpython2.7-stdlib libsqlite3-0 mime-support python python-minimal
-  python2.7 python2.7-minimal
-<span class="m">0</span> actualizados, <span class="m">13</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
-Se necesita descargar 5.010 kB de archivos.
-Se utilizarán 21,3 MB de espacio de disco adicional después de esta operación.
-¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
-...
-Descargados 5.010 kB en 15s <span class="o">(</span><span class="m">327</span> kB/s<span class="o">)</span>                                        
-...
-root@client1:~# 
-</pre></div>
-
-
-<p>Como estos paquetes no están en la <em>caché</em> del servidor, se han descargado de internet en 15 segundos, de acuerdo a la velocidad de mi conexión de internet y de la velocidad de respuesta de los repositorios elegidos.</p>
-<p>Si revisamos la página de estadísticas de <strong>apt-cacher-ng</strong>, disponible en <em>http://aptcacher:3142/acng-report.html</em> podemos ver que se han descargado 4,78mb en 13 paquetes; todos son <strong>miss</strong> de la cache, es decir, se han ido a buscar al repositorio oficial.</p>
-<p><img alt="Estadísticas web de apt-cacher" src="http://www.linuxsysadmin.tk/images/apt-cacher-ng-1.jpg" /></p>
-<p>Ahora vamos a instalar <em>python</em> en otro de los clientes:</p>
-<div class="highlight"><pre>root@client2:~# apt-get install python
-Leyendo lista de paquetes... Hecho
-Creando árbol de dependencias... Hecho
+Creando árbol de dependencias       
+Leyendo la información de estado... Hecho
 ...
 Se instalarán los siguientes paquetes NUEVOS:
-  file libexpat1 libffi6 libmagic1 libpython-stdlib libpython2.7-minimal
-  libpython2.7-stdlib libsqlite3-0 mime-support python python-minimal
-  python2.7 python2.7-minimal
-<span class="m">0</span> actualizados, <span class="m">13</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
-Se necesita descargar 5.010 kB de archivos.
-Se utilizarán 21,3 MB de espacio de disco adicional después de esta operación.
+  ca-certificates gnupg-agent gnupg2 libarchive13 libassuan0 libcurl3-gnutls libffi6 libgmp10 libgnutls-deb0-28 libgpgme11 libhogweed2 libidn11 libksba8 libldap-2.4-2
+  liblzo2-2 libnettle4 libp11-kit0 libpth20 librtmp1 libsasl2-2 libsasl2-modules libsasl2-modules-db libssh2-1 libtasn1-6 libxml2 nginx-common nginx-light openssl
+  pinentry-curses reprepro sgml-base xml-core
+<span class="m">0</span> actualizados, <span class="m">32</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar 7.645 kB de archivos.
+Se utilizarán 21,2 MB de espacio de disco adicional después de esta operación.
 ¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
 ...
-Descargados 5.010 kB en 1s <span class="o">(</span>3.902 kB/s<span class="o">)</span>
-root@client2:~# 
+root@repository:~# 
 </pre></div>
 
 
-<p>Hemos elegido el paquete <em>python</em> para asegurar que ambas máquinas instalan lo mismo; como se puede ver, se ha descargado la misma cantidad de datos, pero en vez de los 15 segundos anteriores, ahora se ha tardado 1 segundo. Eso es porque los paquetes solicitados estaban en el <em>proxy</em>, es decir, en el servidor <strong>aptcacher</strong>.</p>
-<p>Podemos ver en la misma página de administración el resultado: ahora hay 13 <strong>hits</strong> adicionales, ya que los paquetes solicitados estaban en local.</p>
-<p><img alt="Estadísticas web de apt-cacher" src="http://www.linuxsysadmin.tk/images/apt-cacher-ng-2.jpg" /></p>
-<p>De esta forma, si tenemos un elevado número de máquinas del mismo tipo, solo consumiremos el ancho de banda necesario para traerlos de internet <strong>una sola vez</strong>.</p>
+<p>Un repositorio necesita una clave <strong>gpg</strong> para firmar los paquetes que sirve; aunque de eso se encarga <strong>reprepro</strong>, tenemos que generarla:</p>
+<div class="highlight"><pre>root@repository:~# gpg --gen-key
+gpg <span class="o">(</span>GnuPG<span class="o">)</span> 1.4.18<span class="p">;</span> Copyright <span class="o">(</span>C<span class="o">)</span> <span class="m">2014</span> Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+...
+gpg: /root/.gnupg/trustdb.gpg: se ha creado base de datos de confianza
+gpg: clave C1B88DF7 marcada como de confianza absoluta
+claves pública y secreta creadas y firmadas.
+...
+root@repository:~# 
+</pre></div>
+
+
+<p>Ahora podemos ver que las claves se han creado y podemos anotar su identificador para continuar con el procedimiento.</p>
+<div class="highlight"><pre>root@repository:~# gpg --list-keys
+/root/.gnupg/pubring.gpg
+------------------------
+pub   2048R/C1B88DF7 2016-01-07
+uid                  Gerard Monells &lt;gerard.monells@gmail.com&gt;
+sub   2048R/5C5B84E3 2016-01-07
+
+root@repository:~# 
+</pre></div>
+
+
+<p>Vamos a crear el repositorio en <em>/opt/repo/</em>, con una carpeta <em>public</em> que es lo que vamos a servir con <strong>nginx</strong>.</p>
+<div class="highlight"><pre>root@repository:~# mkdir -p /opt/repo/<span class="o">{</span>conf,public<span class="o">}</span>
+root@repository:~# 
+</pre></div>
+
+
+<p>Por comodidad, vamos a trabajar en la carpeta base del repositorio.</p>
+<div class="highlight"><pre>root@repository:~# <span class="nb">cd</span> /opt/repo
+root@repository:/opt/repo# 
+</pre></div>
+
+
+<p>Un repositorio hecho con <strong>reprepro</strong> se declara mediante un fichero de configuración, que vamos a crear en la carpeta <em>conf</em>, declarando el nombre del repositorio, las arquitecturas y la clave con la que se firman los paquetes.</p>
+<div class="highlight"><pre>root@repository:/opt/repo# cat conf/distributions 
+Codename: linuxsysadmin
+Components: main
+Architectures: i386
+SignWith: C1B88DF7
+root@repository:/opt/repo# 
+</pre></div>
+
+
+<p>Vamos a poner la parte pública de nuestra clave <strong>gpg</strong> en la raíz del servidor web, para que los clientes puedan agregarla a su almacén de claves, para usar sin problemas los paquetes de nuestro repositorio.</p>
+<div class="highlight"><pre>root@repository:/opt/repo# gpg -a --export C1B88DF7 &gt; /opt/repo/public/key.gpg
+root@repository:/opt/repo# 
+</pre></div>
+
+
+<p>Ahora vamos a poner una configuración a <strong>nginx</strong> que nos permita servir la carpeta pública en el puerto web.</p>
+<div class="highlight"><pre>root@repository:/opt/repo# cat /etc/nginx/sites-enabled/repository
+server <span class="o">{</span>
+    server_name localhost<span class="p">;</span>
+    root /opt/repo/public<span class="p">;</span>
+    autoindex on<span class="p">;</span>
+<span class="o">}</span>
+root@repository:/opt/repo# 
+</pre></div>
+
+
+<p>Recargamos o reiniciamos el servicio <strong>nginx</strong> para que la configuración surta efecto:</p>
+<div class="highlight"><pre>root@repository:/opt/repo# service nginx restart
+root@repository:/opt/repo# 
+</pre></div>
+
+
+<h2>Añadiendo paquetes al repositorio</h2>
+<p>Añadir un paquete a nuestro repositorio es tan fácil como invocar el comando <em>reprepro</em>, con la opción <em>includedeb</em> del paquete, en alguna carpeta de nuestra máquina. El resto son opciones que indican donde están las carpetas del repositorio.</p>
+<p><strong>WARNING</strong>: Si se pone un paquete empaquetado por nosotros, es importante que su fichero <em>control</em> incluya las directivas <em>Section</em> y <em>Priority</em>, normalmente solo recomendadas, pero necesarias para <strong>reprepro</strong>.</p>
+<p>Por ejemplo, podemos usar el paquete de un <a href="/2015/12/empaquetando-ficheros-punto-deb.html">artículo anterior</a>.</p>
+<div class="highlight"><pre>root@repository:/opt/repo# reprepro --distdir ./public/dists --outdir ./public includedeb linuxsysadmin /root/welcome_1.0-1_all.deb 
+Exporting indices...
+root@repository:/opt/repo# 
+</pre></div>
+
+
+<p><strong>WARNING</strong>: Puede que el comando falle si no se ha montado el sistema de ficheros <em>/dev/pts</em>, especialmente en un entorno tipo <strong>chroot</strong>.</p>
+<h2>Usando el repositorio</h2>
+<p>Cambiamos de máquina; ahora vamos a la máquina que vaya a usar el repositorio y vamos a configurar el repositorio nuevo.</p>
+<p>Lo primero es declarar la <strong>source</strong> de nuestro repositorio, declarando la dirección web del repositorio, el nombre del repositorio y el componente.</p>
+<div class="highlight"><pre>root@client:~# cat /etc/apt/sources.list.d/linuxsysadmin.list 
+deb http://10.0.0.2/ linuxsysadmin main
+root@client:~# 
+</pre></div>
+
+
+<p>Ahora nos descargamos la clave pública del repositorio y la añadimos al almacén de claves de <strong>apt</strong>.</p>
+<div class="highlight"><pre>root@client:~# wget -qO- http://10.0.0.2/key.gpg <span class="p">|</span> apt-key add -
+OK
+root@client:~# 
+</pre></div>
+
+
+<p>Y con esto ya tenemos el repositorio habilitado. A partir de aquí su uso es el mismo que el de cualquier otro repositorio. Hacemos un <em>apt-get update</em> para descargar la lista de paquetes del repositorio.</p>
+<div class="highlight"><pre>root@client:~# apt-get update
+Des:1 http://10.0.0.2 linuxsysadmin InRelease <span class="o">[</span>1.340 B<span class="o">]</span>
+...
+Des:2 http://10.0.0.2 linuxsysadmin/main i386 Packages <span class="o">[</span><span class="m">333</span> B<span class="o">]</span>
+...
+Descargados 2.040 B en 6s <span class="o">(</span><span class="m">330</span> B/s<span class="o">)</span>                                                                                                                                    
+Leyendo lista de paquetes... Hecho
+root@client:~# 
+</pre></div>
+
+
+<p>A partir de aquí, y sabiendo nuestro sistema los paquetes de los que dispone el nuevo repositorio, podemos buscar los paquetes que hay en él.</p>
+<div class="highlight"><pre>root@client:~# apt-cache search welcome <span class="p">|</span> grep ^welcome
+welcome2l - Linux ANSI boot logo
+welcome - A fancy shell script
+root@client:~# apt-cache show welcome
+Package: welcome
+Version: 1.0-1
+Architecture: all
+Maintainer: Linux Sysadmin
+Priority: optional
+Section: main
+Filename: pool/main/w/welcome/welcome_1.0-1_all.deb
+Size: 786
+SHA256: 2e701f7fbc090230fb7abc06597fbe5b4e9e70dcc553e749e69793a745b032f2
+SHA1: 41351d1d2135bcee09e1fa3bade984ece9f23caf
+MD5sum: 574fab58b3c871184047c40d0e732b35
+Description: A fancy shell script
+ To demonstrate how to package a .deb file
+Description-md5: ed73975a1e7c5f0422fef1f624586821
+Depends: bash, coreutils
+
+root@client:~# 
+</pre></div>
+
+
+<p>Visto que el paquete está disponible, podemos instalarlo, usando <em>apt-get</em> o cualquier otro frontal, gráfico o no.</p>
+<div class="highlight"><pre>root@client:~# apt-get install welcome
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias       
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes NUEVOS:
+  welcome
+<span class="m">0</span> actualizados, <span class="m">1</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar <span class="m">786</span> B de archivos.
+Se utilizarán <span class="m">0</span> B de espacio de disco adicional después de esta operación.
+Des:1 http://10.0.0.2/ linuxsysadmin/main welcome all 1.0-1 <span class="o">[</span><span class="m">786</span> B<span class="o">]</span>
+Descargados <span class="m">786</span> B en 0s <span class="o">(</span>37,4 kB/s<span class="o">)</span>
+debconf: se retrasa la configuración de los paquetes, ya que «apt-utils» no está instalado
+Seleccionando el paquete welcome previamente no seleccionado.
+<span class="o">(</span>Leyendo la base de datos ... <span class="m">10434</span> ficheros o directorios instalados actualmente.<span class="o">)</span>
+Preparando para desempaquetar .../archives/welcome_1.0-1_all.deb ...
+Desempaquetando welcome <span class="o">(</span>1.0-1<span class="o">)</span> ...
+Configurando welcome <span class="o">(</span>1.0-1<span class="o">)</span> ...
+root@client:~# 
+</pre></div>
+
+
+<p>Tal como lo esperábamos, el comando <em>welcome</em> está instalado y funciona como esperábamos:</p>
+<div class="highlight"><pre>root@client:~# which welcome
+/usr/bin/welcome
+root@client:~# welcome
+Hello world!
+root@client:~# 
+</pre></div>
+
+
+<p>Y con esto tenemos nuestro repositorio funcional.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Restart automático de servicios con systemd</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/empaquetando-ficheros-punto-deb.html">Empaquetando ficheros .deb</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Escribiendo units en systemd</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html">Virtualizando contenedores LXC con acceso a la red local</a></li>
     </ul>
 </section>
     <hr/>
@@ -259,8 +369,8 @@ root@client2:~#
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes';
-                var disqus_url = 'http://www.linuxsysadmin.tk/2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html';
+                    var disqus_identifier = 'un-repositorio-de-debian-con-reprepro';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/01/un-repositorio-de-debian-con-reprepro.html';
 
             var disqus_config = function () {
                 this.language = "es";

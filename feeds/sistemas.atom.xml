@@ -1,5 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2015-12-21T10:00:00+01:00</updated><entry><title>Utilizando apt-cacher-ng para agilizar la instalación de paquetes</title><link href="http://www.linuxsysadmin.tk/2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html" rel="alternate"></link><updated>2015-12-21T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-12-21:2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html</id><summary type="html">&lt;p&gt;Hace tiempo veo que tras usar muchas maquinas virtuales &lt;em&gt;Debian&lt;/em&gt; para el uso diario y para las demostraciones de este blog, el ancho de banda usado para bajar los paquetes se dispara. La mayoría de veces se trata de los mismos paquetes, para instalar las mismas aplicaciones, servicios o actualizaciones.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-01-11T08:00:00+01:00</updated><entry><title>Un repositorio de Debian con reprepro</title><link href="http://www.linuxsysadmin.tk/2016/01/un-repositorio-de-debian-con-reprepro.html" rel="alternate"></link><updated>2016-01-11T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-01-11:2016/01/un-repositorio-de-debian-con-reprepro.html</id><summary type="html">&lt;p&gt;Una de las grandes facilidades que nos ofrece una distribución de Linux es su sistema de gestor de paquetes. Los paquetes oficiales nos simplifican la instalación y mantenimiento de paquetes; sin embargo, podemos sacar provecho del sistema de paquetes para uso personal, para automatizar instalaciones y actualizaciones que queramos hacer.&lt;/p&gt;
+&lt;p&gt;En este artículo vamos a crear un repositorio en el que podemos poner paquetes, sean sacados del repositorio oficial (para hacer de caché), o sean paquetes creados por nosotros con aplicativos propios o empaquetados a partir de paquetes no libres.&lt;/p&gt;
+&lt;p&gt;Para hacerlo, necesitamos una máquina en donde pondremos el repositorio, y a efectos de demostración, una máquina en donde instalaremos paquetes de dicho repositorio. En este caso, usaremos como &lt;em&gt;LXC&lt;/em&gt; tecnología para crear las máquina virtuales.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# lxc-ls -f
+NAME        STATE    IPV4      IPV6  AUTOSTART  
+----------------------------------------------
+client      RUNNING  10.0.0.3  -     YES        
+repository  RUNNING  10.0.0.2  -     YES        
+root@lxc:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Montando el repositorio&lt;/h2&gt;
+&lt;p&gt;Un repositorio &lt;em&gt;Debian&lt;/em&gt; no es mas que un servidor web sirviendo una estructura de ficheros con una forma concreta, que vamos a crear con &lt;strong&gt;reprepro&lt;/strong&gt; y vamos a servir con &lt;strong&gt;nginx&lt;/strong&gt;. Aís pues, los instalamos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@repository:~# apt-get install reprepro nginx-light
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias       
+Leyendo la información de estado... Hecho
+...
+Se instalarán los siguientes paquetes NUEVOS:
+  ca-certificates gnupg-agent gnupg2 libarchive13 libassuan0 libcurl3-gnutls libffi6 libgmp10 libgnutls-deb0-28 libgpgme11 libhogweed2 libidn11 libksba8 libldap-2.4-2
+  liblzo2-2 libnettle4 libp11-kit0 libpth20 librtmp1 libsasl2-2 libsasl2-modules libsasl2-modules-db libssh2-1 libtasn1-6 libxml2 nginx-common nginx-light openssl
+  pinentry-curses reprepro sgml-base xml-core
+&lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;32&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
+Se necesita descargar 7.645 kB de archivos.
+Se utilizarán 21,2 MB de espacio de disco adicional después de esta operación.
+¿Desea continuar? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
+...
+root@repository:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Un repositorio necesita una clave &lt;strong&gt;gpg&lt;/strong&gt; para firmar los paquetes que sirve; aunque de eso se encarga &lt;strong&gt;reprepro&lt;/strong&gt;, tenemos que generarla:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@repository:~# gpg --gen-key
+gpg &lt;span class="o"&gt;(&lt;/span&gt;GnuPG&lt;span class="o"&gt;)&lt;/span&gt; 1.4.18&lt;span class="p"&gt;;&lt;/span&gt; Copyright &lt;span class="o"&gt;(&lt;/span&gt;C&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;2014&lt;/span&gt; Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+...
+gpg: /root/.gnupg/trustdb.gpg: se ha creado base de datos de confianza
+gpg: clave C1B88DF7 marcada como de confianza absoluta
+claves pública y secreta creadas y firmadas.
+...
+root@repository:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora podemos ver que las claves se han creado y podemos anotar su identificador para continuar con el procedimiento.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@repository:~# gpg --list-keys
+/root/.gnupg/pubring.gpg
+------------------------
+pub   2048R/C1B88DF7 2016-01-07
+uid                  Gerard Monells &amp;lt;gerard.monells@gmail.com&amp;gt;
+sub   2048R/5C5B84E3 2016-01-07
+
+root@repository:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a crear el repositorio en &lt;em&gt;/opt/repo/&lt;/em&gt;, con una carpeta &lt;em&gt;public&lt;/em&gt; que es lo que vamos a servir con &lt;strong&gt;nginx&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@repository:~# mkdir -p /opt/repo/&lt;span class="o"&gt;{&lt;/span&gt;conf,public&lt;span class="o"&gt;}&lt;/span&gt;
+root@repository:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Por comodidad, vamos a trabajar en la carpeta base del repositorio.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@repository:~# &lt;span class="nb"&gt;cd&lt;/span&gt; /opt/repo
+root@repository:/opt/repo# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Un repositorio hecho con &lt;strong&gt;reprepro&lt;/strong&gt; se declara mediante un fichero de configuración, que vamos a crear en la carpeta &lt;em&gt;conf&lt;/em&gt;, declarando el nombre del repositorio, las arquitecturas y la clave con la que se firman los paquetes.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@repository:/opt/repo# cat conf/distributions 
+Codename: linuxsysadmin
+Components: main
+Architectures: i386
+SignWith: C1B88DF7
+root@repository:/opt/repo# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a poner la parte pública de nuestra clave &lt;strong&gt;gpg&lt;/strong&gt; en la raíz del servidor web, para que los clientes puedan agregarla a su almacén de claves, para usar sin problemas los paquetes de nuestro repositorio.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@repository:/opt/repo# gpg -a --export C1B88DF7 &amp;gt; /opt/repo/public/key.gpg
+root@repository:/opt/repo# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora vamos a poner una configuración a &lt;strong&gt;nginx&lt;/strong&gt; que nos permita servir la carpeta pública en el puerto web.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@repository:/opt/repo# cat /etc/nginx/sites-enabled/repository
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    server_name localhost&lt;span class="p"&gt;;&lt;/span&gt;
+    root /opt/repo/public&lt;span class="p"&gt;;&lt;/span&gt;
+    autoindex on&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@repository:/opt/repo# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Recargamos o reiniciamos el servicio &lt;strong&gt;nginx&lt;/strong&gt; para que la configuración surta efecto:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@repository:/opt/repo# service nginx restart
+root@repository:/opt/repo# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Añadiendo paquetes al repositorio&lt;/h2&gt;
+&lt;p&gt;Añadir un paquete a nuestro repositorio es tan fácil como invocar el comando &lt;em&gt;reprepro&lt;/em&gt;, con la opción &lt;em&gt;includedeb&lt;/em&gt; del paquete, en alguna carpeta de nuestra máquina. El resto son opciones que indican donde están las carpetas del repositorio.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;WARNING&lt;/strong&gt;: Si se pone un paquete empaquetado por nosotros, es importante que su fichero &lt;em&gt;control&lt;/em&gt; incluya las directivas &lt;em&gt;Section&lt;/em&gt; y &lt;em&gt;Priority&lt;/em&gt;, normalmente solo recomendadas, pero necesarias para &lt;strong&gt;reprepro&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Por ejemplo, podemos usar el paquete de un &lt;a href="/2015/12/empaquetando-ficheros-punto-deb.html"&gt;artículo anterior&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@repository:/opt/repo# reprepro --distdir ./public/dists --outdir ./public includedeb linuxsysadmin /root/welcome_1.0-1_all.deb 
+Exporting indices...
+root@repository:/opt/repo# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;WARNING&lt;/strong&gt;: Puede que el comando falle si no se ha montado el sistema de ficheros &lt;em&gt;/dev/pts&lt;/em&gt;, especialmente en un entorno tipo &lt;strong&gt;chroot&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;Usando el repositorio&lt;/h2&gt;
+&lt;p&gt;Cambiamos de máquina; ahora vamos a la máquina que vaya a usar el repositorio y vamos a configurar el repositorio nuevo.&lt;/p&gt;
+&lt;p&gt;Lo primero es declarar la &lt;strong&gt;source&lt;/strong&gt; de nuestro repositorio, declarando la dirección web del repositorio, el nombre del repositorio y el componente.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client:~# cat /etc/apt/sources.list.d/linuxsysadmin.list 
+deb http://10.0.0.2/ linuxsysadmin main
+root@client:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora nos descargamos la clave pública del repositorio y la añadimos al almacén de claves de &lt;strong&gt;apt&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client:~# wget -qO- http://10.0.0.2/key.gpg &lt;span class="p"&gt;|&lt;/span&gt; apt-key add -
+OK
+root@client:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto ya tenemos el repositorio habilitado. A partir de aquí su uso es el mismo que el de cualquier otro repositorio. Hacemos un &lt;em&gt;apt-get update&lt;/em&gt; para descargar la lista de paquetes del repositorio.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client:~# apt-get update
+Des:1 http://10.0.0.2 linuxsysadmin InRelease &lt;span class="o"&gt;[&lt;/span&gt;1.340 B&lt;span class="o"&gt;]&lt;/span&gt;
+...
+Des:2 http://10.0.0.2 linuxsysadmin/main i386 Packages &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;333&lt;/span&gt; B&lt;span class="o"&gt;]&lt;/span&gt;
+...
+Descargados 2.040 B en 6s &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;330&lt;/span&gt; B/s&lt;span class="o"&gt;)&lt;/span&gt;                                                                                                                                    
+Leyendo lista de paquetes... Hecho
+root@client:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A partir de aquí, y sabiendo nuestro sistema los paquetes de los que dispone el nuevo repositorio, podemos buscar los paquetes que hay en él.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client:~# apt-cache search welcome &lt;span class="p"&gt;|&lt;/span&gt; grep ^welcome
+welcome2l - Linux ANSI boot logo
+welcome - A fancy shell script
+root@client:~# apt-cache show welcome
+Package: welcome
+Version: 1.0-1
+Architecture: all
+Maintainer: Linux Sysadmin
+Priority: optional
+Section: main
+Filename: pool/main/w/welcome/welcome_1.0-1_all.deb
+Size: 786
+SHA256: 2e701f7fbc090230fb7abc06597fbe5b4e9e70dcc553e749e69793a745b032f2
+SHA1: 41351d1d2135bcee09e1fa3bade984ece9f23caf
+MD5sum: 574fab58b3c871184047c40d0e732b35
+Description: A fancy shell script
+ To demonstrate how to package a .deb file
+Description-md5: ed73975a1e7c5f0422fef1f624586821
+Depends: bash, coreutils
+
+root@client:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Visto que el paquete está disponible, podemos instalarlo, usando &lt;em&gt;apt-get&lt;/em&gt; o cualquier otro frontal, gráfico o no.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client:~# apt-get install welcome
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias       
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes NUEVOS:
+  welcome
+&lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;1&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
+Se necesita descargar &lt;span class="m"&gt;786&lt;/span&gt; B de archivos.
+Se utilizarán &lt;span class="m"&gt;0&lt;/span&gt; B de espacio de disco adicional después de esta operación.
+Des:1 http://10.0.0.2/ linuxsysadmin/main welcome all 1.0-1 &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;786&lt;/span&gt; B&lt;span class="o"&gt;]&lt;/span&gt;
+Descargados &lt;span class="m"&gt;786&lt;/span&gt; B en 0s &lt;span class="o"&gt;(&lt;/span&gt;37,4 kB/s&lt;span class="o"&gt;)&lt;/span&gt;
+debconf: se retrasa la configuración de los paquetes, ya que «apt-utils» no está instalado
+Seleccionando el paquete welcome previamente no seleccionado.
+&lt;span class="o"&gt;(&lt;/span&gt;Leyendo la base de datos ... &lt;span class="m"&gt;10434&lt;/span&gt; ficheros o directorios instalados actualmente.&lt;span class="o"&gt;)&lt;/span&gt;
+Preparando para desempaquetar .../archives/welcome_1.0-1_all.deb ...
+Desempaquetando welcome &lt;span class="o"&gt;(&lt;/span&gt;1.0-1&lt;span class="o"&gt;)&lt;/span&gt; ...
+Configurando welcome &lt;span class="o"&gt;(&lt;/span&gt;1.0-1&lt;span class="o"&gt;)&lt;/span&gt; ...
+root@client:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Tal como lo esperábamos, el comando &lt;em&gt;welcome&lt;/em&gt; está instalado y funciona como esperábamos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client:~# which welcome
+/usr/bin/welcome
+root@client:~# welcome
+Hello world!
+root@client:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos nuestro repositorio funcional.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="repositorio"></category><category term="reprepro"></category><category term="nginx"></category><category term="gpg"></category><category term="apt"></category></entry><entry><title>Utilizando apt-cacher-ng para agilizar la instalación de paquetes</title><link href="http://www.linuxsysadmin.tk/2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html" rel="alternate"></link><updated>2015-12-21T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-12-21:2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html</id><summary type="html">&lt;p&gt;Hace tiempo veo que tras usar muchas maquinas virtuales &lt;em&gt;Debian&lt;/em&gt; para el uso diario y para las demostraciones de este blog, el ancho de banda usado para bajar los paquetes se dispara. La mayoría de veces se trata de los mismos paquetes, para instalar las mismas aplicaciones, servicios o actualizaciones.&lt;/p&gt;
 &lt;p&gt;En el artículo de hoy, voy a enseñar como usar un &lt;em&gt;proxy&lt;/em&gt; con una &lt;em&gt;caché&lt;/em&gt; para &lt;em&gt;apt-get&lt;/em&gt;, llamado &lt;strong&gt;apt-cacher-ng&lt;/strong&gt;, de forma que los paquetes son descargados por la primera máquina que los pida, guardados en un servidor local y aprovechados por el resto de máquinas.&lt;/p&gt;
 &lt;h2&gt;Preparación de las máquinas&lt;/h2&gt;
 &lt;p&gt;Partimos de la máquina habitual, llamada &lt;strong&gt;aptcacher&lt;/strong&gt;, siendo esta un contenedor LXC con una &lt;em&gt;Debian Jessie&lt;/em&gt; básica, aunque esto se podría haber puesto en una &lt;em&gt;Ubuntu&lt;/em&gt; o cualquier otra distribución que funcione con paquetes &lt;em&gt;.deb&lt;/em&gt;.&lt;/p&gt;
