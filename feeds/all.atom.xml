@@ -1,5 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-01-11T08:00:00+01:00</updated><entry><title>Un repositorio de Debian con reprepro</title><link href="http://www.linuxsysadmin.tk/2016/01/un-repositorio-de-debian-con-reprepro.html" rel="alternate"></link><updated>2016-01-11T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-01-11:2016/01/un-repositorio-de-debian-con-reprepro.html</id><summary type="html">&lt;p&gt;Una de las grandes facilidades que nos ofrece una distribución de Linux es su sistema de gestor de paquetes. Los paquetes oficiales nos simplifican la instalación y mantenimiento de paquetes; sin embargo, podemos sacar provecho del sistema de paquetes para uso personal, para automatizar instalaciones y actualizaciones que queramos hacer.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-01-18T09:00:00+01:00</updated><entry><title>LVM: logical volume manager</title><link href="http://www.linuxsysadmin.tk/2016/01/lvm-logical-volume-manager.html" rel="alternate"></link><updated>2016-01-18T09:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-01-18:2016/01/lvm-logical-volume-manager.html</id><summary type="html">&lt;p&gt;Cuando eres un usuario medio no te complicas; particionas tu disco, a menudo usando un sistema de particionado guiado e instalas tu sistema operativo favorito. El problema es cuando las particiones se te quedan cortas. Para estos casos, se inventó una tecnología llamada &lt;em&gt;logical volume manager&lt;/em&gt;, usando sus siglas: &lt;strong&gt;LVM&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;LVM es una implementación de un administrador de volúmenes lógicos para el kernel Linux. Se escribió originalmente en 1998 por Heinz Mauelshagen, que se basó en el administrador de volúmenes de Veritas usado en sistemas HP-UX.&lt;/p&gt;
+&lt;p&gt;Lo que hay que saber es que las "particiones" son ahora &lt;em&gt;logical volumes&lt;/em&gt;, que son particiones de un &lt;em&gt;volume group&lt;/em&gt;. A su vez, este &lt;em&gt;volume group&lt;/em&gt; es una agrupación de discos físicos, &lt;em&gt;physical volume&lt;/em&gt; en el argot de &lt;strong&gt;LVM&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;La ventaja de &lt;strong&gt;LVM&lt;/strong&gt; es que podemos redimensionar nuestros &lt;em&gt;logical volumes&lt;/em&gt; (siempre que el sistema de ficheros lo permita) y que podemos añadir y quitar &lt;em&gt;physical volumes&lt;/em&gt; a nuestros &lt;em&gt;volume groups&lt;/em&gt;, a efectos de incrementar su espacio disponible.&lt;/p&gt;
+&lt;p&gt;Usos frecuentes para &lt;strong&gt;LVM&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Dimensionado de discos en caliente&lt;/li&gt;
+&lt;li&gt;Creación de particiones de espacio limitado&lt;/li&gt;
+&lt;li&gt;Capacidad para crear &lt;em&gt;snapshots point-in-time&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Un ejemplo&lt;/h2&gt;
+&lt;p&gt;Partimos de una máquina virtual con cualquier distribución &lt;em&gt;Linux&lt;/em&gt;, por ejemplo &lt;em&gt;Debian&lt;/em&gt;, que dispone de 2 discos adicionales dedicados para &lt;strong&gt;LVM&lt;/strong&gt;. Con uno bastaría, pero ya pongo los dos para tenerlo hecho cuando el tutorial avance.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# fdisk -l /dev/sdb
+
+Disco /dev/sdb: &lt;span class="m"&gt;8&lt;/span&gt; GiB, &lt;span class="m"&gt;8589934592&lt;/span&gt; bytes, &lt;span class="m"&gt;16777216&lt;/span&gt; sectores
+Unidades: sectores de &lt;span class="m"&gt;1&lt;/span&gt; * &lt;span class="nv"&gt;512&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;512&lt;/span&gt; bytes
+Tamaño de sector &lt;span class="o"&gt;(&lt;/span&gt;lógico/físico&lt;span class="o"&gt;)&lt;/span&gt;: &lt;span class="m"&gt;512&lt;/span&gt; bytes / &lt;span class="m"&gt;512&lt;/span&gt; bytes
+Tamaño de E/S &lt;span class="o"&gt;(&lt;/span&gt;mínimo/óptimo&lt;span class="o"&gt;)&lt;/span&gt;: &lt;span class="m"&gt;512&lt;/span&gt; bytes / &lt;span class="m"&gt;512&lt;/span&gt; bytes
+root@server:~# fdisk -l /dev/sdc
+
+Disco /dev/sdc: &lt;span class="m"&gt;4&lt;/span&gt; GiB, &lt;span class="m"&gt;4294967296&lt;/span&gt; bytes, &lt;span class="m"&gt;8388608&lt;/span&gt; sectores
+Unidades: sectores de &lt;span class="m"&gt;1&lt;/span&gt; * &lt;span class="nv"&gt;512&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;512&lt;/span&gt; bytes
+Tamaño de sector &lt;span class="o"&gt;(&lt;/span&gt;lógico/físico&lt;span class="o"&gt;)&lt;/span&gt;: &lt;span class="m"&gt;512&lt;/span&gt; bytes / &lt;span class="m"&gt;512&lt;/span&gt; bytes
+Tamaño de E/S &lt;span class="o"&gt;(&lt;/span&gt;mínimo/óptimo&lt;span class="o"&gt;)&lt;/span&gt;: &lt;span class="m"&gt;512&lt;/span&gt; bytes / &lt;span class="m"&gt;512&lt;/span&gt; bytes
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Los discos que forman un &lt;em&gt;volume group&lt;/em&gt; no necesitan tener el mismo tamaño; así que con uno de 8 GB y otro de 4 GB tendremos bastante.&lt;/p&gt;
+&lt;p&gt;Nos aseguramos que tenemos el paquete &lt;strong&gt;lvm2&lt;/strong&gt; instalado, y si no lo estuviera, lo instalamos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# apt-get install lvm2
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias       
+Leyendo la información de estado... Hecho
+...
+Se instalarán los siguientes paquetes NUEVOS:
+  dmeventd libdevmapper-event1.02.1 liblvm2cmd2.02 libreadline5 lvm2
+&lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;5&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
+Se necesita descargar 1.530 kB de archivos.
+Se utilizarán 3.898 kB de espacio de disco adicional después de esta operación.
+¿Desea continuar? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
+...
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a crear un &lt;em&gt;volume group&lt;/em&gt; con 1 solo disco. Así que primero vamos a preparar &lt;em&gt;/dev/sdb&lt;/em&gt; como &lt;em&gt;physical volume&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# pvcreate /dev/sdb 
+  Physical volume &lt;span class="s2"&gt;&amp;quot;/dev/sdb&amp;quot;&lt;/span&gt; successfully created
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y ahora creamos un &lt;em&gt;volume group&lt;/em&gt; a partir del nuevo &lt;em&gt;physical volume&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# vgcreate vg1 /dev/sdb 
+  /proc/devices: No entry &lt;span class="k"&gt;for&lt;/span&gt; device-mapper found
+  Volume group &lt;span class="s2"&gt;&amp;quot;vg1&amp;quot;&lt;/span&gt; successfully created
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vemos que tenemos un &lt;em&gt;volume group&lt;/em&gt; llamado &lt;strong&gt;vg1&lt;/strong&gt; y que dispone de 8 GB, todos ellos libres.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# vgs
+  VG   &lt;span class="c"&gt;#PV #LV #SN Attr   VSize VFree&lt;/span&gt;
+  vg1    &lt;span class="m"&gt;1&lt;/span&gt;   &lt;span class="m"&gt;0&lt;/span&gt;   &lt;span class="m"&gt;0&lt;/span&gt; wz--n- 8,00g 8,00g
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Nos gustaría que nuestros usuarios tuvieran una partición dedicada, así quedarán limitados en el espacio que pueden usar, sin molestar el resto del sistema operativo. En el argot de &lt;strong&gt;LVM&lt;/strong&gt; se trata de un &lt;em&gt;logical volume&lt;/em&gt;. Lo creamos, por ejemplo de 5 GB:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# lvcreate vg1 -L 5G -n users
+  Logical volume &lt;span class="s2"&gt;&amp;quot;users&amp;quot;&lt;/span&gt; created
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Miramos la salida de los comandos &lt;strong&gt;lvs&lt;/strong&gt;, &lt;strong&gt;vgs&lt;/strong&gt; y &lt;strong&gt;pvs&lt;/strong&gt;: sin sorpresas. Tenemos un &lt;em&gt;logical volume&lt;/em&gt; de 5 GB, al &lt;em&gt;volume group&lt;/em&gt; le quedan 3 GB igual que al &lt;em&gt;physical volume&lt;/em&gt; subyacente.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# lvs
+  LV    VG   Attr       LSize Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  users vg1  -wi-a----- 5,00g                                                    
+root@server:~# vgs
+  VG   &lt;span class="c"&gt;#PV #LV #SN Attr   VSize VFree&lt;/span&gt;
+  vg1    &lt;span class="m"&gt;1&lt;/span&gt;   &lt;span class="m"&gt;1&lt;/span&gt;   &lt;span class="m"&gt;0&lt;/span&gt; wz--n- 8,00g 3,00g
+root@server:~# pvs
+  PV         VG   Fmt  Attr PSize PFree
+  /dev/sdb   vg1  lvm2 a--  8,00g 3,00g
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Sabiendo que ahora tenemos un dispositivo nuevo de 5 GB en &lt;em&gt;/dev/vg1-users&lt;/em&gt;, lo formateamos y lo montamos como cualquier otra partición.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mkfs.ext4 /dev/mapper/vg1-users 
+mke2fs 1.42.12 &lt;span class="o"&gt;(&lt;/span&gt;29-Aug-2014&lt;span class="o"&gt;)&lt;/span&gt;
+Se está creando El sistema de ficheros con &lt;span class="m"&gt;1310720&lt;/span&gt; 4k bloques y &lt;span class="m"&gt;327680&lt;/span&gt; nodos-i
+
+UUID del sistema de ficheros: 44788452-bbb4-42e3-a5f3-4a1cfa50cabb
+Respaldo del superbloque guardado en los bloques: 
+    32768, 98304, 163840, 229376, 294912, 819200, 884736
+
+Reservando las tablas de grupo: hecho                           
+Escribiendo las tablas de nodos-i: hecho                           
+Creando el fichero de transacciones &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;32768&lt;/span&gt; bloques&lt;span class="o"&gt;)&lt;/span&gt;: hecho
+Escribiendo superbloques y la información contable del sistema de ficheros: hecho
+
+root@server:~# tune2fs -m0 /dev/mapper/vg1-users 
+tune2fs 1.42.12 &lt;span class="o"&gt;(&lt;/span&gt;29-Aug-2014&lt;span class="o"&gt;)&lt;/span&gt;
+Se pone el porcentaje de bloques reservados a 0% &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; bloques&lt;span class="o"&gt;)&lt;/span&gt;
+root@server:~# mount /dev/mapper/vg1-users /home/
+root@server:~# df -h /home
+S.ficheros            Tamaño Usados  Disp Uso% Montado en
+/dev/mapper/vg1-users   4,8G    10M  4,8G   1% /home
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Tal como pasa el tiempo, vemos que los 5 GB de los usuarios se nos quedan cortos y decidimos que necesitan 10 GB. Como el &lt;em&gt;volume group&lt;/em&gt; no tiene 5 GB mas, hay que ampliarlo.&lt;/p&gt;
+&lt;p&gt;Así pues, ponemos otro disco en la máquina, lo preparamos como &lt;em&gt;physical volume&lt;/em&gt; y lo asignamos al &lt;em&gt;volume group&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# pvcreate /dev/sdc
+  Physical volume &lt;span class="s2"&gt;&amp;quot;/dev/sdc&amp;quot;&lt;/span&gt; successfully created
+root@server:~# vgextend vg1 /dev/sdc
+  Volume group &lt;span class="s2"&gt;&amp;quot;vg1&amp;quot;&lt;/span&gt; successfully extended
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Así nos queda el &lt;em&gt;volume group&lt;/em&gt;: tiene 12 GB y se compone de dos &lt;em&gt;physical volumes&lt;/em&gt;, uno de 8 GB y el otro de 4 GB, aunque para nosotros, el &lt;em&gt;volume group&lt;/em&gt; es una masa uniforme de información, sin importar en que disco cae.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# vgs
+  VG   &lt;span class="c"&gt;#PV #LV #SN Attr   VSize  VFree&lt;/span&gt;
+  vg1    &lt;span class="m"&gt;2&lt;/span&gt;   &lt;span class="m"&gt;1&lt;/span&gt;   &lt;span class="m"&gt;0&lt;/span&gt; wz--n- 11,99g 6,99g
+root@server:~# pvs
+  PV         VG   Fmt  Attr PSize PFree
+  /dev/sdb   vg1  lvm2 a--  8,00g 3,00g
+  /dev/sdc   vg1  lvm2 a--  4,00g 4,00g
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ya estamos en disposición de reclamar los 10 GB que necesitamos, asó que &lt;strong&gt;extendemos&lt;/strong&gt; el &lt;em&gt;logical volume&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# lvs
+  LV    VG   Attr       LSize Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  users vg1  -wi-ao---- 5,00g                                                    
+root@server:~# lvextend /dev/mapper/vg1-users -L 10G
+  Size of logical volume vg1/users changed from 5,00 GiB &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1280&lt;/span&gt; extents&lt;span class="o"&gt;)&lt;/span&gt; to 10,00 GiB &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2560&lt;/span&gt; extents&lt;span class="o"&gt;)&lt;/span&gt;.
+  Logical volume users successfully resized
+root@server:~# lvs
+  LV    VG   Attr       LSize  Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  users vg1  -wi-ao---- 10,00g                                                    
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como curiosidad, se han absorbido 2 GB adicionales de cada &lt;em&gt;physical volume&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# pvs
+  PV         VG   Fmt  Attr PSize PFree
+  /dev/sdb   vg1  lvm2 a--  8,00g    0 
+  /dev/sdc   vg1  lvm2 a--  4,00g 1,99g
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y un último detalle: a pesar de que la nueva "partición" dispone de 10 GB, el sistema de fichero subyacente no lo sabe, y solo tiene &lt;em&gt;inodos&lt;/em&gt; para indexar 5 GB de datos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# df -h /home/
+S.ficheros            Tamaño Usados  Disp Uso% Montado en
+/dev/mapper/vg1-users   4,8G    10M  4,8G   1% /home
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Por suerte para nosotros, el sistema de ficheros usado es &lt;em&gt;ext4&lt;/em&gt;, que nos permite redimensionarlo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# resize2fs /dev/mapper/vg1-users 
+resize2fs 1.42.12 &lt;span class="o"&gt;(&lt;/span&gt;29-Aug-2014&lt;span class="o"&gt;)&lt;/span&gt;
+El sistema de ficheros de /dev/mapper/vg1-users está montado en /home&lt;span class="p"&gt;;&lt;/span&gt; hace falta cambiar el tamaño en línea
+&lt;span class="nv"&gt;old_desc_blocks&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; 1, &lt;span class="nv"&gt;new_desc_blocks&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; 1
+The filesystem on /dev/mapper/vg1-users is now &lt;span class="m"&gt;2621440&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;4k&lt;span class="o"&gt;)&lt;/span&gt; blocks long.
+
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto, el sistema de ficheros de &lt;em&gt;/home&lt;/em&gt; ya tiene el nuevo tamaño disponible y listo para usar:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# df -h /home/
+S.ficheros            Tamaño Usados  Disp Uso% Montado en
+/dev/mapper/vg1-users   9,8G    12M  9,7G   1% /home
+root@server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto queda listo. Para hacer el montaje permanente, basta con añadir la línea adecuada a &lt;em&gt;/etc/fstab&lt;/em&gt;.&lt;/p&gt;</summary><category term="linux"></category><category term="lvm"></category><category term="logical volume manager"></category></entry><entry><title>Un repositorio de Debian con reprepro</title><link href="http://www.linuxsysadmin.tk/2016/01/un-repositorio-de-debian-con-reprepro.html" rel="alternate"></link><updated>2016-01-11T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-01-11:2016/01/un-repositorio-de-debian-con-reprepro.html</id><summary type="html">&lt;p&gt;Una de las grandes facilidades que nos ofrece una distribución de Linux es su sistema de gestor de paquetes. Los paquetes oficiales nos simplifican la instalación y mantenimiento de paquetes; sin embargo, podemos sacar provecho del sistema de paquetes para uso personal, para automatizar instalaciones y actualizaciones que queramos hacer.&lt;/p&gt;
 &lt;p&gt;En este artículo vamos a crear un repositorio en el que podemos poner paquetes, sean sacados del repositorio oficial (para hacer de caché), o sean paquetes creados por nosotros con aplicativos propios o empaquetados a partir de paquetes no libres.&lt;/p&gt;
 &lt;p&gt;Para hacerlo, necesitamos una máquina en donde pondremos el repositorio, y a efectos de demostración, una máquina en donde instalaremos paquetes de dicho repositorio. En este caso, usaremos como &lt;em&gt;LXC&lt;/em&gt; tecnología para crear las máquina virtuales.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# lxc-ls -f

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Categorías - Linux Sysadmin</title>
+    <title>LVM: logical volume manager - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,15 +9,23 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/01/lvm-logical-volume-manager.html">
 
         <meta name="author" content="Gerard" />
+        <meta name="keywords" content="linux,lvm,logical volume manager" />
+        <meta name="description" content="Cuando eres un usuario medio no te complicas; particionas tu disco, a menudo usando un sistema de particionado guiado e instalas tu sistema operativo favorito. El problema es cuando las particiones se te quedan cortas. Para estos casos, se inventó una tecnología llamada logical volume manager, usando sus siglas: LVM ..." />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="LVM: logical volume manager"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/01/lvm-logical-volume-manager.html"/>
+        <meta property="og:description" content="Cuando eres un usuario medio no te complicas; particionas tu disco, a menudo usando un sistema de particionado guiado e instalas tu sistema operativo favorito. El problema es cuando las particiones se te quedan cortas. Para estos casos, se inventó una tecnología llamada logical volume manager, usando sus siglas: LVM ..."/>
+        <meta property="article:published_time" content="2016-01-18" />
+            <meta property="article:section" content="Operaciones" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="lvm" />
+            <meta property="article:tag" content="logical volume manager" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -33,6 +41,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -74,10 +84,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li class="active">Categorías</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
+                <li class="active">LVM: logical volume manager</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -90,71 +101,275 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-    <section id="categories">
-        <h1>Categorías de Linux Sysadmin</h1>
-        <div class="panel-group" id="accordion">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-operaciones">Operaciones <span class="badge pull-right">7</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-operaciones" class="panel-collapse collapse">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2016/01/lvm-logical-volume-manager.html"
+                       rel="bookmark"
+                       title="Permalink to LVM: logical volume manager">
+                        LVM: logical volume manager
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
                     <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2016-01-18T09:00:00+01:00">2016-01-18</time></span> <a href="http://www.linuxsysadmin.tk/2016/01/lvm-logical-volume-manager.html">LVM: logical volume manager</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-12-28T10:00:00+01:00">2015-12-28</time></span> <a href="http://www.linuxsysadmin.tk/2015/12/empaquetando-ficheros-punto-deb.html">Empaquetando ficheros .deb</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-12-02T12:30:00+01:00">2015-12-02</time></span> <a href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html">Creación de un livecd con Debian</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-11-16T23:15:00+01:00">2015-11-16</time></span> <a href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html">Creando sistemas de ficheros temporales con tmpfs</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-11-09T22:30:00+01:00">2015-11-09</time></span> <a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Escribiendo units en systemd</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-11-05T22:30:00+01:00">2015-11-05</time></span> <a href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Restart automático de servicios con systemd</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-11-02T14:00:00+01:00">2015-11-02</time></span> <a href="http://www.linuxsysadmin.tk/2015/11/liberando-memoria-cache.html">Liberando memoria caché</a></p>
-                    </div>
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-01-18T09:00:00+01:00"> 2016-01-18</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 8 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/lvm.html">lvm</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/logical-volume-manager.html">logical volume manager</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 </div>
+                <p>Cuando eres un usuario medio no te complicas; particionas tu disco, a menudo usando un sistema de particionado guiado e instalas tu sistema operativo favorito. El problema es cuando las particiones se te quedan cortas. Para estos casos, se inventó una tecnología llamada <em>logical volume manager</em>, usando sus siglas: <strong>LVM</strong>.</p>
+<p>LVM es una implementación de un administrador de volúmenes lógicos para el kernel Linux. Se escribió originalmente en 1998 por Heinz Mauelshagen, que se basó en el administrador de volúmenes de Veritas usado en sistemas HP-UX.</p>
+<p>Lo que hay que saber es que las "particiones" son ahora <em>logical volumes</em>, que son particiones de un <em>volume group</em>. A su vez, este <em>volume group</em> es una agrupación de discos físicos, <em>physical volume</em> en el argot de <strong>LVM</strong>.</p>
+<p>La ventaja de <strong>LVM</strong> es que podemos redimensionar nuestros <em>logical volumes</em> (siempre que el sistema de ficheros lo permita) y que podemos añadir y quitar <em>physical volumes</em> a nuestros <em>volume groups</em>, a efectos de incrementar su espacio disponible.</p>
+<p>Usos frecuentes para <strong>LVM</strong>:</p>
+<ul>
+<li>Dimensionado de discos en caliente</li>
+<li>Creación de particiones de espacio limitado</li>
+<li>Capacidad para crear <em>snapshots point-in-time</em></li>
+</ul>
+<h2>Un ejemplo</h2>
+<p>Partimos de una máquina virtual con cualquier distribución <em>Linux</em>, por ejemplo <em>Debian</em>, que dispone de 2 discos adicionales dedicados para <strong>LVM</strong>. Con uno bastaría, pero ya pongo los dos para tenerlo hecho cuando el tutorial avance.</p>
+<div class="highlight"><pre>root@server:~# fdisk -l /dev/sdb
+
+Disco /dev/sdb: <span class="m">8</span> GiB, <span class="m">8589934592</span> bytes, <span class="m">16777216</span> sectores
+Unidades: sectores de <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
+Tamaño de sector <span class="o">(</span>lógico/físico<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
+Tamaño de E/S <span class="o">(</span>mínimo/óptimo<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
+root@server:~# fdisk -l /dev/sdc
+
+Disco /dev/sdc: <span class="m">4</span> GiB, <span class="m">4294967296</span> bytes, <span class="m">8388608</span> sectores
+Unidades: sectores de <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
+Tamaño de sector <span class="o">(</span>lógico/físico<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
+Tamaño de E/S <span class="o">(</span>mínimo/óptimo<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
+root@server:~# 
+</pre></div>
+
+
+<p>Los discos que forman un <em>volume group</em> no necesitan tener el mismo tamaño; así que con uno de 8 GB y otro de 4 GB tendremos bastante.</p>
+<p>Nos aseguramos que tenemos el paquete <strong>lvm2</strong> instalado, y si no lo estuviera, lo instalamos.</p>
+<div class="highlight"><pre>root@server:~# apt-get install lvm2
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias       
+Leyendo la información de estado... Hecho
+...
+Se instalarán los siguientes paquetes NUEVOS:
+  dmeventd libdevmapper-event1.02.1 liblvm2cmd2.02 libreadline5 lvm2
+<span class="m">0</span> actualizados, <span class="m">5</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar 1.530 kB de archivos.
+Se utilizarán 3.898 kB de espacio de disco adicional después de esta operación.
+¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
+...
+root@server:~# 
+</pre></div>
+
+
+<p>Vamos a crear un <em>volume group</em> con 1 solo disco. Así que primero vamos a preparar <em>/dev/sdb</em> como <em>physical volume</em>.</p>
+<div class="highlight"><pre>root@server:~# pvcreate /dev/sdb 
+  Physical volume <span class="s2">&quot;/dev/sdb&quot;</span> successfully created
+root@server:~# 
+</pre></div>
+
+
+<p>Y ahora creamos un <em>volume group</em> a partir del nuevo <em>physical volume</em></p>
+<div class="highlight"><pre>root@server:~# vgcreate vg1 /dev/sdb 
+  /proc/devices: No entry <span class="k">for</span> device-mapper found
+  Volume group <span class="s2">&quot;vg1&quot;</span> successfully created
+root@server:~# 
+</pre></div>
+
+
+<p>Vemos que tenemos un <em>volume group</em> llamado <strong>vg1</strong> y que dispone de 8 GB, todos ellos libres.</p>
+<div class="highlight"><pre>root@server:~# vgs
+  VG   <span class="c">#PV #LV #SN Attr   VSize VFree</span>
+  vg1    <span class="m">1</span>   <span class="m">0</span>   <span class="m">0</span> wz--n- 8,00g 8,00g
+root@server:~# 
+</pre></div>
+
+
+<p>Nos gustaría que nuestros usuarios tuvieran una partición dedicada, así quedarán limitados en el espacio que pueden usar, sin molestar el resto del sistema operativo. En el argot de <strong>LVM</strong> se trata de un <em>logical volume</em>. Lo creamos, por ejemplo de 5 GB:</p>
+<div class="highlight"><pre>root@server:~# lvcreate vg1 -L 5G -n users
+  Logical volume <span class="s2">&quot;users&quot;</span> created
+root@server:~# 
+</pre></div>
+
+
+<p>Miramos la salida de los comandos <strong>lvs</strong>, <strong>vgs</strong> y <strong>pvs</strong>: sin sorpresas. Tenemos un <em>logical volume</em> de 5 GB, al <em>volume group</em> le quedan 3 GB igual que al <em>physical volume</em> subyacente.</p>
+<div class="highlight"><pre>root@server:~# lvs
+  LV    VG   Attr       LSize Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  users vg1  -wi-a----- 5,00g                                                    
+root@server:~# vgs
+  VG   <span class="c">#PV #LV #SN Attr   VSize VFree</span>
+  vg1    <span class="m">1</span>   <span class="m">1</span>   <span class="m">0</span> wz--n- 8,00g 3,00g
+root@server:~# pvs
+  PV         VG   Fmt  Attr PSize PFree
+  /dev/sdb   vg1  lvm2 a--  8,00g 3,00g
+root@server:~# 
+</pre></div>
+
+
+<p>Sabiendo que ahora tenemos un dispositivo nuevo de 5 GB en <em>/dev/vg1-users</em>, lo formateamos y lo montamos como cualquier otra partición.</p>
+<div class="highlight"><pre>root@server:~# mkfs.ext4 /dev/mapper/vg1-users 
+mke2fs 1.42.12 <span class="o">(</span>29-Aug-2014<span class="o">)</span>
+Se está creando El sistema de ficheros con <span class="m">1310720</span> 4k bloques y <span class="m">327680</span> nodos-i
+
+UUID del sistema de ficheros: 44788452-bbb4-42e3-a5f3-4a1cfa50cabb
+Respaldo del superbloque guardado en los bloques: 
+    32768, 98304, 163840, 229376, 294912, 819200, 884736
+
+Reservando las tablas de grupo: hecho                           
+Escribiendo las tablas de nodos-i: hecho                           
+Creando el fichero de transacciones <span class="o">(</span><span class="m">32768</span> bloques<span class="o">)</span>: hecho
+Escribiendo superbloques y la información contable del sistema de ficheros: hecho
+
+root@server:~# tune2fs -m0 /dev/mapper/vg1-users 
+tune2fs 1.42.12 <span class="o">(</span>29-Aug-2014<span class="o">)</span>
+Se pone el porcentaje de bloques reservados a 0% <span class="o">(</span><span class="m">0</span> bloques<span class="o">)</span>
+root@server:~# mount /dev/mapper/vg1-users /home/
+root@server:~# df -h /home
+S.ficheros            Tamaño Usados  Disp Uso% Montado en
+/dev/mapper/vg1-users   4,8G    10M  4,8G   1% /home
+root@server:~# 
+</pre></div>
+
+
+<p>Tal como pasa el tiempo, vemos que los 5 GB de los usuarios se nos quedan cortos y decidimos que necesitan 10 GB. Como el <em>volume group</em> no tiene 5 GB mas, hay que ampliarlo.</p>
+<p>Así pues, ponemos otro disco en la máquina, lo preparamos como <em>physical volume</em> y lo asignamos al <em>volume group</em>.</p>
+<div class="highlight"><pre>root@server:~# pvcreate /dev/sdc
+  Physical volume <span class="s2">&quot;/dev/sdc&quot;</span> successfully created
+root@server:~# vgextend vg1 /dev/sdc
+  Volume group <span class="s2">&quot;vg1&quot;</span> successfully extended
+root@server:~# 
+</pre></div>
+
+
+<p>Así nos queda el <em>volume group</em>: tiene 12 GB y se compone de dos <em>physical volumes</em>, uno de 8 GB y el otro de 4 GB, aunque para nosotros, el <em>volume group</em> es una masa uniforme de información, sin importar en que disco cae.</p>
+<div class="highlight"><pre>root@server:~# vgs
+  VG   <span class="c">#PV #LV #SN Attr   VSize  VFree</span>
+  vg1    <span class="m">2</span>   <span class="m">1</span>   <span class="m">0</span> wz--n- 11,99g 6,99g
+root@server:~# pvs
+  PV         VG   Fmt  Attr PSize PFree
+  /dev/sdb   vg1  lvm2 a--  8,00g 3,00g
+  /dev/sdc   vg1  lvm2 a--  4,00g 4,00g
+root@server:~# 
+</pre></div>
+
+
+<p>Ya estamos en disposición de reclamar los 10 GB que necesitamos, asó que <strong>extendemos</strong> el <em>logical volume</em>.</p>
+<div class="highlight"><pre>root@server:~# lvs
+  LV    VG   Attr       LSize Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  users vg1  -wi-ao---- 5,00g                                                    
+root@server:~# lvextend /dev/mapper/vg1-users -L 10G
+  Size of logical volume vg1/users changed from 5,00 GiB <span class="o">(</span><span class="m">1280</span> extents<span class="o">)</span> to 10,00 GiB <span class="o">(</span><span class="m">2560</span> extents<span class="o">)</span>.
+  Logical volume users successfully resized
+root@server:~# lvs
+  LV    VG   Attr       LSize  Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  users vg1  -wi-ao---- 10,00g                                                    
+root@server:~# 
+</pre></div>
+
+
+<p>Como curiosidad, se han absorbido 2 GB adicionales de cada <em>physical volume</em>.</p>
+<div class="highlight"><pre>root@server:~# pvs
+  PV         VG   Fmt  Attr PSize PFree
+  /dev/sdb   vg1  lvm2 a--  8,00g    0 
+  /dev/sdc   vg1  lvm2 a--  4,00g 1,99g
+root@server:~# 
+</pre></div>
+
+
+<p>Y un último detalle: a pesar de que la nueva "partición" dispone de 10 GB, el sistema de fichero subyacente no lo sabe, y solo tiene <em>inodos</em> para indexar 5 GB de datos.</p>
+<div class="highlight"><pre>root@server:~# df -h /home/
+S.ficheros            Tamaño Usados  Disp Uso% Montado en
+/dev/mapper/vg1-users   4,8G    10M  4,8G   1% /home
+root@server:~# 
+</pre></div>
+
+
+<p>Por suerte para nosotros, el sistema de ficheros usado es <em>ext4</em>, que nos permite redimensionarlo.</p>
+<div class="highlight"><pre>root@server:~# resize2fs /dev/mapper/vg1-users 
+resize2fs 1.42.12 <span class="o">(</span>29-Aug-2014<span class="o">)</span>
+El sistema de ficheros de /dev/mapper/vg1-users está montado en /home<span class="p">;</span> hace falta cambiar el tamaño en línea
+<span class="nv">old_desc_blocks</span> <span class="o">=</span> 1, <span class="nv">new_desc_blocks</span> <span class="o">=</span> 1
+The filesystem on /dev/mapper/vg1-users is now <span class="m">2621440</span> <span class="o">(</span>4k<span class="o">)</span> blocks long.
+
+root@server:~# 
+</pre></div>
+
+
+<p>Y con esto, el sistema de ficheros de <em>/home</em> ya tiene el nuevo tamaño disponible y listo para usar:</p>
+<div class="highlight"><pre>root@server:~# df -h /home/
+S.ficheros            Tamaño Usados  Disp Uso% Montado en
+/dev/mapper/vg1-users   9,8G    12M  9,7G   1% /home
+root@server:~# 
+</pre></div>
+
+
+<p>Y con esto queda listo. Para hacer el montaje permanente, basta con añadir la línea adecuada a <em>/etc/fstab</em>.</p>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-seguridad">Seguridad <span class="badge pull-right">2</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-seguridad" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2016-01-04T10:00:00+01:00">2016-01-04</time></span> <a href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Enjaulado de usuarios para uso de rsync</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-10-29T11:30:00+01:00">2015-10-29</time></span> <a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-sistemas">Sistemas <span class="badge pull-right">4</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-sistemas" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2016-01-11T08:00:00+01:00">2016-01-11</time></span> <a href="http://www.linuxsysadmin.tk/2016/01/un-repositorio-de-debian-con-reprepro.html">Un repositorio de Debian con reprepro</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-12-21T10:00:00+01:00">2015-12-21</time></span> <a href="http://www.linuxsysadmin.tk/2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html">Utilizando apt-cacher-ng para agilizar la instalación de paquetes</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-12-17T23:00:00+01:00">2015-12-17</time></span> <a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-12-08T12:30:00+01:00">2015-12-08</time></span> <a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Construyendo una replica set en mongodb</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-virtualizacion">Virtualización <span class="badge pull-right">2</span></a>
-                    </h4>
-                </div>
-                <div id="collapse-virtualizacion" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <p><span class="categories-timestamp"><time datetime="2015-11-23T23:30:00+01:00">2015-11-23</time></span> <a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></p>
-                        <p><span class="categories-timestamp"><time datetime="2015-10-15T12:00:00+02:00">2015-10-15</time></span> <a href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html">Virtualizando contenedores LXC con acceso a la red local</a></p>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/empaquetando-ficheros-punto-deb.html">Empaquetando ficheros .deb</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html">Utilizando apt-cacher-ng para agilizar la instalación de paquetes</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html">Creación de un livecd con Debian</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'lvm-logical-volume-manager';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/01/lvm-logical-volume-manager.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
 
     </section>
+        </article>
+    </section>
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
