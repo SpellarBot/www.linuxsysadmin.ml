@@ -744,7 +744,7 @@ root@server:~#
 &lt;p&gt;En caso de ser una &lt;strong&gt;unit&lt;/strong&gt; escrita por nosotros, se encontraría en &lt;em&gt;/etc/systemd/system/&lt;/em&gt;. Esta es la convención:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;em&gt;/lib/systemd/system/&lt;/em&gt; &amp;rarr; &lt;strong&gt;units&lt;/strong&gt; de sistema, puestas por los paquetes instalados&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;/lib/systemd/system/&lt;/em&gt; &amp;rarr; &lt;strong&gt;units&lt;/strong&gt; o &lt;strong&gt;overrides&lt;/strong&gt; puestos por el usuario (nosotros)&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;/etc/systemd/system/&lt;/em&gt; &amp;rarr; &lt;strong&gt;units&lt;/strong&gt; o &lt;strong&gt;overrides&lt;/strong&gt; puestos por el usuario (nosotros)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Para añadir nuevas directivas (&lt;strong&gt;overrides&lt;/strong&gt;) a una &lt;strong&gt;unit&lt;/strong&gt; sin reescribirla entera, basta con crear una carpeta con su mismo nombre, concatenando &lt;strong&gt;.d&lt;/strong&gt;. Dentro podemos poner tantos ficheros &lt;em&gt;.conf&lt;/em&gt; como creamos necesarios, añadiendo las directivas que queramos añadir o modificar.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mkdir /etc/systemd/system/nginx.service.d

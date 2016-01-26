@@ -187,7 +187,7 @@ root@server:~#
 <p>En caso de ser una <strong>unit</strong> escrita por nosotros, se encontraría en <em>/etc/systemd/system/</em>. Esta es la convención:</p>
 <ul>
 <li><em>/lib/systemd/system/</em> &rarr; <strong>units</strong> de sistema, puestas por los paquetes instalados</li>
-<li><em>/lib/systemd/system/</em> &rarr; <strong>units</strong> o <strong>overrides</strong> puestos por el usuario (nosotros)</li>
+<li><em>/etc/systemd/system/</em> &rarr; <strong>units</strong> o <strong>overrides</strong> puestos por el usuario (nosotros)</li>
 </ul>
 <p>Para añadir nuevas directivas (<strong>overrides</strong>) a una <strong>unit</strong> sin reescribirla entera, basta con crear una carpeta con su mismo nombre, concatenando <strong>.d</strong>. Dentro podemos poner tantos ficheros <em>.conf</em> como creamos necesarios, añadiendo las directivas que queramos añadir o modificar.</p>
 <div class="highlight"><pre>root@server:~# mkdir /etc/systemd/system/nginx.service.d
@@ -246,7 +246,7 @@ root@server:~#
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Escribiendo units en systemd</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Construyendo una replica set en mongodb</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
     </ul>
 </section>
     <hr/>
