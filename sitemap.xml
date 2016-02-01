@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2016-01-26T18:19:45-00:00</lastmod>
+<lastmod>2016-02-01T08:28:51-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2016-01-26T18:19:45-00:00</lastmod>
+<lastmod>2016-02-01T08:28:51-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2016-01-26T18:19:45-00:00</lastmod>
+<lastmod>2016-02-01T08:28:51-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2016-01-26T18:19:45-00:00</lastmod>
+<lastmod>2016-02-01T08:28:51-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2016-01-26T18:19:45-00:00</lastmod>
+<lastmod>2016-02-01T08:28:51-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2016/02/un-proxy-dns-con-dnsmasq.html</loc>
+<lastmod>2016-02-01T08:30:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -166,7 +173,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/sistemas.html</loc>
-<lastmod>2016-01-11T08:00:00-00:15</lastmod>
+<lastmod>2016-02-01T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -193,8 +200,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/gpg.html</loc>
-<lastmod>2016-01-11T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/cache.html</loc>
+<lastmod>2016-02-01T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -242,13 +249,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/lvm.html</loc>
-<lastmod>2016-01-18T09:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
 <loc>http://www.linuxsysadmin.tk/tag/drop-caches.html</loc>
 <lastmod>2015-11-02T14:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -264,14 +264,14 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/linux.html</loc>
-<lastmod>2016-01-25T08:00:00-00:15</lastmod>
+<lastmod>2016-02-01T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/jessie.html</loc>
-<lastmod>2015-12-21T10:00:00-00:15</lastmod>
+<lastmod>2016-02-01T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -298,8 +298,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/cache.html</loc>
-<lastmod>2015-12-21T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/gpg.html</loc>
+<lastmod>2016-01-11T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -312,8 +312,36 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/iso.html</loc>
+<lastmod>2015-12-02T12:30:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/dns.html</loc>
+<lastmod>2016-02-01T08:30:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/mongodb.html</loc>
 <lastmod>2015-12-08T12:30:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/dhcp.html</loc>
+<lastmod>2016-02-01T08:30:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/tmpfs.html</loc>
+<lastmod>2015-11-16T23:15:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -403,15 +431,15 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/tmpfs.html</loc>
-<lastmod>2015-11-16T23:15:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/rssh.html</loc>
+<lastmod>2016-01-04T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/debian.html</loc>
-<lastmod>2016-01-11T08:00:00-00:15</lastmod>
+<lastmod>2016-02-01T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -452,15 +480,15 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/iso.html</loc>
-<lastmod>2015-12-02T12:30:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/dnsmasq.html</loc>
+<lastmod>2016-02-01T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/rssh.html</loc>
-<lastmod>2016-01-04T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/lvm.html</loc>
+<lastmod>2016-01-18T09:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -474,7 +502,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2016-01-25T08:00:00-00:15</lastmod>
+<lastmod>2016-02-01T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
