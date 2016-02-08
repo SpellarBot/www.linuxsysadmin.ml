@@ -1,5 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-02-01T08:30:00+01:00</updated><entry><title>Un proxy DNS con dnsmasq</title><link href="http://www.linuxsysadmin.tk/2016/02/un-proxy-dns-con-dnsmasq.html" rel="alternate"></link><updated>2016-02-01T08:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-02-01:2016/02/un-proxy-dns-con-dnsmasq.html</id><summary type="html">&lt;p&gt;A veces nos puede interesar disponer de una servidor &lt;strong&gt;DNS&lt;/strong&gt; para nombrar las máquinas de nuestra red privada, sin la complejidad de &lt;strong&gt;BIND&lt;/strong&gt;. Otras, queremos acelerar el acceso a internet desde nuestra red; es interesante ver el tiempo que se pierde en la resolución &lt;strong&gt;DNS&lt;/strong&gt;. Para eso disponemos de &lt;strong&gt;dnsmasq&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-02-08T08:30:00+01:00</updated><entry><title>Restringiendo accesos web mediante autenticación básica</title><link href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html" rel="alternate"></link><updated>2016-02-08T08:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-02-08:2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html</id><summary type="html">&lt;p&gt;Algunas veces nos encontramos con la necesidad de restringir el acceso a algunos recursos web. Normalmente se suele implementar algún sistema de &lt;em&gt;login&lt;/em&gt;, &lt;em&gt;cookies&lt;/em&gt; o &lt;em&gt;sesiones&lt;/em&gt;; no obstante, esta opción no siempre nos es posible, y tenemos que proteger esos recursos usando los mecanismos que nos ofrezca el servidor web.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;ATENCIÓN&lt;/strong&gt;: Este método es bastante simple, y se puede descodificar lo que manda el cliente; por eso se recomienda encarecidamente usar &lt;strong&gt;SSL&lt;/strong&gt;, mediante el uso de &lt;strong&gt;HTTPS&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Empezaremos instalando el servidor web y la herramienta de generación de certificados para usar con &lt;strong&gt;SSL&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# apt-get install nginx-light openssl
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes extras:
+  nginx-common
+Paquetes sugeridos:
+  fcgiwrap nginx-doc ssl-cert ca-certificates
+Se instalarán los siguientes paquetes NUEVOS:
+  nginx-common nginx-light openssl
+&lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;3&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
+Se necesita descargar 1.126 kB de archivos.
+Se utilizarán 2.148 kB de espacio de disco adicional después de esta operación.
+¿Desea continuar? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
+...
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Generar el certificado y la clave de la CA&lt;/h2&gt;
+&lt;p&gt;Empezaremos por generar la clave de la CA, que va a servir para firmar el certificado que pondremos en el servidor.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# openssl genrsa -des3 -out ca.key 4096
+Generating RSA private key, &lt;span class="m"&gt;4096&lt;/span&gt; bit long modulus
+..................................++
+.....................................................................++
+e is &lt;span class="m"&gt;65537&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;0x10001&lt;span class="o"&gt;)&lt;/span&gt;
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; ca.key:
+Verifying - Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; ca.key:
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora generamos el certificado de la CA. Lo generamos directamente firmado en un solo paso.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# openssl req -new -x509 -days &lt;span class="m"&gt;365&lt;/span&gt; -key ca.key -out ca.crt -subj &lt;span class="s2"&gt;&amp;quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin&amp;quot;&lt;/span&gt;
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; ca.key:
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Generar el certificado para el servidor web&lt;/h2&gt;
+&lt;p&gt;Generamos la clave para el certificado del servidor web.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# openssl genrsa -des3 -out server.key 4096
+Generating RSA private key, &lt;span class="m"&gt;4096&lt;/span&gt; bit long modulus
+.....................................................................++
+......................................................................................................................................................................++
+e is &lt;span class="m"&gt;65537&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;0x10001&lt;span class="o"&gt;)&lt;/span&gt;
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; server.key:
+Verifying - Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; server.key:
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora creamos un certificado para el servidor web.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# openssl req -new -key server.key -out server.csr -subj &lt;span class="s2"&gt;&amp;quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin/CN=private.linuxsysadmin.tk&amp;quot;&lt;/span&gt;
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; server.key:
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y lo firmamos con la clave y el certificado de la CA.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# openssl x509 -req -days &lt;span class="m"&gt;365&lt;/span&gt; -in server.csr -CA ca.crt -CAkey ca.key -set_serial &lt;span class="m"&gt;01&lt;/span&gt; -out server.crt
+Signature ok
+&lt;span class="nv"&gt;subject&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/C&lt;span class="o"&gt;=&lt;/span&gt;ES/ST&lt;span class="o"&gt;=&lt;/span&gt;Spain/L&lt;span class="o"&gt;=&lt;/span&gt;Barcelona/O&lt;span class="o"&gt;=&lt;/span&gt;LinuxSysadmin/CN&lt;span class="o"&gt;=&lt;/span&gt;private.linuxsysadmin.tk
+Getting CA Private Key
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; ca.key:
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Si la clave está protegida por una &lt;em&gt;passphrase&lt;/em&gt;, se va a necesitar introducirla cada vez que se quiera levantar el servidor web. Nos lo podemos ahorrar con unos simples comandos, que dejará la clave como insegura.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mv server.key server.key.secure
+root@server:~# openssl rsa -in server.key.secure -out server.key
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; server.key.secure:
+writing RSA key
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Montando el dominio web&lt;/h2&gt;
+&lt;p&gt;Para habilitar &lt;strong&gt;SSL&lt;/strong&gt; en un dominio, necesitamos la clave y el certificado del servidor, así que vamos a ponerlos en una carpeta pensado para tal efecto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cp server.key /etc/ssl/private/
+root@server:~# cp server.crt /etc/ssl/certs/
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Así quedarían los certificados una vez en su sitio.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# tree /etc/ssl/
+/etc/ssl/
+├── certs
+│   └── server.crt
+├── openssl.cnf
+└── private
+    └── server.key
+
+&lt;span class="m"&gt;2&lt;/span&gt; directories, &lt;span class="m"&gt;3&lt;/span&gt; files
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a poner un fichero de configuración en &lt;strong&gt;nginx&lt;/strong&gt;, que va a escuchar por el puerto 443 y con &lt;strong&gt;SSL&lt;/strong&gt; habilitado. Indicamos también donde están los ficheros que servirá el &lt;strong&gt;nginx&lt;/strong&gt;, la localización de los certificados y activamos la autenticación básica.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/nginx/sites-enabled/private.linuxsysadmin.tk
+server &lt;span class="o"&gt;{&lt;/span&gt;
+        listen &lt;span class="m"&gt;443&lt;/span&gt; ssl&lt;span class="p"&gt;;&lt;/span&gt;
+        server_name private.linuxsysadmin.tk&lt;span class="p"&gt;;&lt;/span&gt;
+        root /www&lt;span class="p"&gt;;&lt;/span&gt;
+
+        ssl_certificate /etc/ssl/certs/server.crt&lt;span class="p"&gt;;&lt;/span&gt;
+        ssl_certificate_key /etc/ssl/private/server.key&lt;span class="p"&gt;;&lt;/span&gt;
+
+        auth_basic &lt;span class="s2"&gt;&amp;quot;Admin Area&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        auth_basic_user_file /etc/nginx/auth/private&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora tenemos que crear un fichero tipo &lt;em&gt;.htpasswd&lt;/em&gt; como los de &lt;strong&gt;apache&lt;/strong&gt;. Crearemos primero la carpeta en donde lo vamos a dejar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mkdir /etc/nginx/auth
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En la carpeta creada pondremos un fichero llamado &lt;em&gt;private&lt;/em&gt; con un formato idéntico a los &lt;em&gt;.htpasswd&lt;/em&gt; de &lt;strong&gt;apache&lt;/strong&gt;. Aquí podríamos usar las herramientas de &lt;strong&gt;apache-utils&lt;/strong&gt;, pero de momento nos conformaremos con crearlo con &lt;strong&gt;openssl&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;admin:&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;openssl passwd -crypt s3cr3t&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /etc/nginx/auth/private
+root@server:~# cat /etc/nginx/auth/private
+admin:y6xasR0LI8mbg
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finalmente reiniciamos el servidor web para que aplique los cambios en la configuración.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# service nginx restart
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Comprobación de funcionamiento&lt;/h2&gt;
+&lt;p&gt;Es importante que nos acordemos de crear nuestro &lt;em&gt;document root&lt;/em&gt; con algún contenido.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mkdir /www
+root@server:~# &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Private area&amp;quot;&lt;/span&gt; &amp;gt; /www/index.html
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si apuntamos un navegador al dominio configurado, y tras aceptar nuestro certificado autofirmado como excepción, deberíamos ver que se nos piden las credenciales en una ventana emergente.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Autenticación básica: credenciales" src="http://www.linuxsysadmin.tk/images/autenticacion-basica-credenciales.png" /&gt;&lt;/p&gt;
+&lt;p&gt;Y con eso tenemos nuestro contenido protegido de los curiosos.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="nginx"></category><category term="autenticacion basica"></category><category term="htpasswd"></category><category term="ssl"></category><category term="https"></category><category term="certificado"></category></entry><entry><title>Un proxy DNS con dnsmasq</title><link href="http://www.linuxsysadmin.tk/2016/02/un-proxy-dns-con-dnsmasq.html" rel="alternate"></link><updated>2016-02-01T08:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-02-01:2016/02/un-proxy-dns-con-dnsmasq.html</id><summary type="html">&lt;p&gt;A veces nos puede interesar disponer de una servidor &lt;strong&gt;DNS&lt;/strong&gt; para nombrar las máquinas de nuestra red privada, sin la complejidad de &lt;strong&gt;BIND&lt;/strong&gt;. Otras, queremos acelerar el acceso a internet desde nuestra red; es interesante ver el tiempo que se pierde en la resolución &lt;strong&gt;DNS&lt;/strong&gt;. Para eso disponemos de &lt;strong&gt;dnsmasq&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;El servicio &lt;strong&gt;dnsmasq&lt;/strong&gt; proporciona servicios como caché &lt;strong&gt;DNS&lt;/strong&gt; y como servidor &lt;strong&gt;DHCP&lt;/strong&gt;. Se trata de un &lt;em&gt;proxy&lt;/em&gt; &lt;strong&gt;DNS&lt;/strong&gt; que va a dirigir las consultas &lt;strong&gt;DNS&lt;/strong&gt; contra el servidor configurado en el &lt;em&gt;proxy&lt;/em&gt;, guardando una copia en &lt;em&gt;caché&lt;/em&gt; para agilizar futuras consultas.&lt;/p&gt;
 &lt;p&gt;Es muy fácil de configurar y es bastante ligero. Se considera ideal para redes pequeñas con menos de 50 ordenadores.&lt;/p&gt;
 &lt;p&gt;En mi caso, resultó muy útil para solucionar el problema de &lt;strong&gt;DNS&lt;/strong&gt; que me planteaba una red &lt;strong&gt;Virtualbox&lt;/strong&gt; &lt;em&gt;solo anfitrión&lt;/em&gt;, en donde se escondían mis máquinas virtuales con dirección IP estática. Resulta que me muevo entre varias zonas de trabajo, y que no hay ningún servidor &lt;strong&gt;DNS&lt;/strong&gt; accesible desde todas; ir cambiando los &lt;strong&gt;DNS&lt;/strong&gt; de todas las máquinas era trabajoso.&lt;/p&gt;

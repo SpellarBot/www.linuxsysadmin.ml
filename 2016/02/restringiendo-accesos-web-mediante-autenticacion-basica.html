@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>livecd - Linux Sysadmin</title>
+    <title>Restringiendo accesos web mediante autenticación básica - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,29 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="livecd" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="linux,debian,jessie,nginx,autenticacion basica,htpasswd,ssl,https,certificado" />
+        <meta name="description" content="Algunas veces nos encontramos con la necesidad de restringir el acceso a algunos recursos web. Normalmente se suele implementar algún sistema de login, cookies o sesiones; no obstante, esta opción no siempre nos es posible, y tenemos que proteger esos recursos usando los mecanismos que nos ofrezca el servidor web ..." />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Restringiendo accesos web mediante autenticación básica"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html"/>
+        <meta property="og:description" content="Algunas veces nos encontramos con la necesidad de restringir el acceso a algunos recursos web. Normalmente se suele implementar algún sistema de login, cookies o sesiones; no obstante, esta opción no siempre nos es posible, y tenemos que proteger esos recursos usando los mecanismos que nos ofrezca el servidor web ..."/>
+        <meta property="article:published_time" content="2016-02-08" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="debian" />
+            <meta property="article:tag" content="jessie" />
+            <meta property="article:tag" content="nginx" />
+            <meta property="article:tag" content="autenticacion basica" />
+            <meta property="article:tag" content="htpasswd" />
+            <meta property="article:tag" content="ssl" />
+            <meta property="article:tag" content="https" />
+            <meta property="article:tag" content="certificado" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,6 +47,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -75,11 +90,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.tk/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
-        <li class="active">livecd</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Restringiendo accesos web mediante autenticación básica</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -92,13 +107,249 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html">Creación de un livecd con Debian</a></h2>
-                <div class="summary"><p>Tras ver como las actualizaciones de mis máquinas virtuales <em>VirtualBox</em> expandían mis discos <em>.vdi</em> sin control, quise pasar la herramienta <em>zerofree</em> y un compactado con la herramienta oficial <em>VBoxManage</em>. No quería instalar <em>zerofree</em> de forma permanente y no pude encontrar un <em>livecd</em> que lo tuviera, así que decidí crear uno ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html">Seguir leyendo</a>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html"
+                       rel="bookmark"
+                       title="Permalink to Restringiendo accesos web mediante autenticación básica">
+                        Restringiendo accesos web mediante autenticación básica
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-02-08T08:30:00+01:00"> 2016-02-08</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 5 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/sistemas.html">Sistemas</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/debian.html">debian</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/jessie.html">jessie</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/nginx.html">nginx</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/autenticacion-basica.html">autenticacion basica</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/htpasswd.html">htpasswd</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/ssl.html">ssl</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/https.html">https</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/certificado.html">certificado</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 </div>
-            </article>
-            <hr/>
+                <p>Algunas veces nos encontramos con la necesidad de restringir el acceso a algunos recursos web. Normalmente se suele implementar algún sistema de <em>login</em>, <em>cookies</em> o <em>sesiones</em>; no obstante, esta opción no siempre nos es posible, y tenemos que proteger esos recursos usando los mecanismos que nos ofrezca el servidor web.</p>
+<p><strong>ATENCIÓN</strong>: Este método es bastante simple, y se puede descodificar lo que manda el cliente; por eso se recomienda encarecidamente usar <strong>SSL</strong>, mediante el uso de <strong>HTTPS</strong>.</p>
+<p>Empezaremos instalando el servidor web y la herramienta de generación de certificados para usar con <strong>SSL</strong>.</p>
+<div class="highlight"><pre>root@server:~# apt-get install nginx-light openssl
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes extras:
+  nginx-common
+Paquetes sugeridos:
+  fcgiwrap nginx-doc ssl-cert ca-certificates
+Se instalarán los siguientes paquetes NUEVOS:
+  nginx-common nginx-light openssl
+<span class="m">0</span> actualizados, <span class="m">3</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar 1.126 kB de archivos.
+Se utilizarán 2.148 kB de espacio de disco adicional después de esta operación.
+¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
+...
+root@server:~#
+</pre></div>
+
+
+<h2>Generar el certificado y la clave de la CA</h2>
+<p>Empezaremos por generar la clave de la CA, que va a servir para firmar el certificado que pondremos en el servidor.</p>
+<div class="highlight"><pre>root@server:~# openssl genrsa -des3 -out ca.key 4096
+Generating RSA private key, <span class="m">4096</span> bit long modulus
+..................................++
+.....................................................................++
+e is <span class="m">65537</span> <span class="o">(</span>0x10001<span class="o">)</span>
+Enter pass phrase <span class="k">for</span> ca.key:
+Verifying - Enter pass phrase <span class="k">for</span> ca.key:
+root@server:~#
+</pre></div>
+
+
+<p>Ahora generamos el certificado de la CA. Lo generamos directamente firmado en un solo paso.</p>
+<div class="highlight"><pre>root@server:~# openssl req -new -x509 -days <span class="m">365</span> -key ca.key -out ca.crt -subj <span class="s2">&quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin&quot;</span>
+Enter pass phrase <span class="k">for</span> ca.key:
+root@server:~#
+</pre></div>
+
+
+<h2>Generar el certificado para el servidor web</h2>
+<p>Generamos la clave para el certificado del servidor web.</p>
+<div class="highlight"><pre>root@server:~# openssl genrsa -des3 -out server.key 4096
+Generating RSA private key, <span class="m">4096</span> bit long modulus
+.....................................................................++
+......................................................................................................................................................................++
+e is <span class="m">65537</span> <span class="o">(</span>0x10001<span class="o">)</span>
+Enter pass phrase <span class="k">for</span> server.key:
+Verifying - Enter pass phrase <span class="k">for</span> server.key:
+root@server:~#
+</pre></div>
+
+
+<p>Ahora creamos un certificado para el servidor web.</p>
+<div class="highlight"><pre>root@server:~# openssl req -new -key server.key -out server.csr -subj <span class="s2">&quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin/CN=private.linuxsysadmin.tk&quot;</span>
+Enter pass phrase <span class="k">for</span> server.key:
+root@server:~#
+</pre></div>
+
+
+<p>Y lo firmamos con la clave y el certificado de la CA.</p>
+<div class="highlight"><pre>root@server:~# openssl x509 -req -days <span class="m">365</span> -in server.csr -CA ca.crt -CAkey ca.key -set_serial <span class="m">01</span> -out server.crt
+Signature ok
+<span class="nv">subject</span><span class="o">=</span>/C<span class="o">=</span>ES/ST<span class="o">=</span>Spain/L<span class="o">=</span>Barcelona/O<span class="o">=</span>LinuxSysadmin/CN<span class="o">=</span>private.linuxsysadmin.tk
+Getting CA Private Key
+Enter pass phrase <span class="k">for</span> ca.key:
+root@server:~#
+</pre></div>
+
+
+<p><strong>TRUCO</strong>: Si la clave está protegida por una <em>passphrase</em>, se va a necesitar introducirla cada vez que se quiera levantar el servidor web. Nos lo podemos ahorrar con unos simples comandos, que dejará la clave como insegura.</p>
+<div class="highlight"><pre>root@server:~# mv server.key server.key.secure
+root@server:~# openssl rsa -in server.key.secure -out server.key
+Enter pass phrase <span class="k">for</span> server.key.secure:
+writing RSA key
+root@server:~#
+</pre></div>
+
+
+<h2>Montando el dominio web</h2>
+<p>Para habilitar <strong>SSL</strong> en un dominio, necesitamos la clave y el certificado del servidor, así que vamos a ponerlos en una carpeta pensado para tal efecto.</p>
+<div class="highlight"><pre>root@server:~# cp server.key /etc/ssl/private/
+root@server:~# cp server.crt /etc/ssl/certs/
+root@server:~#
+</pre></div>
+
+
+<p>Así quedarían los certificados una vez en su sitio.</p>
+<div class="highlight"><pre>root@server:~# tree /etc/ssl/
+/etc/ssl/
+├── certs
+│   └── server.crt
+├── openssl.cnf
+└── private
+    └── server.key
+
+<span class="m">2</span> directories, <span class="m">3</span> files
+root@server:~#
+</pre></div>
+
+
+<p>Vamos a poner un fichero de configuración en <strong>nginx</strong>, que va a escuchar por el puerto 443 y con <strong>SSL</strong> habilitado. Indicamos también donde están los ficheros que servirá el <strong>nginx</strong>, la localización de los certificados y activamos la autenticación básica.</p>
+<div class="highlight"><pre>root@server:~# cat /etc/nginx/sites-enabled/private.linuxsysadmin.tk
+server <span class="o">{</span>
+        listen <span class="m">443</span> ssl<span class="p">;</span>
+        server_name private.linuxsysadmin.tk<span class="p">;</span>
+        root /www<span class="p">;</span>
+
+        ssl_certificate /etc/ssl/certs/server.crt<span class="p">;</span>
+        ssl_certificate_key /etc/ssl/private/server.key<span class="p">;</span>
+
+        auth_basic <span class="s2">&quot;Admin Area&quot;</span><span class="p">;</span>
+        auth_basic_user_file /etc/nginx/auth/private<span class="p">;</span>
+<span class="o">}</span>
+root@server:~#
+</pre></div>
+
+
+<p>Ahora tenemos que crear un fichero tipo <em>.htpasswd</em> como los de <strong>apache</strong>. Crearemos primero la carpeta en donde lo vamos a dejar.</p>
+<div class="highlight"><pre>root@server:~# mkdir /etc/nginx/auth
+root@server:~#
+</pre></div>
+
+
+<p>En la carpeta creada pondremos un fichero llamado <em>private</em> con un formato idéntico a los <em>.htpasswd</em> de <strong>apache</strong>. Aquí podríamos usar las herramientas de <strong>apache-utils</strong>, pero de momento nos conformaremos con crearlo con <strong>openssl</strong>.</p>
+<div class="highlight"><pre>root@server:~# <span class="nb">echo</span> <span class="s2">&quot;admin:</span><span class="k">$(</span>openssl passwd -crypt s3cr3t<span class="k">)</span><span class="s2">&quot;</span> &gt;&gt; /etc/nginx/auth/private
+root@server:~# cat /etc/nginx/auth/private
+admin:y6xasR0LI8mbg
+root@server:~#
+</pre></div>
+
+
+<p>Finalmente reiniciamos el servidor web para que aplique los cambios en la configuración.</p>
+<div class="highlight"><pre>root@server:~# service nginx restart
+root@server:~#
+</pre></div>
+
+
+<h2>Comprobación de funcionamiento</h2>
+<p>Es importante que nos acordemos de crear nuestro <em>document root</em> con algún contenido.</p>
+<div class="highlight"><pre>root@server:~# mkdir /www
+root@server:~# <span class="nb">echo</span> <span class="s2">&quot;Private area&quot;</span> &gt; /www/index.html
+root@server:~#
+</pre></div>
+
+
+<p>Si apuntamos un navegador al dominio configurado, y tras aceptar nuestro certificado autofirmado como excepción, deberíamos ver que se nos piden las credenciales en una ventana emergente.</p>
+<p><img alt="Autenticación básica: credenciales" src="http://www.linuxsysadmin.tk/images/autenticacion-basica-credenciales.png" /></p>
+<p>Y con eso tenemos nuestro contenido protegido de los curiosos.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Restart automático de servicios con systemd</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Construyendo una replica set en mongodb</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'restringiendo-accesos-web-mediante-autenticacion-basica';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
 
         </div>
         <div class="col-sm-3" id="sidebar">
@@ -415,7 +666,7 @@ Linux Sysadmin            </a>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2015 Gerard
+         <div class="col-xs-10">&copy; 2016 Gerard
             &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
