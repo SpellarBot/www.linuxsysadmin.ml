@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>systemd - Linux Sysadmin</title>
+    <title>Haciendo snapshots con LVM - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,26 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/02/haciendo-snapshots-con-lvm.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="systemd" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="linux,lvm,logical volume manager,snapshot,point-in-time,backup" />
+        <meta name="description" content="Una de las funcionalidades mas implementadas en los sistemas de ficheros de nueva generación es la capacidad de hacer snapshots point-in-time. Sin embargo, no tenemos que renunciar a la estabilidad de los sistemas de ficheros tradicionales como ext4; otras veces no es posible por requisitos del servicio que debe usarlo ..." />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Haciendo snapshots con LVM"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/02/haciendo-snapshots-con-lvm.html"/>
+        <meta property="og:description" content="Una de las funcionalidades mas implementadas en los sistemas de ficheros de nueva generación es la capacidad de hacer snapshots point-in-time. Sin embargo, no tenemos que renunciar a la estabilidad de los sistemas de ficheros tradicionales como ext4; otras veces no es posible por requisitos del servicio que debe usarlo ..."/>
+        <meta property="article:published_time" content="2016-02-15" />
+            <meta property="article:section" content="Operaciones" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="lvm" />
+            <meta property="article:tag" content="logical volume manager" />
+            <meta property="article:tag" content="snapshot" />
+            <meta property="article:tag" content="point-in-time" />
+            <meta property="article:tag" content="backup" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,6 +44,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -75,11 +87,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.tk/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
-        <li class="active">systemd</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
+                <li class="active">Haciendo snapshots con LVM</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -92,27 +104,259 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Construyendo una replica set en mongodb</a></h2>
-                <div class="summary"><p>Muchas veces nos interesa obtener alta disponibilidad en los servicios que gestionamos. No hay nada mas desagradable que una llamada a las tantas de la noche porque se ha caído un nodo de una base de datos y no damos servicio. Para eso <em>mongodb</em> nos ofrece el mecanismo de replicación ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Seguir leyendo</a>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2016/02/haciendo-snapshots-con-lvm.html"
+                       rel="bookmark"
+                       title="Permalink to Haciendo snapshots con LVM">
+                        Haciendo snapshots con LVM
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-02-15T08:30:00+01:00"> 2016-02-15</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 6 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/lvm.html">lvm</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/logical-volume-manager.html">logical volume manager</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/snapshot.html">snapshot</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/point-in-time.html">point-in-time</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/backup.html">backup</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Escribiendo units en systemd</a></h2>
-                <div class="summary"><p>Cuando se anunció <em>systemd</em> me llamó la atención que además de las funciones estándares de otros sistemas de <em>init</em> (por ejemplo <em>sysvinit</em>), también se ofrecían otras funcionalidades normalmente delegadas a otros procesos, como por ejemplo, la posibilidad de reiniciar procesos automáticamente o de lanzar procesos temporales al estilo de <em>cron ...</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Restart automático de servicios con systemd</a></h2>
-                <div class="summary"><p>Cuando estamos gestionando un servidor, es posible que se caiga alguno de sus servicios. Esto es especialmente molesto cuando nos interesa tener un <em>uptime</em> elevado. Para conseguirlo, se han utilizado diferentes maneras, desde poner personas a monitorizar en modo 24x7 hasta herramientas auxiliares como gestores tipo <em>runit</em>, <em>supervisor</em> o <em>monit ...</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+                <p>Una de las funcionalidades mas implementadas en los sistemas de ficheros de nueva generación es la capacidad de hacer <em>snapshots point-in-time</em>. Sin embargo, no tenemos que renunciar a la estabilidad de los sistemas de ficheros tradicionales como <strong>ext4</strong>; otras veces no es posible por requisitos del servicio que debe usarlo.</p>
+<p>En este tutorial vamos a demostrar lo fácil que es hacer este tipo de <em>snapshots</em>, usando como tecnología subyacente el <strong>logical volume manager</strong>, de ahora en adelante, <strong>LVM</strong>.</p>
+<p>Los únicos requisitos para seguir esta guía son el paquete <strong>lvm</strong> y un disco físico sobre el que vamos a construir el <em>volume group</em> que va a alojar los <em>logical volumes</em>; al menos van a ser la partición original y algo de espacio para servir como volumen para el <em>snapshot</em>.</p>
+<h2>Preparación</h2>
+<p>Empezamos instalando los requisitos software:</p>
+<div class="highlight"><pre>root@server:~# apt-get install lvm2
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes extras:
+  dmeventd libdevmapper-event1.02.1 liblvm2cmd2.02 libreadline5
+Paquetes sugeridos:
+  thin-provisioning-tools
+Se instalarán los siguientes paquetes NUEVOS:
+  dmeventd libdevmapper-event1.02.1 liblvm2cmd2.02 libreadline5 lvm2
+<span class="m">0</span> actualizados, <span class="m">5</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar 1.530 kB de archivos.
+Se utilizarán 3.898 kB de espacio de disco adicional después de esta operación.
+¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
+...
+root@server:~#
+</pre></div>
+
+
+<p>Suponiendo que el disco que vamos a usar es <em>/dev/sdb</em>, vamos a acondicionarlo para que pueda actuar como <em>physical volume</em>.</p>
+<div class="highlight"><pre>root@server:~# pvcreate /dev/sdb
+  Physical volume <span class="s2">&quot;/dev/sdb&quot;</span> successfully created
+root@server:~#
+</pre></div>
+
+
+<p>Ahora vamos a usar este <em>physical volume</em> para crear el <em>volume group</em>.</p>
+<div class="highlight"><pre>root@server:~# vgcreate lvm /dev/sdb
+  /proc/devices: No entry <span class="k">for</span> device-mapper found
+  Volume group <span class="s2">&quot;lvm&quot;</span> successfully created
+root@server:~#
+</pre></div>
+
+
+<p>Vamos a sacar un <em>logical volume</em> para crear el sistema de ficheros que va a ser el objeto del <em>snapshot</em>. El tamaño del volumen puede ser el que nos convenga, e incluso crecer según sea necesario. De momento, nos basta con 1 GB.</p>
+<div class="highlight"><pre>root@server:~# lvcreate lvm -L 1G -n datos
+  Logical volume <span class="s2">&quot;datos&quot;</span> created
+root@server:~#
+</pre></div>
+
+
+<p>Lo formateamos como si de un disco mas se tratara.</p>
+<div class="highlight"><pre>root@server:~# mkfs.ext4 /dev/lvm/datos
+mke2fs 1.42.12 <span class="o">(</span>29-Aug-2014<span class="o">)</span>
+Se está creando El sistema de ficheros con <span class="m">262144</span> 4k bloques y <span class="m">65536</span> nodos-i
+
+UUID del sistema de ficheros: 1ad4e531-82de-4797-9968-28cb33b3badd
+Respaldo del superbloque guardado en los bloques:
+        32768, 98304, 163840, 229376
+
+Reservando las tablas de grupo: hecho
+Escribiendo las tablas de nodos-i: hecho
+Creando el fichero de transacciones <span class="o">(</span><span class="m">8192</span> bloques<span class="o">)</span>: hecho
+Escribiendo superbloques y la información contable del sistema de ficheros: hecho
+
+root@server:~#
+</pre></div>
+
+
+<p>Vamos a asumir que nuestro servicio necesita dejar sus datos en <em>/data</em>; como no existe, vamos a crearlo.</p>
+<div class="highlight"><pre>root@server:~# mkdir /data
+root@server:~#
+</pre></div>
+
+
+<p>El siguiente paso es montar ese volumen en su sitio, en este caso, en <em>/data</em>. Se deja como ejercicio personal ponerlo en el <em>/etc/fstab</em>.</p>
+<div class="highlight"><pre>root@server:~# mount /dev/lvm/datos /data/
+root@server:~#
+</pre></div>
+
+
+<p>Vamos a crear algo de contenido en la carpeta para simular los datos que dejaría el servicio que supuestamente usaría esta carpeta.</p>
+<div class="highlight"><pre>root@server:~# <span class="nb">echo </span><span class="m">1</span> &gt; /data/a
+root@server:~# <span class="nb">echo </span><span class="m">1</span> &gt; /data/b
+root@server:~#
+</pre></div>
+
+
+<h2>Creación del snapshot</h2>
+<p>Hacer un <em>snapshot</em> es tan fácil como invocar el binario <strong>lvcreate</strong> con el parámetro <em>-s</em>, especificando el tamaño, el nombre y el volumen objetivo.</p>
+<div class="highlight"><pre>root@server:~# lvcreate -L 100M -n datos-snap -s /dev/lvm/datos
+  Logical volume <span class="s2">&quot;datos-snap&quot;</span> created
+root@server:~#
+</pre></div>
+
+
+<p>El volumen <em>datos-snap</em> solo contiene las diferencias con el volumen original, así que no necesita tener el mismo tamaño que el original. Sin embargo, si hubiera mas de 100 MB de cambios, este <em>snapshot</em> quedaría inválido.</p>
+<p>De momento, creo que con 100 MB va a ser suficiente, ya que solo pretendo sacar un fichero comprimido de ese <em>snapshot</em>, eliminándolo después. Un tamaño seguro habría sido el mismo que el volumen original. Sin embargo, como se trata de otro volumen <strong>LVM</strong>, podremos extenderla a posteriori con <em>lvextend</em>.</p>
+<p>Vamos a analizar el contenido; lo montamos en una carpeta cualquiera para ver su contenido.</p>
+<div class="highlight"><pre>root@server:~# mount /dev/lvm/datos-snap /mnt/
+root@server:~#
+</pre></div>
+
+
+<p>Es fácil de verificar que tienen el mismo contenido.</p>
+<div class="highlight"><pre>root@server:~# grep . /data/* /mnt/*
+/data/a:1
+/data/b:1
+/mnt/a:1
+/mnt/b:1
+root@server:~#
+</pre></div>
+
+
+<p>Vamos a continuar simulando que el servicio escribe en el volumen original, por ejemplo, modificando uno de los ficheros.</p>
+<div class="highlight"><pre>root@server:~# <span class="nb">echo </span><span class="m">2</span> &gt; /data/a
+root@server:~#
+</pre></div>
+
+
+<p>Y verificamos que el <em>snapshot point-in-time</em> se quedó en el momento temporal en el que lo hicimos, quedando como estaba entonces:</p>
+<div class="highlight"><pre>root@server:~# grep . /data/* /mnt/*
+/data/a:2
+/data/b:1
+/mnt/a:1
+/mnt/b:1
+root@server:~#
+</pre></div>
+
+
+<p>Verificando los <em>logical volume</em> con el comando <em>lvs</em>, vemos que es un volumen de 100 MB, con una ocupación baja, del 0,08%. El <em>snapshot</em> quedaría inservible si llegara a superar el 100%.</p>
+<div class="highlight"><pre>root@server:~# lvs
+  LV         VG   Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  datos      lvm  owi-aos---   1,00g
+  datos-snap lvm  swi-aos--- 100,00m      datos  0,08
+root@server:~#
+</pre></div>
+
+
+<h2>Sacando el backup</h2>
+<p>El objetivo inicial era sacar una copia de los datos, congelados en un momento concreto. Tenemos ese momento en el volumen <em>datos-snap</em>.</p>
+<p>Empezaremos montándolo en alguna carpeta cualquiera, si no lo teníamos ya (lo hemos montado en el punto anterior).</p>
+<div class="highlight"><pre>root@server:~# mount /dev/lvm/datos-snap /mnt/
+root@server:~#
+</pre></div>
+
+
+<p>Con el volumen montado, el resto es procedimiento estándar. En este caso, vamos a sacar un fichero <em>.tar.gz</em> con el contenido de la carpeta:</p>
+<div class="highlight"><pre>root@server:~# <span class="nb">cd</span> /mnt/
+root@server:/mnt# tar cvzf /root/backup.tar.gz *
+a
+b
+root@server:/mnt#
+</pre></div>
+
+
+<p>Y finalmente vamos a limpiar el <em>snapshot</em>, empezando por desmontar el volumen. Como estamos dentro de la carpeta no vamos a poder desmontar el volumen, así que salimos.</p>
+<div class="highlight"><pre>root@server:/mnt# <span class="nb">cd</span>
+root@server:~# umount /mnt/
+root@server:~#
+</pre></div>
+
+
+<p>Y ahora que no lo tenemos montado, lo eliminamos sin problemas con las herramientas propias de <strong>LVM</strong>.</p>
+<div class="highlight"><pre>root@server:~# lvremove /dev/lvm/datos-snap
+Do you really want to remove active logical volume datos-snap? <span class="o">[</span>y/n<span class="o">]</span>: y
+  Logical volume <span class="s2">&quot;datos-snap&quot;</span> successfully removed
+root@server:~#
+</pre></div>
+
+
+<p>Y solo quedará poner el fichero <em>backup.tar.gz</em> a buen recaudo.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/01/lvm-logical-volume-manager.html">LVM: logical volume manager</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/01/un-repositorio-de-debian-con-reprepro.html">Un repositorio de Debian con reprepro</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html">Creación de un livecd con Debian</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'haciendo-snapshots-con-lvm';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/02/haciendo-snapshots-con-lvm.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
 
         </div>
         <div class="col-sm-3" id="sidebar">
@@ -444,7 +688,7 @@ Linux Sysadmin            </a>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2015 Gerard
+         <div class="col-xs-10">&copy; 2016 Gerard
             &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
