@@ -1,5 +1,195 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-02-15T08:30:00+01:00</updated><entry><title>Haciendo snapshots con LVM</title><link href="http://www.linuxsysadmin.tk/2016/02/haciendo-snapshots-con-lvm.html" rel="alternate"></link><updated>2016-02-15T08:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-02-15:2016/02/haciendo-snapshots-con-lvm.html</id><summary type="html">&lt;p&gt;Una de las funcionalidades mas implementadas en los sistemas de ficheros de nueva generación es la capacidad de hacer &lt;em&gt;snapshots point-in-time&lt;/em&gt;. Sin embargo, no tenemos que renunciar a la estabilidad de los sistemas de ficheros tradicionales como &lt;strong&gt;ext4&lt;/strong&gt;; otras veces no es posible por requisitos del servicio que debe usarlo.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-02-22T08:00:00+01:00</updated><entry><title>Restringiendo accesos mediante certificados de cliente</title><link href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html" rel="alternate"></link><updated>2016-02-22T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-02-22:2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html</id><summary type="html">&lt;p&gt;De vez en cuando, tenemos algún contenido web o una API que necesita un control de acceso superior. El método mas eficaz del que disponemos hoy en día es la autenticación con certificados SSL cliente, en donde es el cliente el que debe ofrecer un certificado que el servidor validará.&lt;/p&gt;
+&lt;p&gt;Como se trata de proteger contenido web, vamos a necesitar un servidor web, por ejemplo, &lt;strong&gt;nginx&lt;/strong&gt;. De paso, vamos a instalar el paquete &lt;strong&gt;openssl&lt;/strong&gt;, que nos permitirá generar los certificados usados.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# apt-get install nginx-light openssl
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes extras:
+  nginx-common
+Paquetes sugeridos:
+  fcgiwrap nginx-doc ssl-cert ca-certificates
+Se instalarán los siguientes paquetes NUEVOS:
+  nginx-common nginx-light openssl
+&lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;3&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
+Se necesita descargar 1.126 kB de archivos.
+Se utilizarán 2.148 kB de espacio de disco adicional después de esta operación.
+¿Desea continuar? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
+...
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Generar el certificado y la clave de la CA&lt;/h2&gt;
+&lt;p&gt;Empezaremos por generar la clave de la CA, que va a servir para firmar el certificado que pondremos en el servidor.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# openssl genrsa -des3 -out ca.key 4096
+Generating RSA private key, &lt;span class="m"&gt;4096&lt;/span&gt; bit long modulus
+...................................................................++
+.++
+e is &lt;span class="m"&gt;65537&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;0x10001&lt;span class="o"&gt;)&lt;/span&gt;
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; ca.key:
+Verifying - Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; ca.key:
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora generamos el certificado de la CA. Lo generamos directamente firmado en un solo paso.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# openssl req -new -x509 -days &lt;span class="m"&gt;365&lt;/span&gt; -key ca.key -out ca.crt -subj &lt;span class="s2"&gt;&amp;quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin&amp;quot;&lt;/span&gt;
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; ca.key:
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Generar el certificado para el servidor web&lt;/h2&gt;
+&lt;p&gt;Generamos la clave para el certificado del servidor web.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# openssl genrsa -des3 -out server.key 4096
+Generating RSA private key, &lt;span class="m"&gt;4096&lt;/span&gt; bit long modulus
+.............................................++
+.....................................++
+e is &lt;span class="m"&gt;65537&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;0x10001&lt;span class="o"&gt;)&lt;/span&gt;
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; server.key:
+Verifying - Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; server.key:
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora creamos un certificado para el servidor web. Es importante que el campo &lt;strong&gt;CN&lt;/strong&gt; sea el mismo que el nombre del &lt;em&gt;virtualhost&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# openssl req -new -key server.key -out server.csr -subj &lt;span class="s2"&gt;&amp;quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin/CN=private.linuxsysadmin.tk&amp;quot;&lt;/span&gt;
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; server.key:
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y lo firmamos con la clave y el certificado de la CA.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# openssl x509 -req -days &lt;span class="m"&gt;365&lt;/span&gt; -in server.csr -CA ca.crt -CAkey ca.key -set_serial &lt;span class="m"&gt;01&lt;/span&gt; -out server.crt
+Signature ok
+&lt;span class="nv"&gt;subject&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/C&lt;span class="o"&gt;=&lt;/span&gt;ES/ST&lt;span class="o"&gt;=&lt;/span&gt;Spain/L&lt;span class="o"&gt;=&lt;/span&gt;Barcelona/O&lt;span class="o"&gt;=&lt;/span&gt;LinuxSysadmin/CN&lt;span class="o"&gt;=&lt;/span&gt;private.linuxsysadmin.tk
+Getting CA Private Key
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; ca.key:
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Si la clave está protegida por una passphrase, se va a necesitar introducirla cada vez que se quiera levantar el servidor web. Nos lo podemos ahorrar con unos simples comandos, que dejará la clave como insegura.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mv server.key server.key.secure
+root@server:~# openssl rsa -in server.key.secure -out server.key
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; server.key.secure:
+writing RSA key
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Generar el certificado cliente&lt;/h2&gt;
+&lt;p&gt;Generamos la clave para el certificado del cliente.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# openssl genrsa -des3 -out client.key 1024
+Generating RSA private key, &lt;span class="m"&gt;1024&lt;/span&gt; bit long modulus
+...............................++++++
+.....................++++++
+e is &lt;span class="m"&gt;65537&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;0x10001&lt;span class="o"&gt;)&lt;/span&gt;
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; client.key:
+Verifying - Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; client.key:
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El siguiente paso consiste en generar una petición de certificado, que posteriormente haremos firmar. El campo &lt;strong&gt;CN&lt;/strong&gt; puede ser recogido por el servidor web y trasladado mediante cabeceras a un hipotético &lt;em&gt;backend&lt;/em&gt;, en caso de hacer un &lt;em&gt;proxy_pass&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# openssl req -new -key client.key -out client.csr -subj &lt;span class="s2"&gt;&amp;quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin/CN=Gerard Monells&amp;quot;&lt;/span&gt;
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; client.key:
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Firmamos nuestra petición de certificado con la clave de la CA, obteniendo el certificado final.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# openssl x509 -req -days &lt;span class="m"&gt;365&lt;/span&gt; -in client.csr -CA ca.crt -CAkey ca.key -set_serial &lt;span class="m"&gt;91&lt;/span&gt; -out client.crt
+Signature ok
+&lt;span class="nv"&gt;subject&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/C&lt;span class="o"&gt;=&lt;/span&gt;ES/ST&lt;span class="o"&gt;=&lt;/span&gt;Spain/L&lt;span class="o"&gt;=&lt;/span&gt;Barcelona/O&lt;span class="o"&gt;=&lt;/span&gt;LinuxSysadmin/CN&lt;span class="o"&gt;=&lt;/span&gt;Gerard Monells
+Getting CA Private Key
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; ca.key:
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora queda empaquetar la clave y el certificado en un fichero &lt;em&gt;client.p12&lt;/em&gt; que pueda ser importado en un navegador web.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# openssl pkcs12 -export -in client.crt -inkey client.key -out client.p12 -name &lt;span class="s2"&gt;&amp;quot;LinuxSysadmin&amp;quot;&lt;/span&gt;
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; client.key:
+Enter Export Password:
+Verifying - Enter Export Password:
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Montando el dominio web&lt;/h2&gt;
+&lt;p&gt;Además de necesitar el certificado y la clave servidor, es necesario que el servidor web conozca el certificado de la CA para que pueda verificar el servidor cliente que nos ofrezca el navegador.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cp server.key /etc/ssl/private/
+root@server:~# cp server.crt /etc/ssl/certs/
+root@server:~# cp ca.crt /etc/ssl/certs/
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Así quedarían los certificados una vez en su sitio.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# tree /etc/ssl/
+/etc/ssl/
+├── certs
+│   ├── ca.crt
+│   └── server.crt
+├── openssl.cnf
+└── private
+    └── server.key
+
+&lt;span class="m"&gt;2&lt;/span&gt; directories, &lt;span class="m"&gt;4&lt;/span&gt; files
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a poner un fichero de configuración en &lt;strong&gt;nginx&lt;/strong&gt;, que va a escuchar por el puerto 443 y con &lt;strong&gt;SSL&lt;/strong&gt; habilitado. Indicamos también donde están los ficheros que servirá el &lt;strong&gt;nginx&lt;/strong&gt;, la localización de los certificados y la necesidad de verificar al cliente mediante certificado contra el certificado de la CA.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/nginx/sites-enabled/private.linuxsysadmin.tk
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen                      &lt;span class="m"&gt;443&lt;/span&gt; ssl&lt;span class="p"&gt;;&lt;/span&gt;
+    server_name                 private.linuxsysadmin.tk&lt;span class="p"&gt;;&lt;/span&gt;
+    root                        /www&lt;span class="p"&gt;;&lt;/span&gt;
+
+    ssl_certificate             /etc/ssl/certs/server.crt&lt;span class="p"&gt;;&lt;/span&gt;
+    ssl_certificate_key         /etc/ssl/private/server.key&lt;span class="p"&gt;;&lt;/span&gt;
+    ssl_client_certificate      /etc/ssl/certs/ca.crt&lt;span class="p"&gt;;&lt;/span&gt;
+    ssl_verify_client           on&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos verificar que la sintaxis de la configuración es correcta usando el binario de &lt;strong&gt;nginx&lt;/strong&gt; con el parámetro adecuado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf &lt;span class="nb"&gt;test &lt;/span&gt;is successful
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y sabiendo que es correcto, reiniciamos el servidor web.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# service nginx restart
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Comprobación de funcionamiento&lt;/h2&gt;
+&lt;p&gt;Como hemos indicado en la configuración en el &lt;em&gt;document root&lt;/em&gt;, vamos a servir el contenido que se encuentra en &lt;em&gt;/www&lt;/em&gt;. Empezaremos poniendo algún contenido en él.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mkdir /www
+root@server:~# &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Private area&amp;quot;&lt;/span&gt; &amp;gt; /www/index.html
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora apuntemos el navegador a la &lt;strong&gt;URL&lt;/strong&gt; del servidor web. Debemos aceptar el certificado autofirmado, puesto que no viene firmado por ninguna autoridad certificadora conocida, por ejemplo, &lt;strong&gt;VeriSign&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Aún así, como no hemos presentado el certificado cliente, el servidor web nos impide el acceso, con una respuesta &lt;strong&gt;HTTP 400&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="2 way SSL access denied" src="http://www.linuxsysadmin.tk/images/2-way-ssl-access-denied.png" /&gt;&lt;/p&gt;
+&lt;p&gt;Ahora debemos importar el certificado &lt;em&gt;client.p12&lt;/em&gt; en el navegador web. En el caso concreto de &lt;strong&gt;Google Chrome&lt;/strong&gt;, se hace desde el siguiente menú:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Menu &amp;rarr; Settings &amp;rarr; Show advanced settings &amp;rarr; HTTPS/SSL &amp;rarr; Manage certificates &amp;rarr; Your certificates &amp;rarr; Import &amp;rarr; client.p12&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Y ya podemos acceder a nuestro contenido protegido, previa selección del certificado a usar.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="2 way SSL certificate" src="http://www.linuxsysadmin.tk/images/2-way-ssl-certificate.png" /&gt;&lt;/p&gt;
+&lt;p&gt;Y con esto ya tenemos montada la autenticación cliente mediante certificados.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="nginx"></category><category term="2 way ssl"></category><category term="ssl"></category><category term="https"></category><category term="certificado"></category></entry><entry><title>Haciendo snapshots con LVM</title><link href="http://www.linuxsysadmin.tk/2016/02/haciendo-snapshots-con-lvm.html" rel="alternate"></link><updated>2016-02-15T08:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-02-15:2016/02/haciendo-snapshots-con-lvm.html</id><summary type="html">&lt;p&gt;Una de las funcionalidades mas implementadas en los sistemas de ficheros de nueva generación es la capacidad de hacer &lt;em&gt;snapshots point-in-time&lt;/em&gt;. Sin embargo, no tenemos que renunciar a la estabilidad de los sistemas de ficheros tradicionales como &lt;strong&gt;ext4&lt;/strong&gt;; otras veces no es posible por requisitos del servicio que debe usarlo.&lt;/p&gt;
 &lt;p&gt;En este tutorial vamos a demostrar lo fácil que es hacer este tipo de &lt;em&gt;snapshots&lt;/em&gt;, usando como tecnología subyacente el &lt;strong&gt;logical volume manager&lt;/strong&gt;, de ahora en adelante, &lt;strong&gt;LVM&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Los únicos requisitos para seguir esta guía son el paquete &lt;strong&gt;lvm&lt;/strong&gt; y un disco físico sobre el que vamos a construir el &lt;em&gt;volume group&lt;/em&gt; que va a alojar los &lt;em&gt;logical volumes&lt;/em&gt;; al menos van a ser la partición original y algo de espacio para servir como volumen para el &lt;em&gt;snapshot&lt;/em&gt;.&lt;/p&gt;
 &lt;h2&gt;Preparación&lt;/h2&gt;
