@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2016-02-22T08:28:13-00:00</lastmod>
+<lastmod>2016-02-29T17:58:01-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2016-02-22T08:28:13-00:00</lastmod>
+<lastmod>2016-02-29T17:58:01-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2016-02-22T08:28:13-00:00</lastmod>
+<lastmod>2016-02-29T17:58:01-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2016-02-22T08:28:13-00:00</lastmod>
+<lastmod>2016-02-29T17:58:01-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2016-02-22T08:28:13-00:00</lastmod>
+<lastmod>2016-02-29T17:58:01-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html</loc>
+<lastmod>2016-02-29T08:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -194,7 +201,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/sistemas.html</loc>
-<lastmod>2016-02-22T08:00:00-00:15</lastmod>
+<lastmod>2016-02-29T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -207,8 +214,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/bridge.html</loc>
-<lastmod>2015-11-23T23:30:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/escalable.html</loc>
+<lastmod>2016-02-29T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -291,8 +298,15 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/entorno.html</loc>
+<lastmod>2016-02-29T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/linux.html</loc>
-<lastmod>2016-02-22T08:00:00-00:15</lastmod>
+<lastmod>2016-02-29T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -361,8 +375,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/dns.html</loc>
-<lastmod>2016-02-01T08:30:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/https.html</loc>
+<lastmod>2016-02-22T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -382,6 +396,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/bridge.html</loc>
+<lastmod>2015-11-23T23:30:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/tmpfs.html</loc>
 <lastmod>2015-11-16T23:15:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -396,8 +417,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/https.html</loc>
-<lastmod>2016-02-22T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/dns.html</loc>
+<lastmod>2016-02-01T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -438,7 +459,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/nginx.html</loc>
+<loc>http://www.linuxsysadmin.tk/tag/ssl.html</loc>
 <lastmod>2016-02-22T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -515,7 +536,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/ssl.html</loc>
+<loc>http://www.linuxsysadmin.tk/tag/nginx.html</loc>
 <lastmod>2016-02-22T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -586,7 +607,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2016-02-22T08:00:00-00:15</lastmod>
+<lastmod>2016-02-29T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

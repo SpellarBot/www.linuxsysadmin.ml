@@ -1,5 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-02-22T08:00:00+01:00</updated><entry><title>Restringiendo accesos mediante certificados de cliente</title><link href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html" rel="alternate"></link><updated>2016-02-22T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-02-22:2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html</id><summary type="html">&lt;p&gt;De vez en cuando, tenemos algún contenido web o una API que necesita un control de acceso superior. El método mas eficaz del que disponemos hoy en día es la autenticación con certificados SSL cliente, en donde es el cliente el que debe ofrecer un certificado que el servidor validará.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-02-29T08:00:00+01:00</updated><entry><title>Creando un entorno escalable (I)</title><link href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html" rel="alternate"></link><updated>2016-02-29T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-02-29:2016/02/creando-un-entorno-escalable.html</id><summary type="html">&lt;p&gt;Mucha gente tiene un servidor único para alojar páginas web dinámicas, por ejemplo con &lt;strong&gt;PHP&lt;/strong&gt; y con &lt;strong&gt;MySQL&lt;/strong&gt;. Sin embargo, a veces esto puede resultar insuficiente; nos puede interesar tener un entorno de bajas especificaciones y de bajo coste, pero preparado crecer al mismo ritmo que lo hacen los usuarios.&lt;/p&gt;
+&lt;p&gt;En este caso, el truco consiste en hacer trabajar a varias máquinas como si fueran una sola, escondidas en una o varias subredes privadas y poniendo un representante único de todo el sistema (que es el que va a recibir &lt;strong&gt;todas&lt;/strong&gt; las peticiones).&lt;/p&gt;
+&lt;p&gt;Este representante suele ser lo que llamamos un &lt;strong&gt;balanceador de carga&lt;/strong&gt;, cuya función es repartir el trabajo entre varios servidores de &lt;strong&gt;backend&lt;/strong&gt;. Al tratarse solo de un "policía de tráfico" su rendimiento es elevado con unas especificaciones modestas, mientras que los servidores de &lt;strong&gt;backend&lt;/strong&gt; consiguen resolver las mismas peticiones por unidad de tiempo; la mejora reside en que pueden haber varios servidores de &lt;strong&gt;backend&lt;/strong&gt; resolviendo peticiones en paralelo.&lt;/p&gt;
+&lt;p&gt;Normalmente, estos servidores de &lt;strong&gt;backend&lt;/strong&gt; suelen conectarse a otros servicios (idealmente en otros servidores) para cumplir con sus funciones, por ejemplo con un grupo de servidores de &lt;strong&gt;bases de datos&lt;/strong&gt; dispuestos como un &lt;em&gt;cluster&lt;/em&gt;, que suelen tener una topología propia.&lt;/p&gt;
+&lt;p&gt;En este tutorial se va a montar un entorno pequeño de estas características, sirviendo una &lt;em&gt;API&lt;/em&gt; pública en servidores de &lt;strong&gt;backend&lt;/strong&gt;, una aplicación web de administración de los datos de la &lt;em&gt;API&lt;/em&gt; en un servidor de &lt;strong&gt;backoffice&lt;/strong&gt;, y un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;bases de datos&lt;/strong&gt; representado por una &lt;em&gt;replica set&lt;/em&gt; de MongoDB; todo ello oculto en una red privada y un balanceador usando &lt;em&gt;virtualhosts&lt;/em&gt; para ir a una aplicación u otra según el protocolo usado.&lt;/p&gt;
+&lt;p&gt;Esto es lo que propongo montar:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Entorno propuesto" src="http://www.linuxsysadmin.tk/images/entorno_propuesto.png" /&gt;&lt;/p&gt;
+&lt;p&gt;Para ello, vamos a crear las máquinas virtuales necesarias. En este caso, voy a usar mi servidor de &lt;strong&gt;virtualización con LXC&lt;/strong&gt;, tal como lo monté en &lt;a href="/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html"&gt;este artículo&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# lxc-ls -f
+NAME        STATE    IPV4        IPV6  AUTOSTART
+------------------------------------------------
+backend1    RUNNING  10.0.0.3    -     YES
+backend2    RUNNING  10.0.0.4    -     YES
+backoffice  RUNNING  10.0.0.5    -     YES
+frontend    RUNNING  10.0.0.2    -     YES
+mongo1      RUNNING  10.0.0.6    -     YES
+mongo2      RUNNING  10.0.0.7    -     YES
+root@lxc:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para hacer mas fácil las referencias a las diferentes máquinas, vamos a utilizar sus nombres; como no me apetece montar un servidor DNS, vamos a ponerlas en el fichero &lt;em&gt;/etc/hosts&lt;/em&gt; en todas las máquinas virtuales.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# cat /etc/hosts
+...
+10.0.0.2        frontend
+10.0.0.3        backend1
+10.0.0.4        backend2
+10.0.0.5        backoffice
+10.0.0.6        mongo1
+10.0.0.7        mongo2
+...
+root@mongo1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a ir montando todas las máquinas una por una; es laborioso pero no es nada complicado. Las reglas del &lt;em&gt;firewall&lt;/em&gt; también las iremos explicando según el rol de cada máquina.&lt;/p&gt;
+&lt;p&gt;El orden de montaje no es importante, pero como queremos ir comprobando en cada caso que va funcionando, se montarán de acuerdo al orden de requisitos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;El &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;bases de datos&lt;/strong&gt;, que no tiene dependencias.&lt;/li&gt;
+&lt;li&gt;Los servidores de &lt;strong&gt;backend&lt;/strong&gt; y &lt;strong&gt;backoffice&lt;/strong&gt; que dependen del &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;bases de datos&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Finalmente, pondremos el servidor de &lt;strong&gt;frontend&lt;/strong&gt;, con los &lt;em&gt;virtualhosts&lt;/em&gt; y el balanceador, lanzando las peticiones contra los &lt;strong&gt;backends&lt;/strong&gt; y el &lt;strong&gt;backoffice&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Sabiendo lo que vamos a montar, solo queda decir: ¡Manos a la obra!&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</summary><category term="linux"></category><category term="entorno"></category><category term="escalable"></category></entry><entry><title>Restringiendo accesos mediante certificados de cliente</title><link href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html" rel="alternate"></link><updated>2016-02-22T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-02-22:2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html</id><summary type="html">&lt;p&gt;De vez en cuando, tenemos algún contenido web o una API que necesita un control de acceso superior. El método mas eficaz del que disponemos hoy en día es la autenticación con certificados SSL cliente, en donde es el cliente el que debe ofrecer un certificado que el servidor validará.&lt;/p&gt;
 &lt;p&gt;Como se trata de proteger contenido web, vamos a necesitar un servidor web, por ejemplo, &lt;strong&gt;nginx&lt;/strong&gt;. De paso, vamos a instalar el paquete &lt;strong&gt;openssl&lt;/strong&gt;, que nos permitirá generar los certificados usados.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# apt-get install nginx-light openssl
 Leyendo lista de paquetes... Hecho
