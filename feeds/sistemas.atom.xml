@@ -1,5 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-02-29T08:00:00+01:00</updated><entry><title>Creando un entorno escalable (I)</title><link href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html" rel="alternate"></link><updated>2016-02-29T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-02-29:2016/02/creando-un-entorno-escalable.html</id><summary type="html">&lt;p&gt;Mucha gente tiene un servidor único para alojar páginas web dinámicas, por ejemplo con &lt;strong&gt;PHP&lt;/strong&gt; y con &lt;strong&gt;MySQL&lt;/strong&gt;. Sin embargo, a veces esto puede resultar insuficiente; nos puede interesar tener un entorno de bajas especificaciones y de bajo coste, pero preparado crecer al mismo ritmo que lo hacen los usuarios.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-03-07T08:00:00+01:00</updated><entry><title>Creando un entorno escalable (II)</title><link href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html" rel="alternate"></link><updated>2016-03-07T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-03-07:2016/03/creando-un-entorno-escalable-2.html</id><summary type="html">&lt;p&gt;Seguimos con la serie de montar un entorno escalable. Tras explicar en el primer artículo lo que vamos a montar, seguimos con ello. En este artículo vamos a montar un &lt;em&gt;cluster&lt;/em&gt; de bases de datos; será &lt;strong&gt;mongodb&lt;/strong&gt; porque la aplicación lo requiere y usará la topología de un &lt;strong&gt;replica set&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Este artículo se basa enormemente en &lt;a href="/2015/12/construyendo-una-replica-set-en-mongodb.html"&gt;otro artículo&lt;/a&gt; que ya publicamos, al que vamos a añadir algunas mejoras reflejadas en otros.&lt;/p&gt;
+&lt;p&gt;Como ya vimos en el artículo referido, solo necesitamos levantar un proceso &lt;em&gt;mongod&lt;/em&gt; en cada una de las máquinas, para posteriormente casarlos entre sí.&lt;/p&gt;
+&lt;h2&gt;Levantando los procesos de mongodb&lt;/h2&gt;
+&lt;p&gt;Este punto se repite en las máquinas que van a formar la &lt;strong&gt;replica set&lt;/strong&gt;, que son &lt;em&gt;mongo1&lt;/em&gt;, &lt;em&gt;mongo2&lt;/em&gt; y &lt;em&gt;backoffice&lt;/em&gt;. Vamos a seguir solamente una de ellas; el resto son análogas.&lt;/p&gt;
+&lt;p&gt;Crearemos una estructura en &lt;em&gt;/opt/&lt;/em&gt; para alojar los binarios, las configuraciones, los datos y los logs.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# mkdir -p /opt/mongodb/&lt;span class="o"&gt;{&lt;/span&gt;bin,conf,data,logs&lt;span class="o"&gt;}&lt;/span&gt;
+root@mongo1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En la carpeta de binarios vamos a poner el único que se necesita: el &lt;em&gt;mongod&lt;/em&gt;. Lo podemos sacar descomprimiendo el 
+fichero comprimido &lt;em&gt;.tar.gz&lt;/em&gt; de la página de descargas de &lt;strong&gt;mongodb&lt;/strong&gt;. En nuestro caso concreto, lo he sacado de &lt;a href="https://fastdl.mongodb.org/linux/mongodb-linux-i686-3.2.3.tgz"&gt;https://fastdl.mongodb.org/linux/mongodb-linux-i686-3.2.3.tgz&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# cp mongodb-linux-i686-3.2.3/bin/mongod /opt/mongodb/bin/
+root@mongo1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ponemos un fichero de configuración para la instancia que queremos correr. Esta configuración puede variar mucho, pero un ejemplo básico para salir del paso con una máquina de 32 bits (que no soportan &lt;em&gt;WiredTiger&lt;/em&gt;) podría ser:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# cat /opt/mongodb/conf/mongo.conf
+systemLog:
+    path: /opt/mongodb/logs/mongo.log
+    logAppend: &lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="nb"&gt;    &lt;/span&gt;destination: file
+
+net:
+    port: 27017
+    bindIp: 0.0.0.0
+
+storage:
+    dbPath: /opt/mongodb/data/
+    engine: mmapv1
+    mmapv1:
+        smallFiles: &lt;span class="nb"&gt;true&lt;/span&gt;
+
+replication:
+    replSetName: rs
+root@mongo1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;Truco&lt;/strong&gt;: Es un buen momento para montar un sistema de ficheros alternativo para almacenar los datos, sea poner &lt;a href="/2016/01/lvm-logical-volume-manager.html"&gt;LVM&lt;/a&gt; (para tener crecimiento dinámico o &lt;a href="/2016/02/haciendo-snapshots-con-lvm.html"&gt;snapshots&lt;/a&gt;, sea un &lt;a href="/2015/12/construyendo-un-raid-10-en-linux.html"&gt;RAID&lt;/a&gt; (por ejemplo para tener alto rendimiento y/o replicación de datos), o incluso ambos.&lt;/p&gt;
+&lt;p&gt;Cumpliendo con una política de seguridad básica, vamos a crear un usuario de sistema para correr el proceso.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# useradd -s /usr/sbin/nologin -r -M mongo -d /opt/mongodb/
+root@mongo1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Le damos la propiedad de toda la estructura de &lt;strong&gt;mongodb&lt;/strong&gt;, para ahorrarnos problemas de permisos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# chown -R mongo:mongo /opt/mongodb/
+root@mongo1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y ya como resumen, ponemos una salida para ver como nos queda la estructura:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# tree /opt/mongodb/
+/opt/mongodb/
+├── bin
+│   └── mongod
+├── conf
+│   └── mongo.conf
+├── data
+└── logs
+
+&lt;span class="m"&gt;4&lt;/span&gt; directories, &lt;span class="m"&gt;2&lt;/span&gt; files
+root@mongo1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El último paso consiste en crear una &lt;em&gt;unit&lt;/em&gt; en &lt;strong&gt;systemd&lt;/strong&gt; (o un &lt;em&gt;init script&lt;/em&gt;, dependiendo de la distribución usada; de hecho, cada máquina puede ir con una distribución distinta).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# cat /etc/systemd/system/mongo.service
+&lt;span class="o"&gt;[&lt;/span&gt;Unit&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;MongoDB
+
+&lt;span class="o"&gt;[&lt;/span&gt;Service&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;User&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;mongo
+&lt;span class="nv"&gt;LimitFSIZE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitCPU&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitAS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;infinity
+&lt;span class="nv"&gt;LimitNOFILE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;64000
+&lt;span class="nv"&gt;LimitNPROC&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;64000
+&lt;span class="nv"&gt;ExecStartPre&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/bin/rm -f /opt/mongodb/data/mongod.lock
+&lt;span class="nv"&gt;ExecStart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/opt/mongodb/bin/mongod -f /opt/mongodb/conf/mongo.conf
+
+&lt;span class="o"&gt;[&lt;/span&gt;Install&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;WantedBy&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;multi-user.target
+root@mongo1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lo activamos para que se levante solo en los siguientes arranques, y lo levantamos para la sesión actual.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# systemctl &lt;span class="nb"&gt;enable &lt;/span&gt;mongo
+Created symlink from /etc/systemd/system/multi-user.target.wants/mongo.service to /etc/systemd/system/mongo.service.
+root@mongo1:~# systemctl start mongo
+root@mongo1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Repetid este paso en las otras máquinas de &lt;strong&gt;mongodb&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;Consideraciones de seguridad&lt;/h2&gt;
+&lt;p&gt;Para que una &lt;strong&gt;replica set&lt;/strong&gt; funcione como debe, todos los procesos deben comunicarse entre sí. Como los hemos puesto en el mismo puerto, podemos agruparlo todo en una sola regla.&lt;/p&gt;
+&lt;p&gt;Como en nuestro caso estamos virtualizando con &lt;strong&gt;LXC&lt;/strong&gt;, vamos a controlar el tráfico con el &lt;strong&gt;firehol&lt;/strong&gt; de la máquina anfitriona.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;...
+root@lxc:~# cat /etc/firehol/firehol.conf
+&lt;span class="nv"&gt;mongo_servers&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;10.0.0.5 10.0.0.6 10.0.0.7&amp;quot;&lt;/span&gt;
+...  
+router internal inface lxc0 outface lxc0
+    route custom mongodb tcp/27017 default accept src &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$mongo_servers&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; dst &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$mongo_servers&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+...
+root@lxc:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Acordaos de reiniciar &lt;strong&gt;firehol&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;Atando la replica set&lt;/h2&gt;
+&lt;p&gt;Este paso se ejecuta en una sola máquina, que va a reproducir los cambios a las demás, por efecto de la &lt;strong&gt;replica set&lt;/strong&gt;. Por ejemplo, lo hago en &lt;em&gt;mongo1&lt;/em&gt;, por hacer alguna.&lt;/p&gt;
+&lt;p&gt;Entramos en el &lt;em&gt;mongo shell&lt;/em&gt;, desde donde lanzaremos el resto de comandos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# ./mongodb-linux-i686-3.2.3/bin/mongo
+MongoDB shell version: 3.2.3
+connecting to: &lt;span class="nb"&gt;test&lt;/span&gt;
+Welcome to the MongoDB shell.
+For interactive &lt;span class="nb"&gt;help&lt;/span&gt;, &lt;span class="nb"&gt;type&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;help&amp;quot;&lt;/span&gt;.
+...
+&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Siguiendo los pasos estándares, creamos una configuración vacía en la máquina elegida, y añadimos las otras dos. Tened en cuenta que la máquina &lt;em&gt;backoffice&lt;/em&gt; se declara como un árbitro, por decisión de diseño.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&amp;gt; rs.initiate&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;info2&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;no configuration specified. Using a default configuration for the set&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;me&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;mongo1:27017&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : 1
+&lt;span class="o"&gt;}&lt;/span&gt;
+rs:SECONDARY&amp;gt; rs.add&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;mongo2:27017&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+rs:PRIMARY&amp;gt; rs.addArb&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;backoffice:27017&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+rs:PRIMARY&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos verificar que todo está bien mediante el comando &lt;em&gt;rs.status()&lt;/em&gt;, como sigue:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;rs:PRIMARY&amp;gt; rs.status&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;set&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;rs&amp;quot;&lt;/span&gt;,
+...  
+        &lt;span class="s2"&gt;&amp;quot;members&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;[&lt;/span&gt;
+                &lt;span class="o"&gt;{&lt;/span&gt;
+...  
+                        &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;mongo1:27017&amp;quot;&lt;/span&gt;,
+                        &lt;span class="s2"&gt;&amp;quot;stateStr&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;PRIMARY&amp;quot;&lt;/span&gt;,
+...  
+                &lt;span class="o"&gt;}&lt;/span&gt;,
+                &lt;span class="o"&gt;{&lt;/span&gt;
+...  
+                        &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;mongo2:27017&amp;quot;&lt;/span&gt;,
+                        &lt;span class="s2"&gt;&amp;quot;stateStr&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;SECONDARY&amp;quot;&lt;/span&gt;,
+...  
+                &lt;span class="o"&gt;}&lt;/span&gt;,
+                &lt;span class="o"&gt;{&lt;/span&gt;
+...  
+                        &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;backoffice:27017&amp;quot;&lt;/span&gt;,
+                        &lt;span class="s2"&gt;&amp;quot;stateStr&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;ARBITER&amp;quot;&lt;/span&gt;,
+...  
+                &lt;span class="o"&gt;}&lt;/span&gt;
+        &lt;span class="o"&gt;]&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : 1
+&lt;span class="o"&gt;}&lt;/span&gt;
+rs:PRIMARY&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y salimos del &lt;em&gt;mongo shell&lt;/em&gt;, que ya no necesitamos; las aplicaciones de &lt;em&gt;backend&lt;/em&gt; y de &lt;em&gt;backoffice&lt;/em&gt; ya incluyen una librería para conectarse por sí mismos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;rs:PRIMARY&amp;gt; &lt;span class="nb"&gt;exit&lt;/span&gt;
+bye
+root@mongo1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Todo lo que queda en &lt;em&gt;/root/&lt;/em&gt; es innecesario y se puede borrar. De todas formas podemos dejar el resto de binarios en &lt;em&gt;/opt/mongodb/&lt;/em&gt; en alguna de las máquinas por si acaso.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;El siguiente paso va a ser montar los servidores de aplicaciones en los backends y en el backoffice&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="mongodb"></category><category term="replica set"></category><category term="systemd"></category><category term="firehol"></category></entry><entry><title>Creando un entorno escalable (I)</title><link href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html" rel="alternate"></link><updated>2016-02-29T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-02-29:2016/02/creando-un-entorno-escalable.html</id><summary type="html">&lt;p&gt;Mucha gente tiene un servidor único para alojar páginas web dinámicas, por ejemplo con &lt;strong&gt;PHP&lt;/strong&gt; y con &lt;strong&gt;MySQL&lt;/strong&gt;. Sin embargo, a veces esto puede resultar insuficiente; nos puede interesar tener un entorno de bajas especificaciones y de bajo coste, pero preparado crecer al mismo ritmo que lo hacen los usuarios.&lt;/p&gt;
 &lt;p&gt;En este caso, el truco consiste en hacer trabajar a varias máquinas como si fueran una sola, escondidas en una o varias subredes privadas y poniendo un representante único de todo el sistema (que es el que va a recibir &lt;strong&gt;todas&lt;/strong&gt; las peticiones).&lt;/p&gt;
 &lt;p&gt;Este representante suele ser lo que llamamos un &lt;strong&gt;balanceador de carga&lt;/strong&gt;, cuya función es repartir el trabajo entre varios servidores de &lt;strong&gt;backend&lt;/strong&gt;. Al tratarse solo de un "policía de tráfico" su rendimiento es elevado con unas especificaciones modestas, mientras que los servidores de &lt;strong&gt;backend&lt;/strong&gt; consiguen resolver las mismas peticiones por unidad de tiempo; la mejora reside en que pueden haber varios servidores de &lt;strong&gt;backend&lt;/strong&gt; resolviendo peticiones en paralelo.&lt;/p&gt;
 &lt;p&gt;Normalmente, estos servidores de &lt;strong&gt;backend&lt;/strong&gt; suelen conectarse a otros servicios (idealmente en otros servidores) para cumplir con sus funciones, por ejemplo con un grupo de servidores de &lt;strong&gt;bases de datos&lt;/strong&gt; dispuestos como un &lt;em&gt;cluster&lt;/em&gt;, que suelen tener una topología propia.&lt;/p&gt;

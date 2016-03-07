@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Virtualización - Linux Sysadmin</title>
+    <title>Creando un entorno escalable (II) - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,27 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="Virtualización" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="linux,debian,jessie,mongodb,replica set,systemd,firehol" />
+        <meta name="description" content="Seguimos con la serie de montar un entorno escalable. Tras explicar en el primer artículo lo que vamos a montar, seguimos con ello. En este artículo vamos a montar un cluster de bases de datos; será mongodb porque la aplicación lo requiere y usará la topología de un replica set ..." />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Creando un entorno escalable (II)"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html"/>
+        <meta property="og:description" content="Seguimos con la serie de montar un entorno escalable. Tras explicar en el primer artículo lo que vamos a montar, seguimos con ello. En este artículo vamos a montar un cluster de bases de datos; será mongodb porque la aplicación lo requiere y usará la topología de un replica set ..."/>
+        <meta property="article:published_time" content="2016-03-07" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="debian" />
+            <meta property="article:tag" content="jessie" />
+            <meta property="article:tag" content="mongodb" />
+            <meta property="article:tag" content="replica set" />
+            <meta property="article:tag" content="systemd" />
+            <meta property="article:tag" content="firehol" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,8 +45,8 @@
 
 
 
-        <link href="http://www.linuxsysadmin.tk/feeds/virtualizacion.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Virtualización ATOM Feed"/>
+        <link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -77,11 +88,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.tk/categories.html" title="Categorías de Linux Sysadmin">Categorías</a></li>
-        <li class="active">Virtualización</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Creando un entorno escalable (II)</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -94,20 +105,283 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></h2>
-                <div class="summary"><p>En un artículo anterior propusimos virtualizar contenedores en la red de la máquina <em>host</em>. Sin embargo, puede ser mas interesante esconder los contenedores detrás de una máquina que haga las funciones de <em>host</em> y de <em>firewall</em>. Expondremos una serie de puertos tras la misma dirección <em>IP</em> mediante el protocolo <em>NAT ...</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Seguir leyendo</a>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html"
+                       rel="bookmark"
+                       title="Permalink to Creando un entorno escalable (II)">
+                        Creando un entorno escalable (II)
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-03-07T08:00:00+01:00"> 2016-03-07</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 5 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/sistemas.html">Sistemas</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/debian.html">debian</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/jessie.html">jessie</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/mongodb.html">mongodb</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/replica-set.html">replica set</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/systemd.html">systemd</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/firehol.html">firehol</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html">Virtualizando contenedores LXC con acceso a la red local</a></h2>
-                <div class="summary"><p>En este tutorial se propone montar un servidor de contenedores LXC, de forma que todos los contenedores queden expuestos a la misma red que el servidor que los aloja. Para protegerlos de posibles ataques de esta red, pondremos un firewall basado en <em>iptables</em> mediante una capa de abstracción llamada <em>firehol ...</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+                <p>Seguimos con la serie de montar un entorno escalable. Tras explicar en el primer artículo lo que vamos a montar, seguimos con ello. En este artículo vamos a montar un <em>cluster</em> de bases de datos; será <strong>mongodb</strong> porque la aplicación lo requiere y usará la topología de un <strong>replica set</strong>.</p>
+<p>Este artículo se basa enormemente en <a href="/2015/12/construyendo-una-replica-set-en-mongodb.html">otro artículo</a> que ya publicamos, al que vamos a añadir algunas mejoras reflejadas en otros.</p>
+<p>Como ya vimos en el artículo referido, solo necesitamos levantar un proceso <em>mongod</em> en cada una de las máquinas, para posteriormente casarlos entre sí.</p>
+<h2>Levantando los procesos de mongodb</h2>
+<p>Este punto se repite en las máquinas que van a formar la <strong>replica set</strong>, que son <em>mongo1</em>, <em>mongo2</em> y <em>backoffice</em>. Vamos a seguir solamente una de ellas; el resto son análogas.</p>
+<p>Crearemos una estructura en <em>/opt/</em> para alojar los binarios, las configuraciones, los datos y los logs.</p>
+<div class="highlight"><pre>root@mongo1:~# mkdir -p /opt/mongodb/<span class="o">{</span>bin,conf,data,logs<span class="o">}</span>
+root@mongo1:~#
+</pre></div>
+
+
+<p>En la carpeta de binarios vamos a poner el único que se necesita: el <em>mongod</em>. Lo podemos sacar descomprimiendo el 
+fichero comprimido <em>.tar.gz</em> de la página de descargas de <strong>mongodb</strong>. En nuestro caso concreto, lo he sacado de <a href="https://fastdl.mongodb.org/linux/mongodb-linux-i686-3.2.3.tgz">https://fastdl.mongodb.org/linux/mongodb-linux-i686-3.2.3.tgz</a>.</p>
+<div class="highlight"><pre>root@mongo1:~# cp mongodb-linux-i686-3.2.3/bin/mongod /opt/mongodb/bin/
+root@mongo1:~#
+</pre></div>
+
+
+<p>Ponemos un fichero de configuración para la instancia que queremos correr. Esta configuración puede variar mucho, pero un ejemplo básico para salir del paso con una máquina de 32 bits (que no soportan <em>WiredTiger</em>) podría ser:</p>
+<div class="highlight"><pre>root@mongo1:~# cat /opt/mongodb/conf/mongo.conf
+systemLog:
+    path: /opt/mongodb/logs/mongo.log
+    logAppend: <span class="nb">true</span>
+<span class="nb">    </span>destination: file
+
+net:
+    port: 27017
+    bindIp: 0.0.0.0
+
+storage:
+    dbPath: /opt/mongodb/data/
+    engine: mmapv1
+    mmapv1:
+        smallFiles: <span class="nb">true</span>
+
+replication:
+    replSetName: rs
+root@mongo1:~#
+</pre></div>
+
+
+<p><strong>Truco</strong>: Es un buen momento para montar un sistema de ficheros alternativo para almacenar los datos, sea poner <a href="/2016/01/lvm-logical-volume-manager.html">LVM</a> (para tener crecimiento dinámico o <a href="/2016/02/haciendo-snapshots-con-lvm.html">snapshots</a>, sea un <a href="/2015/12/construyendo-un-raid-10-en-linux.html">RAID</a> (por ejemplo para tener alto rendimiento y/o replicación de datos), o incluso ambos.</p>
+<p>Cumpliendo con una política de seguridad básica, vamos a crear un usuario de sistema para correr el proceso.</p>
+<div class="highlight"><pre>root@mongo1:~# useradd -s /usr/sbin/nologin -r -M mongo -d /opt/mongodb/
+root@mongo1:~#
+</pre></div>
+
+
+<p>Le damos la propiedad de toda la estructura de <strong>mongodb</strong>, para ahorrarnos problemas de permisos.</p>
+<div class="highlight"><pre>root@mongo1:~# chown -R mongo:mongo /opt/mongodb/
+root@mongo1:~#
+</pre></div>
+
+
+<p>Y ya como resumen, ponemos una salida para ver como nos queda la estructura:</p>
+<div class="highlight"><pre>root@mongo1:~# tree /opt/mongodb/
+/opt/mongodb/
+├── bin
+│   └── mongod
+├── conf
+│   └── mongo.conf
+├── data
+└── logs
+
+<span class="m">4</span> directories, <span class="m">2</span> files
+root@mongo1:~#
+</pre></div>
+
+
+<p>El último paso consiste en crear una <em>unit</em> en <strong>systemd</strong> (o un <em>init script</em>, dependiendo de la distribución usada; de hecho, cada máquina puede ir con una distribución distinta).</p>
+<div class="highlight"><pre>root@mongo1:~# cat /etc/systemd/system/mongo.service
+<span class="o">[</span>Unit<span class="o">]</span>
+<span class="nv">Description</span><span class="o">=</span>MongoDB
+
+<span class="o">[</span>Service<span class="o">]</span>
+<span class="nv">User</span><span class="o">=</span>mongo
+<span class="nv">LimitFSIZE</span><span class="o">=</span>infinity
+<span class="nv">LimitCPU</span><span class="o">=</span>infinity
+<span class="nv">LimitAS</span><span class="o">=</span>infinity
+<span class="nv">LimitNOFILE</span><span class="o">=</span>64000
+<span class="nv">LimitNPROC</span><span class="o">=</span>64000
+<span class="nv">ExecStartPre</span><span class="o">=</span>/bin/rm -f /opt/mongodb/data/mongod.lock
+<span class="nv">ExecStart</span><span class="o">=</span>/opt/mongodb/bin/mongod -f /opt/mongodb/conf/mongo.conf
+
+<span class="o">[</span>Install<span class="o">]</span>
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+root@mongo1:~#
+</pre></div>
+
+
+<p>Lo activamos para que se levante solo en los siguientes arranques, y lo levantamos para la sesión actual.</p>
+<div class="highlight"><pre>root@mongo1:~# systemctl <span class="nb">enable </span>mongo
+Created symlink from /etc/systemd/system/multi-user.target.wants/mongo.service to /etc/systemd/system/mongo.service.
+root@mongo1:~# systemctl start mongo
+root@mongo1:~#
+</pre></div>
+
+
+<p>Repetid este paso en las otras máquinas de <strong>mongodb</strong>.</p>
+<h2>Consideraciones de seguridad</h2>
+<p>Para que una <strong>replica set</strong> funcione como debe, todos los procesos deben comunicarse entre sí. Como los hemos puesto en el mismo puerto, podemos agruparlo todo en una sola regla.</p>
+<p>Como en nuestro caso estamos virtualizando con <strong>LXC</strong>, vamos a controlar el tráfico con el <strong>firehol</strong> de la máquina anfitriona.</p>
+<div class="highlight"><pre>...
+root@lxc:~# cat /etc/firehol/firehol.conf
+<span class="nv">mongo_servers</span><span class="o">=</span><span class="s2">&quot;10.0.0.5 10.0.0.6 10.0.0.7&quot;</span>
+...  
+router internal inface lxc0 outface lxc0
+    route custom mongodb tcp/27017 default accept src <span class="s2">&quot;</span><span class="nv">$mongo_servers</span><span class="s2">&quot;</span> dst <span class="s2">&quot;</span><span class="nv">$mongo_servers</span><span class="s2">&quot;</span>
+...
+root@lxc:~#
+</pre></div>
+
+
+<p>Acordaos de reiniciar <strong>firehol</strong>.</p>
+<h2>Atando la replica set</h2>
+<p>Este paso se ejecuta en una sola máquina, que va a reproducir los cambios a las demás, por efecto de la <strong>replica set</strong>. Por ejemplo, lo hago en <em>mongo1</em>, por hacer alguna.</p>
+<p>Entramos en el <em>mongo shell</em>, desde donde lanzaremos el resto de comandos.</p>
+<div class="highlight"><pre>root@mongo1:~# ./mongodb-linux-i686-3.2.3/bin/mongo
+MongoDB shell version: 3.2.3
+connecting to: <span class="nb">test</span>
+Welcome to the MongoDB shell.
+For interactive <span class="nb">help</span>, <span class="nb">type</span> <span class="s2">&quot;help&quot;</span>.
+...
+&gt; 
+</pre></div>
+
+
+<p>Siguiendo los pasos estándares, creamos una configuración vacía en la máquina elegida, y añadimos las otras dos. Tened en cuenta que la máquina <em>backoffice</em> se declara como un árbitro, por decisión de diseño.</p>
+<div class="highlight"><pre>&gt; rs.initiate<span class="o">()</span>
+<span class="o">{</span>
+        <span class="s2">&quot;info2&quot;</span> : <span class="s2">&quot;no configuration specified. Using a default configuration for the set&quot;</span>,
+        <span class="s2">&quot;me&quot;</span> : <span class="s2">&quot;mongo1:27017&quot;</span>,
+        <span class="s2">&quot;ok&quot;</span> : 1
+<span class="o">}</span>
+rs:SECONDARY&gt; rs.add<span class="o">(</span><span class="s2">&quot;mongo2:27017&quot;</span><span class="o">)</span>
+<span class="o">{</span> <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+rs:PRIMARY&gt; rs.addArb<span class="o">(</span><span class="s2">&quot;backoffice:27017&quot;</span><span class="o">)</span>
+<span class="o">{</span> <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+rs:PRIMARY&gt;
+</pre></div>
+
+
+<p>Podemos verificar que todo está bien mediante el comando <em>rs.status()</em>, como sigue:</p>
+<div class="highlight"><pre>rs:PRIMARY&gt; rs.status<span class="o">()</span>
+<span class="o">{</span>
+        <span class="s2">&quot;set&quot;</span> : <span class="s2">&quot;rs&quot;</span>,
+...  
+        <span class="s2">&quot;members&quot;</span> : <span class="o">[</span>
+                <span class="o">{</span>
+...  
+                        <span class="s2">&quot;name&quot;</span> : <span class="s2">&quot;mongo1:27017&quot;</span>,
+                        <span class="s2">&quot;stateStr&quot;</span> : <span class="s2">&quot;PRIMARY&quot;</span>,
+...  
+                <span class="o">}</span>,
+                <span class="o">{</span>
+...  
+                        <span class="s2">&quot;name&quot;</span> : <span class="s2">&quot;mongo2:27017&quot;</span>,
+                        <span class="s2">&quot;stateStr&quot;</span> : <span class="s2">&quot;SECONDARY&quot;</span>,
+...  
+                <span class="o">}</span>,
+                <span class="o">{</span>
+...  
+                        <span class="s2">&quot;name&quot;</span> : <span class="s2">&quot;backoffice:27017&quot;</span>,
+                        <span class="s2">&quot;stateStr&quot;</span> : <span class="s2">&quot;ARBITER&quot;</span>,
+...  
+                <span class="o">}</span>
+        <span class="o">]</span>,
+        <span class="s2">&quot;ok&quot;</span> : 1
+<span class="o">}</span>
+rs:PRIMARY&gt;
+</pre></div>
+
+
+<p>Y salimos del <em>mongo shell</em>, que ya no necesitamos; las aplicaciones de <em>backend</em> y de <em>backoffice</em> ya incluyen una librería para conectarse por sí mismos.</p>
+<div class="highlight"><pre>rs:PRIMARY&gt; <span class="nb">exit</span>
+bye
+root@mongo1:~#
+</pre></div>
+
+
+<p>Todo lo que queda en <em>/root/</em> es innecesario y se puede borrar. De todas formas podemos dejar el resto de binarios en <em>/opt/mongodb/</em> en alguna de las máquinas por si acaso.</p>
+<p><strong><em>El siguiente paso va a ser montar los servidores de aplicaciones en los backends y en el backoffice</em></strong></p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Construyendo una replica set en mongodb</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Escribiendo units en systemd</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
+    </ul>
+</section>
+<section class="well" id="related-posts">
+    <h4>Parte 2 de la serie "Creando un entorno escalable"</h4>
+       <h5>Artículos anteriores</h5>
+       <ul>
+           <li><a href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html">Creando un entorno escalable (I)</a></li>
+       </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'creando-un-entorno-escalable-2';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
 
         </div>
         <div class="col-sm-3" id="sidebar">
@@ -454,7 +728,7 @@ Linux Sysadmin            </a>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2015 Gerard
+         <div class="col-xs-10">&copy; 2016 Gerard
             &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
