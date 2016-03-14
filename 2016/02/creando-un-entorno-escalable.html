@@ -146,7 +146,7 @@ Linux Sysadmin            </a>
 <p>En este tutorial se va a montar un entorno pequeño de estas características, sirviendo una <em>API</em> pública en servidores de <strong>backend</strong>, una aplicación web de administración de los datos de la <em>API</em> en un servidor de <strong>backoffice</strong>, y un <em>cluster</em> de <strong>bases de datos</strong> representado por una <em>replica set</em> de MongoDB; todo ello oculto en una red privada y un balanceador usando <em>virtualhosts</em> para ir a una aplicación u otra según el protocolo usado.</p>
 <p>Esto es lo que propongo montar:</p>
 <p><img alt="Entorno propuesto" src="http://www.linuxsysadmin.tk/images/entorno_propuesto.png" /></p>
-<p>Para ello, vamos a crear las máquinas virtuales necesarias. En este caso, voy a usar mi servidor de <strong>virtualización con LXC</strong>, tal como lo monté en <a href="/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">este artículo</a>.</p>
+<p>Para ello, vamos a crear las máquinas virtuales necesarias. En este caso, voy a usar mi servidor de <strong>virtualización con LXC</strong>, tal como lo monté en <a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">este artículo</a>.</p>
 <div class="highlight"><pre>root@lxc:~# lxc-ls -f
 NAME        STATE    IPV4        IPV6  AUTOSTART
 ------------------------------------------------
@@ -187,7 +187,7 @@ root@mongo1:~#
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/01/lvm-logical-volume-manager.html">LVM: logical volume manager</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Restart automático de servicios con systemd</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">Restringiendo accesos mediante certificados de cliente</a></li>
     </ul>
@@ -197,6 +197,7 @@ root@mongo1:~#
        <h5>Artículos siguientes</h5>
        <ul>
            <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
+           <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></li>
        </ul>
 </section>
     <hr/>
@@ -494,6 +495,11 @@ root@mongo1:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/python.html">
+                            python
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/raid.html">
                             raid
                         </a>
@@ -556,6 +562,21 @@ root@mongo1:~#
                     <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/ubuntu.html">
                             ubuntu
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
+                            uWSGI
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/virtualenv.html">
+                            virtualenv
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/wsgi.html">
+                            WSGI
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

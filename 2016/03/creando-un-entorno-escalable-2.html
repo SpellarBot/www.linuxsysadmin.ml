@@ -152,7 +152,7 @@ Linux Sysadmin            </a>
 </footer><!-- /.post-info -->                    </div>
                 </div>
                 <p>Seguimos con la serie de montar un entorno escalable. Tras explicar en el primer artículo lo que vamos a montar, seguimos con ello. En este artículo vamos a montar un <em>cluster</em> de bases de datos; será <strong>mongodb</strong> porque la aplicación lo requiere y usará la topología de un <strong>replica set</strong>.</p>
-<p>Este artículo se basa enormemente en <a href="/2015/12/construyendo-una-replica-set-en-mongodb.html">otro artículo</a> que ya publicamos, al que vamos a añadir algunas mejoras reflejadas en otros.</p>
+<p>Este artículo se basa enormemente en <a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">otro artículo</a> que ya publicamos, al que vamos a añadir algunas mejoras reflejadas en otros.</p>
 <p>Como ya vimos en el artículo referido, solo necesitamos levantar un proceso <em>mongod</em> en cada una de las máquinas, para posteriormente casarlos entre sí.</p>
 <h2>Levantando los procesos de mongodb</h2>
 <p>Este punto se repite en las máquinas que van a formar la <strong>replica set</strong>, que son <em>mongo1</em>, <em>mongo2</em> y <em>backoffice</em>. Vamos a seguir solamente una de ellas; el resto son análogas.</p>
@@ -192,7 +192,7 @@ root@mongo1:~#
 </pre></div>
 
 
-<p><strong>Truco</strong>: Es un buen momento para montar un sistema de ficheros alternativo para almacenar los datos, sea poner <a href="/2016/01/lvm-logical-volume-manager.html">LVM</a> (para tener crecimiento dinámico o <a href="/2016/02/haciendo-snapshots-con-lvm.html">snapshots</a>, sea un <a href="/2015/12/construyendo-un-raid-10-en-linux.html">RAID</a> (por ejemplo para tener alto rendimiento y/o replicación de datos), o incluso ambos.</p>
+<p><strong>Truco</strong>: Es un buen momento para montar un sistema de ficheros alternativo para almacenar los datos, sea poner <a href="http://www.linuxsysadmin.tk/2016/01/lvm-logical-volume-manager.html">LVM</a> (para tener crecimiento dinámico o <a href="http://www.linuxsysadmin.tk/2016/02/haciendo-snapshots-con-lvm.html">snapshots</a>, sea un <a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">RAID</a> (por ejemplo para tener alto rendimiento y/o replicación de datos), o incluso ambos.</p>
 <p>Cumpliendo con una política de seguridad básica, vamos a crear un usuario de sistema para correr el proceso.</p>
 <div class="highlight"><pre>root@mongo1:~# useradd -s /usr/sbin/nologin -r -M mongo -d /opt/mongodb/
 root@mongo1:~#
@@ -340,7 +340,7 @@ root@mongo1:~#
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Construyendo una replica set en mongodb</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Escribiendo units en systemd</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Restart automático de servicios con systemd</a></li>
     </ul>
 </section>
 <section class="well" id="related-posts">
@@ -348,6 +348,10 @@ root@mongo1:~#
        <h5>Artículos anteriores</h5>
        <ul>
            <li><a href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html">Creando un entorno escalable (I)</a></li>
+       </ul>
+       <h5>Artículos siguientes</h5>
+       <ul>
+           <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></li>
        </ul>
 </section>
     <hr/>
@@ -645,6 +649,11 @@ root@mongo1:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/python.html">
+                            python
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/raid.html">
                             raid
                         </a>
@@ -707,6 +716,21 @@ root@mongo1:~#
                     <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/ubuntu.html">
                             ubuntu
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
+                            uWSGI
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/virtualenv.html">
+                            virtualenv
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/wsgi.html">
+                            WSGI
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

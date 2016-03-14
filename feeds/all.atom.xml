@@ -1,6 +1,284 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-03-07T08:00:00+01:00</updated><entry><title>Creando un entorno escalable (II)</title><link href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html" rel="alternate"></link><updated>2016-03-07T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-03-07:2016/03/creando-un-entorno-escalable-2.html</id><summary type="html">&lt;p&gt;Seguimos con la serie de montar un entorno escalable. Tras explicar en el primer artículo lo que vamos a montar, seguimos con ello. En este artículo vamos a montar un &lt;em&gt;cluster&lt;/em&gt; de bases de datos; será &lt;strong&gt;mongodb&lt;/strong&gt; porque la aplicación lo requiere y usará la topología de un &lt;strong&gt;replica set&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;Este artículo se basa enormemente en &lt;a href="/2015/12/construyendo-una-replica-set-en-mongodb.html"&gt;otro artículo&lt;/a&gt; que ya publicamos, al que vamos a añadir algunas mejoras reflejadas en otros.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-03-14T08:00:00+01:00</updated><entry><title>Creando un entorno escalable (III)</title><link href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html" rel="alternate"></link><updated>2016-03-14T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-03-14:2016/03/creando-un-entorno-escalable-3.html</id><summary type="html">&lt;p&gt;En el artículo anterior de esta serie montamos el cluster de la base de datos que íbamos a necesitar para las aplicaciones que conformaban este entorno de ejemplo. Ahora que tenemos la base de datos, falta poner los servidores de aplicaciones que sirven nuestras aplicaciones y que usan el cluster.&lt;/p&gt;
+&lt;p&gt;Las aplicaciones que pretendemos servir son aplicaciones hechas en &lt;strong&gt;python&lt;/strong&gt;, siguiendo el protocolo &lt;strong&gt;WSGI&lt;/strong&gt;. Para ir rápidos, ambas utilizan el &lt;em&gt;framework&lt;/em&gt; &lt;strong&gt;bottle&lt;/strong&gt;. En realidad, nos sirve cualquier &lt;em&gt;framework&lt;/em&gt; que construya aplicaciones &lt;strong&gt;WSGI&lt;/strong&gt; estándares, de acuerdo al protocolo. Estas aplicaciones se conectan a la base de datos antes creadas para resolver las peticiones, mediante el &lt;em&gt;driver&lt;/em&gt; de &lt;strong&gt;mongodb&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Desde el punto de vista de entrada al servidor, ambas aplicaciones se van a servir mediante el protocolo &lt;strong&gt;HTTP&lt;/strong&gt; en puerto TCP 8080. Hay muchos servidores que sirven aplicaciones &lt;strong&gt;WSGI&lt;/strong&gt;, por ejemplo, &lt;strong&gt;Apache mod_wsgi&lt;/strong&gt;, &lt;strong&gt;gunicorn&lt;/strong&gt; o &lt;strong&gt;uWSGI&lt;/strong&gt;. De hecho hay docenas de ellos, casi todos capaces de servir aplicaciones &lt;strong&gt;WSGI&lt;/strong&gt; en un puerto cualquiera TCP.&lt;/p&gt;
+&lt;p&gt;En este caso, usaremos un servidor de aplicaciones &lt;strong&gt;uWSGI&lt;/strong&gt; que, aunque es un poco mas complicado que &lt;strong&gt;gunicorn&lt;/strong&gt; (y menos que &lt;strong&gt;mod_wsgi&lt;/strong&gt;), me tiene enamorado. Destaco especialmente el modo de funcionamiento &lt;em&gt;emperador&lt;/em&gt; y la capacidad de usar un &lt;em&gt;virtualenv&lt;/em&gt; distinto para cada aplicación servida. De hecho, puede servir diferentes lenguajes y/o versiones, una por cada aplicación.&lt;/p&gt;
+&lt;h2&gt;Instalar el servidor de aplicaciones&lt;/h2&gt;
+&lt;p&gt;Este paso se repite en las máquinas &lt;em&gt;backend1&lt;/em&gt;, &lt;em&gt;backend2&lt;/em&gt; y  &lt;em&gt;backoffice&lt;/em&gt;; aunque cada una va a servir una aplicación distinta, el servidor de aplicaciones es el mismo. En puntos posteriores pondremos y activaremos las aplicaciones.&lt;/p&gt;
+&lt;p&gt;El servidor &lt;strong&gt;uWSGI&lt;/strong&gt; está disponible en los repositorios oficiales de &lt;em&gt;Debian Jessie&lt;/em&gt;. Vamos a instalarlo con un &lt;em&gt;init script&lt;/em&gt; que levante un emperador y le vamos a añadir el &lt;em&gt;plugin&lt;/em&gt; para servir &lt;strong&gt;python&lt;/strong&gt; (en la versión 2.7, según podemos ver).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backend1:~# apt-get install uwsgi-emperor uwsgi-plugin-python
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes extras:
+  file libexpat1 libffi6 libjansson4 libmagic1 libmatheval1 libpgm-5.1-0 libpython2.7 libpython2.7-minimal libpython2.7-stdlib
+  libsodium13 libsqlite3-0 libxml2 libyaml-0-2 libzmq3 mime-support sgml-base uwsgi-core xml-core
+Paquetes sugeridos:
+  sgml-base-doc nginx-full cherokee libapache2-mod-proxy-uwsgi libapache2-mod-uwsgi libapache2-mod-ruwsgi uwsgi-plugins-all
+  uwsgi-extra python-uwsgidecorators debhelper
+Se instalarán los siguientes paquetes NUEVOS:
+  file libexpat1 libffi6 libjansson4 libmagic1 libmatheval1 libpgm-5.1-0 libpython2.7 libpython2.7-minimal libpython2.7-stdlib
+  libsodium13 libsqlite3-0 libxml2 libyaml-0-2 libzmq3 mime-support sgml-base uwsgi-core uwsgi-emperor uwsgi-plugin-python
+  xml-core
+&lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;21&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
+Se necesita descargar 6.608 kB de archivos.
+Se utilizarán 25,9 MB de espacio de disco adicional después de esta operación.
+¿Desea continuar? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
+...
+root@backend1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto ya tenemos el servidor de aplicaciones en funcionamiento. Las instancias se declaran con un fichero de configuración en &lt;em&gt;/etc/uwsgi-emperor/vassals/&lt;/em&gt;, que haremos mas adelante.&lt;/p&gt;
+&lt;h2&gt;Consideraciones de seguridad&lt;/h2&gt;
+&lt;p&gt;Estas aplicaciones usarán el &lt;em&gt;driver&lt;/em&gt; &lt;strong&gt;pymongo&lt;/strong&gt; para conectar a las instancias de &lt;strong&gt;mongodb&lt;/strong&gt;. Para eso hay que habilitar el tráfico relativo (de los servidores de aplicaciones a los de mongodb, por el puerto TCP 27017).&lt;/p&gt;
+&lt;p&gt;En nuestro caso, como estamos trabajando con &lt;strong&gt;LXC&lt;/strong&gt;, lo haremos desde el &lt;em&gt;host&lt;/em&gt;, mediante la modificación de las reglas de &lt;em&gt;firehol&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/firehol/firehol.conf
+&lt;span class="nv"&gt;mongo_servers&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;10.0.0.5 10.0.0.6 10.0.0.7&amp;quot;&lt;/span&gt;
+&lt;span class="nv"&gt;app_servers&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;10.0.0.3 10.0.0.4 10.0.0.5&amp;quot;&lt;/span&gt;
+...  
+router internal inface lxc0 outface lxc0
+...  
+      route custom mongodb tcp/27017 default accept src &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$app_servers&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; dst &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$mongo_servers&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+...  
+root@lxc:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;No os olvidéis de reiniciar el servicio &lt;em&gt;firehol&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Instalando las aplicaciones&lt;/h2&gt;
+&lt;p&gt;Este punto se hace en los tres servidores que sirven aplicaciones (&lt;em&gt;backend1&lt;/em&gt;, &lt;em&gt;backend2&lt;/em&gt; y &lt;em&gt;backoffice&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;Las aplicaciones de ejemplo que vamos a usar las podéis encontrar en &lt;a href="http://www.linuxsysadmin.tk/downloads/shop.tar.gz"&gt;este enlace&lt;/a&gt;. Debo admitir que no son bonitas, pero para esta demostración, nos valen.&lt;/p&gt;
+&lt;p&gt;Descomprimimos el fichero comprimido con las dos aplicaciones.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backend1:~# tar xzf shop.tar.gz
+root@backend1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esta es la estructura que queda tras descomprimir:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backend1:~# tree
+.
+├── shop
+│   ├── requirements.txt
+│   ├── shop_admin
+│   │   ├── app.py
+│   │   └── views
+│   │       ├── index.tpl
+│   │       ├── product_form.tpl
+│   │       └── product_list.tpl
+│   └── shop_api
+│       └── app.py
+└── shop.tar.gz
+
+&lt;span class="m"&gt;4&lt;/span&gt; directories, &lt;span class="m"&gt;7&lt;/span&gt; files
+root@backend1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esta estructura tiene las dos aplicaciones. Cada tipo de servidor usará solo una por simplicidad, así que borraremos la que no se utilice, de acuerdo al tipo de servidor.&lt;/p&gt;
+&lt;p&gt;En resumen, vamos a poner la carpeta &lt;em&gt;shop&lt;/em&gt; en &lt;em&gt;/opt/&lt;/em&gt;, y vamos a poner dentro el &lt;em&gt;virtualenv&lt;/em&gt; con las librerías necesarias.&lt;/p&gt;
+&lt;p&gt;Como buena &lt;em&gt;praxis&lt;/em&gt;, vamos a instalar las librerías en un &lt;em&gt;virtualenv&lt;/em&gt; dedicado por aplicación. Para ello necesitamos la herramienta, que puede salir del repositorio oficial o lo podemos descargar, para usarlo y desecharlo posteriormente. Podemos encontrar el paquete en &lt;a href="https://pypi.python.org/packages/source/v/virtualenv/virtualenv-14.0.6.tar.gz#md5=a035037925c82990a7659ecf8764bcdb"&gt;este enlace&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Lo descomprimimos y lo dejamos ahí, para que los puntos específicos para cada servidor lo usen a su antojo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backend1:~# tar xzf virtualenv-14.0.6.tar.gz
+root@backend1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El &lt;em&gt;script&lt;/em&gt; de creación del &lt;em&gt;virtualenv&lt;/em&gt; se ejecuta con &lt;strong&gt;python&lt;/strong&gt;; así que también lo necesitamos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backend1:~# apt-get install python
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes extras:
+  libpython-stdlib python-minimal python2.7 python2.7-minimal
+Paquetes sugeridos:
+  python-doc python-tk python2.7-doc binutils binfmt-support
+Se instalarán los siguientes paquetes NUEVOS:
+  libpython-stdlib python python-minimal python2.7 python2.7-minimal
+0 actualizados, 5 nuevos se instalarán, 0 para eliminar y 0 no actualizados.
+Se necesita descargar 1.854 kB de archivos.
+Se utilizarán 5.131 kB de espacio de disco adicional después de esta operación.
+¿Desea continuar? [S/n] s
+..
+root@backend1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Veamos ahora los puntos específicos por tipo de aplicación.&lt;/p&gt;
+&lt;h3&gt;Aplicación de backend: la API pública&lt;/h3&gt;
+&lt;p&gt;Este punto se ejecuta solamente en los &lt;em&gt;backends&lt;/em&gt; (&lt;em&gt;backend1&lt;/em&gt; y &lt;em&gt;backend2&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;Eliminamos la aplicación de administración, que no se usa en los &lt;em&gt;backends&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backend1:~# rm -R shop/shop_admin/
+root@backend1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Así nos queda la carpeta:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backend1:~# tree shop
+shop
+├── requirements.txt
+└── shop_api
+    └── app.py
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;2&lt;/span&gt; files
+root@backend1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Copiamos la carpeta a &lt;em&gt;/opt/&lt;/em&gt; que va a ser su emplazamiento habitual.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backend1:~# cp -R shop/ /opt/
+root@backend1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a trabajar ya desde la carpeta contenedora del proyecto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backend1:~# &lt;span class="nb"&gt;cd&lt;/span&gt; /opt/shop/
+root@backend1:/opt/shop#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El siguiente paso es crear el conjunto de librerías necesarias, construyendo un &lt;em&gt;virtualenv&lt;/em&gt; con las librerías. &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backend1:/opt/shop# /root/virtualenv-14.0.6/virtualenv.py env
+New python executable in /opt/shop/env/bin/python
+Installing setuptools, pip, wheel...done.
+root@backend1:/opt/shop#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Activamos el entorno virtual para instalar las librerías declaradas en el fichero &lt;em&gt;requirements.txt&lt;/em&gt;. Luego salimos del entorno.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backend1:/opt/shop# . env/bin/activate
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@backend1:/opt/shop# pip install -r requirements.txt
+Collecting &lt;span class="nv"&gt;bottle&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;0.12.9 &lt;span class="o"&gt;(&lt;/span&gt;from -r requirements.txt &lt;span class="o"&gt;(&lt;/span&gt;line 1&lt;span class="o"&gt;))&lt;/span&gt;
+...
+Installing collected packages: bottle, pymongo
+Successfully installed bottle-0.12.9 pymongo-3.2
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@backend1:/opt/shop# deactivate
+root@backend1:/opt/shop#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y para evitarnos problemas de permisos, uniformizamos el propietario de la carpeta:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backend1:~# chown -R www-data:www-data /opt/shop/
+root@backend1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Con todo lo necesario para levantar la aplicación, la declaramos como &lt;em&gt;vasallo&lt;/em&gt; del &lt;em&gt;emperador&lt;/em&gt;; el mismo &lt;strong&gt;emperador&lt;/strong&gt; va a levantar un proceso para servir esa configuración.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backend1:/opt/shop# cat /etc/uwsgi-emperor/vassals/shop_api.ini
+&lt;span class="o"&gt;[&lt;/span&gt;uwsgi&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;plugin&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; python
+http-socket &lt;span class="o"&gt;=&lt;/span&gt; 0.0.0.0:8080
+&lt;span class="nv"&gt;master&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="nv"&gt;workers&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; 2
+&lt;span class="nv"&gt;virtualenv&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; /opt/shop/env
+&lt;span class="nv"&gt;chdir&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; /opt/shop/shop_api
+&lt;span class="nv"&gt;module&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; app:app
+root@backend1:/opt/shop#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y podemos comprobar que todo funciona como debe haciendo una petición a la &lt;strong&gt;API&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backend1:~# curl -i http://localhost:8080/products/
+HTTP/1.1 &lt;span class="m"&gt;200&lt;/span&gt; OK
+Content-Length: 3
+Content-Type: application/json
+Backend: backend1
+
+&lt;span class="o"&gt;[]&lt;/span&gt;
+root@backend1:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Aplicación de backoffice: la interfaz de administración&lt;/h3&gt;
+&lt;p&gt;Este punto aplica solamente a la máquina &lt;em&gt;backoffice&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;El proceso es análogo al de los &lt;em&gt;backends&lt;/em&gt;; quitamos la aplicación que no vamos a utilizar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backoffice:~# rm -R shop/shop_api/
+root@backoffice:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Así nos queda la carpeta:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backoffice:~# tree shop
+shop
+├── requirements.txt
+└── shop_admin
+    ├── app.py
+    └── views
+        ├── index.tpl
+        ├── product_form.tpl
+        └── product_list.tpl
+
+&lt;span class="m"&gt;2&lt;/span&gt; directories, &lt;span class="m"&gt;5&lt;/span&gt; files
+root@backoffice:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La transferimos a la carpeta &lt;em&gt;/opt/&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backoffice:~# cp -R shop/ /opt/
+root@backoffice:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Nos situamos en la carpeta contenedora:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backoffice:~# &lt;span class="nb"&gt;cd&lt;/span&gt; /opt/shop/
+root@backoffice:/opt/shop#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Creamos el &lt;em&gt;virtualenv&lt;/em&gt; en la carpeta contenedora.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backoffice:/opt/shop# /root/virtualenv-14.0.6/virtualenv.py env
+New python executable in /opt/shop/env/bin/python
+Installing setuptools, pip, wheel...done.
+root@backoffice:/opt/shop#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y le instalamos las librerías necesarias, declaradas en el fichero &lt;em&gt;requirements.txt&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backoffice:/opt/shop# . env/bin/activate
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@backoffice:/opt/shop# pip install -r requirements.txt
+Collecting &lt;span class="nv"&gt;bottle&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;0.12.9 &lt;span class="o"&gt;(&lt;/span&gt;from -r requirements.txt &lt;span class="o"&gt;(&lt;/span&gt;line 1&lt;span class="o"&gt;))&lt;/span&gt;
+...
+Installing collected packages: bottle, pymongo
+Successfully installed bottle-0.12.9 pymongo-3.2
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@backoffice:/opt/shop# deactivate
+root@backoffice:/opt/shop#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Actualizamos el propietario de la aplicación &lt;strong&gt;WSGI&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backoffice:/opt/shop# chown -R www-data:www-data /opt/shop/
+root@backoffice:/opt/shop#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y creamos el fichero de configuración del &lt;em&gt;vasallo&lt;/em&gt;, para que lo levante el &lt;em&gt;emperador&lt;/em&gt;, quedando así:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backoffice:/opt/shop# cat /etc/uwsgi-emperor/vassals/shop_admin.ini
+&lt;span class="o"&gt;[&lt;/span&gt;uwsgi&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;plugin&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; python
+http-socket &lt;span class="o"&gt;=&lt;/span&gt; 0.0.0.0:8080
+&lt;span class="nv"&gt;master&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="nv"&gt;workers&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; 2
+&lt;span class="nv"&gt;virtualenv&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; /opt/shop/env
+&lt;span class="nv"&gt;chdir&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; /opt/shop/shop_admin
+&lt;span class="nv"&gt;module&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; app:app
+root@backoffice:/opt/shop#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y comprobamos que obtenemos la página web que se espera:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@backoffice:~# curl -i http://localhost:8080/
+HTTP/1.1 &lt;span class="m"&gt;200&lt;/span&gt; OK
+Content-Length: 33
+Content-Type: text/html&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nv"&gt;charset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;UTF-8
+
+&amp;lt;a &lt;span class="nv"&gt;href&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/products&amp;quot;&lt;/span&gt;&amp;gt;Products&amp;lt;/a&amp;gt;
+root@backoffice:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto hemos acabado con las aplicaciones. Nuevamente, todo lo que queda en la carpeta &lt;em&gt;/root/&lt;/em&gt; es desechable.&lt;/p&gt;
+&lt;p&gt;En el siguiente artículo vamos a montar el &lt;em&gt;proxy&lt;/em&gt;/balanceador que va a actuar como fachada de todo el sistema.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="WSGI"></category><category term="uWSGI"></category><category term="python"></category><category term="virtualenv"></category><category term="firehol"></category></entry><entry><title>Creando un entorno escalable (II)</title><link href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html" rel="alternate"></link><updated>2016-03-07T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-03-07:2016/03/creando-un-entorno-escalable-2.html</id><summary type="html">&lt;p&gt;Seguimos con la serie de montar un entorno escalable. Tras explicar en el primer artículo lo que vamos a montar, seguimos con ello. En este artículo vamos a montar un &lt;em&gt;cluster&lt;/em&gt; de bases de datos; será &lt;strong&gt;mongodb&lt;/strong&gt; porque la aplicación lo requiere y usará la topología de un &lt;strong&gt;replica set&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Este artículo se basa enormemente en &lt;a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html"&gt;otro artículo&lt;/a&gt; que ya publicamos, al que vamos a añadir algunas mejoras reflejadas en otros.&lt;/p&gt;
 &lt;p&gt;Como ya vimos en el artículo referido, solo necesitamos levantar un proceso &lt;em&gt;mongod&lt;/em&gt; en cada una de las máquinas, para posteriormente casarlos entre sí.&lt;/p&gt;
 &lt;h2&gt;Levantando los procesos de mongodb&lt;/h2&gt;
 &lt;p&gt;Este punto se repite en las máquinas que van a formar la &lt;strong&gt;replica set&lt;/strong&gt;, que son &lt;em&gt;mongo1&lt;/em&gt;, &lt;em&gt;mongo2&lt;/em&gt; y &lt;em&gt;backoffice&lt;/em&gt;. Vamos a seguir solamente una de ellas; el resto son análogas.&lt;/p&gt;
@@ -40,7 +318,7 @@ root@mongo1:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;&lt;strong&gt;Truco&lt;/strong&gt;: Es un buen momento para montar un sistema de ficheros alternativo para almacenar los datos, sea poner &lt;a href="/2016/01/lvm-logical-volume-manager.html"&gt;LVM&lt;/a&gt; (para tener crecimiento dinámico o &lt;a href="/2016/02/haciendo-snapshots-con-lvm.html"&gt;snapshots&lt;/a&gt;, sea un &lt;a href="/2015/12/construyendo-un-raid-10-en-linux.html"&gt;RAID&lt;/a&gt; (por ejemplo para tener alto rendimiento y/o replicación de datos), o incluso ambos.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Truco&lt;/strong&gt;: Es un buen momento para montar un sistema de ficheros alternativo para almacenar los datos, sea poner &lt;a href="http://www.linuxsysadmin.tk/2016/01/lvm-logical-volume-manager.html"&gt;LVM&lt;/a&gt; (para tener crecimiento dinámico o &lt;a href="http://www.linuxsysadmin.tk/2016/02/haciendo-snapshots-con-lvm.html"&gt;snapshots&lt;/a&gt;, sea un &lt;a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html"&gt;RAID&lt;/a&gt; (por ejemplo para tener alto rendimiento y/o replicación de datos), o incluso ambos.&lt;/p&gt;
 &lt;p&gt;Cumpliendo con una política de seguridad básica, vamos a crear un usuario de sistema para correr el proceso.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@mongo1:~# useradd -s /usr/sbin/nologin -r -M mongo -d /opt/mongodb/
 root@mongo1:~#
@@ -187,7 +465,7 @@ root@mongo1:~#
 &lt;p&gt;En este tutorial se va a montar un entorno pequeño de estas características, sirviendo una &lt;em&gt;API&lt;/em&gt; pública en servidores de &lt;strong&gt;backend&lt;/strong&gt;, una aplicación web de administración de los datos de la &lt;em&gt;API&lt;/em&gt; en un servidor de &lt;strong&gt;backoffice&lt;/strong&gt;, y un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;bases de datos&lt;/strong&gt; representado por una &lt;em&gt;replica set&lt;/em&gt; de MongoDB; todo ello oculto en una red privada y un balanceador usando &lt;em&gt;virtualhosts&lt;/em&gt; para ir a una aplicación u otra según el protocolo usado.&lt;/p&gt;
 &lt;p&gt;Esto es lo que propongo montar:&lt;/p&gt;
 &lt;p&gt;&lt;img alt="Entorno propuesto" src="http://www.linuxsysadmin.tk/images/entorno_propuesto.png" /&gt;&lt;/p&gt;
-&lt;p&gt;Para ello, vamos a crear las máquinas virtuales necesarias. En este caso, voy a usar mi servidor de &lt;strong&gt;virtualización con LXC&lt;/strong&gt;, tal como lo monté en &lt;a href="/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html"&gt;este artículo&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Para ello, vamos a crear las máquinas virtuales necesarias. En este caso, voy a usar mi servidor de &lt;strong&gt;virtualización con LXC&lt;/strong&gt;, tal como lo monté en &lt;a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html"&gt;este artículo&lt;/a&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# lxc-ls -f
 NAME        STATE    IPV4        IPV6  AUTOSTART
 ------------------------------------------------
@@ -1198,7 +1476,7 @@ root@repository:/opt/repo#
 &lt;h2&gt;Añadiendo paquetes al repositorio&lt;/h2&gt;
 &lt;p&gt;Añadir un paquete a nuestro repositorio es tan fácil como invocar el comando &lt;em&gt;reprepro&lt;/em&gt;, con la opción &lt;em&gt;includedeb&lt;/em&gt; del paquete, en alguna carpeta de nuestra máquina. El resto son opciones que indican donde están las carpetas del repositorio.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;WARNING&lt;/strong&gt;: Si se pone un paquete empaquetado por nosotros, es importante que su fichero &lt;em&gt;control&lt;/em&gt; incluya las directivas &lt;em&gt;Section&lt;/em&gt; y &lt;em&gt;Priority&lt;/em&gt;, normalmente solo recomendadas, pero necesarias para &lt;strong&gt;reprepro&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;Por ejemplo, podemos usar el paquete de un &lt;a href="/2015/12/empaquetando-ficheros-punto-deb.html"&gt;artículo anterior&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Por ejemplo, podemos usar el paquete de un &lt;a href="http://www.linuxsysadmin.tk/2015/12/empaquetando-ficheros-punto-deb.html"&gt;artículo anterior&lt;/a&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@repository:/opt/repo# reprepro --distdir ./public/dists --outdir ./public includedeb linuxsysadmin /root/welcome_1.0-1_all.deb 
 Exporting indices...
 root@repository:/opt/repo# 
