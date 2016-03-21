@@ -1,5 +1,261 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-03-14T08:00:00+01:00</updated><entry><title>Creando un entorno escalable (III)</title><link href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html" rel="alternate"></link><updated>2016-03-14T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-03-14:2016/03/creando-un-entorno-escalable-3.html</id><summary type="html">&lt;p&gt;En el artículo anterior de esta serie montamos el cluster de la base de datos que íbamos a necesitar para las aplicaciones que conformaban este entorno de ejemplo. Ahora que tenemos la base de datos, falta poner los servidores de aplicaciones que sirven nuestras aplicaciones y que usan el cluster.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-03-21T08:00:00+01:00</updated><entry><title>Creando un entorno escalable (IV)</title><link href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html" rel="alternate"></link><updated>2016-03-21T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-03-21:2016/03/creando-un-entorno-escalable-4.html</id><summary type="html">&lt;p&gt;Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un &lt;em&gt;proxy HTTP&lt;/em&gt; que haga las funciones de terminación &lt;em&gt;SSL&lt;/em&gt; y de &lt;em&gt;balanceador&lt;/em&gt;, exponiendo todo el sistema en una sola dirección IP.&lt;/p&gt;
+&lt;p&gt;Como &lt;em&gt;proxy HTTP&lt;/em&gt; tenemos varias opciones; solo se necesita un servidor web que soporte &lt;em&gt;virtual hosts&lt;/em&gt;, protocolo HTTP sobre SSL, capacidad de hacer de &lt;em&gt;proxy&lt;/em&gt; y capacidad para balancear las peticiones entre varias opciones.&lt;/p&gt;
+&lt;p&gt;Si analizamos estos requisitos, podemos comprobar que las opciones son muchas; desde el todopoderoso &lt;strong&gt;apache&lt;/strong&gt; al &lt;strong&gt;nginx&lt;/strong&gt;, pasando por soluciones de balanceador puro como &lt;strong&gt;haproxy&lt;/strong&gt;, u opciones mas esotéricas como &lt;strong&gt;squid&lt;/strong&gt;. En este caso, se utiliza &lt;strong&gt;nginx&lt;/strong&gt; por su facilidad de uso y su bajo consumo de recursos. Cumple con el subconjunto básico de funcionalidades necesario, pero no dispone de tantos algoritmos de balanceo como otras opciones.&lt;/p&gt;
+&lt;h2&gt;Instalación de paquetes&lt;/h2&gt;
+&lt;p&gt;Empezamos instalando los requisitos para nuestra fachada; en principio solo se necesitaría el servidor web &lt;strong&gt;nginx&lt;/strong&gt; (en la versión mínima) y &lt;strong&gt;openssl&lt;/strong&gt; para generar los certificados. Adicionalmente instalaremos &lt;strong&gt;curl&lt;/strong&gt; para comprobar que el resultado es correcto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@frontend:~# apt-get install nginx-light curl
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes extras:
+  ca-certificates libcurl3 libffi6 libgmp10 libgnutls-deb0-28 libhogweed2 libidn11 libldap-2.4-2 libnettle4 libp11-kit0 librtmp1
+  libsasl2-2 libsasl2-modules libsasl2-modules-db libssh2-1 libtasn1-6 nginx-common openssl
+Paquetes sugeridos:
+  gnutls-bin libsasl2-modules-otp libsasl2-modules-ldap libsasl2-modules-sql libsasl2-modules-gssapi-mit
+  libsasl2-modules-gssapi-heimdal fcgiwrap nginx-doc ssl-cert
+Se instalarán los siguientes paquetes NUEVOS:
+  ca-certificates curl libcurl3 libffi6 libgmp10 libgnutls-deb0-28 libhogweed2 libidn11 libldap-2.4-2 libnettle4 libp11-kit0
+  librtmp1 libsasl2-2 libsasl2-modules libsasl2-modules-db libssh2-1 libtasn1-6 nginx-common nginx-light openssl
+&lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;20&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
+Se necesita descargar 4.077 kB de archivos.
+Se utilizarán 8.832 kB de espacio de disco adicional después de esta operación.
+¿Desea continuar? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
+...
+root@frontend:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El paquete &lt;strong&gt;nginx&lt;/strong&gt; de la distribución &lt;em&gt;Debian&lt;/em&gt; viene con una configuración por defecto en &lt;em&gt;/etc/nginx/sites-enabled/&lt;/em&gt;, que vamos a eliminar para evitar que se pise con nuestras configuraciones.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@frontend:~# ls -lh /etc/nginx/sites-enabled/
+total 0
+lrwxrwxrwx &lt;span class="m"&gt;1&lt;/span&gt; root root &lt;span class="m"&gt;34&lt;/span&gt; feb &lt;span class="m"&gt;26&lt;/span&gt; 11:28 default -&amp;gt; /etc/nginx/sites-available/default
+root@frontend:~# unlink /etc/nginx/sites-enabled/default
+root@frontend:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Consideraciones de seguridad&lt;/h2&gt;
+&lt;p&gt;Cuando nuestro servidor web recibe una petición, va a iniciar una nueva conexión contra el servidor de &lt;em&gt;backend&lt;/em&gt; que toque o el de &lt;em&gt;backoffice&lt;/em&gt;. Para habilitar esto, se necesitan nuevas reglas en el &lt;em&gt;firewall&lt;/em&gt;, que en este caso es &lt;strong&gt;firehol&lt;/strong&gt;, instalado en la máquina anfitriona.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/firehol/firehol.conf
+...  
+&lt;span class="nv"&gt;app_servers&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;10.0.0.3 10.0.0.4 10.0.0.5&amp;quot;&lt;/span&gt;
+&lt;span class="nv"&gt;frontend_server&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;10.0.0.2&amp;quot;&lt;/span&gt;
+...
+router internal inface lxc0 outface lxc0
+...  
+    route webcache accept src &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$frontend_server&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; dst &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$app_servers&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+root@lxc:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;No os olvidéis de reiniciar &lt;strong&gt;firehol&lt;/strong&gt;, para que se apliquen las nuevas reglas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# service firehol restart
+...  
+root@lxc:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Montando los virtualhosts de ambas aplicaciones&lt;/h2&gt;
+&lt;p&gt;La parte privada va a estar escondida tras una terminación &lt;strong&gt;HTTPS&lt;/strong&gt;. Esa aplicación se podría esconder tras una &lt;a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html"&gt;autenticación de certificados cliente&lt;/a&gt; o mediante &lt;a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html"&gt;autenticación básica&lt;/a&gt;. Por simplicidad vamos a usar esta última.&lt;/p&gt;
+&lt;p&gt;Empezamos generando un certificado autofirmado para el servidor web, directamente firmado, y su clave. Fijaos que no generamos ningún certificado de CA, ya que no tenemos ninguna intención de generar autenticación cliente en el futuro.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@frontend:~# openssl req -new -newkey rsa:2048 -days &lt;span class="m"&gt;365&lt;/span&gt; -nodes -x509 -keyout server.key -out server.crt -subj &lt;span class="s2"&gt;&amp;quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin/CN=shop.linuxsysadmin.tk&amp;quot;&lt;/span&gt;
+Generating a &lt;span class="m"&gt;2048&lt;/span&gt; bit RSA private key
+.......................................+++
+.................................................................................................................................................................+++
+writing new private key to &lt;span class="s1"&gt;&amp;#39;server.key&amp;#39;&lt;/span&gt;
+-----
+root@frontend:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ponemos la clave y el certificado generado en sus respectivas localizaciones, de acuerdo a los estándares.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@frontend:~# cp server.key /etc/ssl/private/
+root@frontend:~# cp server.crt /etc/ssl/certs/
+root@frontend:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como verificación, así quedaría la carpeta &lt;em&gt;/etc/ssl/&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@frontend:~# tree /etc/ssl/
+/etc/ssl/
+├── certs
+│   └── server.crt
+├── openssl.cnf
+└── private
+    └── server.key
+
+&lt;span class="m"&gt;2&lt;/span&gt; directories, &lt;span class="m"&gt;3&lt;/span&gt; files
+root@frontend:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para poder autenticar mediante autenticación básica, generamos un usuario en un fichero tipo &lt;strong&gt;htpasswd&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@frontend:~# &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;admin:&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;openssl passwd -crypt s3cr3t&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &amp;gt; /etc/nginx/shop.basic_auth
+root@frontend:~# cat /etc/nginx/shop.basic_auth
+admin:rOU9H0ABEB2H6
+root@frontend:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con todas las piezas listas, montamos los virtualhosts, en un fichero de configuración o en varios, según nos apetezca.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@frontend:~# cat /etc/nginx/sites-enabled/shop
+upstream backends &lt;span class="o"&gt;{&lt;/span&gt;
+        server backend1:8080&lt;span class="p"&gt;;&lt;/span&gt;
+        server backend2:8080&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+server &lt;span class="o"&gt;{&lt;/span&gt;
+        listen &lt;span class="m"&gt;80&lt;/span&gt; default_server&lt;span class="p"&gt;;&lt;/span&gt;
+        server_name _&lt;span class="p"&gt;;&lt;/span&gt;
+
+        location / &lt;span class="o"&gt;{&lt;/span&gt;
+                proxy_pass http://backends&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+server &lt;span class="o"&gt;{&lt;/span&gt;
+        listen &lt;span class="m"&gt;443&lt;/span&gt; ssl&lt;span class="p"&gt;;&lt;/span&gt;
+        server_name _&lt;span class="p"&gt;;&lt;/span&gt;
+
+        ssl_certificate /etc/ssl/certs/server.crt&lt;span class="p"&gt;;&lt;/span&gt;
+        ssl_certificate_key /etc/ssl/private/server.key&lt;span class="p"&gt;;&lt;/span&gt;
+
+        auth_basic &lt;span class="s2"&gt;&amp;quot;Admin Area&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        auth_basic_user_file /etc/nginx/shop.basic_auth&lt;span class="p"&gt;;&lt;/span&gt;
+
+        location / &lt;span class="o"&gt;{&lt;/span&gt;
+                proxy_pass http://backoffice:8080&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@frontend:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La configuración es bastante estándar; se trata de un &lt;em&gt;server&lt;/em&gt; (equivalente en &lt;strong&gt;nginx&lt;/strong&gt; a un &lt;em&gt;virtualhost&lt;/em&gt; de &lt;strong&gt;apache&lt;/strong&gt;) para cada protocolo. La parte de administración es solamente la mediación &lt;strong&gt;SSL&lt;/strong&gt; y un &lt;em&gt;proxy_pass&lt;/em&gt; hacia el &lt;em&gt;backoffice&lt;/em&gt;. La parte de la API pública también se limita a hacer un &lt;em&gt;proxy_pass&lt;/em&gt;, solo que se hace contra &lt;em&gt;backends&lt;/em&gt; que es un objeto &lt;strong&gt;upstream&lt;/strong&gt;, que es el que define el balanceador.&lt;/p&gt;
+&lt;p&gt;Ahora solo queda reiniciar el servidor web para aplicar los cambios. De acuerdo a la documentación, habría bastado un &lt;em&gt;reload&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@frontend:~# service nginx restart
+root@frontend:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Comprobando que las aplicaciones funcionan&lt;/h2&gt;
+&lt;p&gt;Para comprobar que la parte de la API funciona y balancea adecuadamente, basta con hacer peticiones. Podemos comprobar el &lt;em&gt;backend&lt;/em&gt; que la ha servido porque la aplicación pone una cabecera que especifica el nombre del &lt;em&gt;host&lt;/em&gt; que la resolvió. Con dos peticiones veremos que va alternativamente a cada &lt;em&gt;backend&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@frontend:~# curl -i http://localhost/products/
+HTTP/1.1 &lt;span class="m"&gt;200&lt;/span&gt; OK
+Server: nginx/1.6.2
+Date: Fri, &lt;span class="m"&gt;26&lt;/span&gt; Feb &lt;span class="m"&gt;2016&lt;/span&gt; 11:04:38 GMT
+Content-Type: application/json
+Content-Length: 3
+Connection: keep-alive
+Backend: backend1
+
+&lt;span class="o"&gt;[]&lt;/span&gt;
+root@frontend:~# curl -i http://localhost/products/
+HTTP/1.1 &lt;span class="m"&gt;200&lt;/span&gt; OK
+Server: nginx/1.6.2
+Date: Fri, &lt;span class="m"&gt;26&lt;/span&gt; Feb &lt;span class="m"&gt;2016&lt;/span&gt; 11:04:40 GMT
+Content-Type: application/json
+Content-Length: 3
+Connection: keep-alive
+Backend: backend2
+
+&lt;span class="o"&gt;[]&lt;/span&gt;
+root@frontend:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para la parte privada, haremos la petición, de la misma manera; vamos a añadir el flag &lt;em&gt;-k&lt;/em&gt; para sobrepasar el certificado autofirmado. Como no hemos indicado el usuario y la contraseña, nos devuelve un error 401, que indica que no estamos autorizados a pasar mas allá.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@frontend:~# curl -i -k https://localhost/products
+HTTP/1.1 &lt;span class="m"&gt;401&lt;/span&gt; Unauthorized
+Server: nginx/1.6.2
+Date: Fri, &lt;span class="m"&gt;26&lt;/span&gt; Feb &lt;span class="m"&gt;2016&lt;/span&gt; 11:05:35 GMT
+Content-Type: text/html
+Content-Length: 194
+Connection: keep-alive
+WWW-Authenticate: Basic &lt;span class="nv"&gt;realm&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Admin Area&amp;quot;&lt;/span&gt;
+
+&amp;lt;html&amp;gt;
+&amp;lt;head&amp;gt;&amp;lt;title&amp;gt;401 Authorization Required&amp;lt;/title&amp;gt;&amp;lt;/head&amp;gt;
+&amp;lt;body &lt;span class="nv"&gt;bgcolor&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;white&amp;quot;&lt;/span&gt;&amp;gt;
+&amp;lt;center&amp;gt;&amp;lt;h1&amp;gt;401 Authorization Required&amp;lt;/h1&amp;gt;&amp;lt;/center&amp;gt;
+&amp;lt;hr&amp;gt;&amp;lt;center&amp;gt;nginx/1.6.2&amp;lt;/center&amp;gt;
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+root@frontend:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto parece que funciona, a falta de probar con un navegador adecuado.&lt;/p&gt;
+&lt;h2&gt;Un pequeño detalle: abrimos los puertos&lt;/h2&gt;
+&lt;p&gt;Puesto que este entorno está montado sobre virtualización &lt;strong&gt;LXC&lt;/strong&gt;, necesitamos que la dirección IP de la maquina anfitriona exponga los puertos de la máquina &lt;em&gt;frontend&lt;/em&gt;. Para ello hay que habilitar un mecanismo que se llama &lt;em&gt;port forwarding&lt;/em&gt;, coloquialmente conocido como "abrir el puerto".&lt;/p&gt;
+&lt;p&gt;Mediante una directiva de &lt;strong&gt;firehol&lt;/strong&gt; indicamos que pasaremos todas las peticiones recibidas a los puertos 80 y 443 directamente a la máquina de &lt;em&gt;frontend&lt;/em&gt;. Hay que habilitar ese tráfico de &lt;strong&gt;FORWARD&lt;/strong&gt;, mediante otras reglas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/firehol/firehol.conf
+...
+&lt;span class="nv"&gt;frontend_server&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;10.0.0.2&amp;quot;&lt;/span&gt;
+...
+dnat to &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$frontend_server&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; proto tcp dport 80
+dnat to &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$frontend_server&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; proto tcp dport 443
+...
+router world2lan inface eth0 outface lxc0
+    route http accept dst &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$frontend_server&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+    route https accept dst &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$frontend_server&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+...
+root@lxc:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y nuevamente reiniciamos el servicio para aplicar las nuevas reglas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# service firehol restart
+...
+root@lxc:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Accediendo a las aplicaciones en la IP pública&lt;/h2&gt;
+&lt;p&gt;Vamos a acceder con un navegador a la parte de administración, para ver que funciona y para rellenar algunos datos, para que se vea una respuesta de la API con fundamento.&lt;/p&gt;
+&lt;p&gt;El primer paso consiste en abrir el navegador con la URL adecuada, y nos tropezamos con la autenticación.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Auth basic" src="http://www.linuxsysadmin.tk/images/entorno-escalable-auth-basic.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;Tras pasar la autenticación podemos acceder a los formularios para añadir productos.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Admin form" src="http://www.linuxsysadmin.tk/images/entorno-escalable-admin-form.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;Tras añadir tres productos, vemos que ya se genera la lista, en formato web.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Admin list" src="http://www.linuxsysadmin.tk/images/entorno-escalable-admin-list.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;Con los datos introducidos podemos consumir la API, para comprobar que los datos que hemos introducido en la base de datos (mediante la aplicación de administración) están disponibles.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;wget -qO- http://192.168.1.232/products/
+&lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;price&amp;quot;&lt;/span&gt;: 1.5, 
+        &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;123&amp;quot;&lt;/span&gt;, 
+        &lt;span class="s2"&gt;&amp;quot;description&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Apples&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;, 
+    &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;price&amp;quot;&lt;/span&gt;: 1.0, 
+        &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;456&amp;quot;&lt;/span&gt;, 
+        &lt;span class="s2"&gt;&amp;quot;description&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Oranges&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;, 
+    &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;price&amp;quot;&lt;/span&gt;: 2.0, 
+        &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;789&amp;quot;&lt;/span&gt;, 
+        &lt;span class="s2"&gt;&amp;quot;description&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Pears&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y consultando un producto concreto, también funciona como debe.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;wget -qO- http://192.168.1.232/products/456
+&lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;price&amp;quot;&lt;/span&gt;: 1.0, 
+    &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;456&amp;quot;&lt;/span&gt;, 
+    &lt;span class="s2"&gt;&amp;quot;description&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Oranges&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@desktop:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto comprobamos que todo queda en su sitio. Solo hará falta limpiar cualquier desecho que hayamos dejado en &lt;em&gt;/root/&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Y con este artículo cerramos la serie.&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="proxy http"></category><category term="balanceador"></category><category term="ssl"></category><category term="nginx"></category><category term="virtual hosts"></category><category term="port forwarding"></category></entry><entry><title>Creando un entorno escalable (III)</title><link href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html" rel="alternate"></link><updated>2016-03-14T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-03-14:2016/03/creando-un-entorno-escalable-3.html</id><summary type="html">&lt;p&gt;En el artículo anterior de esta serie montamos el cluster de la base de datos que íbamos a necesitar para las aplicaciones que conformaban este entorno de ejemplo. Ahora que tenemos la base de datos, falta poner los servidores de aplicaciones que sirven nuestras aplicaciones y que usan el cluster.&lt;/p&gt;
 &lt;p&gt;Las aplicaciones que pretendemos servir son aplicaciones hechas en &lt;strong&gt;python&lt;/strong&gt;, siguiendo el protocolo &lt;strong&gt;WSGI&lt;/strong&gt;. Para ir rápidos, ambas utilizan el &lt;em&gt;framework&lt;/em&gt; &lt;strong&gt;bottle&lt;/strong&gt;. En realidad, nos sirve cualquier &lt;em&gt;framework&lt;/em&gt; que construya aplicaciones &lt;strong&gt;WSGI&lt;/strong&gt; estándares, de acuerdo al protocolo. Estas aplicaciones se conectan a la base de datos antes creadas para resolver las peticiones, mediante el &lt;em&gt;driver&lt;/em&gt; de &lt;strong&gt;mongodb&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Desde el punto de vista de entrada al servidor, ambas aplicaciones se van a servir mediante el protocolo &lt;strong&gt;HTTP&lt;/strong&gt; en puerto TCP 8080. Hay muchos servidores que sirven aplicaciones &lt;strong&gt;WSGI&lt;/strong&gt;, por ejemplo, &lt;strong&gt;Apache mod_wsgi&lt;/strong&gt;, &lt;strong&gt;gunicorn&lt;/strong&gt; o &lt;strong&gt;uWSGI&lt;/strong&gt;. De hecho hay docenas de ellos, casi todos capaces de servir aplicaciones &lt;strong&gt;WSGI&lt;/strong&gt; en un puerto cualquiera TCP.&lt;/p&gt;
 &lt;p&gt;En este caso, usaremos un servidor de aplicaciones &lt;strong&gt;uWSGI&lt;/strong&gt; que, aunque es un poco mas complicado que &lt;strong&gt;gunicorn&lt;/strong&gt; (y menos que &lt;strong&gt;mod_wsgi&lt;/strong&gt;), me tiene enamorado. Destaco especialmente el modo de funcionamiento &lt;em&gt;emperador&lt;/em&gt; y la capacidad de usar un &lt;em&gt;virtualenv&lt;/em&gt; distinto para cada aplicación servida. De hecho, puede servir diferentes lenguajes y/o versiones, una por cada aplicación.&lt;/p&gt;

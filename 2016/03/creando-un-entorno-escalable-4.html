@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>Creando un entorno escalable (IV) - Linux Sysadmin</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html">
+
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="linux,debian,jessie,proxy http,balanceador,ssl,nginx,virtual hosts,port forwarding" />
+        <meta name="description" content="Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un proxy HTTP que haga las funciones de terminación SSL y de balanceador, exponiendo todo el sistema en una sola dirección IP ..." />
+
+        <meta property="og:site_name" content="Linux Sysadmin" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Creando un entorno escalable (IV)"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html"/>
+        <meta property="og:description" content="Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un proxy HTTP que haga las funciones de terminación SSL y de balanceador, exponiendo todo el sistema en una sola dirección IP ..."/>
+        <meta property="article:published_time" content="2016-03-21" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="debian" />
+            <meta property="article:tag" content="jessie" />
+            <meta property="article:tag" content="proxy http" />
+            <meta property="article:tag" content="balanceador" />
+            <meta property="article:tag" content="ssl" />
+            <meta property="article:tag" content="nginx" />
+            <meta property="article:tag" content="virtual hosts" />
+            <meta property="article:tag" content="port forwarding" />
+            <meta property="article:author" content="Gerard" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="http://www.linuxsysadmin.tk/theme/css/bootstrap.cosmo.min.css" type="text/css"/>
+    <link href="http://www.linuxsysadmin.tk/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="http://www.linuxsysadmin.tk/theme/css/pygments/vim.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://www.linuxsysadmin.tk/theme/css/style.css" type="text/css"/>
+        <link href="http://www.linuxsysadmin.tk/static/custom.css" rel="stylesheet">
+
+        <link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin ATOM Feed"/>
+
+
+
+        <link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
+
+    <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
+    <script type="text/javascript">
+        window.cookieconsent_options = {"message":"De acuerdo a la ley vigente, estoy obligado a informarte de la obviedad de que este sitio utiliza cookies.","dismiss":"Acepto","learnMore":"Mas información","link":null,"theme":"dark-bottom"};
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/1.0.9/cookieconsent.min.js"></script>
+    <!-- End Cookie Consent plugin -->
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://www.linuxsysadmin.tk/" class="navbar-brand">
+Linux Sysadmin            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                         <li><a href="http://www.linuxsysadmin.tk/about.html">
+                             Sobre mí
+                          </a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Creando un entorno escalable (IV)</li>
+            </ol>
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Banner linuxsysadmin -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6984858420847602"
+     data-ad-slot="7977846974"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html"
+                       rel="bookmark"
+                       title="Permalink to Creando un entorno escalable (IV)">
+                        Creando un entorno escalable (IV)
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-03-21T08:00:00+01:00"> 2016-03-21</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 9 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/sistemas.html">Sistemas</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/debian.html">debian</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/jessie.html">jessie</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/proxy-http.html">proxy http</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/balanceador.html">balanceador</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/ssl.html">ssl</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/nginx.html">nginx</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/virtual-hosts.html">virtual hosts</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/port-forwarding.html">port forwarding</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un <em>proxy HTTP</em> que haga las funciones de terminación <em>SSL</em> y de <em>balanceador</em>, exponiendo todo el sistema en una sola dirección IP.</p>
+<p>Como <em>proxy HTTP</em> tenemos varias opciones; solo se necesita un servidor web que soporte <em>virtual hosts</em>, protocolo HTTP sobre SSL, capacidad de hacer de <em>proxy</em> y capacidad para balancear las peticiones entre varias opciones.</p>
+<p>Si analizamos estos requisitos, podemos comprobar que las opciones son muchas; desde el todopoderoso <strong>apache</strong> al <strong>nginx</strong>, pasando por soluciones de balanceador puro como <strong>haproxy</strong>, u opciones mas esotéricas como <strong>squid</strong>. En este caso, se utiliza <strong>nginx</strong> por su facilidad de uso y su bajo consumo de recursos. Cumple con el subconjunto básico de funcionalidades necesario, pero no dispone de tantos algoritmos de balanceo como otras opciones.</p>
+<h2>Instalación de paquetes</h2>
+<p>Empezamos instalando los requisitos para nuestra fachada; en principio solo se necesitaría el servidor web <strong>nginx</strong> (en la versión mínima) y <strong>openssl</strong> para generar los certificados. Adicionalmente instalaremos <strong>curl</strong> para comprobar que el resultado es correcto.</p>
+<div class="highlight"><pre>root@frontend:~# apt-get install nginx-light curl
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes extras:
+  ca-certificates libcurl3 libffi6 libgmp10 libgnutls-deb0-28 libhogweed2 libidn11 libldap-2.4-2 libnettle4 libp11-kit0 librtmp1
+  libsasl2-2 libsasl2-modules libsasl2-modules-db libssh2-1 libtasn1-6 nginx-common openssl
+Paquetes sugeridos:
+  gnutls-bin libsasl2-modules-otp libsasl2-modules-ldap libsasl2-modules-sql libsasl2-modules-gssapi-mit
+  libsasl2-modules-gssapi-heimdal fcgiwrap nginx-doc ssl-cert
+Se instalarán los siguientes paquetes NUEVOS:
+  ca-certificates curl libcurl3 libffi6 libgmp10 libgnutls-deb0-28 libhogweed2 libidn11 libldap-2.4-2 libnettle4 libp11-kit0
+  librtmp1 libsasl2-2 libsasl2-modules libsasl2-modules-db libssh2-1 libtasn1-6 nginx-common nginx-light openssl
+<span class="m">0</span> actualizados, <span class="m">20</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar 4.077 kB de archivos.
+Se utilizarán 8.832 kB de espacio de disco adicional después de esta operación.
+¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
+...
+root@frontend:~#
+</pre></div>
+
+
+<p>El paquete <strong>nginx</strong> de la distribución <em>Debian</em> viene con una configuración por defecto en <em>/etc/nginx/sites-enabled/</em>, que vamos a eliminar para evitar que se pise con nuestras configuraciones.</p>
+<div class="highlight"><pre>root@frontend:~# ls -lh /etc/nginx/sites-enabled/
+total 0
+lrwxrwxrwx <span class="m">1</span> root root <span class="m">34</span> feb <span class="m">26</span> 11:28 default -&gt; /etc/nginx/sites-available/default
+root@frontend:~# unlink /etc/nginx/sites-enabled/default
+root@frontend:~#
+</pre></div>
+
+
+<h2>Consideraciones de seguridad</h2>
+<p>Cuando nuestro servidor web recibe una petición, va a iniciar una nueva conexión contra el servidor de <em>backend</em> que toque o el de <em>backoffice</em>. Para habilitar esto, se necesitan nuevas reglas en el <em>firewall</em>, que en este caso es <strong>firehol</strong>, instalado en la máquina anfitriona.</p>
+<div class="highlight"><pre>root@lxc:~# cat /etc/firehol/firehol.conf
+...  
+<span class="nv">app_servers</span><span class="o">=</span><span class="s2">&quot;10.0.0.3 10.0.0.4 10.0.0.5&quot;</span>
+<span class="nv">frontend_server</span><span class="o">=</span><span class="s2">&quot;10.0.0.2&quot;</span>
+...
+router internal inface lxc0 outface lxc0
+...  
+    route webcache accept src <span class="s2">&quot;</span><span class="nv">$frontend_server</span><span class="s2">&quot;</span> dst <span class="s2">&quot;</span><span class="nv">$app_servers</span><span class="s2">&quot;</span>
+root@lxc:~#
+</pre></div>
+
+
+<p>No os olvidéis de reiniciar <strong>firehol</strong>, para que se apliquen las nuevas reglas.</p>
+<div class="highlight"><pre>root@lxc:~# service firehol restart
+...  
+root@lxc:~#
+</pre></div>
+
+
+<h2>Montando los virtualhosts de ambas aplicaciones</h2>
+<p>La parte privada va a estar escondida tras una terminación <strong>HTTPS</strong>. Esa aplicación se podría esconder tras una <a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">autenticación de certificados cliente</a> o mediante <a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html">autenticación básica</a>. Por simplicidad vamos a usar esta última.</p>
+<p>Empezamos generando un certificado autofirmado para el servidor web, directamente firmado, y su clave. Fijaos que no generamos ningún certificado de CA, ya que no tenemos ninguna intención de generar autenticación cliente en el futuro.</p>
+<div class="highlight"><pre>root@frontend:~# openssl req -new -newkey rsa:2048 -days <span class="m">365</span> -nodes -x509 -keyout server.key -out server.crt -subj <span class="s2">&quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin/CN=shop.linuxsysadmin.tk&quot;</span>
+Generating a <span class="m">2048</span> bit RSA private key
+.......................................+++
+.................................................................................................................................................................+++
+writing new private key to <span class="s1">&#39;server.key&#39;</span>
+-----
+root@frontend:~#
+</pre></div>
+
+
+<p>Ponemos la clave y el certificado generado en sus respectivas localizaciones, de acuerdo a los estándares.</p>
+<div class="highlight"><pre>root@frontend:~# cp server.key /etc/ssl/private/
+root@frontend:~# cp server.crt /etc/ssl/certs/
+root@frontend:~#
+</pre></div>
+
+
+<p>Como verificación, así quedaría la carpeta <em>/etc/ssl/</em>:</p>
+<div class="highlight"><pre>root@frontend:~# tree /etc/ssl/
+/etc/ssl/
+├── certs
+│   └── server.crt
+├── openssl.cnf
+└── private
+    └── server.key
+
+<span class="m">2</span> directories, <span class="m">3</span> files
+root@frontend:~#
+</pre></div>
+
+
+<p>Para poder autenticar mediante autenticación básica, generamos un usuario en un fichero tipo <strong>htpasswd</strong>.</p>
+<div class="highlight"><pre>root@frontend:~# <span class="nb">echo</span> <span class="s2">&quot;admin:</span><span class="k">$(</span>openssl passwd -crypt s3cr3t<span class="k">)</span><span class="s2">&quot;</span> &gt; /etc/nginx/shop.basic_auth
+root@frontend:~# cat /etc/nginx/shop.basic_auth
+admin:rOU9H0ABEB2H6
+root@frontend:~#
+</pre></div>
+
+
+<p>Y con todas las piezas listas, montamos los virtualhosts, en un fichero de configuración o en varios, según nos apetezca.</p>
+<div class="highlight"><pre>root@frontend:~# cat /etc/nginx/sites-enabled/shop
+upstream backends <span class="o">{</span>
+        server backend1:8080<span class="p">;</span>
+        server backend2:8080<span class="p">;</span>
+<span class="o">}</span>
+
+server <span class="o">{</span>
+        listen <span class="m">80</span> default_server<span class="p">;</span>
+        server_name _<span class="p">;</span>
+
+        location / <span class="o">{</span>
+                proxy_pass http://backends<span class="p">;</span>
+        <span class="o">}</span>
+<span class="o">}</span>
+
+server <span class="o">{</span>
+        listen <span class="m">443</span> ssl<span class="p">;</span>
+        server_name _<span class="p">;</span>
+
+        ssl_certificate /etc/ssl/certs/server.crt<span class="p">;</span>
+        ssl_certificate_key /etc/ssl/private/server.key<span class="p">;</span>
+
+        auth_basic <span class="s2">&quot;Admin Area&quot;</span><span class="p">;</span>
+        auth_basic_user_file /etc/nginx/shop.basic_auth<span class="p">;</span>
+
+        location / <span class="o">{</span>
+                proxy_pass http://backoffice:8080<span class="p">;</span>
+        <span class="o">}</span>
+<span class="o">}</span>
+root@frontend:~#
+</pre></div>
+
+
+<p>La configuración es bastante estándar; se trata de un <em>server</em> (equivalente en <strong>nginx</strong> a un <em>virtualhost</em> de <strong>apache</strong>) para cada protocolo. La parte de administración es solamente la mediación <strong>SSL</strong> y un <em>proxy_pass</em> hacia el <em>backoffice</em>. La parte de la API pública también se limita a hacer un <em>proxy_pass</em>, solo que se hace contra <em>backends</em> que es un objeto <strong>upstream</strong>, que es el que define el balanceador.</p>
+<p>Ahora solo queda reiniciar el servidor web para aplicar los cambios. De acuerdo a la documentación, habría bastado un <em>reload</em>.</p>
+<div class="highlight"><pre>root@frontend:~# service nginx restart
+root@frontend:~#
+</pre></div>
+
+
+<h2>Comprobando que las aplicaciones funcionan</h2>
+<p>Para comprobar que la parte de la API funciona y balancea adecuadamente, basta con hacer peticiones. Podemos comprobar el <em>backend</em> que la ha servido porque la aplicación pone una cabecera que especifica el nombre del <em>host</em> que la resolvió. Con dos peticiones veremos que va alternativamente a cada <em>backend</em>.</p>
+<div class="highlight"><pre>root@frontend:~# curl -i http://localhost/products/
+HTTP/1.1 <span class="m">200</span> OK
+Server: nginx/1.6.2
+Date: Fri, <span class="m">26</span> Feb <span class="m">2016</span> 11:04:38 GMT
+Content-Type: application/json
+Content-Length: 3
+Connection: keep-alive
+Backend: backend1
+
+<span class="o">[]</span>
+root@frontend:~# curl -i http://localhost/products/
+HTTP/1.1 <span class="m">200</span> OK
+Server: nginx/1.6.2
+Date: Fri, <span class="m">26</span> Feb <span class="m">2016</span> 11:04:40 GMT
+Content-Type: application/json
+Content-Length: 3
+Connection: keep-alive
+Backend: backend2
+
+<span class="o">[]</span>
+root@frontend:~#
+</pre></div>
+
+
+<p>Para la parte privada, haremos la petición, de la misma manera; vamos a añadir el flag <em>-k</em> para sobrepasar el certificado autofirmado. Como no hemos indicado el usuario y la contraseña, nos devuelve un error 401, que indica que no estamos autorizados a pasar mas allá.</p>
+<div class="highlight"><pre>root@frontend:~# curl -i -k https://localhost/products
+HTTP/1.1 <span class="m">401</span> Unauthorized
+Server: nginx/1.6.2
+Date: Fri, <span class="m">26</span> Feb <span class="m">2016</span> 11:05:35 GMT
+Content-Type: text/html
+Content-Length: 194
+Connection: keep-alive
+WWW-Authenticate: Basic <span class="nv">realm</span><span class="o">=</span><span class="s2">&quot;Admin Area&quot;</span>
+
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;401 Authorization Required&lt;/title&gt;&lt;/head&gt;
+&lt;body <span class="nv">bgcolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span>&gt;
+&lt;center&gt;&lt;h1&gt;401 Authorization Required&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.6.2&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+root@frontend:~#
+</pre></div>
+
+
+<p>Y con esto parece que funciona, a falta de probar con un navegador adecuado.</p>
+<h2>Un pequeño detalle: abrimos los puertos</h2>
+<p>Puesto que este entorno está montado sobre virtualización <strong>LXC</strong>, necesitamos que la dirección IP de la maquina anfitriona exponga los puertos de la máquina <em>frontend</em>. Para ello hay que habilitar un mecanismo que se llama <em>port forwarding</em>, coloquialmente conocido como "abrir el puerto".</p>
+<p>Mediante una directiva de <strong>firehol</strong> indicamos que pasaremos todas las peticiones recibidas a los puertos 80 y 443 directamente a la máquina de <em>frontend</em>. Hay que habilitar ese tráfico de <strong>FORWARD</strong>, mediante otras reglas.</p>
+<div class="highlight"><pre>root@lxc:~# cat /etc/firehol/firehol.conf
+...
+<span class="nv">frontend_server</span><span class="o">=</span><span class="s2">&quot;10.0.0.2&quot;</span>
+...
+dnat to <span class="s2">&quot;</span><span class="nv">$frontend_server</span><span class="s2">&quot;</span> proto tcp dport 80
+dnat to <span class="s2">&quot;</span><span class="nv">$frontend_server</span><span class="s2">&quot;</span> proto tcp dport 443
+...
+router world2lan inface eth0 outface lxc0
+    route http accept dst <span class="s2">&quot;</span><span class="nv">$frontend_server</span><span class="s2">&quot;</span>
+    route https accept dst <span class="s2">&quot;</span><span class="nv">$frontend_server</span><span class="s2">&quot;</span>
+...
+root@lxc:~#
+</pre></div>
+
+
+<p>Y nuevamente reiniciamos el servicio para aplicar las nuevas reglas.</p>
+<div class="highlight"><pre>root@lxc:~# service firehol restart
+...
+root@lxc:~#
+</pre></div>
+
+
+<h2>Accediendo a las aplicaciones en la IP pública</h2>
+<p>Vamos a acceder con un navegador a la parte de administración, para ver que funciona y para rellenar algunos datos, para que se vea una respuesta de la API con fundamento.</p>
+<p>El primer paso consiste en abrir el navegador con la URL adecuada, y nos tropezamos con la autenticación.</p>
+<p><img alt="Auth basic" src="http://www.linuxsysadmin.tk/images/entorno-escalable-auth-basic.jpg" /></p>
+<p>Tras pasar la autenticación podemos acceder a los formularios para añadir productos.</p>
+<p><img alt="Admin form" src="http://www.linuxsysadmin.tk/images/entorno-escalable-admin-form.jpg" /></p>
+<p>Tras añadir tres productos, vemos que ya se genera la lista, en formato web.</p>
+<p><img alt="Admin list" src="http://www.linuxsysadmin.tk/images/entorno-escalable-admin-list.jpg" /></p>
+<p>Con los datos introducidos podemos consumir la API, para comprobar que los datos que hemos introducido en la base de datos (mediante la aplicación de administración) están disponibles.</p>
+<div class="highlight"><pre>gerard@desktop:~<span class="nv">$ </span>wget -qO- http://192.168.1.232/products/
+<span class="o">[</span>
+    <span class="o">{</span>
+        <span class="s2">&quot;price&quot;</span>: 1.5, 
+        <span class="s2">&quot;_id&quot;</span>: <span class="s2">&quot;123&quot;</span>, 
+        <span class="s2">&quot;description&quot;</span>: <span class="s2">&quot;Apples&quot;</span>
+    <span class="o">}</span>, 
+    <span class="o">{</span>
+        <span class="s2">&quot;price&quot;</span>: 1.0, 
+        <span class="s2">&quot;_id&quot;</span>: <span class="s2">&quot;456&quot;</span>, 
+        <span class="s2">&quot;description&quot;</span>: <span class="s2">&quot;Oranges&quot;</span>
+    <span class="o">}</span>, 
+    <span class="o">{</span>
+        <span class="s2">&quot;price&quot;</span>: 2.0, 
+        <span class="s2">&quot;_id&quot;</span>: <span class="s2">&quot;789&quot;</span>, 
+        <span class="s2">&quot;description&quot;</span>: <span class="s2">&quot;Pears&quot;</span>
+    <span class="o">}</span>
+<span class="o">]</span>
+gerard@desktop:~<span class="nv">$ </span>
+</pre></div>
+
+
+<p>Y consultando un producto concreto, también funciona como debe.</p>
+<div class="highlight"><pre>gerard@desktop:~<span class="nv">$ </span>wget -qO- http://192.168.1.232/products/456
+<span class="o">{</span>
+    <span class="s2">&quot;price&quot;</span>: 1.0, 
+    <span class="s2">&quot;_id&quot;</span>: <span class="s2">&quot;456&quot;</span>, 
+    <span class="s2">&quot;description&quot;</span>: <span class="s2">&quot;Oranges&quot;</span>
+<span class="o">}</span>
+gerard@desktop:~<span class="nv">$ </span>
+</pre></div>
+
+
+<p>Y con esto comprobamos que todo queda en su sitio. Solo hará falta limpiar cualquier desecho que hayamos dejado en <em>/root/</em>.</p>
+<p><strong><em>Y con este artículo cerramos la serie.</em></strong></p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">Restringiendo accesos mediante certificados de cliente</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html">Restringiendo accesos web mediante autenticación básica</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Restart automático de servicios con systemd</a></li>
+    </ul>
+</section>
+<section class="well" id="related-posts">
+    <h4>Parte 4 de la serie "Creando un entorno escalable"</h4>
+       <h5>Artículos anteriores</h5>
+       <ul>
+           <li><a href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html">Creando un entorno escalable (I)</a></li>
+           <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
+           <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></li>
+       </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'creando-un-entorno-escalable-4';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+              <ul class="list-group" id="social">
+                <li class="list-group-item"><a href="https://github.com/sirtea"><i class="fa fa-github-square fa-lg"></i> GitHub</a></li>
+              </ul>
+            </li>
+
+
+            <li class="list-group-item"><a href="http://www.linuxsysadmin.tk/categories.html"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Categorías</span></h4></a>
+                <ul class="list-group" id="categories">
+                    <li class="list-group-item">
+                        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Operaciones
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="http://www.linuxsysadmin.tk/category/seguridad.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Seguridad
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="http://www.linuxsysadmin.tk/category/sistemas.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Sistemas
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="http://www.linuxsysadmin.tk/category/virtualizacion.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Virtualización
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Sidebar linuxsysadmin -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6984858420847602"
+     data-ad-slot="1931313371"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+            <li class="list-group-item"><a href="http://www.linuxsysadmin.tk/tags.html"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                <ul class="list-group list-inline tagcloud" id="tags">
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/2-way-ssl.html">
+                            2 way ssl
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/apt.html">
+                            apt
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/apt-cacher-ng.html">
+                            apt-cacher-ng
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/autenticacion-basica.html">
+                            autenticacion basica
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/backup.html">
+                            backup
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/balanceador.html">
+                            balanceador
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/bridge.html">
+                            bridge
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/cache.html">
+                            cache
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/centos.html">
+                            centos
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/certificado.html">
+                            certificado
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/deb.html">
+                            .deb
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-1">
+                        <a href="http://www.linuxsysadmin.tk/tag/debian.html">
+                            debian
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/debootstrap.html">
+                            debootstrap
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/dhcp.html">
+                            dhcp
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/dns.html">
+                            dns
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/dnsmasq.html">
+                            dnsmasq
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/drop-caches.html">
+                            drop caches
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/entorno.html">
+                            entorno
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/escalable.html">
+                            escalable
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-2">
+                        <a href="http://www.linuxsysadmin.tk/tag/firehol.html">
+                            firehol
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/genisoimage.html">
+                            genisoimage
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/gpg.html">
+                            gpg
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/htpasswd.html">
+                            htpasswd
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/https.html">
+                            https
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/iso.html">
+                            iso
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/isolinux.html">
+                            isolinux
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/jaula.html">
+                            jaula
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-1">
+                        <a href="http://www.linuxsysadmin.tk/tag/jessie.html">
+                            jessie
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/kernel.html">
+                            kernel
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ldd.html">
+                            ldd
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-1">
+                        <a href="http://www.linuxsysadmin.tk/tag/linux.html">
+                            linux
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/livecd.html">
+                            livecd
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/logical-volume-manager.html">
+                            logical volume manager
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/lvm.html">
+                            lvm
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/lxc.html">
+                            lxc
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/maipo.html">
+                            maipo
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/memory-manager.html">
+                            memory manager
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-2">
+                        <a href="http://www.linuxsysadmin.tk/tag/mongodb.html">
+                            mongodb
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-2">
+                        <a href="http://www.linuxsysadmin.tk/tag/nginx.html">
+                            nginx
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/nmap.html">
+                            nmap
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/paquete.html">
+                            paquete
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/point-in-time.html">
+                            point-in-time
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/port-forwarding.html">
+                            port forwarding
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/port-knocking.html">
+                            port knocking
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/proxy-http.html">
+                            proxy http
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/python.html">
+                            python
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/raid.html">
+                            raid
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/replica-set.html">
+                            replica set
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/repositorio.html">
+                            repositorio
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/reprepro.html">
+                            reprepro
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/rssh.html">
+                            rssh
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/rsync.html">
+                            rsync
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/snapshot.html">
+                            snapshot
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/squashfs.html">
+                            squashfs
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/ssh.html">
+                            ssh
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-2">
+                        <a href="http://www.linuxsysadmin.tk/tag/ssl.html">
+                            ssl
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-2">
+                        <a href="http://www.linuxsysadmin.tk/tag/systemd.html">
+                            systemd
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/tmpfs.html">
+                            tmpfs
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ubuntu.html">
+                            ubuntu
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
+                            uWSGI
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/virtual-hosts.html">
+                            virtual hosts
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/virtualenv.html">
+                            virtualenv
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/wsgi.html">
+                            WSGI
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/zerofree.html">
+                            zerofree
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2016 Gerard
+            &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Volver arriba</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="http://www.linuxsysadmin.tk/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="http://www.linuxsysadmin.tk/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="http://www.linuxsysadmin.tk/theme/js/respond.min.js"></script>
+
+    <!-- Disqus -->
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function () {
+            var s = document.createElement('script');
+            s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+    </script>
+    <!-- End Disqus Code -->
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-68486572-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    <!-- End Google Analytics Code -->
+
+</body>
+</html>
