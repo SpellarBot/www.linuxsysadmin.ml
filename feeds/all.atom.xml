@@ -1,5 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-03-21T08:00:00+01:00</updated><entry><title>Creando un entorno escalable (IV)</title><link href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html" rel="alternate"></link><updated>2016-03-21T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-03-21:2016/03/creando-un-entorno-escalable-4.html</id><summary type="html">&lt;p&gt;Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un &lt;em&gt;proxy HTTP&lt;/em&gt; que haga las funciones de terminación &lt;em&gt;SSL&lt;/em&gt; y de &lt;em&gt;balanceador&lt;/em&gt;, exponiendo todo el sistema en una sola dirección IP.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-03-28T08:00:00+02:00</updated><entry><title>Sistemas de ficheros multicapa con aufs</title><link href="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html" rel="alternate"></link><updated>2016-03-28T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-03-28:2016/03/sistemas-de-ficheros-multicapa-con-aufs.html</id><summary type="html">&lt;p&gt;Trabajando con contenedores tenemos una parte que se repite: el sistema de ficheros base, que copiamos siempre. Otras veces nos puede interesar hacer un sistema capaz de descartar los cambios desde un punto inicial. Podemos crear una capa base de solo lectura y añadir otra capa de cambios con &lt;strong&gt;aufs&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;La idea es crear un sistema de ficheros que sea el resultado de mezclar otros dos: una capa de solo lectura y una capa de cambios, que podría ser de lectura y escritura. Esta nueva capa puede, a su vez, servir de base para otro sistema de ficheros.&lt;/p&gt;
+&lt;p&gt;De hecho, esta técnica de "apilado" se utiliza en la distribución de pendrive llamada &lt;a href="http://www.slax.org/"&gt;Slax&lt;/a&gt;. Mediante el apilado de módulos, mas una capa final de cambios, consiguen crear un sistema de ficheros linux entero, con una capa de cambios que se puede descartar en cualquier momento.&lt;/p&gt;
+&lt;p&gt;Empezaremos con un sistema de ficheros simulado en una carpeta, que llamaremos &lt;em&gt;base&lt;/em&gt;. También pondremos una carpeta &lt;em&gt;unified&lt;/em&gt; que va a ser el sistema de ficheros resultante, y una carpeta &lt;em&gt;changes&lt;/em&gt; que va a alojar los cambios del sistema de ficheros respecto al sistema &lt;em&gt;base&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# tree
+.
+├── base
+│   ├── bin
+│   │   └── hello.sh
+│   └── conf
+│       └── hello.conf
+├── changes
+└── unified
+
+&lt;span class="m"&gt;5&lt;/span&gt; directories, &lt;span class="m"&gt;2&lt;/span&gt; files
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para esta demostración nos vale poca cosa, por ejemplo un binario y su configuración. En casos algo mas complejos podría tratarse de una jaula entera de sistema operativo.&lt;/p&gt;
+&lt;p&gt;La "aplicación" y su configuración son simples, se muestran como guía, para ver como lo evolucionamos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat base/bin/hello.sh
+&lt;span class="c"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="nb"&gt;source &lt;/span&gt;conf/hello.conf
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Hello &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;NAME&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;!&amp;quot;&lt;/span&gt;
+root@server:~# cat base/conf/hello.conf
+&lt;span class="nv"&gt;NAME&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Gerard&amp;quot;&lt;/span&gt;
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora vamos a crear el sistema combinado en la carpeta &lt;em&gt;unified&lt;/em&gt;, usando la &lt;em&gt;base&lt;/em&gt; como capa de solo lectura, y la carpeta &lt;em&gt;changes&lt;/em&gt; como la capa de lectura escritura.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mount -t aufs -o br:changes&lt;span class="o"&gt;=&lt;/span&gt;rw:base&lt;span class="o"&gt;=&lt;/span&gt;ro none unified
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver que la carpeta &lt;em&gt;unified&lt;/em&gt; es una unión de la capa base con la de cambios. Puesto que no hay cambios, por ahora las carpetas coinciden en contenido.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# tree
+.
+├── base
+│   ├── bin
+│   │   └── hello.sh
+│   └── conf
+│       └── hello.conf
+├── changes
+└── unified
+    ├── bin
+    │   └── hello.sh
+    └── conf
+        └── hello.conf
+
+&lt;span class="m"&gt;7&lt;/span&gt; directories, &lt;span class="m"&gt;4&lt;/span&gt; files
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De ahora en adelante, solo queda trabajar con el sistema de ficheros &lt;em&gt;unified&lt;/em&gt;, así que vamos a trabajar en esa carpeta.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# &lt;span class="nb"&gt;cd &lt;/span&gt;unified/
+root@server:~/unified#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si ejecutamos el binario, vemos que reacciona como se supone que debe hacerlo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~/unified# ./bin/hello.sh
+Hello Gerard!
+root@server:~/unified#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En un momento dado, vemos que queremos modificar un fichero, por ejemplo, el de configuración, cambiando el parámetro &lt;strong&gt;NAME&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~/unified# cat conf/hello.conf
+&lt;span class="nv"&gt;NAME&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Gerard Monells&amp;quot;&lt;/span&gt;
+root@server:~/unified#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Efectivamente, el resultado es el esperado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~/unified# ./bin/hello.sh
+Hello Gerard Monells!
+root@server:~/unified#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora vamos a crear nuevas carpetas y nuevos ficheros, por ejemplo, una carpeta &lt;em&gt;data&lt;/em&gt; con un fichero &lt;em&gt;greetings&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~/unified# mkdir data
+root@server:~/unified# ./bin/hello.sh &amp;gt; data/greetings
+root@server:~/unified#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Volvemos al nivel de carpetas anteriores, para investigar lo que está pasando.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~/unified# &lt;span class="nb"&gt;cd&lt;/span&gt; ..
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver que el sistema &lt;em&gt;base&lt;/em&gt; ha quedado intacto. De la misma forma, todas las modificaciones respecto a la base se han almacenado en la carpeta &lt;em&gt;changes&lt;/em&gt;. En conjunto, nos queda la carpeta &lt;em&gt;unified&lt;/em&gt; con la suma de ambos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# tree
+.
+├── base
+│   ├── bin
+│   │   └── hello.sh
+│   └── conf
+│       └── hello.conf
+├── changes
+│   ├── conf
+│   │   └── hello.conf
+│   └── data
+│       └── greetings
+└── unified
+    ├── bin
+    │   └── hello.sh
+    ├── conf
+    │   └── hello.conf
+    └── data
+        └── greetings
+
+&lt;span class="m"&gt;10&lt;/span&gt; directories, &lt;span class="m"&gt;7&lt;/span&gt; files
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es fácil intuir que el fichero &lt;em&gt;greetings&lt;/em&gt; es el de la capa de cambios, ya que no hay otro. En el caso del fichero &lt;em&gt;hello.conf&lt;/em&gt; modificado, se ha modificado el de la capa de cambios, y es el que vemos en el punto de montaje &lt;em&gt;unified&lt;/em&gt;, aunque hayan dos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat base/conf/hello.conf
+&lt;span class="nv"&gt;NAME&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Gerard&amp;quot;&lt;/span&gt;
+root@server:~# cat unified/conf/hello.conf
+&lt;span class="nv"&gt;NAME&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Gerard Monells&amp;quot;&lt;/span&gt;
+root@server:~# cat changes/conf/hello.conf
+&lt;span class="nv"&gt;NAME&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Gerard Monells&amp;quot;&lt;/span&gt;
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: el sistema de ficheros de solo lectura &lt;em&gt;base&lt;/em&gt; no tiene porque estar en una carpeta; podría tratarse se un sistema de fichero simulado montado en un fichero, montado mediante un &lt;strong&gt;mount -o loop&lt;/strong&gt;; por ejemplo, un sistema de ficheros &lt;strong&gt;squashfs&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;De hecho, como la capa &lt;em&gt;base&lt;/em&gt; no se modifica, nada nos impide crear otro sistema de ficheros, a base de sumar esta misma &lt;em&gt;base&lt;/em&gt; con otra capa de cambios.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# mkdir changes2 unified2
+root@server:~# mount -t aufs -o br:changes2&lt;span class="o"&gt;=&lt;/span&gt;rw:base&lt;span class="o"&gt;=&lt;/span&gt;ro none unified2
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos dos sistemas de ficheros, &lt;em&gt;unified&lt;/em&gt; y &lt;em&gt;unified2&lt;/em&gt;, que comparten una capa &lt;em&gt;base&lt;/em&gt; común.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# tree
+.
+├── base
+│   ├── bin
+│   │   └── hello.sh
+│   └── conf
+│       └── hello.conf
+├── changes
+│   ├── conf
+│   │   └── hello.conf
+│   └── data
+│       └── greetings
+├── changes2
+├── unified
+│   ├── bin
+│   │   └── hello.sh
+│   ├── conf
+│   │   └── hello.conf
+│   └── data
+│       └── greetings
+└── unified2
+    ├── bin
+    │   └── hello.sh
+    └── conf
+        └── hello.conf
+
+&lt;span class="m"&gt;14&lt;/span&gt; directories, &lt;span class="m"&gt;9&lt;/span&gt; files
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso no supone mucho ahorro, ya que la capa base es pequeña, pero... ¿os imagináis que la capa base es una jaula entera resultado de un &lt;strong&gt;debootstrap&lt;/strong&gt;?&lt;/p&gt;
+&lt;p&gt;De hecho, esta capa &lt;em&gt;base&lt;/em&gt; compartida no hay que copiarla, con lo que ganamos tiempo al crear una jaula grande, y además, si lo juntamos con &lt;strong&gt;squashfs&lt;/strong&gt; podemos ahorrar bastante espacio.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="mount"></category><category term="aufs"></category><category term="squashfs"></category><category term="debootstrap"></category></entry><entry><title>Creando un entorno escalable (IV)</title><link href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html" rel="alternate"></link><updated>2016-03-21T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-03-21:2016/03/creando-un-entorno-escalable-4.html</id><summary type="html">&lt;p&gt;Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un &lt;em&gt;proxy HTTP&lt;/em&gt; que haga las funciones de terminación &lt;em&gt;SSL&lt;/em&gt; y de &lt;em&gt;balanceador&lt;/em&gt;, exponiendo todo el sistema en una sola dirección IP.&lt;/p&gt;
 &lt;p&gt;Como &lt;em&gt;proxy HTTP&lt;/em&gt; tenemos varias opciones; solo se necesita un servidor web que soporte &lt;em&gt;virtual hosts&lt;/em&gt;, protocolo HTTP sobre SSL, capacidad de hacer de &lt;em&gt;proxy&lt;/em&gt; y capacidad para balancear las peticiones entre varias opciones.&lt;/p&gt;
 &lt;p&gt;Si analizamos estos requisitos, podemos comprobar que las opciones son muchas; desde el todopoderoso &lt;strong&gt;apache&lt;/strong&gt; al &lt;strong&gt;nginx&lt;/strong&gt;, pasando por soluciones de balanceador puro como &lt;strong&gt;haproxy&lt;/strong&gt;, u opciones mas esotéricas como &lt;strong&gt;squid&lt;/strong&gt;. En este caso, se utiliza &lt;strong&gt;nginx&lt;/strong&gt; por su facilidad de uso y su bajo consumo de recursos. Cumple con el subconjunto básico de funcionalidades necesario, pero no dispone de tantos algoritmos de balanceo como otras opciones.&lt;/p&gt;
 &lt;h2&gt;Instalación de paquetes&lt;/h2&gt;
