@@ -1,5 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-04-04T08:00:00+02:00</updated><entry><title>Compilando python desde cero</title><link href="http://www.linuxsysadmin.tk/2016/04/compilando-python-desde-cero.html" rel="alternate"></link><updated>2016-04-04T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-04-04:2016/04/compilando-python-desde-cero.html</id><summary type="html">&lt;p&gt;Siempre que estoy trabajando en un servidor CentOS o RedHat, veo que las versiones de &lt;em&gt;python&lt;/em&gt; que usan son bastante viejas. De hecho, hay una gran mejora de &lt;em&gt;python&lt;/em&gt; entre las versiones 2.4, 2.6 y 2.7; así que es frecuente compilar una versión superior para nuestro uso.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-04-11T08:00:00+02:00</updated><entry><title>Instalando ansible para gestionar servidores</title><link href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html" rel="alternate"></link><updated>2016-04-11T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-04-11:2016/04/instalando-ansible-para-gestionar-servidores.html</id><summary type="html">&lt;p&gt;Cuando nos encontramos delante de servidores únicos, es bastante fácil su gestión. Sin embargo, cuando tenemos 8 instancias de cada tipo de servidor, las tareas se vuelven lentas y repetitivas. Podemos incluso automatizar la gestión de una sola máquina para hacer su entorno fácilmente reproducible, en vistas a su reconstrucción.&lt;/p&gt;
+&lt;p&gt;Para ello existen algunas herramientas capaces de modificar los servidores, sea mediante un protocolo de &lt;strong&gt;pull&lt;/strong&gt; (&lt;strong&gt;puppet&lt;/strong&gt;, &lt;strong&gt;chef&lt;/strong&gt;) que tienen agentes capaces de pedir a un servidor central las reglas a aplicarse, o mediante un protocolo de &lt;strong&gt;push&lt;/strong&gt; (&lt;strong&gt;fabric&lt;/strong&gt;, &lt;strong&gt;ansible&lt;/strong&gt;) que simplemente son formas de enviar esas órdenes desde el servidor central.&lt;/p&gt;
+&lt;p&gt;Hoy vamos a instalar &lt;strong&gt;ansible&lt;/strong&gt;, herramienta que considero muy interesante por su simplicidad; carece de agentes activos, funcionando como un conjunto de &lt;em&gt;scripts&lt;/em&gt; en una máquina cualquiera que actúa de servidor y utilizando el protocolo &lt;strong&gt;SSH&lt;/strong&gt; para empujar los &lt;em&gt;scripts&lt;/em&gt;, que se ejecutan con un &lt;strong&gt;python&lt;/strong&gt; en el servidor destino.&lt;/p&gt;
+&lt;p&gt;Si estuviéramos en una máquina tipo &lt;strong&gt;Debian&lt;/strong&gt;/&lt;strong&gt;Ubuntu&lt;/strong&gt;, la instalación es tan fácil como lanzar &lt;strong&gt;apt-get&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~&lt;span class="nv"&gt;$ &lt;/span&gt;apt-get install ansible
+...  
+root@server:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Sin embargo, instalarlo a nivel de sistema es un problema en algunos entornos, así que podemos instalarlo en una carpeta local, concretamente en un &lt;strong&gt;virtualenv&lt;/strong&gt; dedicado en nuestra carpeta personal. Esta es la forma que se explica en este tutorial.&lt;/p&gt;
+&lt;p&gt;Empezaremos con un servidor cualquiera; al no tener agentes activos y ser &lt;em&gt;scripts&lt;/em&gt;, nos vale cualquiera. En este caso se ha usado una máquina tipo &lt;strong&gt;RedHat&lt;/strong&gt;. Realmente no nos importa demasiado la versión de &lt;strong&gt;python&lt;/strong&gt; que utilice.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;cat /etc/redhat-release
+Red Hat Enterprise Linux Server release 6.7 &lt;span class="o"&gt;(&lt;/span&gt;Santiago&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;python -V
+Python 2.6.6
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Creación del virtualenv con ansible&lt;/h2&gt;
+&lt;p&gt;Vamos a construir el &lt;strong&gt;virtualenv&lt;/strong&gt; desde cero. Si nos interesara hacerlo en otra máquina en la que tengamos permisos para instalar paquetes, bastaría con copiar la carpeta del &lt;strong&gt;virtualenv&lt;/strong&gt; en el mismo sitio, y sin instalar nada mas.&lt;/p&gt;
+&lt;p&gt;Las únicas dependencias que se necesitan para construir el &lt;strong&gt;virtualenv&lt;/strong&gt; es &lt;strong&gt;python&lt;/strong&gt;, &lt;strong&gt;gcc&lt;/strong&gt; y &lt;strong&gt;python-devel&lt;/strong&gt; (o &lt;strong&gt;python-dev&lt;/strong&gt; si se tratara de una máquina tipo &lt;strong&gt;Debian&lt;/strong&gt;/&lt;strong&gt;Ubuntu&lt;/strong&gt;). Como ya tenemos &lt;strong&gt;gcc&lt;/strong&gt; y &lt;strong&gt;python&lt;/strong&gt;, instalamos solamente &lt;strong&gt;python-devel&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@toolbox:~&lt;span class="nv"&gt;$ &lt;/span&gt;sudo yum install python-devel
+Loaded plugins: product-id, subscription-manager
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+Setting up Install Process
+...
+Installed:
+  python-devel.x86_64 0:2.6.6-64.el6
+
+Complete!
+gerard@toolbox:~&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para no instalar nada innecesario en la máquina, vamos a descargar el comando &lt;em&gt;virtualenv&lt;/em&gt;, que va a cumplir su función y va a ser eliminado. Lo descargamos y lo descomprimimos, en cualquier carpeta.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;wget https://pypi.python.org/packages/source/v/virtualenv/virtualenv-15.0.1.tar.gz
+--2016-04-05 11:54:27--  https://pypi.python.org/packages/source/v/virtualenv/virtualenv-15.0.1.tar.gz
+Resolving pypi.python.org... 23.235.43.223
+Connecting to pypi.python.org&lt;span class="p"&gt;|&lt;/span&gt;23.235.43.223&lt;span class="p"&gt;|&lt;/span&gt;:443... connected.
+HTTP request sent, awaiting response... &lt;span class="m"&gt;200&lt;/span&gt; OK
+Length: &lt;span class="m"&gt;1842776&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;1.8M&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;application/octet-stream&lt;span class="o"&gt;]&lt;/span&gt;
+Saving to: “virtualenv-15.0.1.tar.gz”
+
+100%&lt;span class="o"&gt;[========================================================================================&lt;/span&gt;&amp;gt;&lt;span class="o"&gt;]&lt;/span&gt; 1,842,776   2.90M/s   in 0.6s
+
+2016-04-05 11:54:28 &lt;span class="o"&gt;(&lt;/span&gt;2.90 MB/s&lt;span class="o"&gt;)&lt;/span&gt; - “virtualenv-15.0.1.tar.gz” saved &lt;span class="o"&gt;[&lt;/span&gt;1842776/1842776&lt;span class="o"&gt;]&lt;/span&gt;
+
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;tar xzf virtualenv-15.0.1.tar.gz
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Utilizamos el comando &lt;em&gt;virtualenv&lt;/em&gt; para generar la estructura contenedora, de la misma manera que otros &lt;em&gt;virtualenv&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./virtualenv-15.0.1/virtualenv.py ansible
+New python executable in /home/gerard/ansible/bin/python
+Installing setuptools, pip, wheel...done.
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Hacemos limpieza de &lt;strong&gt;virtualenv&lt;/strong&gt;, que ya no vamos a necesitar mas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;rm -R virtualenv-15.0.1*
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La instalación es la misma que haríamos con cualquier módulo de &lt;strong&gt;python&lt;/strong&gt;, con la excepción que va a generar fichero &lt;em&gt;.so&lt;/em&gt;, dependientes de la arquitectura del procesador que los genere. Si movéis el &lt;strong&gt;virtualenv&lt;/strong&gt;, tened esto en cuenta.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;source &lt;/span&gt;ansible/bin/activate
+&lt;span class="o"&gt;(&lt;/span&gt;ansible&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;pip install ansible
+DEPRECATION: Python 2.6 is no longer supported by the Python core team, please upgrade your Python. A future version of pip will drop support &lt;span class="k"&gt;for&lt;/span&gt; Python 2.6
+Collecting ansible
+...
+Installing collected packages: ecdsa, pycrypto, paramiko, MarkupSafe, jinja2, PyYAML, ansible
+Successfully installed MarkupSafe-0.23 PyYAML-3.11 ansible-2.0.1.0 ecdsa-0.13 jinja2-2.8 paramiko-1.16.0 pycrypto-2.6.1
+&lt;span class="o"&gt;(&lt;/span&gt;ansible&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;deactivate
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Controlando nuestro primer esclavo&lt;/h2&gt;
+&lt;p&gt;Vamos a habilitar una máquina cualquiera como receptora de &lt;strong&gt;ansible&lt;/strong&gt;. Los puntos básicos a tener en cuenta es que vamos a habilitar &lt;strong&gt;SSH&lt;/strong&gt; por claves (sin contraseña) y debemos asegurar que la máquina destino tiene un &lt;strong&gt;python&lt;/strong&gt; instalado.&lt;/p&gt;
+&lt;p&gt;Empezaremos generando las claves privada y pública en la máquina controladora. Esto se hace mediante el comando &lt;em&gt;ssh-keygen&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key &lt;span class="o"&gt;(&lt;/span&gt;/home/gerard/.ssh/id_rsa&lt;span class="o"&gt;)&lt;/span&gt;:
+Created directory &lt;span class="s1"&gt;&amp;#39;/home/gerard/.ssh&amp;#39;&lt;/span&gt;.
+Enter passphrase &lt;span class="o"&gt;(&lt;/span&gt;empty &lt;span class="k"&gt;for&lt;/span&gt; no passphrase&lt;span class="o"&gt;)&lt;/span&gt;:
+Enter same passphrase again:
+Your identification has been saved in /home/gerard/.ssh/id_rsa.
+Your public key has been saved in /home/gerard/.ssh/id_rsa.pub.
+The key fingerprint is:
+8e:74:f9:49:70:ba:15:d0:93:ff:88:5a:6a:f5:ad:cd gerard@toolbox
+The key&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s randomart image is:
++--&lt;span class="o"&gt;[&lt;/span&gt; RSA 2048&lt;span class="o"&gt;]&lt;/span&gt;----+
+&lt;span class="p"&gt;|&lt;/span&gt;        .. .     &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt;         .+      &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt;        . oo     &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt;         &lt;span class="o"&gt;=&lt;/span&gt; ..    &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt;      . S o. o   &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt;     . + &lt;span class="o"&gt;=&lt;/span&gt;+.. .  &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt;      . &lt;span class="nv"&gt;o&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;o. .   &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt;        +   .o.  &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt;       .    ..E  &lt;span class="p"&gt;|&lt;/span&gt;
++-----------------+
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esto va a generar una carpeta &lt;em&gt;.ssh&lt;/em&gt; en nuestra carpeta personal, con dos ficheros generados: &lt;em&gt;id_rsa&lt;/em&gt; (clave privada) e &lt;em&gt;id_rsa.pub&lt;/em&gt; (clave pública). La idea es que la clave privada se va a ofrecer automáticamente cuando se haga &lt;strong&gt;ssh&lt;/strong&gt;, y si la parte pública esta en &lt;em&gt;~/.ssh/authorized_keys&lt;/em&gt; del usuario remoto, el login se hace automático.&lt;/p&gt;
+&lt;p&gt;La clave privada es sagrada, y no debe entregarse a nadie. Sin embargo, la parte pública es la que se va a poner en todas las máquinas controladas. Se trata de una línea que vamos a añadir al &lt;em&gt;authorized_keys&lt;/em&gt; de todas las máquinas, así que la apuntamos en algún sitio.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;cat .ssh/id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAo/hobjbaSNX4zP/wjke5FY910xk5VwW0WaAO10ILAbvhuswdghLbMBdgt+4tWIwFM4DgOwA62wQ04lPsxpQ7Ya4VVmVVZLN5oN2BGQ2ixV6ofB8PA51vNDO5p0xz4ExYebXu8qshrOi4ulcSsc1rEDhlT+zZkYApjVOcgmO7T7T6149XWWBH0YSFEOto8qF+YiyS2yMlVy5p6QruHNPwcr6kC0z13aYrNUnk5VXFwlOSRtUTYMZ+c0ysh49uTDm50AWoccuDUK0v0juNWnHfQw1PFYLaQZLmJEWIkIsND3pBACHdFTyJDGDOB2Kuw+DCaAxp5vqPt5zFuidVS0h5Mw&lt;span class="o"&gt;==&lt;/span&gt; gerard@toolbox
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En la máquina controlada, añadimos la línea de la clave pública en el fichero &lt;em&gt;authorized_keys&lt;/em&gt;. Vamos a controlar login automático contra el usuario &lt;em&gt;root&lt;/em&gt; en nuestra máquina de ejemplo misma.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# cat .ssh/authorized_keys&lt;/span&gt;
+ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAo/hobjbaSNX4zP/wjke5FY910xk5VwW0WaAO10ILAbvhuswdghLbMBdgt+4tWIwFM4DgOwA62wQ04lPsxpQ7Ya4VVmVVZLN5oN2BGQ2ixV6ofB8PA51vNDO5p0xz4ExYebXu8qshrOi4ulcSsc1rEDhlT+zZkYApjVOcgmO7T7T6149XWWBH0YSFEOto8qF+YiyS2yMlVy5p6QruHNPwcr6kC0z13aYrNUnk5VXFwlOSRtUTYMZ+c0ysh49uTDm50AWoccuDUK0v0juNWnHfQw1PFYLaQZLmJEWIkIsND3pBACHdFTyJDGDOB2Kuw+DCaAxp5vqPt5zFuidVS0h5Mw&lt;span class="o"&gt;==&lt;/span&gt; gerard@toolbox
+&lt;span class="o"&gt;[&lt;/span&gt;root@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Una vez que tengamos las claves &lt;strong&gt;SSH&lt;/strong&gt; distribuidas, y &lt;strong&gt;python&lt;/strong&gt; instalado en las máquinas controladas, podemos probar. Para ello, vamos a añadir esta máquina en el fichero de &lt;em&gt;hosts&lt;/em&gt;, sea por nombre o por dirección IP.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;cat hosts
+127.0.0.1
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y lanzamos el módulo &lt;strong&gt;ping&lt;/strong&gt; a todas las máquinas (que solo es la de test, de momento).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ansible/bin/ansible -u root -i hosts -m ping all
+127.0.0.1 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: &lt;span class="nb"&gt;false&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Creando un fichero de configuración&lt;/h2&gt;
+&lt;p&gt;Las opciones por defecto de &lt;strong&gt;ansible&lt;/strong&gt; son bastante correctas, pero hay algunos parámetros que se pueden poner por fichero de configuración; esto nos facilita bastante las cosas. Este fichero de configuración es el primero que se encuentre siguiendo este orden:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ANSIBLE_CONFIG (lo que diga esta variable de entorno)&lt;/li&gt;
+&lt;li&gt;ansible.cfg (en el directorio actual de trabajo)&lt;/li&gt;
+&lt;li&gt;.ansible.cfg (en la carpeta personal de nuestro usuario)&lt;/li&gt;
+&lt;li&gt;/etc/ansible/ansible.cfg&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;De hecho, si os parece bien utilizar carpetas de sistema, la última opción es la normal. Sin embargo, me interesa restringirme a mi carpeta local, por falta de permisos habitualmente.&lt;/p&gt;
+&lt;p&gt;De la misma manera, el fichero de &lt;em&gt;hosts&lt;/em&gt; se busca en un sitio concreto, que con la configuración estándar es &lt;em&gt;/etc/ansible/hosts&lt;/em&gt;, a menos que se indique explícitamente el flag &lt;em&gt;-i&lt;/em&gt; en los comandos.&lt;/p&gt;
+&lt;p&gt;Para evitar usar estos dos ficheros fuera de nuestra carpeta, vamos a crearlos en el &lt;strong&gt;virtualenv&lt;/strong&gt; creado, añadiéndolos en una carpeta &lt;em&gt;etc&lt;/em&gt;, que vamos a crear. Todos los parámetros se van a poner en el fichero de configuración y vamos a explicitar la localización del fichero de configuración.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;mkdir ansible/etc
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;cat ansible/etc/ansible.cfg
+&lt;span class="o"&gt;[&lt;/span&gt;defaults&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;inventory&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; /home/gerard/ansible/etc/hosts
+&lt;span class="nv"&gt;host_key_checking&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; False
+&lt;span class="nv"&gt;remote_user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; root
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;mv hosts ansible/etc/
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Tras crear la configuración, la probamos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ ANSIBLE_CONFIG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/home/gerard/ansible/etc/ansible.cfg ./ansible/bin/ansible -m ping all
+127.0.0.1 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: &lt;span class="nb"&gt;false&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para conseguir eliminar el &lt;em&gt;path&lt;/em&gt; absoluto del binario de ansible, lo añadimos en la variable de entorno &lt;em&gt;PATH&lt;/em&gt;. Para nuestra comodidadd, podemos definir ambas variables de entorno en el fichero &lt;em&gt;.bashrc&lt;/em&gt;. Este fichero se va a activar cada vez que se inicie &lt;strong&gt;bash&lt;/strong&gt;; para no cerrar y abrir sesión lo incluimos a mano.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;tail -2 .bashrc
+&lt;span class="nb"&gt;export &lt;/span&gt;&lt;span class="nv"&gt;ANSIBLE_CONFIG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;~/ansible/etc/ansible.cfg
+&lt;span class="nb"&gt;export &lt;/span&gt;&lt;span class="nv"&gt;PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;~/ansible/bin:&lt;span class="nv"&gt;$PATH&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;source&lt;/span&gt; .bashrc
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y finalmente obtenemos la versión mínima del comando a ejecutar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;ansible -m ping all
+127.0.0.1 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: &lt;span class="nb"&gt;false&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@toolbox ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora solo queda poner mas servidores en el fichero de &lt;em&gt;hosts&lt;/em&gt; y lanzar comandos y &lt;em&gt;playbooks&lt;/em&gt; útiles contra los mismos.&lt;/p&gt;</summary><category term="linux"></category><category term="redhat"></category><category term="centos"></category><category term="python"></category><category term="ansible"></category><category term="ssh"></category><category term="virtualenv"></category></entry><entry><title>Compilando python desde cero</title><link href="http://www.linuxsysadmin.tk/2016/04/compilando-python-desde-cero.html" rel="alternate"></link><updated>2016-04-04T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-04-04:2016/04/compilando-python-desde-cero.html</id><summary type="html">&lt;p&gt;Siempre que estoy trabajando en un servidor CentOS o RedHat, veo que las versiones de &lt;em&gt;python&lt;/em&gt; que usan son bastante viejas. De hecho, hay una gran mejora de &lt;em&gt;python&lt;/em&gt; entre las versiones 2.4, 2.6 y 2.7; así que es frecuente compilar una versión superior para nuestro uso.&lt;/p&gt;
 &lt;p&gt;Para este tutorial he usado una máquina virtual con un sistema operativo &lt;em&gt;RedHat&lt;/em&gt;. Realmente no necesita ninguna configuración &lt;em&gt;hardware&lt;/em&gt; adicional. Lo único relevante es que estamos tratando con una versión de &lt;em&gt;RedHat&lt;/em&gt; 6.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@foundry ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;cat /etc/redhat-release
 Red Hat Enterprise Linux Server release 6.7 &lt;span class="o"&gt;(&lt;/span&gt;Santiago&lt;span class="o"&gt;)&lt;/span&gt;
