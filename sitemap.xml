@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2016-04-11T07:53:19-00:00</lastmod>
+<lastmod>2016-04-18T07:45:59-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2016-04-11T07:53:19-00:00</lastmod>
+<lastmod>2016-04-18T07:45:59-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2016-04-11T07:53:19-00:00</lastmod>
+<lastmod>2016-04-18T07:45:59-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2016-04-11T07:53:19-00:00</lastmod>
+<lastmod>2016-04-18T07:45:59-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2016-04-11T07:53:19-00:00</lastmod>
+<lastmod>2016-04-18T07:45:59-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html</loc>
+<lastmod>2016-04-18T08:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -228,6 +235,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/category/desarrollo.html</loc>
+<lastmod>2016-04-18T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/category/operaciones.html</loc>
 <lastmod>2016-04-11T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -284,7 +298,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/redhat.html</loc>
+<loc>http://www.linuxsysadmin.tk/tag/centos.html</loc>
 <lastmod>2016-04-11T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -333,6 +347,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/lvm.html</loc>
+<lastmod>2016-02-15T08:30:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/drop-caches.html</loc>
 <lastmod>2015-11-02T14:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -347,6 +368,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/isolinux.html</loc>
+<lastmod>2015-12-02T12:30:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/entorno.html</loc>
 <lastmod>2016-02-29T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -355,7 +383,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/linux.html</loc>
-<lastmod>2016-04-11T08:00:00-00:15</lastmod>
+<lastmod>2016-04-18T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -369,14 +397,14 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/virtualenv.html</loc>
-<lastmod>2016-04-11T08:00:00-00:15</lastmod>
+<lastmod>2016-04-18T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/jessie.html</loc>
-<lastmod>2016-03-28T08:00:00-00:15</lastmod>
+<lastmod>2016-04-18T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -396,15 +424,15 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/centos.html</loc>
+<loc>http://www.linuxsysadmin.tk/tag/redhat.html</loc>
 <lastmod>2016-04-11T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/isolinux.html</loc>
-<lastmod>2015-12-02T12:30:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/script.html</loc>
+<lastmod>2016-04-18T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -480,8 +508,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/bridge.html</loc>
-<lastmod>2015-11-23T23:30:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/wheel.html</loc>
+<lastmod>2016-04-18T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -523,7 +551,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/python.html</loc>
-<lastmod>2016-04-11T08:00:00-00:15</lastmod>
+<lastmod>2016-04-18T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -557,7 +585,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/nginx.html</loc>
+<loc>http://www.linuxsysadmin.tk/tag/ssl.html</loc>
 <lastmod>2016-03-21T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -613,6 +641,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/bridge.html</loc>
+<lastmod>2015-11-23T23:30:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/maipo.html</loc>
 <lastmod>2016-01-25T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -628,7 +663,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/debian.html</loc>
-<lastmod>2016-03-28T08:00:00-00:15</lastmod>
+<lastmod>2016-04-18T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -648,7 +683,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/ssl.html</loc>
+<loc>http://www.linuxsysadmin.tk/tag/nginx.html</loc>
 <lastmod>2016-03-21T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -711,8 +746,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/lvm.html</loc>
-<lastmod>2016-02-15T08:30:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/oracle.html</loc>
+<lastmod>2016-04-18T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -733,7 +768,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2016-04-11T08:00:00-00:15</lastmod>
+<lastmod>2016-04-18T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

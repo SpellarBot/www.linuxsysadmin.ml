@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Construyendo un RAID 10 en linux - Linux Sysadmin</title>
+    <title>Consultando una base de datos Oracle en python - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,23 +9,27 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="keywords" content="linux,debian,jessie,raid" />
-        <meta name="description" content="El otro día estaba habilitando un servidor de mongodb para un entorno de producción. Como me interesaba mejorar el rendimiento de los accesos a disco y no disponía de discos SSD con una durabilidad aceptable, me propuse montar un array de discos en configuración de RAID 10, como se recomienda ..." />
+        <meta name="keywords" content="linux,debian,jessie,python,oracle,script,virtualenv,wheel" />
+        <meta name="description" content="El otro día estuve optimizando unos scripts hechos en bash que había hecho otro. Como resultado del lenguaje usado era un caos de comandos, muchos de ellos para limpiar la salida y darle la forma adecuada. Los reescribí en python usando la librería cx_Oracle, que compilé en un fichero wheel ..." />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Construyendo un RAID 10 en linux"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html"/>
-        <meta property="og:description" content="El otro día estaba habilitando un servidor de mongodb para un entorno de producción. Como me interesaba mejorar el rendimiento de los accesos a disco y no disponía de discos SSD con una durabilidad aceptable, me propuse montar un array de discos en configuración de RAID 10, como se recomienda ..."/>
-        <meta property="article:published_time" content="2015-12-17" />
-            <meta property="article:section" content="Sistemas" />
+        <meta property="og:title" content="Consultando una base de datos Oracle en python"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html"/>
+        <meta property="og:description" content="El otro día estuve optimizando unos scripts hechos en bash que había hecho otro. Como resultado del lenguaje usado era un caos de comandos, muchos de ellos para limpiar la salida y darle la forma adecuada. Los reescribí en python usando la librería cx_Oracle, que compilé en un fichero wheel ..."/>
+        <meta property="article:published_time" content="2016-04-18" />
+            <meta property="article:section" content="Desarrollo" />
             <meta property="article:tag" content="linux" />
             <meta property="article:tag" content="debian" />
             <meta property="article:tag" content="jessie" />
-            <meta property="article:tag" content="raid" />
+            <meta property="article:tag" content="python" />
+            <meta property="article:tag" content="oracle" />
+            <meta property="article:tag" content="script" />
+            <meta property="article:tag" content="virtualenv" />
+            <meta property="article:tag" content="wheel" />
             <meta property="article:author" content="Gerard" />
 
 
@@ -42,8 +46,8 @@
 
 
 
-        <link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Sistemas ATOM Feed"/>
+        <link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Desarrollo ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -87,8 +91,8 @@ Linux Sysadmin            </a>
         <div class="col-sm-9">
             <ol class="breadcrumb">
                 <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.tk/category/sistemas.html" title="Sistemas">Sistemas</a></li>
-                <li class="active">Construyendo un RAID 10 en linux</li>
+                <li><a href="http://www.linuxsysadmin.tk/category/desarrollo.html" title="Desarrollo">Desarrollo</a></li>
+                <li class="active">Consultando una base de datos Oracle en python</li>
             </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -106,10 +110,10 @@ Linux Sysadmin            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html"
+                    <a href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html"
                        rel="bookmark"
-                       title="Permalink to Construyendo un RAID 10 en linux">
-                        Construyendo un RAID 10 en linux
+                       title="Permalink to Consultando una base de datos Oracle en python">
+                        Consultando una base de datos Oracle en python
                     </a>
                 </h1>
             </header>
@@ -119,16 +123,16 @@ Linux Sysadmin            </a>
 <footer class="post-info">
     <span class="label label-default">Fecha</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2015-12-17T23:00:00+01:00"> 2015-12-17</time>
+        <i class="fa fa-calendar"></i><time datetime="2016-04-18T08:00:00+02:00"> 2016-04-18</time>
     </span>
 
 
             <span class="label label-default">Autor</span>
             <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
 
-        <span class="label label-default">Tiempo de lectura</span> 6 minutos
+        <span class="label label-default">Tiempo de lectura</span> 13 minutos
         <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.tk/category/sistemas.html">Sistemas</a>
+        <a href="http://www.linuxsysadmin.tk/category/desarrollo.html">Desarrollo</a>
 
 
 <span class="label label-default">Tags</span>
@@ -138,184 +142,366 @@ Linux Sysadmin            </a>
         /
 	<a href="http://www.linuxsysadmin.tk/tag/jessie.html">jessie</a>
         /
-	<a href="http://www.linuxsysadmin.tk/tag/raid.html">raid</a>
+	<a href="http://www.linuxsysadmin.tk/tag/python.html">python</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/oracle.html">oracle</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/script.html">script</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/virtualenv.html">virtualenv</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/wheel.html">wheel</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>El otro día estaba habilitando un servidor de <em>mongodb</em> para un entorno de producción. Como me interesaba mejorar el rendimiento de los accesos a disco y no disponía de discos SSD con una durabilidad aceptable, me propuse montar un <em>array de discos</em> en configuración de <strong>RAID 10</strong>, como se recomienda.</p>
-<p>Para este tutorial vamos a tener una máquina virtual (es una <em>Debian</em>, pero vale cualquier otra distribución) con 5 discos, 1 de sistema y otros 4 para usar en la configuración <strong>RAID 10</strong>, cada uno con 8gb, a efecto de demostración.</p>
-<p>En este caso, el sistema operativo estaba en <em>/dev/sda</em> y sus particiones, mientras que los discos para los datos de <em>mongodb</em> fueron <em>/dev/sdb</em>, <em>/dev/sdc</em>, <em>/dev/sdd</em>, <em>/dev/sde</em>.</p>
-<div class="highlight"><pre>root@server:~# ls /dev/sd* -1
-/dev/sda
-/dev/sda1
-/dev/sdb
-/dev/sdc
-/dev/sdd
-/dev/sde
-root@server:~# 
+                <p>El otro día estuve optimizando unos <em>scripts</em> hechos en <em>bash</em> que había hecho otro. Como resultado del lenguaje usado era un caos de comandos, muchos de ellos para limpiar la salida y darle la forma adecuada. Los reescribí en <em>python</em> usando la librería <strong>cx_Oracle</strong>, que compilé en un fichero <em>wheel</em>.</p>
+<p>El mayor problema al que te enfrentas si intentas instalar una librería <em>python</em> que no está en la librería estándar, es que debes usar el gestor de paquetes, previo uso del usuario <strong>root</strong>. Y eso no siempre es posible.</p>
+<p>Así que para hacer una instalación en mi carpeta personal, me decanté por crear un <strong>virtualenv</strong> en donde se iba a instalar una <em>wheel</em> precompilada en una máquina similar. Lo documento para tenerlo a mano.</p>
+<p>Voy a explicar dos procedimientos: el primero es como instalar el <em>package</em> en una máquina que tenga herramientas de compilación y como empaquetarlo en un fichero <em>wheel</em>; el segundo consiste en instalar la <em>wheel</em> localmente en la máquina que la va a usar, a modo de <em>runtime</em>.</p>
+<p>Para seguir esta guía, necesitamos una máquina con <strong>Linux</strong> cualquiera, que en mi caso ha sido una <strong>Debian Jessie</strong>. Estos son los paquetes necesarios como requisitos:</p>
+<ul>
+<li>unzip</li>
+<li>python</li>
+<li>libaio1</li>
+</ul>
+<p>En la máquina en donde se vaya a crear la <em>wheel</em>, también serán necesarios los siguientes:</p>
+<ul>
+<li>python-dev</li>
+<li>gcc</li>
+</ul>
+<p>Adicionalmente, se necesita descargar el <a href="https://www.oracle.com/downloads/index.html">Oracle instant client</a>, concretamente el <strong>basic</strong> y, en caso de la construcción de la <em>wheel</em>, también el <strong>sdk</strong>.</p>
+<div class="highlight"><pre>root@oracle:~# ls -1
+instantclient-basic-linux-12.1.0.2.0.zip
+instantclient-sdk-linux-12.1.0.2.0.zip
+root@oracle:~#
 </pre></div>
 
 
-<h2>Creación del dispositivo RAID 10</h2>
-<p>Empezamos instalando el controlador de <strong>RAID</strong> por software:</p>
-<div class="highlight"><pre>root@server:~# apt-get install mdadm
+<h2>Construyendo el fichero wheel</h2>
+<p>El primer paso consiste en descomprimir el <em>instant client</em> de Oracle, necesario para cualquier programa que intente conectarse a sus bases de datos.</p>
+<div class="highlight"><pre>root@oracle:~# unzip instantclient-basic-linux-12.1.0.2.0.zip
+Archive:  instantclient-basic-linux-12.1.0.2.0.zip
+  inflating: instantclient_12_1/adrci
+  inflating: instantclient_12_1/BASIC_README
+  inflating: instantclient_12_1/genezi
+  inflating: instantclient_12_1/libclntshcore.so.12.1
+  inflating: instantclient_12_1/libclntsh.so.12.1
+  inflating: instantclient_12_1/libnnz12.so
+  inflating: instantclient_12_1/libocci.so.12.1
+  inflating: instantclient_12_1/libociei.so
+  inflating: instantclient_12_1/libocijdbc12.so
+  inflating: instantclient_12_1/libons.so
+  inflating: instantclient_12_1/liboramysql12.so
+  inflating: instantclient_12_1/ojdbc6.jar
+  inflating: instantclient_12_1/ojdbc7.jar
+  inflating: instantclient_12_1/uidrvci
+  inflating: instantclient_12_1/xstreams.jar
+root@oracle:~# unzip instantclient-sdk-linux-12.1.0.2.0.zip
+Archive:  instantclient-sdk-linux-12.1.0.2.0.zip
+   creating: instantclient_12_1/sdk/
+   creating: instantclient_12_1/sdk/include/
+  inflating: instantclient_12_1/sdk/include/oratypes.h
+  inflating: instantclient_12_1/sdk/include/occi.h
+  inflating: instantclient_12_1/sdk/include/ocikpr.h
+  inflating: instantclient_12_1/sdk/include/odci.h
+  inflating: instantclient_12_1/sdk/include/xa.h
+  inflating: instantclient_12_1/sdk/include/ldap.h
+  inflating: instantclient_12_1/sdk/include/oci.h
+  inflating: instantclient_12_1/sdk/include/ocidfn.h
+  inflating: instantclient_12_1/sdk/include/oci1.h
+  inflating: instantclient_12_1/sdk/include/ort.h
+  inflating: instantclient_12_1/sdk/include/ociextp.h
+  inflating: instantclient_12_1/sdk/include/occiAQ.h
+  inflating: instantclient_12_1/sdk/include/ori.h
+  inflating: instantclient_12_1/sdk/include/nzerror.h
+  inflating: instantclient_12_1/sdk/include/ocixmldb.h
+  inflating: instantclient_12_1/sdk/include/ocidef.h
+  inflating: instantclient_12_1/sdk/include/occiControl.h
+  inflating: instantclient_12_1/sdk/include/ocidem.h
+  inflating: instantclient_12_1/sdk/include/nzt.h
+  inflating: instantclient_12_1/sdk/include/orid.h
+  inflating: instantclient_12_1/sdk/include/ociap.h
+  inflating: instantclient_12_1/sdk/include/orl.h
+  inflating: instantclient_12_1/sdk/include/ocixstream.h
+  inflating: instantclient_12_1/sdk/include/occiObjects.h
+  inflating: instantclient_12_1/sdk/include/oci8dp.h
+  inflating: instantclient_12_1/sdk/include/oro.h
+  inflating: instantclient_12_1/sdk/include/occiCommon.h
+  inflating: instantclient_12_1/sdk/include/ociapr.h
+  inflating: instantclient_12_1/sdk/include/occiData.h
+   creating: instantclient_12_1/sdk/admin/
+  inflating: instantclient_12_1/sdk/admin/oraaccess.xsd
+ extracting: instantclient_12_1/sdk/ottclasses.zip
+   creating: instantclient_12_1/sdk/demo/
+  inflating: instantclient_12_1/sdk/demo/occidemo.sql
+  inflating: instantclient_12_1/sdk/demo/oraaccess.xml
+  inflating: instantclient_12_1/sdk/demo/occiobj.cpp
+  inflating: instantclient_12_1/sdk/demo/occidemod.sql
+  inflating: instantclient_12_1/sdk/demo/occidml.cpp
+  inflating: instantclient_12_1/sdk/demo/occiobj.typ
+  inflating: instantclient_12_1/sdk/demo/setuporamysql.sh
+  inflating: instantclient_12_1/sdk/demo/cdemo81.c
+  inflating: instantclient_12_1/sdk/demo/demo.mk
+  inflating: instantclient_12_1/sdk/ott
+  inflating: instantclient_12_1/sdk/SDK_README
+root@oracle:~#
+</pre></div>
+
+
+<p>Para que el sistema sepa donde lo hemos descomprimido, hay que definir la variable de entorno <strong>ORACLE_HOME</strong>.</p>
+<div class="highlight"><pre>root@oracle:~# <span class="nb">export </span><span class="nv">ORACLE_HOME</span><span class="o">=</span>/root/instantclient_12_1/
+root@oracle:~#
+</pre></div>
+
+
+<p>La compilación de las librerías contenidas en el <em>package</em> <strong>cx_Oracle</strong> tiene un error y busca una librería llamada <em>libclntsh.so</em>, que no se llama así en el <em>runtime</em>. Se puede evitar el problema copiando la librería con el nuevo nombre, o mediante un enlace simbólico.</p>
+<div class="highlight"><pre>root@oracle:~# <span class="nb">cd </span>instantclient_12_1/
+root@oracle:~/instantclient_12_1# ln -s libclntsh.so.12.1 libclntsh.so
+root@oracle:~/instantclient_12_1# <span class="nb">cd</span> ..
+root@oracle:~#
+</pre></div>
+
+
+<p>Y con esto ya podemos empezar. Creamos un <strong>virtualenv</strong> que nos va a servir como plataforma de construcción del fichero <em>wheel</em>.</p>
+<div class="highlight"><pre>root@oracle:~# virtualenv env
+New python executable in /root/env/bin/python
+Installing setuptools, pip, wheel...done.
+root@oracle:~#
+</pre></div>
+
+
+<p>Se activa el entorno virtual y se instala la librería mediante <strong>pip</strong>.</p>
+<div class="highlight"><pre>root@oracle:~# . env/bin/activate
+<span class="o">(</span>env<span class="o">)</span> root@oracle:~# pip install cx_Oracle
+Collecting cx-Oracle
+  Using cached cx_Oracle-5.2.1.tar.gz
+Building wheels <span class="k">for</span> collected packages: cx-Oracle
+  Running setup.py bdist_wheel <span class="k">for</span> cx-Oracle ... <span class="k">done</span>
+  Stored in directory: /root/.cache/pip/wheels/1f/38/66/b37c50906777b231a241ee02134f0ae018615519af43566269
+Successfully built cx-Oracle
+Installing collected packages: cx-Oracle
+Successfully installed cx-Oracle-5.2.1
+<span class="o">(</span>env<span class="o">)</span> root@oracle:~#
+</pre></div>
+
+
+<p>Podemos verificar si funciona cargando el módulo, y por ejemplo, preguntando la versión del mismo.</p>
+<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle:~# python -c <span class="s2">&quot;import cx_Oracle; print cx_Oracle.version&quot;</span>
+Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+  File <span class="s2">&quot;&lt;string&gt;&quot;</span>, line 1, in &lt;module&gt;
+ImportError: libclntsh.so.12.1: cannot open shared object file: No such file or directory
+<span class="o">(</span>env<span class="o">)</span> root@oracle:~#
+</pre></div>
+
+
+<p>Este es un mal resultado; nos indica que no se encuentra un fichero <em>.so</em>. Este fichero está en <strong>ORACLE_HOME</strong>, pero el sistema intenta buscar en <strong>LD_LIBRARY_PATH</strong>. Con modificar esta variable de entorno funciona.</p>
+<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle:~# <span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$ORACLE_HOME</span>:<span class="nv">$LD_LIBRARY_PATH</span>
+<span class="o">(</span>env<span class="o">)</span> root@oracle:~#
+</pre></div>
+
+
+<p>Otro error es que se queje de que no encuentra <em>libaio.so</em>. Esto indica que os habéis saltado los requisitos y necesitáis instalarlos.</p>
+<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle:~# python -c <span class="s2">&quot;import cx_Oracle; print cx_Oracle.version&quot;</span>
+Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+  File <span class="s2">&quot;&lt;string&gt;&quot;</span>, line 1, in &lt;module&gt;
+ImportError: libaio.so.1: cannot open shared object file: No such file or directory
+<span class="o">(</span>env<span class="o">)</span> root@oracle:~# apt-get install libaio1
 Leyendo lista de paquetes... Hecho
-Creando árbol de dependencias       
+Creando árbol de dependencias
 Leyendo la información de estado... Hecho
-..
 Se instalarán los siguientes paquetes NUEVOS:
-  bsd-mailx exim4-base exim4-config exim4-daemon-light liblockfile-bin
-  liblockfile1 mdadm psmisc
-<span class="m">0</span> actualizados, <span class="m">8</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+  libaio1
+<span class="m">0</span> actualizados, <span class="m">1</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar 9.634 B de archivos.
+Se utilizarán 13,3 kB de espacio de disco adicional después de esta operación.
 ...
-update-initramfs: Generating /boot/initrd.img-3.16.0-4-586
-W: mdadm: /etc/mdadm/mdadm.conf defines no arrays.
-W: mdadm: no arrays defined in configuration file.
-root@server:~# 
+<span class="o">(</span>env<span class="o">)</span> root@oracle:~#
 </pre></div>
 
 
-<p>Con las herramientas instaladas, procedemos a crear un <em>/dev/md0</em> que será nuestro <strong>disco RAID</strong>, indicando el nivel <strong>RAID 10</strong> y los 4 discos reales que van a formarlo.</p>
-<div class="highlight"><pre>root@server:~# mdadm -v --create /dev/md0 --level<span class="o">=</span>raid10 --raid-devices<span class="o">=</span><span class="m">4</span> /dev/sdb /dev/sdc /dev/sdd /dev/sde
-mdadm: layout defaults to n2
-mdadm: layout defaults to n2
-mdadm: chunk size defaults to 512K
-mdadm: size <span class="nb">set </span>to 8380416K
-mdadm: Defaulting to version 1.2 metadata
-mdadm: array /dev/md0 started.
-root@server:~# 
+<p>Finalmente obtenemos un resultado correcto, que nos indica que tenemos instalada la librería en nuestro entorno virtual.</p>
+<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle:~# python -c <span class="s2">&quot;import cx_Oracle; print cx_Oracle.version&quot;</span>
+5.2.1
+<span class="o">(</span>env<span class="o">)</span> root@oracle:~#
 </pre></div>
 
 
-<p>Para que ese array de discos sea reconocido en cada inicio del sistema, hay que añadir en <em>/etc/mdadm/mdadm.conf</em> la información relacionada al array, de la misma forma que la tengamos en este momento.</p>
-<div class="highlight"><pre>root@server:~# mdadm --detail --scan --verbose &gt;&gt; /etc/mdadm/mdadm.conf
-root@server:~# 
+<p>Podemos aprovechar esta compilación para máquinas con el mismo tipo de procesador y con la misma versión de <strong>python</strong>, creando un fichero <em>wheel</em> con la librería ya compilada.</p>
+<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle:~# pip wheel cx_Oracle
+Collecting cx-Oracle
+  Saved ./cx_Oracle-5.2.1-cp27-cp27mu-linux_i686.whl
+Skipping cx-Oracle, due to already being wheel.
+<span class="o">(</span>env<span class="o">)</span> root@oracle:~#
 </pre></div>
 
 
-<p>Y ya tenemos nuestro dispositivo <strong>RAID 10</strong>.</p>
-<h2>Preparación del dispositivo</h2>
-<p>Ahora disponemos de un <strong>RAID 10</strong> de 4 discos de 8gb, que corresponden a una capacidad total de 16gb utilizables, como el dispositivo <em>/dev/md0</em>.</p>
-<p>Este dispositivo es transparente para nosotros y no es diferente de cualquier otro dispositivo de bloques, con lo que se puede particionar, formatear e incluso actuar como un <em>physical volume</em> en caso de usar <strong>LVM</strong>.</p>
-<p>Para esta demostración, se creará una única partición que ocupe todo el disco y que será montada en <em>/data</em>.</p>
-<p>Así pues, sin mas preámbulo la particionamos; en mi caso lo hice con <em>cfdisk</em>. Este es el resultado:</p>
-<div class="highlight"><pre>root@server:~# fdisk -l /dev/md0
-
-Disco /dev/md0: <span class="m">16</span> GiB, <span class="m">17163091968</span> bytes, <span class="m">33521664</span> sectores
-Unidades: sectores de <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
-Tamaño de sector <span class="o">(</span>lógico/físico<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
-Tamaño de E/S <span class="o">(</span>mínimo/óptimo<span class="o">)</span>: <span class="m">524288</span> bytes / <span class="m">1048576</span> bytes
-Tipo de etiqueta de disco: gpt
-Identificador del disco: E3FE7B0A-0F5D-4151-84E8-49670C33B65E
-
-Device     Start      End  Sectors Size Type
-/dev/md0p1  <span class="m">2048</span> <span class="m">33521630</span> <span class="m">33519583</span>  16G Linux filesystem
-
-root@server:~# 
+<p>Y ese es el fichero que vamos a distribuir a los entornos de producción donde necesitemos crear <em>scripts</em> en <strong>python</strong> que se conecten a Oracle.</p>
+<h2>Instalando en otras máquinas</h2>
+<p>Vamos a suponer que nos interesa poner el <em>runtime</em> de Oracle y la carpeta con nuestros <em>scripts</em> en <em>/opt/</em>. De hecho, nada impide que se haga en una carpeta personal, en la que tengamos privilegios completos.</p>
+<p>También vamos a necesitar un <em>instant client</em> para poder funcionar, aunque esta vez no se necesitan enlaces simbólicos ni declarar la variable de entorno <strong>ORACLE_HOME</strong>. Lo descargamos en su localización deseada.</p>
+<div class="highlight"><pre>root@oracle2:/opt# unzip /root/instantclient-basic-linux-12.1.0.2.0.zip
+Archive:  /root/instantclient-basic-linux-12.1.0.2.0.zip
+  inflating: instantclient_12_1/adrci
+  inflating: instantclient_12_1/BASIC_README
+  inflating: instantclient_12_1/genezi
+  inflating: instantclient_12_1/libclntshcore.so.12.1
+  inflating: instantclient_12_1/libclntsh.so.12.1
+  inflating: instantclient_12_1/libnnz12.so
+  inflating: instantclient_12_1/libocci.so.12.1
+  inflating: instantclient_12_1/libociei.so
+  inflating: instantclient_12_1/libocijdbc12.so
+  inflating: instantclient_12_1/libons.so
+  inflating: instantclient_12_1/liboramysql12.so
+  inflating: instantclient_12_1/ojdbc6.jar
+  inflating: instantclient_12_1/ojdbc7.jar
+  inflating: instantclient_12_1/uidrvci
+  inflating: instantclient_12_1/xstreams.jar
+root@oracle2:/opt#
 </pre></div>
 
 
-<p>La primera (y única partición) se llama <em>/dev/md0p1</em> y es el dispositivo que vamos a formatear, para posteriormente montarlo.</p>
-<div class="highlight"><pre>root@server:~# mkfs.ext4 /dev/md0p1 
-mke2fs 1.42.12 <span class="o">(</span>29-Aug-2014<span class="o">)</span>
-Se está creando El sistema de ficheros con <span class="m">4189947</span> 4k bloques y <span class="m">1048576</span> nodos-i
-
-UUID del sistema de ficheros: 11e454ce-72c4-41f8-a7bc-4d4a78b873c0
-Respaldo del superbloque guardado en los bloques: 
-    32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208, 
-    4096000
-
-Reservando las tablas de grupo: hecho                           
-Escribiendo las tablas de nodos-i: hecho                           
-Creando el fichero de transacciones <span class="o">(</span><span class="m">32768</span> bloques<span class="o">)</span>: hecho
-Escribiendo superbloques y la información contable del sistema de ficheros:   hecho  
-
-root@server:~# 
+<p>Las dependencias deberían estar ya instaladas, pero en mi caso no lo estaban. Las instalamos.</p>
+<div class="highlight"><pre>root@oracle2:/opt# apt-get install python libaio1
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes extras:
+  file libexpat1 libffi6 libmagic1 libpython-stdlib libpython2.7-minimal libpython2.7-stdlib libsqlite3-0 mime-support
+  python-minimal python2.7 python2.7-minimal
+Paquetes sugeridos:
+  python-doc python-tk python2.7-doc binutils binfmt-support
+Se instalarán los siguientes paquetes NUEVOS:
+  file libaio1 libexpat1 libffi6 libmagic1 libpython-stdlib libpython2.7-minimal libpython2.7-stdlib libsqlite3-0 mime-support
+  python python-minimal python2.7 python2.7-minimal
+<span class="m">0</span> actualizados, <span class="m">14</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar 5.020 kB de archivos.
+Se utilizarán 21,3 MB de espacio de disco adicional después de esta operación.
+¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
+...  
+root@oracle2:/opt#
 </pre></div>
 
 
-<p>Creamos la carpeta que va a servir de <em>mountpoint</em> para esta nueva partición:</p>
-<div class="highlight"><pre>root@server:~# mkdir /data
-root@server:~# 
+<p>Creamos la carpeta que va a contener el entorno virtual y los <em>scripts</em>, y creamos en ella el entorno virtual.</p>
+<div class="highlight"><pre>root@oracle2:/opt# mkdir scripts
+root@oracle2:/opt# <span class="nb">cd </span>scripts/
+root@oracle2:/opt/scripts# virtualenv env
+New python executable in /opt/scripts/env/bin/python
+Installing setuptools, pip, wheel...done.
+root@oracle2:/opt/scripts#
 </pre></div>
 
 
-<p>Añadimos la partición en el fichero <em>/etc/fstab</em>, para que se monte automáticamente tras cada reinicio:</p>
-<div class="highlight"><pre>root@server:~# grep md0p1 /etc/fstab 
-/dev/md0p1 /data ext4 defaults <span class="m">0</span> 0
-root@server:~# 
+<p>Activamos el entorno virtual y le instalamos el fichero <em>wheel</em>, que habremos copiado en algún sitio. Este fichero es local a la máquina, y no se consulta el repositorio de <strong>python</strong> remoto para nada. De hecho, un <em>wheel</em> es un fichero <em>.zip</em> normal, que se descomprime en la carpeta adecuada del <strong>virtualenv</strong>.</p>
+<div class="highlight"><pre>root@oracle2:/opt/scripts# . env/bin/activate
+<span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# pip install /root/cx_Oracle-5.2.1-cp27-cp27mu-linux_i686.whl
+Processing /root/cx_Oracle-5.2.1-cp27-cp27mu-linux_i686.whl
+Installing collected packages: cx-Oracle
+Successfully installed cx-Oracle-5.2.1
+<span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts#
 </pre></div>
 
 
-<p>Finalmente la montamos. Como esta información ya está en el fichero <em>/etc/fstab</em> no es necesario especificar los detalles.</p>
-<div class="highlight"><pre>root@server:~# mount /data
-root@server:~# df -h
-S.ficheros     Tamaño Usados  Disp Uso% Montado en
-/dev/sda1        2,0G   651M  1,2G  35% /
-udev              10M      <span class="m">0</span>   10M   0% /dev
-tmpfs             50M   4,4M   46M   9% /run
-tmpfs            124M      <span class="m">0</span>  124M   0% /dev/shm
-tmpfs            5,0M      <span class="m">0</span>  5,0M   0% /run/lock
-tmpfs            124M      <span class="m">0</span>  124M   0% /sys/fs/cgroup
-/dev/md0p1        16G    44M   15G   1% /data
-root@server:~# 
+<p>Probamos que funcione; es importante definir la variable de entorno <strong>LD_LIBRARY_PATH</strong> para que encuentre el <em>runtime</em> de Oracle. Es muy útil ponerlo en el fichero <em>~/.bashrc</em> para que se cargue solo al abrir el <em>shell</em>.</p>
+<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# <span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span>/opt/instantclient_12_1/
+<span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# python -c <span class="s2">&quot;import cx_Oracle; print cx_Oracle.version&quot;</span>
+5.2.1
+<span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts#
 </pre></div>
 
 
-<p>Como detalle, al no tratarse de una partición raíz de sistema operativo, no hace falta reservar bloques de emergencia; se trata de un 5% de la capacidad que podemos liberar (5% de 16gb son 800mb que podemos usar).</p>
-<div class="highlight"><pre>root@server:~# tune2fs -m <span class="m">0</span> /dev/md0p1 
-tune2fs 1.42.12 <span class="o">(</span>29-Aug-2014<span class="o">)</span>
-Se pone el porcentaje de bloques reservados a 0% <span class="o">(</span><span class="m">0</span> bloques<span class="o">)</span>
-root@server:~# df -h
-S.ficheros     Tamaño Usados  Disp Uso% Montado en
-/dev/sda1        2,0G   651M  1,2G  35% /
-udev              10M      <span class="m">0</span>   10M   0% /dev
-tmpfs             50M   4,4M   46M   9% /run
-tmpfs            124M      <span class="m">0</span>  124M   0% /dev/shm
-tmpfs            5,0M      <span class="m">0</span>  5,0M   0% /run/lock
-tmpfs            124M      <span class="m">0</span>  124M   0% /sys/fs/cgroup
-/dev/md0p1        16G    44M   16G   1% /data
-root@server:~# 
+<p>Opcionalmente, podemos reducir la cantidad de librerías que conforman el <em>instant client</em>, ya que solo se necesitan 4, y reduce su tamaño de forma dramática.</p>
+<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# du -sh /opt/instantclient_12_1/
+169M    /opt/instantclient_12_1/
+<span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts#
 </pre></div>
 
 
-<h2>Verificación</h2>
-<p>Podemos ver la información de estado del array de discos con el mismo comando <em>mdadm</em>, como sigue:</p>
-<div class="highlight"><pre>root@server:~# mdadm --detail /dev/md0
-/dev/md0:
-        Version : 1.2
-  Creation Time : Sat Dec <span class="m">12</span> 21:19:42 2015
-     Raid Level : raid10
-     Array Size : <span class="m">16760832</span> <span class="o">(</span>15.98 GiB 17.16 GB<span class="o">)</span>
-  Used Dev Size : <span class="m">8380416</span> <span class="o">(</span>7.99 GiB 8.58 GB<span class="o">)</span>
-   Raid Devices : 4
-  Total Devices : 4
-    Persistence : Superblock is persistent
-
-    Update Time : Sat Dec <span class="m">12</span> 21:30:11 2015
-          State : clean 
- Active Devices : 4
-Working Devices : 4
- Failed Devices : 0
-  Spare Devices : 0
-
-         Layout : <span class="nv">near</span><span class="o">=</span>2
-     Chunk Size : 512K
-
-           Name : server:0  <span class="o">(</span><span class="nb">local </span>to host server<span class="o">)</span>
-           UUID : 217558a7:bc1cb1d4:9530ecda:ea477a6b
-         Events : 19
-
-    Number   Major   Minor   RaidDevice State
-       <span class="m">0</span>       <span class="m">8</span>       <span class="m">16</span>        <span class="m">0</span>      active sync <span class="nb">set</span>-A   /dev/sdb
-       <span class="m">1</span>       <span class="m">8</span>       <span class="m">32</span>        <span class="m">1</span>      active sync <span class="nb">set</span>-B   /dev/sdc
-       <span class="m">2</span>       <span class="m">8</span>       <span class="m">48</span>        <span class="m">2</span>      active sync <span class="nb">set</span>-A   /dev/sdd
-       <span class="m">3</span>       <span class="m">8</span>       <span class="m">64</span>        <span class="m">3</span>      active sync <span class="nb">set</span>-B   /dev/sde
-root@server:~# 
+<p>Podemos ver que el <em>package</em> <strong>cx_Oracle</strong> es un fichero <em>.so</em> y que este requiere de los otros 4 en el <em>runtime</em>.</p>
+<div class="highlight"><pre>(env) root@oracle2:/opt/scripts# find env/ -name &quot;*.so&quot;
+env/lib/python2.7/site-packages/cx_Oracle.so
+(env) root@oracle2:/opt/scripts# ldd env/lib/python2.7/site-packages/cx_Oracle.so | grep instant
+        libclntsh.so.12.1 =&gt; /opt/instantclient_12_1/libclntsh.so.12.1 (0xb5387000)
+        libnnz12.so =&gt; /opt/instantclient_12_1/libnnz12.so (0xb4d9d000)
+        libons.so =&gt; /opt/instantclient_12_1/libons.so (0xb4d69000)
+        libclntshcore.so.12.1 =&gt; /opt/instantclient_12_1/libclntshcore.so.12.1 (0xb4a90000)
+(env) root@oracle2:/opt/scripts# ldd /opt/instantclient_12_1/lib{clntsh,nnz,ons}* | grep instant
+/opt/instantclient_12_1/libclntshcore.so.12.1:
+/opt/instantclient_12_1/libclntsh.so.12.1:
+        libnnz12.so =&gt; /opt/instantclient_12_1/libnnz12.so (0xb4f8c000)
+        libons.so =&gt; /opt/instantclient_12_1/libons.so (0xb4f58000)
+        libclntshcore.so.12.1 =&gt; /opt/instantclient_12_1/libclntshcore.so.12.1 (0xb4aec000)
+/opt/instantclient_12_1/libnnz12.so:
+        libclntshcore.so.12.1 =&gt; /opt/instantclient_12_1/libclntshcore.so.12.1 (0xb7115000)
+/opt/instantclient_12_1/libons.so:
+(env) root@oracle2:/opt/scripts#
 </pre></div>
 
 
-<p><strong>RESUMEN</strong>: Ahora tengo un disco doble de rápido, doble de capacidad y con doble copia de datos. Afortunadamente, los discos duros son baratos...</p>
+<p>Lo que significa que debería ser seguro eliminar el resto. Así que lo hacemos. Guardad una copia de seguridad antes de eliminar nada.</p>
+<p>Tras eliminar lo que no nos sirve, la carpeta queda así:</p>
+<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# tree /opt/instantclient_12_1/
+/opt/instantclient_12_1/
+├── libclntshcore.so.12.1
+├── libclntsh.so.12.1
+├── libnnz12.so
+└── libons.so
+
+<span class="m">0</span> directories, <span class="m">4</span> files
+<span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# du -sh /opt/instantclient_12_1/
+55M     /opt/instantclient_12_1/
+<span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts#
+</pre></div>
+
+
+<p>No está nada mal; hemos pasado de 169mb a 55mb. Comprobamos que sigue funcionando:</p>
+<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# python -c <span class="s2">&quot;import cx_Oracle; print cx_Oracle.version&quot;</span>
+5.2.1
+<span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts#
+</pre></div>
+
+
+<p>Y parece correcto.</p>
+<h2>Uso del package cx_Oracle</h2>
+<p>En este punto hay que seguir la documentación del módulo, que no es muy diferente de otras bases de datos; <strong>cx_Oracle</strong> sigue la misma especificación para todos los módulos de bases de datos.</p>
+<p>La idea es que se crea un objeto <strong>conexión</strong>, del que se saca un <strong>cursor</strong> para cada consulta que queramos ejecutar, y que se itera para obtener las <strong>filas</strong>. Pongamos un ejemplo simple:</p>
+<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# cat list_fruits.py
+<span class="c">#!/usr/bin/env python</span>
+
+import cx_Oracle
+
+<span class="nv">HOST</span><span class="o">=</span><span class="s1">&#39;my_host&#39;</span>
+<span class="nv">PORT</span><span class="o">=</span><span class="s1">&#39;my_port&#39;</span>
+<span class="nv">SID</span><span class="o">=</span><span class="s1">&#39;my_sid&#39;</span>
+<span class="nv">SERVICE</span><span class="o">=</span><span class="s1">&#39;my_service_name&#39;</span>
+<span class="nv">USER</span><span class="o">=</span><span class="s1">&#39;nobody&#39;</span>
+<span class="nv">PASSWORD</span><span class="o">=</span><span class="s1">&#39;secret&#39;</span>
+
+<span class="nv">dsn</span> <span class="o">=</span> cx_Oracle.makedsn<span class="o">(</span>HOST, PORT, SID, SERVICE<span class="o">)</span>
+<span class="nv">connection</span> <span class="o">=</span> cx_Oracle.connect<span class="o">(</span><span class="nv">user</span><span class="o">=</span>USER, <span class="nv">password</span><span class="o">=</span>PASSWORD, <span class="nv">dsn</span><span class="o">=</span>dsn<span class="o">)</span>
+
+<span class="nv">query</span> <span class="o">=</span> <span class="s2">&quot;select name, price from fruits&quot;</span>
+<span class="nv">cursor</span> <span class="o">=</span> connection.cursor<span class="o">()</span>
+cursor.execute<span class="o">(</span>query<span class="o">)</span>
+<span class="k">for</span> row in cursor:
+    print <span class="s1">&#39;;&#39;</span>.join<span class="o">(</span>row<span class="o">)</span>
+cursor.close<span class="o">()</span>
+
+connection.close<span class="o">()</span>
+<span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts#
+</pre></div>
+
+
+<p>Ejecutamos como cualquier otro <em>script</em>:</p>
+<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# ./list_fruits.py
+Apple<span class="p">;</span>0.99
+Orange<span class="p">;</span>0.89
+Pear<span class="p">;</span>1.19
+<span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts#
+</pre></div>
+
+
+<p>Y obtenemos los datos deseados, con la facilidad que nos aporta <strong>python</strong> para dar formato fácil a la salida de nuestros <em>scripts</em>.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
@@ -335,8 +521,8 @@ root@server:~#
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'construyendo-un-raid-10-en-linux';
-                var disqus_url = 'http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html';
+                    var disqus_identifier = 'consultando-una-base-de-datos-oracle-en-python';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html';
 
             var disqus_config = function () {
                 this.language = "es";
