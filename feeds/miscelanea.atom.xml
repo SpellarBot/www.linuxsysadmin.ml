@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/miscelanea.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-04-25T08:00:00+02:00</updated><entry><title>Un escritorio mínimo con Debian</title><link href="http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html" rel="alternate"></link><updated>2016-04-25T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-04-25:2016/04/un-escritorio-minimo-con-debian.html</id><summary type="html">&lt;p&gt;Harto de distribuciones para escritorio cargados con aplicaciones que no se usan, decidí que esta vez iba a instalar un escritorio de trabajo partiendo de una &lt;em&gt;Debian netinstall&lt;/em&gt;. El resto va a ser instalar las aplicaciones justas y necesarias para nuestro trabajo diario. En este artículo describo como lo hice.&lt;/p&gt;
+&lt;p&gt;Este tutorial se asume que ya tenemos la distribución instalada de una forma mínima, sin nada que sea innecesario. Vamos a instalar los paquetes que se necesiten para nuestro escritorio.&lt;/p&gt;
+&lt;p&gt;Para practicar la instalación y probar variaciones, es recomendable hacerlo en una máquina virtual, por ejemplo, usando &lt;strong&gt;VirtualBox&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;En cuanto a los requisitos, vamos a partir de una distribución &lt;em&gt;Debian Jessie&lt;/em&gt; normal, con una cantidad de memoria tirando a poca, y con un disco también bastante escaso. El resultado es bastante ligero.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@kobayashi-maru:~# cat /etc/debian_version
+8.4
+root@kobayashi-maru:~# free -m
+             total       used       free     shared    buffers     cached
+Mem:           &lt;span class="m"&gt;500&lt;/span&gt;         &lt;span class="m"&gt;65&lt;/span&gt;        &lt;span class="m"&gt;435&lt;/span&gt;          &lt;span class="m"&gt;4&lt;/span&gt;          &lt;span class="m"&gt;6&lt;/span&gt;         34
+-/+ buffers/cache:         &lt;span class="m"&gt;23&lt;/span&gt;        476
+Swap:            &lt;span class="m"&gt;0&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;          0
+root@kobayashi-maru:~# df -h
+S.ficheros     Tamaño Usados  Disp Uso% Montado en
+/dev/sda1        4,0G   600M  3,2G  16% /
+udev              10M      &lt;span class="m"&gt;0&lt;/span&gt;   10M   0% /dev
+tmpfs            101M   4,4M   96M   5% /run
+tmpfs            251M      &lt;span class="m"&gt;0&lt;/span&gt;  251M   0% /dev/shm
+tmpfs            5,0M      &lt;span class="m"&gt;0&lt;/span&gt;  5,0M   0% /run/lock
+tmpfs            251M      &lt;span class="m"&gt;0&lt;/span&gt;  251M   0% /sys/fs/cgroup
+root@kobayashi-maru:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Las buenas prácticas requieren separar algunas de las carpetas en particiones distintas, de forma que el disco raíz no se llene por el uso diario de los usuarios. Especialmente se recomienda asignar una partición o disco para la carpeta &lt;em&gt;/home/&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;El sistema de ventanas&lt;/h2&gt;
+&lt;p&gt;Como primer paso, necesitamos el servidor de ventanas, que se encarga de mediar entre los &lt;em&gt;drivers&lt;/em&gt; y las aplicaciones. En la distribución utilizada, se utiliza &lt;strong&gt;xorg&lt;/strong&gt; para esta función.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@kobayashi-maru:~# apt-get install xorg
+...
+root@kobayashi-maru:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esto nos va a instalar el servidor, y gracias al sistema de dependencias de &lt;em&gt;Debian&lt;/em&gt;, todos los drivers de entrada y de vídeo; esto añade muchos paquetes que seguramente no usaremos jamás, que necesitan irse actualizando y ocupan espacio en disco. En caso de querer reducir la cantidad de drivers instalados, y sabiendo los que necesitamos, podemos instalar los necesarios solamente.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@kobayashi-maru:~# apt-get install xserver-xorg xserver-xorg-input-kbd xserver-xorg-input-mouse xserver-xorg-video-vesa
+...
+root@kobayashi-maru:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso, yo opté por este sistema, instalando el &lt;em&gt;driver&lt;/em&gt; de vídeo &lt;em&gt;vesa&lt;/em&gt;, que es el que funciona con &lt;strong&gt;VirtualBox&lt;/strong&gt; (este &lt;em&gt;driver&lt;/em&gt; funciona siempre). En el caso de mi ordenador, puse el &lt;em&gt;driver&lt;/em&gt; de vídeo &lt;em&gt;intel&lt;/em&gt; (que es la tarjeta gráfica que tengo) y añadí el &lt;em&gt;driver&lt;/em&gt; de entrada &lt;em&gt;synaptics&lt;/em&gt; (que gestiona el &lt;em&gt;touchpad&lt;/em&gt;).&lt;/p&gt;
+&lt;h2&gt;El entorno de escritorio&lt;/h2&gt;
+&lt;p&gt;En este apartado tenemos muchas posibilidades; el ecosistema de entornos de escritorio es grande, pudiendo elegir entre &lt;em&gt;GNOME&lt;/em&gt;, &lt;em&gt;KDE&lt;/em&gt;, &lt;em&gt;XFCE&lt;/em&gt;, &lt;em&gt;LXDE&lt;/em&gt; y otros tantos.&lt;/p&gt;
+&lt;p&gt;Un entorno de escritorio que me gusta por su simplicidad es &lt;em&gt;LXDE&lt;/em&gt;, que se puede instalar con el paquete &lt;strong&gt;lxde&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@kobayashi-maru:~# apt-get install lxde
+...
+root@kobayashi-maru:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En caso de no necesitar todos los paquetes, es posible instalar un conjunto menor de paquetes. Una selección bastante completa podría ser la siguiente:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@kobayashi-maru:~# apt-get install lxde-core lxappearance lxterminal lxtask
+...
+root@kobayashi-maru:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Sin embargo, este entorno de escritorio está muy limitado en cuando a herramientas de configuración, y yo preferí instalar &lt;em&gt;XFCE&lt;/em&gt;, que conseguí con los paquetes &lt;strong&gt;xfce4&lt;/strong&gt; y &lt;strong&gt;xfce4-goodies&lt;/strong&gt; (opcional; incluye algunos &lt;em&gt;plugins&lt;/em&gt; y aplicaciones extras).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@kobayashi-maru:~# apt-get install xfce4 xfce4-goodies
+...
+root@kobayashi-maru:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Cargar el modo gráfico&lt;/h2&gt;
+&lt;p&gt;El primer método consiste en trabajar en modo terminal, levantando manualmente el entorno gráfico invocando el comando &lt;strong&gt;startx&lt;/strong&gt;, que se encuentra en el paquete &lt;strong&gt;xinit&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@kobayashi-maru:~# apt-get install xinit
+...
+root@kobayashi-maru:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esto no es cómodo para el usuario corriente; lo normal es tener una pantalla de &lt;em&gt;login&lt;/em&gt; para entrar en la sesión de escritorio. Nuevamente hay muchas alternativas, pero en nuestro caso hemos optado por poner el paquete &lt;strong&gt;lightdm&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@kobayashi-maru:~# apt-get install lightdm
+...
+root@kobayashi-maru:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Otras utilidades&lt;/h2&gt;
+&lt;p&gt;Dependiendo del uso que vayamos a hacer, es interesante que nuestro ordenador pueda reproducir sonidos y tenga un gestor de redes, tanto cableadas como &lt;em&gt;wifi&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;El primero consiste en usar &lt;em&gt;ALSA&lt;/em&gt;, y detectar la configuración de nuestro sonido, guardando dicha configuración para futuros reinicios de la máquina.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@kobayashi-maru:~# apt-get install alsa-utils
+...
+root@kobayashi-maru:~# alsactl init
+Found hardware: &lt;span class="s2"&gt;&amp;quot;ICH&amp;quot;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;SigmaTel STAC9700,83,84&amp;quot;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;AC97a:83847600&amp;quot;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;0x8086&amp;quot;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;0x0000&amp;quot;&lt;/span&gt;
+Hardware is initialized using a generic method
+root@kobayashi-maru:~# alsactl store
+root@kobayashi-maru:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para la parte del gestor de redes, hay nuevamente debate. Uno que me gusta y que cumple bien con su función es &lt;strong&gt;wicd&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@kobayashi-maru:~# apt-get install wicd
+...
+root@kobayashi-maru:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Las aplicaciones&lt;/h2&gt;
+&lt;p&gt;Las aplicaciones a instalar son un tema muy personal; cada usuario va a necesitar unos tipos de aplicaciones u otras. Incluso así, de las aplicaciones de un tipo dado, pueden haber diversas opciones.&lt;/p&gt;
+&lt;p&gt;Estas aplicaciones se pueden ir instalando a &lt;em&gt;posteriori&lt;/em&gt;, tal como se vayan necesitando. Sin embargo, podemos poner aquellas que se van a usar seguro, como un navegador web, por ejemplo &lt;em&gt;Chromium&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@kobayashi-maru:~# apt-get install chromium
+...
+root@kobayashi-maru:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y para los fans de &lt;em&gt;Firefox&lt;/em&gt;, también hay su alternativa:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@kobayashi-maru:~# apt-get install iceweasel
+...
+root@kobayashi-maru:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Y finalmente, la magia&lt;/h2&gt;
+&lt;p&gt;Podemos limpiar los paquetes descargados e instalados, mediante un &lt;em&gt;clean&lt;/em&gt; simple de &lt;strong&gt;apt-get&lt;/strong&gt;. Esto liberará algunos &lt;em&gt;megas&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@kobayashi-maru:~# apt-get clean
+root@kobayashi-maru:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Rebotamos nuestro ordenador, y dejamos que lo instalado tome el control del &lt;em&gt;boot&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@kobayashi-maru:~# reboot
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Iremos a parar a la pantalla de &lt;em&gt;login&lt;/em&gt;, y con un usuario adecuado deberíamos ver nuestro escritorio, tal como se muestra.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Escritorio XFCE" src="http://www.linuxsysadmin.tk/images/escritorio-xfce.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;Ahora es tarea del usuario tunear el escritorio a su gusto, con paneles, &lt;em&gt;plugins&lt;/em&gt; y &lt;em&gt;wallpapers&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Un apunte sobre los recursos&lt;/h2&gt;
+&lt;p&gt;Tras instalar todos los componentes, vemos que los recursos apenas han subido; lo que nos da una idea del tipo de &lt;em&gt;hardware&lt;/em&gt; que podemos usar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@kobayashi-maru:~&lt;span class="nv"&gt;$ &lt;/span&gt;df -h
+S.ficheros     Tamaño Usados  Disp Uso% Montado en
+/dev/sda1        4,0G   1,4G  2,5G  36% /
+udev              10M      &lt;span class="m"&gt;0&lt;/span&gt;   10M   0% /dev
+tmpfs            101M   4,4M   96M   5% /run
+tmpfs            251M      &lt;span class="m"&gt;0&lt;/span&gt;  251M   0% /dev/shm
+tmpfs            5,0M   4,0K  5,0M   1% /run/lock
+tmpfs            251M      &lt;span class="m"&gt;0&lt;/span&gt;  251M   0% /sys/fs/cgroup
+tmpfs             51M   4,0K   51M   1% /run/user/110
+tmpfs             51M   4,0K   51M   1% /run/user/1000
+gerard@kobayashi-maru:~&lt;span class="nv"&gt;$ &lt;/span&gt;free -m
+             total       used       free     shared    buffers     cached
+Mem:           &lt;span class="m"&gt;500&lt;/span&gt;        &lt;span class="m"&gt;238&lt;/span&gt;        &lt;span class="m"&gt;262&lt;/span&gt;          &lt;span class="m"&gt;5&lt;/span&gt;         &lt;span class="m"&gt;15&lt;/span&gt;        125
+-/+ buffers/cache:         &lt;span class="m"&gt;96&lt;/span&gt;        404
+Swap:            &lt;span class="m"&gt;0&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;          0
+gerard@kobayashi-maru:~&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El disco ha aumentado en unos 900 mb y la memoria ha pasado de 23 a 96 mb, sin tener ninguna aplicación abierta.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;CUIDADO&lt;/strong&gt;: Algunas aplicaciones necesitan mucho disco y también memoria. Depende de lo que se ponga, podemos pasar de unos requerimientos &lt;em&gt;hardware&lt;/em&gt; austeros, a una máquina que dejaría de juguete a un supercomputador...&lt;/p&gt;
+&lt;p&gt;Para el uso que doy de mi &lt;em&gt;netbook&lt;/em&gt; (navegar, redacción de artículos, programación de &lt;em&gt;scripts&lt;/em&gt; y alguna sesión de &lt;em&gt;SSH&lt;/em&gt;), los 2gb de memoria me sobran; con 128 mb tendría suficiente.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="escritorio"></category><category term="xfce"></category></entry></feed>

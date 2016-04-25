@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2016-04-18T07:45:59-00:00</lastmod>
+<lastmod>2016-04-25T09:33:45-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2016-04-18T07:45:59-00:00</lastmod>
+<lastmod>2016-04-25T09:33:45-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2016-04-18T07:45:59-00:00</lastmod>
+<lastmod>2016-04-25T09:33:45-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2016-04-18T07:45:59-00:00</lastmod>
+<lastmod>2016-04-25T09:33:45-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2016-04-18T07:45:59-00:00</lastmod>
+<lastmod>2016-04-25T09:33:45-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html</loc>
+<lastmod>2016-04-25T08:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -242,6 +249,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/category/miscelanea.html</loc>
+<lastmod>2016-04-25T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/category/operaciones.html</loc>
 <lastmod>2016-04-11T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -368,8 +382,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/isolinux.html</loc>
-<lastmod>2015-12-02T12:30:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/deb.html</loc>
+<lastmod>2015-12-28T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -383,7 +397,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/linux.html</loc>
-<lastmod>2016-04-18T08:00:00-00:15</lastmod>
+<lastmod>2016-04-25T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -404,7 +418,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/jessie.html</loc>
-<lastmod>2016-04-18T08:00:00-00:15</lastmod>
+<lastmod>2016-04-25T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -438,8 +452,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/point-in-time.html</loc>
-<lastmod>2016-02-15T08:30:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/escritorio.html</loc>
+<lastmod>2016-04-25T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -447,6 +461,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/cache.html</loc>
 <lastmod>2016-02-01T08:30:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/isolinux.html</loc>
+<lastmod>2015-12-02T12:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -585,6 +606,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/rsync.html</loc>
+<lastmod>2016-01-04T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/ssl.html</loc>
 <lastmod>2016-03-21T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -663,7 +691,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/debian.html</loc>
-<lastmod>2016-04-18T08:00:00-00:15</lastmod>
+<lastmod>2016-04-25T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -739,8 +767,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/rsync.html</loc>
-<lastmod>2016-01-04T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/point-in-time.html</loc>
+<lastmod>2016-02-15T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -753,8 +781,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/deb.html</loc>
-<lastmod>2015-12-28T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/xfce.html</loc>
+<lastmod>2016-04-25T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -768,7 +796,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2016-04-18T08:00:00-00:15</lastmod>
+<lastmod>2016-04-25T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

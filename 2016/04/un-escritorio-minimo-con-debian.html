@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Linux Sysadmin</title>
+    <title>Un escritorio mínimo con Debian - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,15 +9,25 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.tk">
-        <meta name="author" content="Gerard" />
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html">
 
-    <!-- Open Graph tags -->
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="linux,debian,jessie,escritorio,xfce" />
+        <meta name="description" content="Harto de distribuciones para escritorio cargados con aplicaciones que no se usan, decidí que esta vez iba a instalar un escritorio de trabajo partiendo de una Debian netinstall. El resto va a ser instalar las aplicaciones justas y necesarias para nuestro trabajo diario. En este artículo describo como lo hice ..." />
+
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Un escritorio mínimo con Debian"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html"/>
+        <meta property="og:description" content="Harto de distribuciones para escritorio cargados con aplicaciones que no se usan, decidí que esta vez iba a instalar un escritorio de trabajo partiendo de una Debian netinstall. El resto va a ser instalar las aplicaciones justas y necesarias para nuestro trabajo diario. En este artículo describo como lo hice ..."/>
+        <meta property="article:published_time" content="2016-04-25" />
+            <meta property="article:section" content="Miscelánea" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="debian" />
+            <meta property="article:tag" content="jessie" />
+            <meta property="article:tag" content="escritorio" />
+            <meta property="article:tag" content="xfce" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -33,6 +43,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/miscelanea.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Miscelánea ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -74,6 +86,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/miscelanea.html" title="Miscelánea">Miscelánea</a></li>
+                <li class="active">Un escritorio mínimo con Debian</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -86,59 +103,245 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html">Un escritorio mínimo con Debian</a></h2>
-                <div class="summary"><p>Harto de distribuciones para escritorio cargados con aplicaciones que no se usan, decidí que esta vez iba a instalar un escritorio de trabajo partiendo de una <em>Debian netinstall</em>. El resto va a ser instalar las aplicaciones justas y necesarias para nuestro trabajo diario. En este artículo describo como lo hice ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></h2>
-                <div class="summary"><p>El otro día estuve optimizando unos <em>scripts</em> hechos en <em>bash</em> que había hecho otro. Como resultado del lenguaje usado era un caos de comandos, muchos de ellos para limpiar la salida y darle la forma adecuada. Los reescribí en <em>python</em> usando la librería <strong>cx_Oracle</strong>, que compilé en un fichero <em>wheel ...</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></h2>
-                <div class="summary"><p>Cuando nos encontramos delante de servidores únicos, es bastante fácil su gestión. Sin embargo, cuando tenemos 8 instancias de cada tipo de servidor, las tareas se vuelven lentas y repetitivas. Podemos incluso automatizar la gestión de una sola máquina para hacer su entorno fácilmente reproducible, en vistas a su reconstrucción ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/04/compilando-python-desde-cero.html">Compilando python desde cero</a></h2>
-                <div class="summary"><p>Siempre que estoy trabajando en un servidor CentOS o RedHat, veo que las versiones de <em>python</em> que usan son bastante viejas. De hecho, hay una gran mejora de <em>python</em> entre las versiones 2.4, 2.6 y 2.7; así que es frecuente compilar una versión superior para nuestro uso ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/04/compilando-python-desde-cero.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">Sistemas de ficheros multicapa con aufs</a></h2>
-                <div class="summary"><p>Trabajando con contenedores tenemos una parte que se repite: el sistema de ficheros base, que copiamos siempre. Otras veces nos puede interesar hacer un sistema capaz de descartar los cambios desde un punto inicial. Podemos crear una capa base de solo lectura y añadir otra capa de cambios con <strong>aufs ...</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html"
+                       rel="bookmark"
+                       title="Permalink to Un escritorio mínimo con Debian">
+                        Un escritorio mínimo con Debian
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-04-25T08:00:00+02:00"> 2016-04-25</time>
+    </span>
 
-        <ul class="pagination">
-                <li class="prev disabled"><a href="#">&laquo;</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.tk/index.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/index2.html">2</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/index3.html">3</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/index4.html">4</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/index5.html">5</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/index6.html">6</a></li>
-                <li class="next"><a
-                        href="http://www.linuxsysadmin.tk/index2.html">&raquo;</a></li>
-        </ul>
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 7 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/miscelanea.html">Miscelánea</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/debian.html">debian</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/jessie.html">jessie</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/escritorio.html">escritorio</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/xfce.html">xfce</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>Harto de distribuciones para escritorio cargados con aplicaciones que no se usan, decidí que esta vez iba a instalar un escritorio de trabajo partiendo de una <em>Debian netinstall</em>. El resto va a ser instalar las aplicaciones justas y necesarias para nuestro trabajo diario. En este artículo describo como lo hice.</p>
+<p>Este tutorial se asume que ya tenemos la distribución instalada de una forma mínima, sin nada que sea innecesario. Vamos a instalar los paquetes que se necesiten para nuestro escritorio.</p>
+<p>Para practicar la instalación y probar variaciones, es recomendable hacerlo en una máquina virtual, por ejemplo, usando <strong>VirtualBox</strong>.</p>
+<p>En cuanto a los requisitos, vamos a partir de una distribución <em>Debian Jessie</em> normal, con una cantidad de memoria tirando a poca, y con un disco también bastante escaso. El resultado es bastante ligero.</p>
+<div class="highlight"><pre>root@kobayashi-maru:~# cat /etc/debian_version
+8.4
+root@kobayashi-maru:~# free -m
+             total       used       free     shared    buffers     cached
+Mem:           <span class="m">500</span>         <span class="m">65</span>        <span class="m">435</span>          <span class="m">4</span>          <span class="m">6</span>         34
+-/+ buffers/cache:         <span class="m">23</span>        476
+Swap:            <span class="m">0</span>          <span class="m">0</span>          0
+root@kobayashi-maru:~# df -h
+S.ficheros     Tamaño Usados  Disp Uso% Montado en
+/dev/sda1        4,0G   600M  3,2G  16% /
+udev              10M      <span class="m">0</span>   10M   0% /dev
+tmpfs            101M   4,4M   96M   5% /run
+tmpfs            251M      <span class="m">0</span>  251M   0% /dev/shm
+tmpfs            5,0M      <span class="m">0</span>  5,0M   0% /run/lock
+tmpfs            251M      <span class="m">0</span>  251M   0% /sys/fs/cgroup
+root@kobayashi-maru:~#
+</pre></div>
+
+
+<p>Las buenas prácticas requieren separar algunas de las carpetas en particiones distintas, de forma que el disco raíz no se llene por el uso diario de los usuarios. Especialmente se recomienda asignar una partición o disco para la carpeta <em>/home/</em>.</p>
+<h2>El sistema de ventanas</h2>
+<p>Como primer paso, necesitamos el servidor de ventanas, que se encarga de mediar entre los <em>drivers</em> y las aplicaciones. En la distribución utilizada, se utiliza <strong>xorg</strong> para esta función.</p>
+<div class="highlight"><pre>root@kobayashi-maru:~# apt-get install xorg
+...
+root@kobayashi-maru:~#
+</pre></div>
+
+
+<p>Esto nos va a instalar el servidor, y gracias al sistema de dependencias de <em>Debian</em>, todos los drivers de entrada y de vídeo; esto añade muchos paquetes que seguramente no usaremos jamás, que necesitan irse actualizando y ocupan espacio en disco. En caso de querer reducir la cantidad de drivers instalados, y sabiendo los que necesitamos, podemos instalar los necesarios solamente.</p>
+<div class="highlight"><pre>root@kobayashi-maru:~# apt-get install xserver-xorg xserver-xorg-input-kbd xserver-xorg-input-mouse xserver-xorg-video-vesa
+...
+root@kobayashi-maru:~#
+</pre></div>
+
+
+<p>En este caso, yo opté por este sistema, instalando el <em>driver</em> de vídeo <em>vesa</em>, que es el que funciona con <strong>VirtualBox</strong> (este <em>driver</em> funciona siempre). En el caso de mi ordenador, puse el <em>driver</em> de vídeo <em>intel</em> (que es la tarjeta gráfica que tengo) y añadí el <em>driver</em> de entrada <em>synaptics</em> (que gestiona el <em>touchpad</em>).</p>
+<h2>El entorno de escritorio</h2>
+<p>En este apartado tenemos muchas posibilidades; el ecosistema de entornos de escritorio es grande, pudiendo elegir entre <em>GNOME</em>, <em>KDE</em>, <em>XFCE</em>, <em>LXDE</em> y otros tantos.</p>
+<p>Un entorno de escritorio que me gusta por su simplicidad es <em>LXDE</em>, que se puede instalar con el paquete <strong>lxde</strong>.</p>
+<div class="highlight"><pre>root@kobayashi-maru:~# apt-get install lxde
+...
+root@kobayashi-maru:~#
+</pre></div>
+
+
+<p>En caso de no necesitar todos los paquetes, es posible instalar un conjunto menor de paquetes. Una selección bastante completa podría ser la siguiente:</p>
+<div class="highlight"><pre>root@kobayashi-maru:~# apt-get install lxde-core lxappearance lxterminal lxtask
+...
+root@kobayashi-maru:~#
+</pre></div>
+
+
+<p>Sin embargo, este entorno de escritorio está muy limitado en cuando a herramientas de configuración, y yo preferí instalar <em>XFCE</em>, que conseguí con los paquetes <strong>xfce4</strong> y <strong>xfce4-goodies</strong> (opcional; incluye algunos <em>plugins</em> y aplicaciones extras).</p>
+<div class="highlight"><pre>root@kobayashi-maru:~# apt-get install xfce4 xfce4-goodies
+...
+root@kobayashi-maru:~#
+</pre></div>
+
+
+<h2>Cargar el modo gráfico</h2>
+<p>El primer método consiste en trabajar en modo terminal, levantando manualmente el entorno gráfico invocando el comando <strong>startx</strong>, que se encuentra en el paquete <strong>xinit</strong>.</p>
+<div class="highlight"><pre>root@kobayashi-maru:~# apt-get install xinit
+...
+root@kobayashi-maru:~#
+</pre></div>
+
+
+<p>Esto no es cómodo para el usuario corriente; lo normal es tener una pantalla de <em>login</em> para entrar en la sesión de escritorio. Nuevamente hay muchas alternativas, pero en nuestro caso hemos optado por poner el paquete <strong>lightdm</strong>.</p>
+<div class="highlight"><pre>root@kobayashi-maru:~# apt-get install lightdm
+...
+root@kobayashi-maru:~#
+</pre></div>
+
+
+<h2>Otras utilidades</h2>
+<p>Dependiendo del uso que vayamos a hacer, es interesante que nuestro ordenador pueda reproducir sonidos y tenga un gestor de redes, tanto cableadas como <em>wifi</em>.</p>
+<p>El primero consiste en usar <em>ALSA</em>, y detectar la configuración de nuestro sonido, guardando dicha configuración para futuros reinicios de la máquina.</p>
+<div class="highlight"><pre>root@kobayashi-maru:~# apt-get install alsa-utils
+...
+root@kobayashi-maru:~# alsactl init
+Found hardware: <span class="s2">&quot;ICH&quot;</span> <span class="s2">&quot;SigmaTel STAC9700,83,84&quot;</span> <span class="s2">&quot;AC97a:83847600&quot;</span> <span class="s2">&quot;0x8086&quot;</span> <span class="s2">&quot;0x0000&quot;</span>
+Hardware is initialized using a generic method
+root@kobayashi-maru:~# alsactl store
+root@kobayashi-maru:~#
+</pre></div>
+
+
+<p>Para la parte del gestor de redes, hay nuevamente debate. Uno que me gusta y que cumple bien con su función es <strong>wicd</strong>.</p>
+<div class="highlight"><pre>root@kobayashi-maru:~# apt-get install wicd
+...
+root@kobayashi-maru:~#
+</pre></div>
+
+
+<h2>Las aplicaciones</h2>
+<p>Las aplicaciones a instalar son un tema muy personal; cada usuario va a necesitar unos tipos de aplicaciones u otras. Incluso así, de las aplicaciones de un tipo dado, pueden haber diversas opciones.</p>
+<p>Estas aplicaciones se pueden ir instalando a <em>posteriori</em>, tal como se vayan necesitando. Sin embargo, podemos poner aquellas que se van a usar seguro, como un navegador web, por ejemplo <em>Chromium</em>.</p>
+<div class="highlight"><pre>root@kobayashi-maru:~# apt-get install chromium
+...
+root@kobayashi-maru:~#
+</pre></div>
+
+
+<p>Y para los fans de <em>Firefox</em>, también hay su alternativa:</p>
+<div class="highlight"><pre>root@kobayashi-maru:~# apt-get install iceweasel
+...
+root@kobayashi-maru:~#
+</pre></div>
+
+
+<h2>Y finalmente, la magia</h2>
+<p>Podemos limpiar los paquetes descargados e instalados, mediante un <em>clean</em> simple de <strong>apt-get</strong>. Esto liberará algunos <em>megas</em>.</p>
+<div class="highlight"><pre>root@kobayashi-maru:~# apt-get clean
+root@kobayashi-maru:~#
+</pre></div>
+
+
+<p>Rebotamos nuestro ordenador, y dejamos que lo instalado tome el control del <em>boot</em>.</p>
+<div class="highlight"><pre>root@kobayashi-maru:~# reboot
+...
+</pre></div>
+
+
+<p>Iremos a parar a la pantalla de <em>login</em>, y con un usuario adecuado deberíamos ver nuestro escritorio, tal como se muestra.</p>
+<p><img alt="Escritorio XFCE" src="http://www.linuxsysadmin.tk/images/escritorio-xfce.jpg" /></p>
+<p>Ahora es tarea del usuario tunear el escritorio a su gusto, con paneles, <em>plugins</em> y <em>wallpapers</em>.</p>
+<h2>Un apunte sobre los recursos</h2>
+<p>Tras instalar todos los componentes, vemos que los recursos apenas han subido; lo que nos da una idea del tipo de <em>hardware</em> que podemos usar.</p>
+<div class="highlight"><pre>gerard@kobayashi-maru:~<span class="nv">$ </span>df -h
+S.ficheros     Tamaño Usados  Disp Uso% Montado en
+/dev/sda1        4,0G   1,4G  2,5G  36% /
+udev              10M      <span class="m">0</span>   10M   0% /dev
+tmpfs            101M   4,4M   96M   5% /run
+tmpfs            251M      <span class="m">0</span>  251M   0% /dev/shm
+tmpfs            5,0M   4,0K  5,0M   1% /run/lock
+tmpfs            251M      <span class="m">0</span>  251M   0% /sys/fs/cgroup
+tmpfs             51M   4,0K   51M   1% /run/user/110
+tmpfs             51M   4,0K   51M   1% /run/user/1000
+gerard@kobayashi-maru:~<span class="nv">$ </span>free -m
+             total       used       free     shared    buffers     cached
+Mem:           <span class="m">500</span>        <span class="m">238</span>        <span class="m">262</span>          <span class="m">5</span>         <span class="m">15</span>        125
+-/+ buffers/cache:         <span class="m">96</span>        404
+Swap:            <span class="m">0</span>          <span class="m">0</span>          0
+gerard@kobayashi-maru:~<span class="err">$</span>
+</pre></div>
+
+
+<p>El disco ha aumentado en unos 900 mb y la memoria ha pasado de 23 a 96 mb, sin tener ninguna aplicación abierta.</p>
+<p><strong>CUIDADO</strong>: Algunas aplicaciones necesitan mucho disco y también memoria. Depende de lo que se ponga, podemos pasar de unos requerimientos <em>hardware</em> austeros, a una máquina que dejaría de juguete a un supercomputador...</p>
+<p>Para el uso que doy de mi <em>netbook</em> (navegar, redacción de artículos, programación de <em>scripts</em> y alguna sesión de <em>SSH</em>), los 2gb de memoria me sobran; con 128 mb tendría suficiente.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'un-escritorio-minimo-con-debian';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
