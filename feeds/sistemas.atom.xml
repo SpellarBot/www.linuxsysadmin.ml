@@ -1,5 +1,391 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-03-21T08:00:00+01:00</updated><entry><title>Creando un entorno escalable (IV)</title><link href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html" rel="alternate"></link><updated>2016-03-21T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-03-21:2016/03/creando-un-entorno-escalable-4.html</id><summary type="html">&lt;p&gt;Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un &lt;em&gt;proxy HTTP&lt;/em&gt; que haga las funciones de terminación &lt;em&gt;SSL&lt;/em&gt; y de &lt;em&gt;balanceador&lt;/em&gt;, exponiendo todo el sistema en una sola dirección IP.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-02T00:00:00+02:00</updated><entry><title>MongoDB sharding con ansible</title><link href="http://www.linuxsysadmin.tk/2016/05/mongodb-sharding-con-ansible.html" rel="alternate"></link><updated>2016-05-02T00:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-02:2016/05/mongodb-sharding-con-ansible.html</id><summary type="html">&lt;p&gt;Como ya vimos en un artículo anterior, los &lt;em&gt;replica sets&lt;/em&gt; nos ofrecen alta disponibilidad para nuestros despliegues de &lt;strong&gt;mongodb&lt;/strong&gt;. Sin embargo, algunas veces, necesitamos que nuestro &lt;em&gt;cluster&lt;/em&gt; ofrezca alto rendimiento, y esto se consigue mediante &lt;em&gt;sharding&lt;/em&gt;. Como no queremos renunciar a la alta disponibilidad, podemos aplicar ambas; hoy explicamos como.&lt;/p&gt;
+&lt;p&gt;El mecanismo de &lt;em&gt;sharding&lt;/em&gt; es bastante simple: tenemos nuestros datos repartidos entre uno o mas &lt;em&gt;shards&lt;/em&gt;, que se van a repartir los datos del &lt;em&gt;cluster&lt;/em&gt;. Para mantener un control de donde están los datos, también vamos a necesitar unos procesos especiales llamados &lt;em&gt;config servers&lt;/em&gt;. Finalmente, habrá que poner algunos procesos &lt;em&gt;mongos&lt;/em&gt; que son unos &lt;em&gt;proxies&lt;/em&gt; al &lt;em&gt;cluster&lt;/em&gt; y sirven para ocultar la complejidad del mismo.&lt;/p&gt;
+&lt;h2&gt;Visión del conjunto&lt;/h2&gt;
+&lt;p&gt;Hay que decir que el mecanismo de &lt;em&gt;sharding&lt;/em&gt; permite poner y quitar &lt;em&gt;shards&lt;/em&gt; a &lt;em&gt;posteriori&lt;/em&gt;, igual que con los procesos &lt;em&gt;mongos&lt;/em&gt;, pero para empezar vamos a necesitar una arquitectura inicial que es lo que vamos a montar.&lt;/p&gt;
+&lt;p&gt;Para empezar se ha decidido por un &lt;em&gt;cluster&lt;/em&gt; de 3 &lt;em&gt;shards&lt;/em&gt;, siendo cada uno de ellos un &lt;em&gt;replica set&lt;/em&gt; de dos nodos de datos y un árbitro cada uno. Usaremos la cantidad de &lt;em&gt;config servers&lt;/em&gt; que se recomienda en la documentación oficial.&lt;/p&gt;
+&lt;p&gt;Así pues, y tras elegir nombres para los &lt;em&gt;shards&lt;/em&gt;, podemos pintar un esquema de nuestro &lt;em&gt;cluster&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Arquitectura lógica" src="http://www.linuxsysadmin.tk/images/sharding_arquitectura_logica.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;Para repartir los procesos entre las máquinas, hay dos reglas que hay que respetar a rajatabla:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Los procesos de datos necesitan una máquina propia, para que no se disputen los recursos de disco y memoria.&lt;/li&gt;
+&lt;li&gt;No hay que poner nunca dos o mas procesos de cada &lt;em&gt;shard&lt;/em&gt;, ya que la no disponibilidad de la máquina supondría la pérdida de la mayoría de las &lt;em&gt;replica sets&lt;/em&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;El resto de procesos pueden compartir servidor con los de datos. Hay muchas formas de cumplir con las dos reglas, por ejemplo, la que vamos a montar:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Arquitectura física" src="http://www.linuxsysadmin.tk/images/sharding_arquitectura_fisica.jpg" /&gt;&lt;/p&gt;
+&lt;h2&gt;Ansible al rescate&lt;/h2&gt;
+&lt;p&gt;Debido a la gran cantidad de procesos que hay que levantar, se ha decidido por automatizar su despliegue mediante &lt;strong&gt;ansible&lt;/strong&gt;. El proceso es bastante similar a &lt;a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html"&gt;otro de nuestros artículos&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Se ha utilizado el mecanismo de &lt;strong&gt;roles&lt;/strong&gt; de &lt;strong&gt;ansible&lt;/strong&gt;, para poder desplegar todos los procesos del mismo tipo; el detalle es que se han usado los parámetros en los &lt;strong&gt;roles&lt;/strong&gt; para los cambios menores. Si queréis intentarlo o entender como funcionan los despliegues, podéis encontrar los &lt;strong&gt;playbooks&lt;/strong&gt; &lt;a href="http://www.linuxsysadmin.tk/downloads/sharding_playbooks.tar.gz"&gt;aquí&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;El fichero comprimido no incluye los binarios de &lt;strong&gt;mongodb&lt;/strong&gt; para reducir tamaño, así que hay que añadirlos en las respectivas carpetas &lt;em&gt;files&lt;/em&gt;. Tras descomprimir el fichero &lt;em&gt;.tar.gz&lt;/em&gt; y poner los binarios ausentes, nos debería quedar algo como esto:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# tree
+.
+├── aquila_shard.yaml
+├── clients.yaml
+├── config_servers.yaml
+├── cygnus_shard.yaml
+├── hosts.yaml
+├── lyra_shard.yaml
+├── mongos_servers.yaml
+└── roles
+    ├── client
+    │   ├── files
+    │   │   └── mongo
+    │   └── tasks
+    │       └── main.yaml
+    ├── config
+    │   ├── meta
+    │   │   └── main.yaml
+    │   ├── tasks
+    │   │   └── main.yaml
+    │   └── templates
+    │       ├── config.conf
+    │       └── config.service
+    ├── mongod
+    │   ├── files
+    │   │   └── mongod
+    │   └── tasks
+    │       └── main.yaml
+    ├── mongos
+    │   ├── files
+    │   │   └── mongos
+    │   ├── tasks
+    │   │   └── main.yaml
+    │   └── templates
+    │       ├── mongos.conf
+    │       └── mongos.service
+    └── shard
+        ├── meta
+        │   └── main.yaml
+        ├── tasks
+        │   └── main.yaml
+        └── templates
+            ├── shard.conf
+            └── shard.service
+
+&lt;span class="m"&gt;19&lt;/span&gt; directories, &lt;span class="m"&gt;23&lt;/span&gt; files
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Preparación de las máquinas&lt;/h2&gt;
+&lt;p&gt;De acuerdo con la arquitectura propuesta, vamos a necesitar 6 servidores para el &lt;em&gt;cluster&lt;/em&gt;, que vamos a montar como contenedores LXC y, aunque no es lo ideal, nos vale como demostración. En la séptima máquina es donde tenemos las herramientas de configuración, en este caso, &lt;strong&gt;ansible&lt;/strong&gt; y los &lt;strong&gt;playbooks&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# lxc-ls -f
+NAME     STATE    IPV4        IPV6  AUTOSTART
+---------------------------------------------
+ansible  RUNNING  10.0.0.254  -     NO
+mongo01  RUNNING  10.0.0.2    -     NO
+mongo02  RUNNING  10.0.0.3    -     NO
+mongo03  RUNNING  10.0.0.4    -     NO
+mongo04  RUNNING  10.0.0.5    -     NO
+mongo05  RUNNING  10.0.0.6    -     NO
+mongo06  RUNNING  10.0.0.7    -     NO
+root@lxc:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a declarar todas las máquina usadas en el fichero &lt;em&gt;hosts&lt;/em&gt; de &lt;strong&gt;ansible&lt;/strong&gt;. Ya de paso, los vamos a catalogar en grupos, para que los &lt;strong&gt;playbooks&lt;/strong&gt; se puedan lanzar a los grupos, indistintamente de los servidores que los formen.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# cat ansible/etc/hosts
+&lt;span class="o"&gt;[&lt;/span&gt;mongo_servers&lt;span class="o"&gt;]&lt;/span&gt;
+10.0.0.2
+10.0.0.3
+10.0.0.4
+10.0.0.5
+10.0.0.6
+10.0.0.7
+
+&lt;span class="o"&gt;[&lt;/span&gt;config_servers&lt;span class="o"&gt;]&lt;/span&gt;
+10.0.0.2
+10.0.0.3
+10.0.0.4
+
+&lt;span class="o"&gt;[&lt;/span&gt;aquila_shard_data&lt;span class="o"&gt;]&lt;/span&gt;
+10.0.0.2
+10.0.0.5
+
+&lt;span class="o"&gt;[&lt;/span&gt;aquila_shard_arbiters&lt;span class="o"&gt;]&lt;/span&gt;
+10.0.0.6
+
+&lt;span class="o"&gt;[&lt;/span&gt;lyra_shard_data&lt;span class="o"&gt;]&lt;/span&gt;
+10.0.0.3
+10.0.0.6
+
+&lt;span class="o"&gt;[&lt;/span&gt;lyra_shard_arbiters&lt;span class="o"&gt;]&lt;/span&gt;
+10.0.0.7
+
+&lt;span class="o"&gt;[&lt;/span&gt;cygnus_shard_data&lt;span class="o"&gt;]&lt;/span&gt;
+10.0.0.4
+10.0.0.7
+
+&lt;span class="o"&gt;[&lt;/span&gt;cygnus_shard_arbiters&lt;span class="o"&gt;]&lt;/span&gt;
+10.0.0.5
+
+&lt;span class="o"&gt;[&lt;/span&gt;mongos_servers&lt;span class="o"&gt;]&lt;/span&gt;
+10.0.0.2
+
+&lt;span class="o"&gt;[&lt;/span&gt;clients&lt;span class="o"&gt;]&lt;/span&gt;
+10.0.0.2
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Por comodidad, vamos a referirnos a las máquinas por su nombre, y a falta de un servidor DNS adecuado, vamos a rellenar sus ficheros &lt;em&gt;/etc/hosts&lt;/em&gt;; para ello vamos a usar un &lt;strong&gt;playbook&lt;/strong&gt; que se asegure que esas líneas están en el fichero.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible-playbook hosts.yaml
+
+...
+
+PLAY RECAP *********************************************************************
+10.0.0.2                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+10.0.0.3                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+10.0.0.4                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+10.0.0.5                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+10.0.0.6                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+10.0.0.7                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Los config servers&lt;/h2&gt;
+&lt;p&gt;Los &lt;em&gt;config servers&lt;/em&gt; son procesos &lt;strong&gt;mongod&lt;/strong&gt; con una configuración concreta. El &lt;strong&gt;playbook&lt;/strong&gt; se limita a crear una estructura en &lt;em&gt;/opt/mongodb/&lt;/em&gt; asegurándose que hay el binario &lt;strong&gt;mongod&lt;/strong&gt;, la configuración, la carpeta de datos y la &lt;em&gt;unit&lt;/em&gt; de &lt;strong&gt;systemd&lt;/strong&gt; activa.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible-playbook config_servers.yaml
+
+...
+
+PLAY RECAP *********************************************************************
+10.0.0.2                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+10.0.0.3                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+10.0.0.4                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Un acceso al cluster&lt;/h2&gt;
+&lt;p&gt;Para poder configurar el &lt;em&gt;cluster&lt;/em&gt; y para un uso futuro, hemos decidido poner un proceso &lt;strong&gt;mongos&lt;/strong&gt; y el binario &lt;strong&gt;mongo&lt;/strong&gt; para poder acceder al &lt;em&gt;mongo shell&lt;/em&gt;. Se ha optado por separar los &lt;strong&gt;playbooks&lt;/strong&gt;; así se podrá utilizar para desplegarlos por separado en futuras máquinas que los puedan usar.&lt;/p&gt;
+&lt;p&gt;De hecho, la recomendación oficial es poner un &lt;strong&gt;mongos&lt;/strong&gt; en cada &lt;em&gt;backend&lt;/em&gt;, aunque no necesitan el binario &lt;strong&gt;mongo&lt;/strong&gt; porque disponen de los &lt;em&gt;drivers&lt;/em&gt; oficiales del lenguaje que utilicen.&lt;/p&gt;
+&lt;p&gt;Empezaremos desplegando los procesos &lt;strong&gt;mongos&lt;/strong&gt; en donde toque (de momento solo en el servidor &lt;em&gt;mongo01&lt;/em&gt;). Este &lt;strong&gt;playbook&lt;/strong&gt; se limita a poner el binario &lt;strong&gt;mongos&lt;/strong&gt; y su respectiva &lt;em&gt;unit&lt;/em&gt; para &lt;strong&gt;systemd&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible-playbook mongos_servers.yaml
+
+...
+
+PLAY RECAP *********************************************************************
+10.0.0.2                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para nuestra comodidad, también vamos a desplegar el &lt;em&gt;mongo shell&lt;/em&gt;. Este &lt;strong&gt;playbook&lt;/strong&gt; se limita a poner el binario &lt;strong&gt;mongo&lt;/strong&gt; en su sitio.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible-playbook clients.yaml
+
+...
+
+PLAY RECAP *********************************************************************
+10.0.0.2                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Los procesos de los shards&lt;/h2&gt;
+&lt;p&gt;Tenemos 9 procesos de este tipo, así que los &lt;strong&gt;roles&lt;/strong&gt; de &lt;strong&gt;ansible&lt;/strong&gt; tienen un protagonismo especial. Los cambios entre los procesos son mínimos, y se pasan por parámetro para que el rol cree los ficheros necesarios a partir de una plantilla. El rol se encarga solamente de poner el binario &lt;strong&gt;mongod&lt;/strong&gt; en &lt;em&gt;/opt/mongodb/bin&lt;/em&gt;, crear la carpeta de datos y configurar el servicio como una &lt;em&gt;unit&lt;/em&gt; de &lt;strong&gt;systemd&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Se ha decidido separar los &lt;em&gt;shards&lt;/em&gt; en diferentes &lt;strong&gt;playbooks&lt;/strong&gt; para simplificar la creación de futuros nuevos &lt;em&gt;shards&lt;/em&gt;; así pues, lanzamos el &lt;strong&gt;playbook&lt;/strong&gt; para el primer &lt;em&gt;shard&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible-playbook aquila_shard.yaml
+
+...
+
+PLAY RECAP *********************************************************************
+10.0.0.2                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+10.0.0.5                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+10.0.0.6                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Acto seguido, lanzamos el &lt;strong&gt;playbook&lt;/strong&gt; responsable de montar los procesos del segundo &lt;em&gt;shard&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible-playbook lyra_shard.yaml
+
+...
+
+PLAY RECAP *********************************************************************
+10.0.0.3                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+10.0.0.6                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+10.0.0.7                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y finalmente, lanzamos el tercer &lt;strong&gt;playbook&lt;/strong&gt; para desplegar los procesos del último &lt;em&gt;shard&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible-playbook cygnus_shard.yaml
+
+...
+
+PLAY RECAP *********************************************************************
+10.0.0.4                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+10.0.0.5                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+10.0.0.7                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Atando los replica sets&lt;/h2&gt;
+&lt;p&gt;El paso anterior nos ha dejado todos los procesos en funcionamiento, pero no hemos iniciado los &lt;em&gt;replica sets&lt;/em&gt;. Para que funcionen como tal, tenemos que configurarlos uno por uno como ya sabemos hacer, usando &lt;em&gt;rs.status()&lt;/em&gt; para verificar que ha quedado todo como debe.&lt;/p&gt;
+&lt;p&gt;Empezaremos con una máquina cualquiera del primer &lt;em&gt;shard&lt;/em&gt;; la configuración se propagará al resto sin nuestra intervención.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo01:~# /opt/mongodb/bin/mongo --host 10.0.0.5 --port 27018
+MongoDB shell version: 3.2.5
+connecting to: 10.0.0.5:27018/test
+...
+&amp;gt; &lt;span class="nv"&gt;config&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+...     _id : &lt;span class="s2"&gt;&amp;quot;aquila&amp;quot;&lt;/span&gt;,
+...      members : &lt;span class="o"&gt;[&lt;/span&gt;
+...          &lt;span class="o"&gt;{&lt;/span&gt;_id : 0, host : &lt;span class="s2"&gt;&amp;quot;mongo01:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;,
+...          &lt;span class="o"&gt;{&lt;/span&gt;_id : 1, host : &lt;span class="s2"&gt;&amp;quot;mongo04:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;,
+...          &lt;span class="o"&gt;{&lt;/span&gt;_id : 2, host : &lt;span class="s2"&gt;&amp;quot;mongo05:27020&amp;quot;&lt;/span&gt;, arbiterOnly: &lt;span class="nb"&gt;true&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;,
+...      &lt;span class="o"&gt;]&lt;/span&gt;
+... &lt;span class="o"&gt;}&lt;/span&gt;
+...
+&amp;gt; rs.initiate&lt;span class="o"&gt;(&lt;/span&gt;config&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+aquila:OTHER&amp;gt; rs.status&lt;span class="o"&gt;()&lt;/span&gt;
+...
+aquila:PRIMARY&amp;gt; &lt;span class="nb"&gt;exit&lt;/span&gt;
+bye
+root@mongo01:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Seguimos con el segundo &lt;em&gt;shard&lt;/em&gt;, entrando en una de sus máquinas y lanzando el comando de configuración.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo01:~# /opt/mongodb/bin/mongo --host 10.0.0.6 --port 27018
+MongoDB shell version: 3.2.5
+connecting to: 10.0.0.6:27018/test
+...
+&amp;gt; &lt;span class="nv"&gt;config&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+...     _id : &lt;span class="s2"&gt;&amp;quot;lyra&amp;quot;&lt;/span&gt;,
+...      members : &lt;span class="o"&gt;[&lt;/span&gt;
+...          &lt;span class="o"&gt;{&lt;/span&gt;_id : 0, host : &lt;span class="s2"&gt;&amp;quot;mongo02:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;,
+...          &lt;span class="o"&gt;{&lt;/span&gt;_id : 1, host : &lt;span class="s2"&gt;&amp;quot;mongo05:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;,
+...          &lt;span class="o"&gt;{&lt;/span&gt;_id : 2, host : &lt;span class="s2"&gt;&amp;quot;mongo06:27020&amp;quot;&lt;/span&gt;, arbiterOnly: &lt;span class="nb"&gt;true&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;,
+...      &lt;span class="o"&gt;]&lt;/span&gt;
+... &lt;span class="o"&gt;}&lt;/span&gt;
+...
+&amp;gt; rs.initiate&lt;span class="o"&gt;(&lt;/span&gt;config&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+lyra:OTHER&amp;gt; rs.status&lt;span class="o"&gt;()&lt;/span&gt;
+...
+lyra:PRIMARY&amp;gt; &lt;span class="nb"&gt;exit&lt;/span&gt;
+bye
+root@mongo01:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y montamos el tercer &lt;em&gt;shard&lt;/em&gt; desde una cualquiera de sus &lt;em&gt;replicas&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo01:~# /opt/mongodb/bin/mongo --host 10.0.0.7 --port 27018
+MongoDB shell version: 3.2.5
+connecting to: 10.0.0.7:27018/test
+...
+&amp;gt; &lt;span class="nv"&gt;config&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+...     _id : &lt;span class="s2"&gt;&amp;quot;cygnus&amp;quot;&lt;/span&gt;,
+...      members : &lt;span class="o"&gt;[&lt;/span&gt;
+...          &lt;span class="o"&gt;{&lt;/span&gt;_id : 0, host : &lt;span class="s2"&gt;&amp;quot;mongo03:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;,
+...          &lt;span class="o"&gt;{&lt;/span&gt;_id : 1, host : &lt;span class="s2"&gt;&amp;quot;mongo06:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;,
+...          &lt;span class="o"&gt;{&lt;/span&gt;_id : 2, host : &lt;span class="s2"&gt;&amp;quot;mongo04:27020&amp;quot;&lt;/span&gt;, arbiterOnly: &lt;span class="nb"&gt;true&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;,
+...      &lt;span class="o"&gt;]&lt;/span&gt;
+... &lt;span class="o"&gt;}&lt;/span&gt;
+...
+&amp;gt; rs.initiate&lt;span class="o"&gt;(&lt;/span&gt;config&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+cygnus:OTHER&amp;gt; rs.status&lt;span class="o"&gt;()&lt;/span&gt;
+...
+cygnus:PRIMARY&amp;gt; &lt;span class="nb"&gt;exit&lt;/span&gt;
+bye
+root@mongo01:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Añadiendo los shards al cluster&lt;/h2&gt;
+&lt;p&gt;Ahora tenemos un grupo de &lt;em&gt;config servers&lt;/em&gt;, que forman un &lt;em&gt;cluster&lt;/em&gt; de 0 &lt;em&gt;shards&lt;/em&gt; (válido pero inútil, ya que no tenemos donde guardar los datos). También disponemos de 3 &lt;em&gt;replica sets&lt;/em&gt; independientes, que se convertirán en los futuros &lt;em&gt;shards&lt;/em&gt;. Solo falta asociar los &lt;em&gt;shards&lt;/em&gt; al resto del &lt;em&gt;cluster&lt;/em&gt;, mediante el comando &lt;em&gt;sh.addShard()&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Para ello entramos en un &lt;strong&gt;mongos&lt;/strong&gt; desde donde lanzaremos los comandos. De hecho, solo tenemos uno, en &lt;em&gt;mongo01&lt;/em&gt;. Puesto que está en la misma máquina que el cliente &lt;strong&gt;mongo&lt;/strong&gt; y corre en el puerto estándar 27017, no hace falta especificar ni el &lt;em&gt;host&lt;/em&gt; ni el puerto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@mongo01:~# /opt/mongodb/bin/mongo
+MongoDB shell version: 3.2.5
+connecting to: &lt;span class="nb"&gt;test&lt;/span&gt;
+...
+mongos&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Veamos como está el cluster antes de añadir los &lt;em&gt;shards&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;mongos&amp;gt; printShardingStatus&lt;span class="o"&gt;()&lt;/span&gt;
+--- Sharding Status ---
+  sharding version: &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : 1,
+        &lt;span class="s2"&gt;&amp;quot;minCompatibleVersion&amp;quot;&lt;/span&gt; : 5,
+        &lt;span class="s2"&gt;&amp;quot;currentVersion&amp;quot;&lt;/span&gt; : 6,
+        &lt;span class="s2"&gt;&amp;quot;clusterId&amp;quot;&lt;/span&gt; : ObjectId&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;571dd47adbda7a5a80047a5d&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+  shards:
+  active mongoses:
+        &lt;span class="s2"&gt;&amp;quot;3.2.5&amp;quot;&lt;/span&gt; : 1
+  balancer:
+        Currently enabled:  yes
+        Currently running:  no
+        Failed balancer rounds in last &lt;span class="m"&gt;5&lt;/span&gt; attempts:  0
+        Migration Results &lt;span class="k"&gt;for&lt;/span&gt; the last &lt;span class="m"&gt;24&lt;/span&gt; hours:
+                No recent migrations
+  databases:
+
+mongos&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Procedemos a lanzar el comando para añadir cada &lt;em&gt;shard&lt;/em&gt;. Es interesante saber que el proceso &lt;strong&gt;mongos&lt;/strong&gt; puede reconocer la forma de cada &lt;em&gt;replica set&lt;/em&gt; a partir de cualquiera de sus procesos. Podemos dar la URL con una sola máquina, o con varias de ellas. Lo importante es que alguna de ellas esté levantada, para que el proceso &lt;strong&gt;mongos&lt;/strong&gt; pueda descubrir el resto a partir de su configuración.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;mongos&amp;gt; sh.addShard&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;aquila/mongo01:27018&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;shardAdded&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;aquila&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+mongos&amp;gt; sh.addShard&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;lyra/mongo02:27018,mongo05:27018,mongo06:27020&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;shardAdded&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;lyra&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+mongos&amp;gt; sh.addShard&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;cygnus/mongo06:27018&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;shardAdded&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;cygnus&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+mongos&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Después de añadir los &lt;em&gt;shards&lt;/em&gt;, podemos ver como queda el &lt;em&gt;cluster&lt;/em&gt; con una sola consulta.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;mongos&amp;gt; printShardingStatus&lt;span class="o"&gt;()&lt;/span&gt;
+--- Sharding Status ---
+  sharding version: &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : 1,
+        &lt;span class="s2"&gt;&amp;quot;minCompatibleVersion&amp;quot;&lt;/span&gt; : 5,
+        &lt;span class="s2"&gt;&amp;quot;currentVersion&amp;quot;&lt;/span&gt; : 6,
+        &lt;span class="s2"&gt;&amp;quot;clusterId&amp;quot;&lt;/span&gt; : ObjectId&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;571dd47adbda7a5a80047a5d&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+  shards:
+        &lt;span class="o"&gt;{&lt;/span&gt;  &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;aquila&amp;quot;&lt;/span&gt;,  &lt;span class="s2"&gt;&amp;quot;host&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;aquila/mongo01:27018,mongo04:27018&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+        &lt;span class="o"&gt;{&lt;/span&gt;  &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;cygnus&amp;quot;&lt;/span&gt;,  &lt;span class="s2"&gt;&amp;quot;host&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;cygnus/mongo03:27018,mongo06:27018&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+        &lt;span class="o"&gt;{&lt;/span&gt;  &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;lyra&amp;quot;&lt;/span&gt;,  &lt;span class="s2"&gt;&amp;quot;host&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;lyra/mongo02:27018,mongo05:27018&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+  active mongoses:
+        &lt;span class="s2"&gt;&amp;quot;3.2.5&amp;quot;&lt;/span&gt; : 1
+  balancer:
+        Currently enabled:  yes
+        Currently running:  no
+        Failed balancer rounds in last &lt;span class="m"&gt;5&lt;/span&gt; attempts:  0
+        Migration Results &lt;span class="k"&gt;for&lt;/span&gt; the last &lt;span class="m"&gt;24&lt;/span&gt; hours:
+                No recent migrations
+  databases:
+
+mongos&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y como todo funciona como debe, salimos del &lt;em&gt;mongo shell&lt;/em&gt; para evitar meter la pata.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;mongos&amp;gt; &lt;span class="nb"&gt;exit&lt;/span&gt;
+bye
+root@mongo01:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto, tenemos nuestro &lt;em&gt;cluster&lt;/em&gt; listo y preparado para su uso.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="mongodb"></category><category term="replica set"></category><category term="sharding"></category><category term="ansible"></category><category term="playbook"></category><category term="systemd"></category></entry><entry><title>Creando un entorno escalable (IV)</title><link href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html" rel="alternate"></link><updated>2016-03-21T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-03-21:2016/03/creando-un-entorno-escalable-4.html</id><summary type="html">&lt;p&gt;Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un &lt;em&gt;proxy HTTP&lt;/em&gt; que haga las funciones de terminación &lt;em&gt;SSL&lt;/em&gt; y de &lt;em&gt;balanceador&lt;/em&gt;, exponiendo todo el sistema en una sola dirección IP.&lt;/p&gt;
 &lt;p&gt;Como &lt;em&gt;proxy HTTP&lt;/em&gt; tenemos varias opciones; solo se necesita un servidor web que soporte &lt;em&gt;virtual hosts&lt;/em&gt;, protocolo HTTP sobre SSL, capacidad de hacer de &lt;em&gt;proxy&lt;/em&gt; y capacidad para balancear las peticiones entre varias opciones.&lt;/p&gt;
 &lt;p&gt;Si analizamos estos requisitos, podemos comprobar que las opciones son muchas; desde el todopoderoso &lt;strong&gt;apache&lt;/strong&gt; al &lt;strong&gt;nginx&lt;/strong&gt;, pasando por soluciones de balanceador puro como &lt;strong&gt;haproxy&lt;/strong&gt;, u opciones mas esotéricas como &lt;strong&gt;squid&lt;/strong&gt;. En este caso, se utiliza &lt;strong&gt;nginx&lt;/strong&gt; por su facilidad de uso y su bajo consumo de recursos. Cumple con el subconjunto básico de funcionalidades necesario, pero no dispone de tantos algoritmos de balanceo como otras opciones.&lt;/p&gt;
 &lt;h2&gt;Instalación de paquetes&lt;/h2&gt;
