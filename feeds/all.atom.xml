@@ -1,5 +1,264 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-02T00:00:00+02:00</updated><entry><title>MongoDB sharding con ansible</title><link href="http://www.linuxsysadmin.tk/2016/05/mongodb-sharding-con-ansible.html" rel="alternate"></link><updated>2016-05-02T00:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-02:2016/05/mongodb-sharding-con-ansible.html</id><summary type="html">&lt;p&gt;Como ya vimos en un artículo anterior, los &lt;em&gt;replica sets&lt;/em&gt; nos ofrecen alta disponibilidad para nuestros despliegues de &lt;strong&gt;mongodb&lt;/strong&gt;. Sin embargo, algunas veces, necesitamos que nuestro &lt;em&gt;cluster&lt;/em&gt; ofrezca alto rendimiento, y esto se consigue mediante &lt;em&gt;sharding&lt;/em&gt;. Como no queremos renunciar a la alta disponibilidad, podemos aplicar ambas; hoy explicamos como.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-09T08:00:00+02:00</updated><entry><title>Algunas ideas sueltas sobre Ansible</title><link href="http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html" rel="alternate"></link><updated>2016-05-09T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-09:2016/05/algunas-ideas-sueltas-sobre-ansible.html</id><summary type="html">&lt;p&gt;En un &lt;a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html"&gt;artículo anterior&lt;/a&gt; vimos qué era &lt;strong&gt;Ansible&lt;/strong&gt; y como instalarlo, dejando su funcionamiento para el lector; Hay miles de tutoriales por internet, y muchos son mejores de los que pueda poner aquí. Sin embargo, hay algunas ideas que no son fáciles de ver juntas, así que aquí las dejo.&lt;/p&gt;
+&lt;h2&gt;Playbooks plantilla&lt;/h2&gt;
+&lt;p&gt;Si solo queremos los &lt;em&gt;playbooks&lt;/em&gt; como una manera fácil de aprovisionar una máquina, nos conviene que no tenga un &lt;em&gt;host&lt;/em&gt; asignado en el mismo, para poder pasar el objetivo por parámetro. Por ejemplo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# cat ping.yml
+- hosts: &lt;span class="s1"&gt;&amp;#39;{{ target }}&amp;#39;&lt;/span&gt;
+  tasks:
+    - ping:
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso hay que pasar un argumento extra como &lt;em&gt;target&lt;/em&gt;, y en caso de no ponerlo, el &lt;em&gt;playbook&lt;/em&gt; no haría nada. Con este truco, podemos ir variando el objetivo, siempre que esté en el fichero &lt;em&gt;hosts&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible-playbook ping.yml
+
+PLAY &lt;span class="o"&gt;[{{&lt;/span&gt; target &lt;span class="o"&gt;}}]&lt;/span&gt; ***********************************************************
+skipping: no hosts matched
+
+PLAY RECAP ********************************************************************
+
+root@ansible:~# ansible-playbook ping.yml --extra-vars &lt;span class="s2"&gt;&amp;quot;target=appservers&amp;quot;&lt;/span&gt;
+
+PLAY &lt;span class="o"&gt;[&lt;/span&gt;appservers&lt;span class="o"&gt;]&lt;/span&gt; *************************************************************
+
+GATHERING FACTS ***************************************************************
+ok: &lt;span class="o"&gt;[&lt;/span&gt;10.0.0.3&lt;span class="o"&gt;]&lt;/span&gt;
+ok: &lt;span class="o"&gt;[&lt;/span&gt;10.0.0.4&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK: &lt;span class="o"&gt;[&lt;/span&gt;ping &lt;span class="o"&gt;]&lt;/span&gt; *****************************************************************
+ok: &lt;span class="o"&gt;[&lt;/span&gt;10.0.0.4&lt;span class="o"&gt;]&lt;/span&gt;
+ok: &lt;span class="o"&gt;[&lt;/span&gt;10.0.0.3&lt;span class="o"&gt;]&lt;/span&gt;
+
+PLAY RECAP ********************************************************************
+10.0.0.3                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+10.0.0.4                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+
+root@ansible:~# ansible-playbook ping.yml --extra-vars &lt;span class="s2"&gt;&amp;quot;target=10.0.0.3&amp;quot;&lt;/span&gt;
+
+PLAY &lt;span class="o"&gt;[&lt;/span&gt;10.0.0.3&lt;span class="o"&gt;]&lt;/span&gt; ***************************************************************
+
+GATHERING FACTS ***************************************************************
+ok: &lt;span class="o"&gt;[&lt;/span&gt;10.0.0.3&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK: &lt;span class="o"&gt;[&lt;/span&gt;ping &lt;span class="o"&gt;]&lt;/span&gt; *****************************************************************
+ok: &lt;span class="o"&gt;[&lt;/span&gt;10.0.0.3&lt;span class="o"&gt;]&lt;/span&gt;
+
+PLAY RECAP ********************************************************************
+10.0.0.3                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Variar el entorno sin cambiar los playbooks&lt;/h2&gt;
+&lt;p&gt;Aunque las máquinas y las redes asignadas a cada entorno sean variables, los grupos y funcionalidades son las mismas. Suponiendo que los &lt;em&gt;playbooks&lt;/em&gt; actúen contra los grupos, variando el fichero de &lt;em&gt;hosts&lt;/em&gt; podemos conseguir todos los entornos necesarios.&lt;/p&gt;
+&lt;p&gt;De hecho, podemos tener varios ficheros de &lt;em&gt;hosts&lt;/em&gt; y especificarlos por parámetro en el momento de lanzar &lt;strong&gt;ansible-playbook&lt;/strong&gt;. Por ejemplo, para el entorno de &lt;em&gt;preproducción&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# cat hosts-pre
+&lt;span class="o"&gt;[&lt;/span&gt;loadbalancer&lt;span class="o"&gt;]&lt;/span&gt;
+172.20.0.2
+
+&lt;span class="o"&gt;[&lt;/span&gt;appservers&lt;span class="o"&gt;]&lt;/span&gt;
+172.20.0.3
+172.20.0.4
+
+&lt;span class="o"&gt;[&lt;/span&gt;dbservers&lt;span class="o"&gt;]&lt;/span&gt;
+172.20.0.5
+root@ansible:~# ansible-playbook -i hosts-pre --list-hosts setup.yml
+
+playbook: setup.yml
+
+  play &lt;span class="c"&gt;#1 (loadbalancer): Setup load balancer...        TAGS: []&lt;/span&gt;
+    pattern: &lt;span class="o"&gt;[&lt;/span&gt;u&lt;span class="s1"&gt;&amp;#39;loadbalancer&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+    hosts &lt;span class="o"&gt;(&lt;/span&gt;1&lt;span class="o"&gt;)&lt;/span&gt;:
+      172.20.0.2
+
+  play &lt;span class="c"&gt;#2 (appservers): Setup application servers...    TAGS: []&lt;/span&gt;
+    pattern: &lt;span class="o"&gt;[&lt;/span&gt;u&lt;span class="s1"&gt;&amp;#39;appservers&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+    hosts &lt;span class="o"&gt;(&lt;/span&gt;2&lt;span class="o"&gt;)&lt;/span&gt;:
+      172.20.0.3
+      172.20.0.4
+
+  play &lt;span class="c"&gt;#3 (dbservers): Setup database servers...        TAGS: []&lt;/span&gt;
+    pattern: &lt;span class="o"&gt;[&lt;/span&gt;u&lt;span class="s1"&gt;&amp;#39;dbservers&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+    hosts &lt;span class="o"&gt;(&lt;/span&gt;1&lt;span class="o"&gt;)&lt;/span&gt;:
+      172.20.0.5
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y casi lo mismo para el entono de &lt;em&gt;producción&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# cat hosts-pro
+&lt;span class="o"&gt;[&lt;/span&gt;loadbalancer&lt;span class="o"&gt;]&lt;/span&gt;
+10.0.0.2
+
+&lt;span class="o"&gt;[&lt;/span&gt;appservers&lt;span class="o"&gt;]&lt;/span&gt;
+10.0.0.3
+10.0.0.4
+10.0.0.5
+10.0.0.6
+10.0.0.7
+
+&lt;span class="o"&gt;[&lt;/span&gt;dbservers&lt;span class="o"&gt;]&lt;/span&gt;
+10.0.0.8
+10.0.0.9
+10.0.0.10
+root@ansible:~# ansible-playbook -i hosts-pro --list-hosts setup.yml
+
+playbook: setup.yml
+
+  play &lt;span class="c"&gt;#1 (loadbalancer): Setup load balancer...        TAGS: []&lt;/span&gt;
+    pattern: &lt;span class="o"&gt;[&lt;/span&gt;u&lt;span class="s1"&gt;&amp;#39;loadbalancer&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+    hosts &lt;span class="o"&gt;(&lt;/span&gt;1&lt;span class="o"&gt;)&lt;/span&gt;:
+      10.0.0.2
+
+  play &lt;span class="c"&gt;#2 (appservers): Setup application servers...    TAGS: []&lt;/span&gt;
+    pattern: &lt;span class="o"&gt;[&lt;/span&gt;u&lt;span class="s1"&gt;&amp;#39;appservers&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+    hosts &lt;span class="o"&gt;(&lt;/span&gt;5&lt;span class="o"&gt;)&lt;/span&gt;:
+      10.0.0.5
+      10.0.0.4
+      10.0.0.7
+      10.0.0.6
+      10.0.0.3
+
+  play &lt;span class="c"&gt;#3 (dbservers): Setup database servers...        TAGS: []&lt;/span&gt;
+    pattern: &lt;span class="o"&gt;[&lt;/span&gt;u&lt;span class="s1"&gt;&amp;#39;dbservers&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+    hosts &lt;span class="o"&gt;(&lt;/span&gt;3&lt;span class="o"&gt;)&lt;/span&gt;:
+      10.0.0.9
+      10.0.0.8
+      10.0.0.10
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Inventario autogenerado&lt;/h2&gt;
+&lt;p&gt;A veces nos conviene sacar la lista de &lt;em&gt;hosts&lt;/em&gt; y de &lt;em&gt;grupos&lt;/em&gt; de otro lugar, por ejemplo, de una base de datos corporativa. En estos casos, basta con saber que el fichero &lt;em&gt;hosts&lt;/em&gt; puede ser ejecutable y se espera que devuelva un diccionario JSON de &lt;em&gt;grupos&lt;/em&gt;, cada uno con una lista de los &lt;em&gt;hosts&lt;/em&gt; que lo componen. &lt;strong&gt;Ansible&lt;/strong&gt; va a ejecutar el &lt;em&gt;script&lt;/em&gt; para sacar esa información.&lt;/p&gt;
+&lt;p&gt;Vamos a hacer un ejercicio de imaginación: supongamos este &lt;em&gt;script&lt;/em&gt; saca los datos de algún sitio (LDAP, BBDD, una API de nuestra CMDB, ...), y los saca en formato JSON:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# cat hosts.py
+&lt;span class="c"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+import json
+
+&lt;span class="nv"&gt;inventory&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;loadbalancer&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;10.0.0.2&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;,
+    &lt;span class="s1"&gt;&amp;#39;appservers&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;10.0.0.3&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;10.0.0.4&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;,
+    &lt;span class="s1"&gt;&amp;#39;dbservers&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;10.0.0.5&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;,
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+print json.dumps&lt;span class="o"&gt;(&lt;/span&gt;inventory&lt;span class="o"&gt;)&lt;/span&gt;
+root@ansible:~# chmod &lt;span class="m"&gt;755&lt;/span&gt; hosts.py
+root@ansible:~# ./hosts.py
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;appservers&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;10.0.0.3&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;10.0.0.4&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;loadbalancer&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;10.0.0.2&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;dbservers&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;10.0.0.5&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]}&lt;/span&gt;
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Veamos que es capaz de sacar los grupos que le pidamos de forma fácil:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible -i hosts.py --list-hosts loadbalancer
+  hosts &lt;span class="o"&gt;(&lt;/span&gt;1&lt;span class="o"&gt;)&lt;/span&gt;:
+    10.0.0.2
+root@ansible:~# ansible -i hosts.py --list-hosts appservers
+  hosts &lt;span class="o"&gt;(&lt;/span&gt;2&lt;span class="o"&gt;)&lt;/span&gt;:
+    10.0.0.3
+    10.0.0.4
+root@ansible:~# ansible -i hosts.py --list-hosts dbservers
+  hosts &lt;span class="o"&gt;(&lt;/span&gt;1&lt;span class="o"&gt;)&lt;/span&gt;:
+    10.0.0.5
+root@ansible:~# ansible -i hosts.py --list-hosts all
+  hosts &lt;span class="o"&gt;(&lt;/span&gt;4&lt;span class="o"&gt;)&lt;/span&gt;:
+    10.0.0.3
+    10.0.0.4
+    10.0.0.2
+    10.0.0.5
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Desplegar ficheros según el host&lt;/h2&gt;
+&lt;p&gt;En los &lt;em&gt;playbooks&lt;/em&gt; podemos usar variables, bien sean de ejecución, o las que indiquemos nosotros. Esto puede jugar a nuestro favor en caso, por ejemplo, de querer desplegar ficheros distintos en cada servidor. Un ejemplo:&lt;/p&gt;
+&lt;p&gt;Supongamos que tenemos esta estructura de ficheros, con su fichero de &lt;em&gt;hosts&lt;/em&gt; y su &lt;em&gt;playbook&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~/multiple_webservers# tree
+.
+├── hosts
+├── playbook.yml
+└── webs
+    ├── server1
+    │   ├── index.html
+    │   └── sitemap.xml
+    └── server2
+        ├── adminer.php
+        └── index.php
+
+&lt;span class="m"&gt;3&lt;/span&gt; directories, &lt;span class="m"&gt;6&lt;/span&gt; files
+root@ansible:~/multiple_webservers# cat hosts
+&lt;span class="o"&gt;[&lt;/span&gt;webservers&lt;span class="o"&gt;]&lt;/span&gt;
+server1
+server2
+root@ansible:~/multiple_webservers# cat playbook.yml
+- hosts: webservers
+  gather_facts: &lt;span class="nb"&gt;false&lt;/span&gt;
+&lt;span class="nb"&gt;  &lt;/span&gt;tasks:
+    - copy: &lt;span class="nv"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;webs/&lt;span class="o"&gt;{{&lt;/span&gt; inventory_hostname &lt;span class="o"&gt;}}&lt;/span&gt;/ &lt;span class="nv"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/var/www/
+root@ansible:~/multiple_webservers#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lanzamos el &lt;em&gt;playbook&lt;/em&gt; para aprovisionar los ficheros &lt;em&gt;web&lt;/em&gt; a los servidores:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~/multiple_webservers# ansible-playbook -i hosts playbook.yml
+
+PLAY ***************************************************************************
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;copy&lt;span class="o"&gt;]&lt;/span&gt; ********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;server1&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;server2&lt;span class="o"&gt;]&lt;/span&gt;
+
+PLAY RECAP *********************************************************************
+server1                    : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+server2                    : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0
+
+root@ansible:~/multiple_webservers#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y fácilmente comprobamos que cada servidor tiene los suyos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~/multiple_webservers# ssh root@server1 ls /var/www/
+index.html
+sitemap.xml
+root@ansible:~/multiple_webservers# ssh root@server2 ls /var/www/
+adminer.php
+index.php
+root@ansible:~/multiple_webservers#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Variables en el inventario&lt;/h2&gt;
+&lt;p&gt;Hay algunas variables que dependen de la máquina en la que se ejecutan. Aunque es posible definir estructuras condicionales en los &lt;em&gt;playbooks&lt;/em&gt;, no escala. Para no ensuciar los &lt;em&gt;playbooks&lt;/em&gt;, las podemos definir en el fichero de &lt;em&gt;hosts&lt;/em&gt;. Así pues, cada &lt;em&gt;grupo&lt;/em&gt; puede tener sus propias variables; pueden ser variables "nuestras" o variables que entienda &lt;strong&gt;ansible&lt;/strong&gt;. Como ejemplo, un &lt;em&gt;inventario&lt;/em&gt; con variables de acceso:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# cat hosts
+[slaves]
+10.0.0.2
+10.0.0.3
+
+[slaves:vars]
+ansible_user = ansible
+ansible_ssh_pass = s3cr3t
+ansible_become = true
+ansible_become_method = sudo
+ansible_become_user = root
+ansible_become_pass = s3cr3t
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De esta forma, y de acuerdo con la &lt;a href="http://docs.ansible.com/ansible/intro_inventory.html#list-of-behavioral-inventory-parameters"&gt;documentación oficial&lt;/a&gt; de &lt;strong&gt;ansible&lt;/strong&gt;, entraríamos con el usuario &lt;em&gt;ansible&lt;/em&gt; para hacer seguidamente &lt;strong&gt;sudo&lt;/strong&gt; para actuar con el usuario &lt;em&gt;root&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible -i hosts -m command -a id slaves
+10.0.0.3 | SUCCESS | rc=0 &amp;gt;&amp;gt;
+uid=0(root) gid=0(root) grupos=0(root)
+
+10.0.0.2 | SUCCESS | rc=0 &amp;gt;&amp;gt;
+uid=0(root) gid=0(root) grupos=0(root)
+
+root@ansible:~#
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="ansible"></category><category term="playbook"></category></entry><entry><title>MongoDB sharding con ansible</title><link href="http://www.linuxsysadmin.tk/2016/05/mongodb-sharding-con-ansible.html" rel="alternate"></link><updated>2016-05-02T00:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-02:2016/05/mongodb-sharding-con-ansible.html</id><summary type="html">&lt;p&gt;Como ya vimos en un artículo anterior, los &lt;em&gt;replica sets&lt;/em&gt; nos ofrecen alta disponibilidad para nuestros despliegues de &lt;strong&gt;mongodb&lt;/strong&gt;. Sin embargo, algunas veces, necesitamos que nuestro &lt;em&gt;cluster&lt;/em&gt; ofrezca alto rendimiento, y esto se consigue mediante &lt;em&gt;sharding&lt;/em&gt;. Como no queremos renunciar a la alta disponibilidad, podemos aplicar ambas; hoy explicamos como.&lt;/p&gt;
 &lt;p&gt;El mecanismo de &lt;em&gt;sharding&lt;/em&gt; es bastante simple: tenemos nuestros datos repartidos entre uno o mas &lt;em&gt;shards&lt;/em&gt;, que se van a repartir los datos del &lt;em&gt;cluster&lt;/em&gt;. Para mantener un control de donde están los datos, también vamos a necesitar unos procesos especiales llamados &lt;em&gt;config servers&lt;/em&gt;. Finalmente, habrá que poner algunos procesos &lt;em&gt;mongos&lt;/em&gt; que son unos &lt;em&gt;proxies&lt;/em&gt; al &lt;em&gt;cluster&lt;/em&gt; y sirven para ocultar la complejidad del mismo.&lt;/p&gt;
 &lt;h2&gt;Visión del conjunto&lt;/h2&gt;
 &lt;p&gt;Hay que decir que el mecanismo de &lt;em&gt;sharding&lt;/em&gt; permite poner y quitar &lt;em&gt;shards&lt;/em&gt; a &lt;em&gt;posteriori&lt;/em&gt;, igual que con los procesos &lt;em&gt;mongos&lt;/em&gt;, pero para empezar vamos a necesitar una arquitectura inicial que es lo que vamos a montar.&lt;/p&gt;
