@@ -1,5 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-16T13:00:00+02:00</updated><entry><title>Reduciendo el tamaño de nuestros binarios con musl libc</title><link href="http://www.linuxsysadmin.tk/2016/05/reduciendo-el-tamano-de-nuestros-binarios-con-musl-libc.html" rel="alternate"></link><updated>2016-05-16T13:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-16:2016/05/reduciendo-el-tamano-de-nuestros-binarios-con-musl-libc.html</id><summary type="html">&lt;p&gt;Cuando construimos jaulas, por el motivo que sea, vemos que no quedan pequeñas. El problema es el conjunto de librerías que hay que poner en el caso de los binarios &lt;em&gt;dinámicos&lt;/em&gt;, o el exceso de tamaño en el caso de los &lt;em&gt;estáticos&lt;/em&gt;. Cambiando la librería base, podemos reducir su tamaño.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-23T08:00:00+02:00</updated><entry><title>Evolucionando los contenedores: Docker</title><link href="http://www.linuxsysadmin.tk/2016/05/evolucionando-los-contenedores-docker.html" rel="alternate"></link><updated>2016-05-23T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-23:2016/05/evolucionando-los-contenedores-docker.html</id><summary type="html">&lt;p&gt;Los contenedores tienen su caso de uso y son muy útiles. Sin embargo, ir copiando la imagen es una pérdida de tiempo. Aunque podemos solventar el problema con un sistema de ficheros &lt;em&gt;copy-on-write&lt;/em&gt; o un sistema de ficheros tipo &lt;em&gt;union&lt;/em&gt;, &lt;strong&gt;Docker&lt;/strong&gt; ya nos lo ofrece todo preparado para su uso.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Docker&lt;/strong&gt; trabaja con imágenes, que no son otra cosa que jaulas en donde tienen todo lo que necesitan para ejecutar su contenido. Estas imágenes se forman a partir de capas que se muestran como una sola mediante &lt;strong&gt;aufs&lt;/strong&gt;. Esto nos permite construir jaulas a partir de otras, ahorrando duplicidad de ficheros en disco y aligerando sus instancias.&lt;/p&gt;
+&lt;p&gt;Nuestro contenedor no es otra cosa que una capa de cambios (inicialmente vacía) montada encima de la imagen mediante &lt;strong&gt;aufs&lt;/strong&gt;. Esta capa se elimina cuando el contenedor se destruye. El coste de crear el contenedor es prácticamente nulo, y no se modifica nunca la imagen base.&lt;/p&gt;
+&lt;p&gt;La gran diferencia con otras tecnologías, por ejemplo &lt;strong&gt;LXC&lt;/strong&gt;, es su filosofía: un contenedor &lt;strong&gt;Docker&lt;/strong&gt; ejecuta un solo comando, acabando la ejecución cuando este acaba.&lt;/p&gt;
+&lt;h2&gt;Instalación y verificación&lt;/h2&gt;
+&lt;p&gt;La instalación es tan simple como seguir &lt;a href="https://docs.docker.com/linux/step_one/"&gt;la documentación&lt;/a&gt;. Así lo instalé en mi &lt;em&gt;netbook&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;curl -fsSL https://get.docker.com/ &lt;span class="p"&gt;|&lt;/span&gt; sh
+...
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Comprobamos su funcionamiento, por ejemplo, levantando una imagen cualquiera.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -ti --rm debian &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Hello world&amp;#39;&lt;/span&gt;
+Unable to find image &lt;span class="s1"&gt;&amp;#39;debian:latest&amp;#39;&lt;/span&gt; locally
+latest: Pulling from library/debian
+8b87079b7a06: Pull &lt;span class="nb"&gt;complete &lt;/span&gt;
+a3ed95caeb02: Pull &lt;span class="nb"&gt;complete &lt;/span&gt;
+Digest: sha256:c8bdce9b6166fcd287c1336f5cd6262971f7f0e98db07c93c23d540a7a19cd96
+Status: Downloaded newer image &lt;span class="k"&gt;for&lt;/span&gt; debian:latest
+Hello world
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver en la salida del comando que no teníamos una imagen local de la imagen &lt;em&gt;debian&lt;/em&gt;, con lo que la ha descargado. Podemos ver que ya la tenemos en local, y que si volvemos a lanzar el comando, no se descarga de nuevo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+debian              latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago          125.1 MB
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -ti --rm debian &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Hello world&amp;#39;&lt;/span&gt;
+Hello world
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Mejorando las imágenes con capas&lt;/h2&gt;
+&lt;p&gt;Las imágenes que podemos encontrar en &lt;a href="https://hub.docker.com/"&gt;Docker Hub&lt;/a&gt; son básicas; por ejemplo vienen sin un servidor &lt;strong&gt;ssh&lt;/strong&gt; y sin &lt;strong&gt;python&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -ti --rm debian python -V
+docker: Error response from daemon: Container &lt;span class="nb"&gt;command&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;python&amp;#39;&lt;/span&gt; not found or does not exist..
+            gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Normalmente nos va a interesar trabajar con imágenes que ya contengan algunas de nuestras utilidades habituales. Para ello podemos construir una imagen a partir de otra que ya tengamos.&lt;/p&gt;
+&lt;p&gt;Para ampliar una imagen modificando otra hay dos formas, que se explican a continuación. Para entender los ejemplos, vamos a suponer que ampliamos la imagen &lt;em&gt;debian&lt;/em&gt; con el paquete &lt;em&gt;python&lt;/em&gt;.&lt;/p&gt;
+&lt;h3&gt;Creando una imagen instalando manualmente las diferencias&lt;/h3&gt;
+&lt;p&gt;Para hacer esta, se necesita levantar un contenedor que vamos a modificar. Luego localizamos el identificador del contenedor y le damos un &lt;em&gt;commit&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Empezamos de la imagen base &lt;em&gt;debian&lt;/em&gt;, a la que instalamos los paquetes necesarios. En este caso, vamos a poner &lt;em&gt;python&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -ti --rm debian
+root@23c4caa12410:/# apt-get update
+...
+root@23c4caa12410:/# apt-get install -y python
+...
+root@23c4caa12410:/# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora, y desde otro terminal, buscamos el identificador del contenedor.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+23c4caa12410        debian              &lt;span class="s2"&gt;&amp;quot;/bin/bash&amp;quot;&lt;/span&gt;         &lt;span class="m"&gt;4&lt;/span&gt; minutes ago       Up &lt;span class="m"&gt;4&lt;/span&gt; minutes                            backstabbing_poincare
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Teniendo el identificador del contenedor, podemos hacer un &lt;em&gt;commit&lt;/em&gt; y podemos ponerle un &lt;em&gt;tag&lt;/em&gt; para referencias futuras.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker commit 23c4caa12410
+sha256:f73b2072ab7404b83749fd098411a1c6392631668363c46fc7203d1a0d39782f
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+&amp;lt;none&amp;gt;              &amp;lt;none&amp;gt;              f73b2072ab74        &lt;span class="m"&gt;9&lt;/span&gt; seconds ago       167.4 MB
+debian              latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago          125.1 MB
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker tag f73b2072ab74 python-debian-manual
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED              SIZE
+python-debian-manual   latest              f73b2072ab74        About a minute ago   167.4 MB
+debian                 latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago           125.1 MB
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y comprobamos que funciona como debe:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -ti --rm python-debian-manual python -V
+Python 2.7.9
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Creando una imagen automáticamente mediante Dockerfiles&lt;/h3&gt;
+&lt;p&gt;Para este método vamos a usar el comando &lt;strong&gt;docker build&lt;/strong&gt; que construye una imagen a partir de un &lt;em&gt;Dockerfile&lt;/em&gt;, que le sirve de receta, y construye imágenes a partir de otras.&lt;/p&gt;
+&lt;p&gt;Supongamos que tenemos el siguiente &lt;em&gt;Dockerfile&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;cat Dockerfile 
+FROM debian
+RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    apt-get install -y python
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/bin/bash&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Bastaría crear la imágen en la carpeta actual con el comando mencionado, especificando opcionalmente el &lt;em&gt;tag&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker build -t python-debian-auto .
+Sending build context to Docker daemon 2.048 kB
+Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM debian
+ ---&amp;gt; bb5d89f9b6cb
+Step &lt;span class="m"&gt;2&lt;/span&gt; : RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     apt-get install -y python
+ ---&amp;gt; Running in 4e975dc297fc
+...  
+ ---&amp;gt; 39025d968357
+Removing intermediate container 4e975dc297fc
+Step &lt;span class="m"&gt;3&lt;/span&gt; : CMD /bin/bash
+ ---&amp;gt; Running in 7331c2d109db
+ ---&amp;gt; e52f43de8b80
+Removing intermediate container 7331c2d109db
+Successfully built e52f43de8b80
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Comprobamos que tenemos una imagen nueva y que funciona.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+python-debian-auto     latest              e52f43de8b80        &lt;span class="m"&gt;6&lt;/span&gt; minutes ago       &lt;span class="m"&gt;176&lt;/span&gt; MB
+python-debian-manual   latest              f73b2072ab74        &lt;span class="m"&gt;22&lt;/span&gt; minutes ago      167.4 MB
+debian                 latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago          125.1 MB
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -ti --rm python-debian-auto python -V
+Python 2.7.9
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Creando una imagen desde cero&lt;/h2&gt;
+&lt;p&gt;Hay veces en las que no queremos usar imágenes de dudoso origen, y queremos hacer una nuestra. En estos casos solo hay que saber que una imagen no es otra cosa que una jaula normal. Podemos hacer esto partiendo de una imagen vacía, pensada para estos casos.&lt;/p&gt;
+&lt;p&gt;Como ejemplo, vamos a crear una jaula con lo necesario para correr un solo comando: el ejemplo que utilizamos en &lt;a href="http://www.linuxsysadmin.tk/2016/05/reduciendo-el-tamano-de-nuestros-binarios-con-musl-libc.html"&gt;otro artículo&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Vamos a utilizar el método del &lt;em&gt;Dockerfile&lt;/em&gt;, añadiendo el binario estático.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;cat Dockerfile 
+FROM scratch
+ADD hello /
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/hello&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Construimos la imagen y vemos que ocupa lo mismo que el binario que le hemos puesto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker build -t saluda .
+Sending build context to Docker daemon 20.34 MB
+Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM scratch
+ ---&amp;gt; 
+Step &lt;span class="m"&gt;2&lt;/span&gt; : ADD hello /
+ ---&amp;gt; 83da41eee33c
+Removing intermediate container 5ea901ba61be
+Step &lt;span class="m"&gt;3&lt;/span&gt; : CMD /hello
+ ---&amp;gt; Running in 54d7512dd61a
+ ---&amp;gt; bf6c560144dd
+Removing intermediate container 54d7512dd61a
+Successfully built bf6c560144dd
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+saluda              latest              bf6c560144dd        &lt;span class="m"&gt;25&lt;/span&gt; seconds ago      5.416 kB
+debian              latest              47af6ca8a14a        &lt;span class="m"&gt;3&lt;/span&gt; weeks ago         125.1 MB
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Probamos que funciona, como ya viene siendo costumbre:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker run --rm -ti saluda
+Hello world!
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="linux"></category><category term="docker"></category><category term="contenedor"></category><category term="dockerfile"></category><category term="jaula"></category></entry><entry><title>Reduciendo el tamaño de nuestros binarios con musl libc</title><link href="http://www.linuxsysadmin.tk/2016/05/reduciendo-el-tamano-de-nuestros-binarios-con-musl-libc.html" rel="alternate"></link><updated>2016-05-16T13:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-16:2016/05/reduciendo-el-tamano-de-nuestros-binarios-con-musl-libc.html</id><summary type="html">&lt;p&gt;Cuando construimos jaulas, por el motivo que sea, vemos que no quedan pequeñas. El problema es el conjunto de librerías que hay que poner en el caso de los binarios &lt;em&gt;dinámicos&lt;/em&gt;, o el exceso de tamaño en el caso de los &lt;em&gt;estáticos&lt;/em&gt;. Cambiando la librería base, podemos reducir su tamaño.&lt;/p&gt;
 &lt;p&gt;La mayoría de los binarios de un sistema &lt;em&gt;linux&lt;/em&gt; necesitan una librería llamada &lt;em&gt;libc&lt;/em&gt;. La que suelen poner en todas las distribuciones es la &lt;strong&gt;GNU libc&lt;/strong&gt;, que es compatible con todos los proyectos de software libre y no suele dar problemas.&lt;/p&gt;
 &lt;p&gt;Sin embargo, no es la única; si tenemos un binario que se puede compilar con estas otras librerías, la reducción de tamaño suele ser importante. Esto no nos preocupa en un sistema "normal" porque el disco es barato, pero es frustrante cuando tenemos que cargar cientos de megas para poner solamente un par de servicios en una jaula.&lt;/p&gt;
 &lt;p&gt;Así que vamos a crear una jaula usando &lt;strong&gt;musl libc&lt;/strong&gt; como demostración, para ver como se reducen la cantidad de librerías y el tamaño de la jaula.&lt;/p&gt;
