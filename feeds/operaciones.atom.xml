@@ -1,5 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-09T08:00:00+02:00</updated><entry><title>Algunas ideas sueltas sobre Ansible</title><link href="http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html" rel="alternate"></link><updated>2016-05-09T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-09:2016/05/algunas-ideas-sueltas-sobre-ansible.html</id><summary type="html">&lt;p&gt;En un &lt;a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html"&gt;artículo anterior&lt;/a&gt; vimos qué era &lt;strong&gt;Ansible&lt;/strong&gt; y como instalarlo, dejando su funcionamiento para el lector; Hay miles de tutoriales por internet, y muchos son mejores de los que pueda poner aquí. Sin embargo, hay algunas ideas que no son fáciles de ver juntas, así que aquí las dejo.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-30T08:00:00+02:00</updated><entry><title>Autenticación SSH por claves</title><link href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html" rel="alternate"></link><updated>2016-05-30T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-30:2016/05/autenticacion-ssh-por-claves.html</id><summary type="html">&lt;p&gt;A pesar de que el protocolo &lt;strong&gt;SSH&lt;/strong&gt; es lo que mas seguridad ofrece hoy en día, un servidor rápido puede probar gran cantidad de contraseñas generadas mediante un generador por fuerza bruta. Para añadir mas seguridad podemos autenticar mediante claves en vez de usar contraseña, opcionalmente protegidos con una &lt;em&gt;passphrase&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;La idea es que un cliente del servidor &lt;strong&gt;SSH&lt;/strong&gt; se autentique reemplazando la contraseña habitual por una clave, previamente generada y con su parte pública compartida con anterioridad.&lt;/p&gt;
+&lt;h2&gt;Disposición inicial&lt;/h2&gt;
+&lt;p&gt;Para la demostración tenemos dos servidores, con los roles claramente especificados en el nombre:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# lxc-ls -f
+NAME       STATE    IPV4      IPV6  AUTOSTART
+---------------------------------------------
+client     RUNNING  10.0.0.3  -     NO
+sshserver  RUNNING  10.0.0.2  -     NO
+root@lxc:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En el caso del servidor, necesitamos un servidor &lt;strong&gt;SSH&lt;/strong&gt; levantado y listo para recibir nuevas sesiones.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@sshserver:~# netstat -lntp
+Active Internet connections &lt;span class="o"&gt;(&lt;/span&gt;only servers&lt;span class="o"&gt;)&lt;/span&gt;
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        &lt;span class="m"&gt;0&lt;/span&gt;      &lt;span class="m"&gt;0&lt;/span&gt; 0.0.0.0:22              0.0.0.0:*               LISTEN      76/sshd
+tcp6       &lt;span class="m"&gt;0&lt;/span&gt;      &lt;span class="m"&gt;0&lt;/span&gt; :::22                   :::*                    LISTEN      76/sshd
+root@sshserver:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a crear un usuario con el que podamos entrar en el servidor.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@sshserver:~# grep gerard /etc/passwd
+gerard:x:1000:1000:,,,:/home/gerard:/bin/bash
+root@sshserver:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si intentamos entrar en el servidor desde la máquina cliente, vemos que se nos pide la contraseña, tras lo cual iniciamos la sesión.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client:~# ssh gerard@10.0.0.2
+gerard@10.0.0.2&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password:
+
+The programs included with the Debian GNU/Linux system are free software&lt;span class="p"&gt;;&lt;/span&gt;
+the exact distribution terms &lt;span class="k"&gt;for&lt;/span&gt; each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+gerard@sshserver:~&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De hecho, si lo volvemos a intentar, se nos pedirá la &lt;em&gt;password&lt;/em&gt; una y otra vez.&lt;/p&gt;
+&lt;h2&gt;Montando el par de claves&lt;/h2&gt;
+&lt;p&gt;Desde la máquina cliente, generamos el par de claves mediante el comando &lt;strong&gt;ssh-keygen&lt;/strong&gt;. Sin parámetros va a generar un clave tipo &lt;strong&gt;RSA&lt;/strong&gt;, que ya nos vale.&lt;/p&gt;
+&lt;p&gt;Es importante indicar que la &lt;em&gt;passphrase&lt;/em&gt; es más segura que la &lt;em&gt;password&lt;/em&gt;, y que la necesidad de la clave convierte el combo en lo mas seguro de lo que disponemos. Vamos a dejarla en blanco para asegurar la autenticación con claves sin &lt;em&gt;passphrase&lt;/em&gt;, por comodidad nuestra.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client:~# ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key &lt;span class="o"&gt;(&lt;/span&gt;/root/.ssh/id_rsa&lt;span class="o"&gt;)&lt;/span&gt;:
+Enter passphrase &lt;span class="o"&gt;(&lt;/span&gt;empty &lt;span class="k"&gt;for&lt;/span&gt; no passphrase&lt;span class="o"&gt;)&lt;/span&gt;:
+Enter same passphrase again:
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+58:6b:38:71:82:a4:b2:97:4d:cc:6d:cd:43:6d:26:00 root@client
+The key&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s randomart image is:
++---&lt;span class="o"&gt;[&lt;/span&gt;RSA 2048&lt;span class="o"&gt;]&lt;/span&gt;----+
+&lt;span class="p"&gt;|&lt;/span&gt;    E.....       &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt;   &lt;span class="o"&gt;=&lt;/span&gt; o +. +      &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt;. . &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; *+       &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt; o + . B o       &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt;. o . + S        &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt; .     o         &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt;                 &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt;                 &lt;span class="p"&gt;|&lt;/span&gt;
+&lt;span class="p"&gt;|&lt;/span&gt;                 &lt;span class="p"&gt;|&lt;/span&gt;
++-----------------+
+root@client:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esto nos ha generado el par de claves en la carpeta que nos preguntó el comando de generación. En este caso dejamos los valores por defecto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client:~# ls -1 .ssh/
+id_rsa
+id_rsa.pub
+known_hosts
+root@client:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vemos que tenemos dos ficheros nuevos. El fichero &lt;em&gt;id_rsa&lt;/em&gt; es la clave privada, y es una parte que nunca debe compartirse. El fichero &lt;em&gt;id_rsa.pub&lt;/em&gt; es la parte pública de la clave y es la que debemos repartir a los servidores a los que pretendamos tener acceso con la clave.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client:~# cat .ssh/id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHR7HSGhP8afT1pz/no+qVT1uKsEhh4CZXIbDebibbKiyPYVaKl/FLovYnCwk0IWXAsiJB1eXkQhX0he0gSK66UIZFnKVr8+G1J1kg9zuqxFTxpJTrM2WbdTZ+nk3bNgKTFKiQNsZ/IMvb/vjgU365LNtDclnajto0scgSCZQBvDfxrNVH8NIyv4IBTKheD6oSNgQsmzpvbWRyKBZf3dRRdVH00tsIC20fdAONtNfcWNToakRMX0/svW7RxUDlJEU/icsm3lf6xRf927CdB0ziu90i9mpzCxTMP3xbsrOJ0/mtdqROjql+OHNvxJa8FOtvX/ZdkNRAPOvuo4AieLZp root@client
+root@client:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para garantizar el acceso a nuestro servidor, debemos poner una nueva línea en el fichero &lt;em&gt;authorized_keys&lt;/em&gt; del usuario remoto, que es la parte pública de la clave. Es especialmente importante que la carpeta &lt;em&gt;.ssh&lt;/em&gt; exista y no tenga permisos para nada ni nadie aparte del usuario propietario.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sshserver:~&lt;span class="nv"&gt;$ &lt;/span&gt;mkdir .ssh
+gerard@sshserver:~&lt;span class="nv"&gt;$ &lt;/span&gt;chmod &lt;span class="m"&gt;700&lt;/span&gt; .ssh/
+gerard@sshserver:~&lt;span class="nv"&gt;$ &lt;/span&gt;cat .ssh/authorized_keys
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHR7HSGhP8afT1pz/no+qVT1uKsEhh4CZXIbDebibbKiyPYVaKl/FLovYnCwk0IWXAsiJB1eXkQhX0he0gSK66UIZFnKVr8+G1J1kg9zuqxFTxpJTrM2WbdTZ+nk3bNgKTFKiQNsZ/IMvb/vjgU365LNtDclnajto0scgSCZQBvDfxrNVH8NIyv4IBTKheD6oSNgQsmzpvbWRyKBZf3dRRdVH00tsIC20fdAONtNfcWNToakRMX0/svW7RxUDlJEU/icsm3lf6xRf927CdB0ziu90i9mpzCxTMP3xbsrOJ0/mtdqROjql+OHNvxJa8FOtvX/ZdkNRAPOvuo4AieLZp root@client
+gerard@sshserver:~&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Pueden haber varias claves públicas en el fichero &lt;em&gt;authorized_keys&lt;/em&gt;, para garantizar la autenticación desde diferentes lugares sin compartir las claves entre los servidores de  origen.&lt;/p&gt;
+&lt;h2&gt;Comprobando su funcionamiento&lt;/h2&gt;
+&lt;p&gt;Para ver que todo funciona, basta con intentar entrar en la sesión; si todo va bien, no nos va a pedir &lt;em&gt;password&lt;/em&gt; sino &lt;em&gt;passphrase&lt;/em&gt;, suponiendo que no la dejáramos en blanco.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client:~# ssh gerard@10.0.0.2
+
+The programs included with the Debian GNU/Linux system are free software&lt;span class="p"&gt;;&lt;/span&gt;
+the exact distribution terms &lt;span class="k"&gt;for&lt;/span&gt; each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Thu May &lt;span class="m"&gt;19&lt;/span&gt; 10:11:51 &lt;span class="m"&gt;2016&lt;/span&gt; from 10.0.0.3
+gerard@sshserver:~&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De hecho, si ponemos el &lt;em&gt;flag&lt;/em&gt; de &lt;em&gt;verbose&lt;/em&gt;, vemos que el servidor origen &lt;strong&gt;ofrece&lt;/strong&gt; automáticamente la clave generada. Si la clave no estuviera en los sitios normales, habría que indicarlo en el comando &lt;strong&gt;ssh&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@client:~# ssh -v gerard@10.0.0.2
+...
+debug1: Connecting to 10.0.0.2 &lt;span class="o"&gt;[&lt;/span&gt;10.0.0.2&lt;span class="o"&gt;]&lt;/span&gt; port 22.
+debug1: Connection established.
+...
+debug1: Authentications that can &lt;span class="k"&gt;continue&lt;/span&gt;: publickey,password
+debug1: Next authentication method: publickey
+debug1: Offering RSA public key: /root/.ssh/id_rsa
+...
+debug1: Authentication succeeded &lt;span class="o"&gt;(&lt;/span&gt;publickey&lt;span class="o"&gt;)&lt;/span&gt;.
+...
+gerard@sshserver:~&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es importante recalcar que la parte privada que se ofrece es la que hay en la carpeta del usuario del servidor origen, pero la validación se hace con el fichero &lt;em&gt;authorized_keys&lt;/em&gt; del usuario en el servidor remoto.&lt;/p&gt;</summary><category term="linux"></category><category term="ssh"></category><category term="autenticación"></category><category term="password"></category><category term="passphrase"></category><category term="rsa"></category></entry><entry><title>Algunas ideas sueltas sobre Ansible</title><link href="http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html" rel="alternate"></link><updated>2016-05-09T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-09:2016/05/algunas-ideas-sueltas-sobre-ansible.html</id><summary type="html">&lt;p&gt;En un &lt;a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html"&gt;artículo anterior&lt;/a&gt; vimos qué era &lt;strong&gt;Ansible&lt;/strong&gt; y como instalarlo, dejando su funcionamiento para el lector; Hay miles de tutoriales por internet, y muchos son mejores de los que pueda poner aquí. Sin embargo, hay algunas ideas que no son fáciles de ver juntas, así que aquí las dejo.&lt;/p&gt;
 &lt;h2&gt;Playbooks plantilla&lt;/h2&gt;
 &lt;p&gt;Si solo queremos los &lt;em&gt;playbooks&lt;/em&gt; como una manera fácil de aprovisionar una máquina, nos conviene que no tenga un &lt;em&gt;host&lt;/em&gt; asignado en el mismo, para poder pasar el objetivo por parámetro. Por ejemplo:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# cat ping.yml
