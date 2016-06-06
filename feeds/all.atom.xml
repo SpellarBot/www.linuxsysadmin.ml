@@ -1,5 +1,300 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-30T08:00:00+02:00</updated><entry><title>Autenticación SSH por claves</title><link href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html" rel="alternate"></link><updated>2016-05-30T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-30:2016/05/autenticacion-ssh-por-claves.html</id><summary type="html">&lt;p&gt;A pesar de que el protocolo &lt;strong&gt;SSH&lt;/strong&gt; es lo que mas seguridad ofrece hoy en día, un servidor rápido puede probar gran cantidad de contraseñas generadas mediante un generador por fuerza bruta. Para añadir mas seguridad podemos autenticar mediante claves en vez de usar contraseña, opcionalmente protegidos con una &lt;em&gt;passphrase&lt;/em&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-06-06T08:00:00+02:00</updated><entry><title>Controlando contenedores docker con ansible</title><link href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html" rel="alternate"></link><updated>2016-06-06T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-06-06:2016/06/controlando-contenedores-docker-con-ansible.html</id><summary type="html">&lt;p&gt;La facilidad de levantar un contenedor &lt;strong&gt;docker&lt;/strong&gt; nos lleva a la pregunta del millón: ¿es posible usar &lt;strong&gt;docker&lt;/strong&gt; para crear contenedores de usar y tirar para probar otras tecnologías? La respuesta es que sí, y para demostrarlo, vamos a generar un entorno minimalista en contenedores &lt;strong&gt;docker&lt;/strong&gt;, desplegados mediante &lt;strong&gt;ansible&lt;/strong&gt; &lt;em&gt;playbooks&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: De acuerdo con el autor de &lt;strong&gt;docker&lt;/strong&gt;, nunca deberíais poner &lt;strong&gt;SSH&lt;/strong&gt; en un contenedor &lt;strong&gt;docker&lt;/strong&gt; (artículo &lt;a href="https://jpetazzo.github.io/2014/06/23/docker-ssh-considered-evil/"&gt;aquí&lt;/a&gt;). Sin embargo, hoy vamos a hacer una excepción para esta demostración.&lt;/p&gt;
+&lt;h2&gt;Las imágenes base&lt;/h2&gt;
+&lt;p&gt;La idea es que vamos a levantar una serie de máquinas y vamos a dejar que &lt;strong&gt;ansible&lt;/strong&gt; las provisiones mediante &lt;em&gt;playbooks&lt;/em&gt;; para ello necesitamos una imagen base. También vamos a crear una imagen que solo sirva para ejecutar &lt;strong&gt;ansible&lt;/strong&gt;, que vamos a crear y a destruir según lo necesitemos.&lt;/p&gt;
+&lt;p&gt;Vamos a empezar creando la imagen &lt;em&gt;master&lt;/em&gt;, que contiene la herramienta &lt;strong&gt;ansible&lt;/strong&gt; (vamos a poner una versión superior desde los &lt;em&gt;backports&lt;/em&gt;) y sus dependencias. Este es nuestro &lt;em&gt;Dockerfile&lt;/em&gt; y el fichero &lt;em&gt;ansible.cfg&lt;/em&gt; que va a gobernarlo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;cat ansible.cfg 
+&lt;span class="o"&gt;[&lt;/span&gt;defaults&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;host_key_checking&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; False
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;cat Dockerfile.master 
+FROM debian:jessie-backports
+RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    apt-get install -y openssh-client sshpass nano
+RUN apt-get install -y -t jessie-backports ansible
+ADD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;ansible.cfg&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;/root/.ansible.cfg&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/bin/bash&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Construimos la imagen mediante el comando &lt;em&gt;build&lt;/em&gt; y le ponemos el &lt;em&gt;tag&lt;/em&gt; "master".&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker build -f Dockerfile.master -t master .
+Sending build context to Docker daemon 4.096 kB
+Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM debian:jessie-backports
+ ---&amp;gt; 99552579b6f6
+Step &lt;span class="m"&gt;2&lt;/span&gt; : RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     apt-get install -y openssh-client sshpass nano
+ ---&amp;gt; Running in 6e311500cbeb
+...
+ ---&amp;gt; d014d43ddf74
+Removing intermediate container 6e311500cbeb
+Step &lt;span class="m"&gt;3&lt;/span&gt; : RUN apt-get install -y -t jessie-backports ansible
+ ---&amp;gt; Running in d047144fce1b
+...
+ ---&amp;gt; 10881f414b84
+Removing intermediate container d047144fce1b
+Step &lt;span class="m"&gt;4&lt;/span&gt; : ADD ansible.cfg /root/.ansible.cfg
+ ---&amp;gt; 08fd2580e558
+Removing intermediate container c6b3c29e8682
+Step &lt;span class="m"&gt;5&lt;/span&gt; : CMD /bin/bash
+ ---&amp;gt; Running in 7b1199ff749f
+ ---&amp;gt; 58689ad42e3e
+Removing intermediate container 7b1199ff749f
+Successfully built 58689ad42e3e
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora vamos a crear la imagen para las máquinas controladas, mediante un &lt;em&gt;Dockerfile&lt;/em&gt; creado a tal efecto:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;cat Dockerfile.slave 
+FROM debian:jessie
+RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    apt-get install -y python openssh-server sudo &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    useradd ansible -G sudo -s /bin/bash -m &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ansible:s3cr3t&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; chpasswd &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    mkdir /var/run/sshd
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/sbin/sshd&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-D&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Nuevamente lanzamos el &lt;em&gt;build&lt;/em&gt; con el &lt;em&gt;tag&lt;/em&gt; "slave".&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker build -f Dockerfile.slave -t slave .
+Sending build context to Docker daemon 4.096 kB
+Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM debian:jessie
+ ---&amp;gt; bb5d89f9b6cb
+Step &lt;span class="m"&gt;2&lt;/span&gt; : RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     apt-get install -y python openssh-server sudo &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     useradd ansible -G sudo -s /bin/bash -m &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ansible:s3cr3t&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; chpasswd &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     mkdir /var/run/sshd
+ ---&amp;gt; Running in ecc6f15ffdc1
+...
+ ---&amp;gt; ecd77bdcc643
+Removing intermediate container ecc6f15ffdc1
+Step &lt;span class="m"&gt;3&lt;/span&gt; : CMD /usr/sbin/sshd -D
+ ---&amp;gt; Running in 09b2642eb314
+ ---&amp;gt; 306389180c9f
+Removing intermediate container 09b2642eb314
+Successfully built 306389180c9f
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos comprobar que tenemos ambas imágenes preparadas para crear nuestros contenedores:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+slave               latest              306389180c9f        &lt;span class="m"&gt;5&lt;/span&gt; seconds ago       &lt;span class="m"&gt;186&lt;/span&gt; MB
+master              latest              58689ad42e3e        &lt;span class="m"&gt;2&lt;/span&gt; minutes ago       245.4 MB
+debian              jessie-backports    99552579b6f6        &lt;span class="m"&gt;6&lt;/span&gt; days ago          125.1 MB
+debian              jessie              bb5d89f9b6cb        &lt;span class="m"&gt;6&lt;/span&gt; days ago          125.1 MB
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Creando los contenedores necesarios&lt;/h2&gt;
+&lt;p&gt;La idea es que vamos a crear un micro entorno compuesto por dos servidores y un balanceador, que es la fachada del sistema. La salida de cada petición web va a indicar el nombre de la máquina que la sirvió, para poder comprobar que balancea adecuadamente.&lt;/p&gt;
+&lt;p&gt;Los &lt;em&gt;flags&lt;/em&gt; de ejecución son &lt;em&gt;--name&lt;/em&gt; (el nombre con el que nos referiremos en los comandos &lt;em&gt;docker&lt;/em&gt;), el &lt;em&gt;-h&lt;/em&gt; (para dar un nombre de sistema operativo a la máquina), el &lt;em&gt;-d&lt;/em&gt; (&lt;em&gt;detach&lt;/em&gt;, para que no nos bloquee el terminal) y la imagen &lt;em&gt;slave&lt;/em&gt; que tiene instalados &lt;strong&gt;ssh&lt;/strong&gt;, &lt;strong&gt;python&lt;/strong&gt; y &lt;strong&gt;sudo&lt;/strong&gt;. Adicionalmente la imagen del balanceador &lt;em&gt;publica&lt;/em&gt; su puerto 80 en el puerto 8000 de la máquina &lt;em&gt;host&lt;/em&gt;, para poder acceder por &lt;strong&gt;HTTP&lt;/strong&gt; desde nuestra máquina.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker run --name balancer -h balancer -d -p 8000:80 slave
+7a80942c69a70e729fc7090983fc59735fd0c10818a5b62b64a26a98e58fc101
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker run --name server1 -h server1 -d slave
+745acb30c5c1b7067a15f593dfefce3e769d2a7b5423f001b6a080296c3aeb3f
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker run --name server2 -h server2 -d slave
+a469c0f69bb42a3c979037b125750a4cc1bf01750c24bd7cef277b9b6e7dc2d0
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es importante anotar las direcciones IP de las máquinas, para saber qué tenemos en cada sitio. Esta información nos sirve para montar la configuración del balanceador y para el inventario de &lt;strong&gt;ansible&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker inspect balancer &lt;span class="p"&gt;|&lt;/span&gt; grep IPAddress
+            &lt;span class="s2"&gt;&amp;quot;SecondaryIPAddresses&amp;quot;&lt;/span&gt;: null,
+            &lt;span class="s2"&gt;&amp;quot;IPAddress&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;172.17.0.2&amp;quot;&lt;/span&gt;,
+                    &lt;span class="s2"&gt;&amp;quot;IPAddress&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;172.17.0.2&amp;quot;&lt;/span&gt;,
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker inspect server1 &lt;span class="p"&gt;|&lt;/span&gt; grep IPAddress
+            &lt;span class="s2"&gt;&amp;quot;SecondaryIPAddresses&amp;quot;&lt;/span&gt;: null,
+            &lt;span class="s2"&gt;&amp;quot;IPAddress&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;172.17.0.3&amp;quot;&lt;/span&gt;,
+                    &lt;span class="s2"&gt;&amp;quot;IPAddress&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;172.17.0.3&amp;quot;&lt;/span&gt;,
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker inspect server2 &lt;span class="p"&gt;|&lt;/span&gt; grep IPAddress
+            &lt;span class="s2"&gt;&amp;quot;SecondaryIPAddresses&amp;quot;&lt;/span&gt;: null,
+            &lt;span class="s2"&gt;&amp;quot;IPAddress&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;172.17.0.4&amp;quot;&lt;/span&gt;,
+                    &lt;span class="s2"&gt;&amp;quot;IPAddress&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;172.17.0.4&amp;quot;&lt;/span&gt;,
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora podemos crear un contenedor de la imagen &lt;em&gt;master&lt;/em&gt; que tiene &lt;strong&gt;ansible&lt;/strong&gt; para &lt;em&gt;empujar&lt;/em&gt; los &lt;em&gt;playbooks&lt;/em&gt; a las &lt;em&gt;slaves&lt;/em&gt;. Esta máquina es de "usar y tirar".&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -ti --rm -h ansible master
+root@ansible:/# &lt;span class="nb"&gt;cd&lt;/span&gt; /root/
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Manos a la obra: los playbooks&lt;/h2&gt;
+&lt;p&gt;Este punto es similar al uso de &lt;strong&gt;ansible&lt;/strong&gt; sin &lt;strong&gt;docker&lt;/strong&gt;. Se trata de definir el fichero de &lt;em&gt;hosts&lt;/em&gt;, los &lt;em&gt;playbooks&lt;/em&gt; y los ficheros que estos puedan necesitar. En este caso concreto, vemos que necesitamos (&lt;em&gt;hosts&lt;/em&gt; y &lt;em&gt;playbooks&lt;/em&gt; aparte) la aplicación &lt;strong&gt;python&lt;/strong&gt; que vamos a servir, la configuracion para &lt;strong&gt;uwsgi&lt;/strong&gt; y la configuración del balanceador.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# tree
+.
+&lt;span class="p"&gt;|&lt;/span&gt;-- balancer.yml
+&lt;span class="p"&gt;|&lt;/span&gt;-- files
+&lt;span class="p"&gt;|&lt;/span&gt;   &lt;span class="p"&gt;|&lt;/span&gt;-- balancer
+&lt;span class="p"&gt;|&lt;/span&gt;   &lt;span class="p"&gt;|&lt;/span&gt;-- myapp.ini
+&lt;span class="p"&gt;|&lt;/span&gt;   &lt;span class="sb"&gt;`&lt;/span&gt;-- myapp.py
+&lt;span class="p"&gt;|&lt;/span&gt;-- hosts
+&lt;span class="sb"&gt;`&lt;/span&gt;-- servers.yml
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;6&lt;/span&gt; files
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Un paso necesario es crear el fichero de &lt;em&gt;hosts&lt;/em&gt;, que incluye los grupos, los contenedores que los forman y los parámetros de conexión a los mismos (como los declaramos en los &lt;em&gt;Dockerfiles&lt;/em&gt;).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# cat hosts 
+&lt;span class="o"&gt;[&lt;/span&gt;all:vars&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;ansible_user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; ansible
+&lt;span class="nv"&gt;ansible_ssh_pass&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; s3cr3t
+&lt;span class="nv"&gt;ansible_become&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="nv"&gt;ansible_become_method&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; sudo
+&lt;span class="nv"&gt;ansible_become_user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; root
+&lt;span class="nv"&gt;ansible_become_pass&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; s3cr3t
+
+&lt;span class="o"&gt;[&lt;/span&gt;balancer&lt;span class="o"&gt;]&lt;/span&gt;
+172.17.0.2
+
+&lt;span class="o"&gt;[&lt;/span&gt;servers&lt;span class="o"&gt;]&lt;/span&gt;
+172.17.0.3
+172.17.0.4
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Los servidores de aplicaciones&lt;/h3&gt;
+&lt;p&gt;La idea es que este grupo va a servir una aplicación &lt;strong&gt;python&lt;/strong&gt; mediante el servidor &lt;strong&gt;uwsgi&lt;/strong&gt;. Esta aplicación es un ejemplo muy simple, que se limita a indicar el &lt;em&gt;hostname&lt;/em&gt; de la máquina, en forma de saludo. Esta aplicación se sirve en el puerto TCP 8080. Estos son el &lt;em&gt;playbook&lt;/em&gt; y los ficheros necesarios para su ejecución:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# cat files/myapp.py 
+import os
+
+def application&lt;span class="o"&gt;(&lt;/span&gt;environ, start_response&lt;span class="o"&gt;)&lt;/span&gt;:
+    start_response&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;200 OK&amp;#39;&lt;/span&gt;, &lt;span class="o"&gt;[(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Content-Type&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;text/plain&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)])&lt;/span&gt;
+    yield &lt;span class="s1"&gt;&amp;#39;Hello from %s\n&amp;#39;&lt;/span&gt; % os.uname&lt;span class="o"&gt;()[&lt;/span&gt;1&lt;span class="o"&gt;]&lt;/span&gt;
+root@ansible:~# cat files/myapp.ini 
+&lt;span class="o"&gt;[&lt;/span&gt;uwsgi&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;plugins&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; python
+&lt;span class="nv"&gt;master&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="nv"&gt;workers&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; 2
+http-socket &lt;span class="o"&gt;=&lt;/span&gt; 0.0.0.0:8080
+&lt;span class="nv"&gt;chdir&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; /opt/
+&lt;span class="nv"&gt;module&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; myapp:application
+root@ansible:~# cat servers.yml 
+- hosts: servers
+  gather_facts: &lt;span class="nb"&gt;false&lt;/span&gt;
+&lt;span class="nb"&gt;  &lt;/span&gt;tasks:
+    - apt: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;={{&lt;/span&gt; item &lt;span class="o"&gt;}}&lt;/span&gt; &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;installed
+      with_items:
+        - uwsgi-emperor
+        - uwsgi-plugin-python
+    - service: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;uwsgi-emperor &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;started
+    - copy: &lt;span class="nv"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;files/myapp.py &lt;span class="nv"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/opt/myapp.py
+    - copy: &lt;span class="nv"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;files/myapp.ini &lt;span class="nv"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/etc/uwsgi-emperor/vassals/myapp.ini
+    - file: &lt;span class="nv"&gt;path&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/etc/uwsgi-emperor/vassals/myapp.ini &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;touch
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esta información, es todo tan fácil como lanzar el &lt;em&gt;playbook&lt;/em&gt; con el inventario creado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible-playbook -i hosts servers.yml 
+
+PLAY ***************************************************************************
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;apt&lt;span class="o"&gt;]&lt;/span&gt; *********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.4&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;item&lt;/span&gt;&lt;span class="o"&gt;=[&lt;/span&gt;u&lt;span class="s1"&gt;&amp;#39;uwsgi-emperor&amp;#39;&lt;/span&gt;, u&lt;span class="s1"&gt;&amp;#39;uwsgi-plugin-python&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;])&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.3&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;item&lt;/span&gt;&lt;span class="o"&gt;=[&lt;/span&gt;u&lt;span class="s1"&gt;&amp;#39;uwsgi-emperor&amp;#39;&lt;/span&gt;, u&lt;span class="s1"&gt;&amp;#39;uwsgi-plugin-python&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;])&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;service&lt;span class="o"&gt;]&lt;/span&gt; *****************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.3&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.4&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;copy&lt;span class="o"&gt;]&lt;/span&gt; ********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.3&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.4&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;copy&lt;span class="o"&gt;]&lt;/span&gt; ********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.3&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.4&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;file&lt;span class="o"&gt;]&lt;/span&gt; ********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.3&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.4&lt;span class="o"&gt;]&lt;/span&gt;
+
+PLAY RECAP *********************************************************************
+172.17.0.3                 : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;   
+172.17.0.4                 : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;   
+
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y ya podríamos hacer peticiones al puerto para obtener respuestas adecuadas.&lt;/p&gt;
+&lt;h3&gt;El balanceador&lt;/h3&gt;
+&lt;p&gt;Vamos a utilizar &lt;strong&gt;nginx&lt;/strong&gt; con una configuración propia de balanceador, que también necesitamos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# cat files/balancer 
+upstream servers &lt;span class="o"&gt;{&lt;/span&gt;
+    server 172.17.0.3:8080&lt;span class="p"&gt;;&lt;/span&gt;
+    server 172.17.0.4:8080&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    location / &lt;span class="o"&gt;{&lt;/span&gt;
+        proxy_pass http://servers&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@ansible:~# cat balancer.yml 
+- hosts: balancer
+  gather_facts: &lt;span class="nb"&gt;false&lt;/span&gt;
+&lt;span class="nb"&gt;  &lt;/span&gt;tasks:
+    - apt: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;nginx-light &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;installed
+    - service: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;nginx &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;started
+    - file: &lt;span class="nv"&gt;path&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/etc/nginx/sites-enabled/default &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;absent
+    - copy: &lt;span class="nv"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;files/balancer &lt;span class="nv"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/etc/nginx/sites-enabled/balancer
+    - service: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;nginx &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;reloaded
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos lo suficiente para lanzar la provisión. Allá vamos!&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible-playbook -i hosts balancer.yml 
+
+PLAY ***************************************************************************
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;apt&lt;span class="o"&gt;]&lt;/span&gt; *********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.2&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;service&lt;span class="o"&gt;]&lt;/span&gt; *****************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.2&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;file&lt;span class="o"&gt;]&lt;/span&gt; ********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.2&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;copy&lt;span class="o"&gt;]&lt;/span&gt; ********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.2&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;service&lt;span class="o"&gt;]&lt;/span&gt; *****************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.2&lt;span class="o"&gt;]&lt;/span&gt;
+
+PLAY RECAP *********************************************************************
+172.17.0.2                 : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;   
+
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Se puede verificar que funciona lanzando peticiones al puerto 80 de esta máquina.&lt;/p&gt;
+&lt;h2&gt;Comprobación del resultado&lt;/h2&gt;
+&lt;p&gt;La mala noticia es que la red 172.17.0.0/16 es privada, y no podemos acceder a ella a menos que sea desde un contenedor. La buena, es que tuvimos la previsión de publicar el puerto 80 del contenedor, mapeado en el puerto 8000 del &lt;em&gt;host&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Así pues, es como si el puerto 80 del balanceador fuera el puerto 8000 de nuestra máquina. Basta con hacer algunas peticiones para darse cuenta de que tenemos las máquinas perfectamente funcionales.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;curl http://localhost:8000/
+Hello from server1
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;curl http://localhost:8000/
+Hello from server2
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;curl http://localhost:8000/
+Hello from server1
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;curl http://localhost:8000/
+Hello from server2
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="linux"></category><category term="docker"></category><category term="dockerfile"></category><category term="ansible"></category><category term="playbook"></category></entry><entry><title>Autenticación SSH por claves</title><link href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html" rel="alternate"></link><updated>2016-05-30T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-30:2016/05/autenticacion-ssh-por-claves.html</id><summary type="html">&lt;p&gt;A pesar de que el protocolo &lt;strong&gt;SSH&lt;/strong&gt; es lo que mas seguridad ofrece hoy en día, un servidor rápido puede probar gran cantidad de contraseñas generadas mediante un generador por fuerza bruta. Para añadir mas seguridad podemos autenticar mediante claves en vez de usar contraseña, opcionalmente protegidos con una &lt;em&gt;passphrase&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;La idea es que un cliente del servidor &lt;strong&gt;SSH&lt;/strong&gt; se autentique reemplazando la contraseña habitual por una clave, previamente generada y con su parte pública compartida con anterioridad.&lt;/p&gt;
 &lt;h2&gt;Disposición inicial&lt;/h2&gt;
 &lt;p&gt;Para la demostración tenemos dos servidores, con los roles claramente especificados en el nombre:&lt;/p&gt;

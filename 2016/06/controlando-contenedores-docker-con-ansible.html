@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Linux Sysadmin</title>
+    <title>Controlando contenedores docker con ansible - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,15 +9,25 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.tk">
-        <meta name="author" content="Gerard" />
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">
 
-    <!-- Open Graph tags -->
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="linux,docker,dockerfile,ansible,playbook" />
+        <meta name="description" content="La facilidad de levantar un contenedor docker nos lleva a la pregunta del millón: ¿es posible usar docker para crear contenedores de usar y tirar para probar otras tecnologías? La respuesta es que sí, y para demostrarlo, vamos a generar un entorno minimalista en contenedores docker, desplegados mediante ansible playbooks ..." />
+
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Controlando contenedores docker con ansible"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html"/>
+        <meta property="og:description" content="La facilidad de levantar un contenedor docker nos lleva a la pregunta del millón: ¿es posible usar docker para crear contenedores de usar y tirar para probar otras tecnologías? La respuesta es que sí, y para demostrarlo, vamos a generar un entorno minimalista en contenedores docker, desplegados mediante ansible playbooks ..."/>
+        <meta property="article:published_time" content="2016-06-06" />
+            <meta property="article:section" content="Operaciones" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:tag" content="dockerfile" />
+            <meta property="article:tag" content="ansible" />
+            <meta property="article:tag" content="playbook" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -33,6 +43,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -74,6 +86,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
+                <li class="active">Controlando contenedores docker con ansible</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -86,61 +103,387 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></h2>
-                <div class="summary"><p>La facilidad de levantar un contenedor <strong>docker</strong> nos lleva a la pregunta del millón: ¿es posible usar <strong>docker</strong> para crear contenedores de usar y tirar para probar otras tecnologías? La respuesta es que sí, y para demostrarlo, vamos a generar un entorno minimalista en contenedores <strong>docker</strong>, desplegados mediante <strong>ansible</strong> <em>playbooks ...</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">Autenticación SSH por claves</a></h2>
-                <div class="summary"><p>A pesar de que el protocolo <strong>SSH</strong> es lo que mas seguridad ofrece hoy en día, un servidor rápido puede probar gran cantidad de contraseñas generadas mediante un generador por fuerza bruta. Para añadir mas seguridad podemos autenticar mediante claves en vez de usar contraseña, opcionalmente protegidos con una <em>passphrase ...</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/05/evolucionando-los-contenedores-docker.html">Evolucionando los contenedores: Docker</a></h2>
-                <div class="summary"><p>Los contenedores tienen su caso de uso y son muy útiles. Sin embargo, ir copiando la imagen es una pérdida de tiempo. Aunque podemos solventar el problema con un sistema de ficheros <em>copy-on-write</em> o un sistema de ficheros tipo <em>union</em>, <strong>Docker</strong> ya nos lo ofrece todo preparado para su uso ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/05/evolucionando-los-contenedores-docker.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/05/reduciendo-el-tamano-de-nuestros-binarios-con-musl-libc.html">Reduciendo el tamaño de nuestros binarios con musl libc</a></h2>
-                <div class="summary"><p>Cuando construimos jaulas, por el motivo que sea, vemos que no quedan pequeñas. El problema es el conjunto de librerías que hay que poner en el caso de los binarios <em>dinámicos</em>, o el exceso de tamaño en el caso de los <em>estáticos</em>. Cambiando la librería base, podemos reducir su tamaño ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/05/reduciendo-el-tamano-de-nuestros-binarios-con-musl-libc.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html">Algunas ideas sueltas sobre Ansible</a></h2>
-                <div class="summary"><p>En un <a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">artículo anterior</a> vimos qué era <strong>Ansible</strong> y como instalarlo, dejando su funcionamiento para el lector; Hay miles de tutoriales por internet, y muchos son mejores de los que pueda poner aquí. Sin embargo, hay algunas ideas que no son fáciles de ver juntas, así que aquí las dejo ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html"
+                       rel="bookmark"
+                       title="Permalink to Controlando contenedores docker con ansible">
+                        Controlando contenedores docker con ansible
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-06-06T08:00:00+02:00"> 2016-06-06</time>
+    </span>
 
-        <ul class="pagination">
-                <li class="prev disabled"><a href="#">&laquo;</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.tk/index.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/index2.html">2</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/index3.html">3</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/index4.html">4</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/index5.html">5</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/index6.html">6</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/index7.html">7</a></li>
-                <li class="next"><a
-                        href="http://www.linuxsysadmin.tk/index2.html">&raquo;</a></li>
-        </ul>
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 9 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/docker.html">docker</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/dockerfile.html">dockerfile</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/ansible.html">ansible</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/playbook.html">playbook</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>La facilidad de levantar un contenedor <strong>docker</strong> nos lleva a la pregunta del millón: ¿es posible usar <strong>docker</strong> para crear contenedores de usar y tirar para probar otras tecnologías? La respuesta es que sí, y para demostrarlo, vamos a generar un entorno minimalista en contenedores <strong>docker</strong>, desplegados mediante <strong>ansible</strong> <em>playbooks</em>.</p>
+<p><strong>AVISO</strong>: De acuerdo con el autor de <strong>docker</strong>, nunca deberíais poner <strong>SSH</strong> en un contenedor <strong>docker</strong> (artículo <a href="https://jpetazzo.github.io/2014/06/23/docker-ssh-considered-evil/">aquí</a>). Sin embargo, hoy vamos a hacer una excepción para esta demostración.</p>
+<h2>Las imágenes base</h2>
+<p>La idea es que vamos a levantar una serie de máquinas y vamos a dejar que <strong>ansible</strong> las provisiones mediante <em>playbooks</em>; para ello necesitamos una imagen base. También vamos a crear una imagen que solo sirva para ejecutar <strong>ansible</strong>, que vamos a crear y a destruir según lo necesitemos.</p>
+<p>Vamos a empezar creando la imagen <em>master</em>, que contiene la herramienta <strong>ansible</strong> (vamos a poner una versión superior desde los <em>backports</em>) y sus dependencias. Este es nuestro <em>Dockerfile</em> y el fichero <em>ansible.cfg</em> que va a gobernarlo:</p>
+<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>cat ansible.cfg 
+<span class="o">[</span>defaults<span class="o">]</span>
+<span class="nv">host_key_checking</span> <span class="o">=</span> False
+gerard@sirius:~/build<span class="nv">$ </span>cat Dockerfile.master 
+FROM debian:jessie-backports
+RUN apt-get update <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    apt-get install -y openssh-client sshpass nano
+RUN apt-get install -y -t jessie-backports ansible
+ADD <span class="o">[</span><span class="s2">&quot;ansible.cfg&quot;</span>, <span class="s2">&quot;/root/.ansible.cfg&quot;</span><span class="o">]</span>
+CMD <span class="o">[</span><span class="s2">&quot;/bin/bash&quot;</span><span class="o">]</span>
+gerard@sirius:~/build<span class="nv">$ </span>
+</pre></div>
+
+
+<p>Construimos la imagen mediante el comando <em>build</em> y le ponemos el <em>tag</em> "master".</p>
+<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>docker build -f Dockerfile.master -t master .
+Sending build context to Docker daemon 4.096 kB
+Step <span class="m">1</span> : FROM debian:jessie-backports
+ ---&gt; 99552579b6f6
+Step <span class="m">2</span> : RUN apt-get update <span class="o">&amp;&amp;</span>     apt-get install -y openssh-client sshpass nano
+ ---&gt; Running in 6e311500cbeb
+...
+ ---&gt; d014d43ddf74
+Removing intermediate container 6e311500cbeb
+Step <span class="m">3</span> : RUN apt-get install -y -t jessie-backports ansible
+ ---&gt; Running in d047144fce1b
+...
+ ---&gt; 10881f414b84
+Removing intermediate container d047144fce1b
+Step <span class="m">4</span> : ADD ansible.cfg /root/.ansible.cfg
+ ---&gt; 08fd2580e558
+Removing intermediate container c6b3c29e8682
+Step <span class="m">5</span> : CMD /bin/bash
+ ---&gt; Running in 7b1199ff749f
+ ---&gt; 58689ad42e3e
+Removing intermediate container 7b1199ff749f
+Successfully built 58689ad42e3e
+gerard@sirius:~/build<span class="nv">$ </span>
+</pre></div>
+
+
+<p>Ahora vamos a crear la imagen para las máquinas controladas, mediante un <em>Dockerfile</em> creado a tal efecto:</p>
+<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>cat Dockerfile.slave 
+FROM debian:jessie
+RUN apt-get update <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    apt-get install -y python openssh-server sudo <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    useradd ansible -G sudo -s /bin/bash -m <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    <span class="nb">echo</span> <span class="s2">&quot;ansible:s3cr3t&quot;</span> <span class="p">|</span> chpasswd <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    mkdir /var/run/sshd
+CMD <span class="o">[</span><span class="s2">&quot;/usr/sbin/sshd&quot;</span>, <span class="s2">&quot;-D&quot;</span><span class="o">]</span>
+gerard@sirius:~/build<span class="nv">$ </span>
+</pre></div>
+
+
+<p>Nuevamente lanzamos el <em>build</em> con el <em>tag</em> "slave".</p>
+<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>docker build -f Dockerfile.slave -t slave .
+Sending build context to Docker daemon 4.096 kB
+Step <span class="m">1</span> : FROM debian:jessie
+ ---&gt; bb5d89f9b6cb
+Step <span class="m">2</span> : RUN apt-get update <span class="o">&amp;&amp;</span>     apt-get install -y python openssh-server sudo <span class="o">&amp;&amp;</span>     useradd ansible -G sudo -s /bin/bash -m <span class="o">&amp;&amp;</span>     <span class="nb">echo</span> <span class="s2">&quot;ansible:s3cr3t&quot;</span> <span class="p">|</span> chpasswd <span class="o">&amp;&amp;</span>     mkdir /var/run/sshd
+ ---&gt; Running in ecc6f15ffdc1
+...
+ ---&gt; ecd77bdcc643
+Removing intermediate container ecc6f15ffdc1
+Step <span class="m">3</span> : CMD /usr/sbin/sshd -D
+ ---&gt; Running in 09b2642eb314
+ ---&gt; 306389180c9f
+Removing intermediate container 09b2642eb314
+Successfully built 306389180c9f
+gerard@sirius:~/build<span class="nv">$ </span>
+</pre></div>
+
+
+<p>Podemos comprobar que tenemos ambas imágenes preparadas para crear nuestros contenedores:</p>
+<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+slave               latest              306389180c9f        <span class="m">5</span> seconds ago       <span class="m">186</span> MB
+master              latest              58689ad42e3e        <span class="m">2</span> minutes ago       245.4 MB
+debian              jessie-backports    99552579b6f6        <span class="m">6</span> days ago          125.1 MB
+debian              jessie              bb5d89f9b6cb        <span class="m">6</span> days ago          125.1 MB
+gerard@sirius:~/build<span class="nv">$ </span>
+</pre></div>
+
+
+<h2>Creando los contenedores necesarios</h2>
+<p>La idea es que vamos a crear un micro entorno compuesto por dos servidores y un balanceador, que es la fachada del sistema. La salida de cada petición web va a indicar el nombre de la máquina que la sirvió, para poder comprobar que balancea adecuadamente.</p>
+<p>Los <em>flags</em> de ejecución son <em>--name</em> (el nombre con el que nos referiremos en los comandos <em>docker</em>), el <em>-h</em> (para dar un nombre de sistema operativo a la máquina), el <em>-d</em> (<em>detach</em>, para que no nos bloquee el terminal) y la imagen <em>slave</em> que tiene instalados <strong>ssh</strong>, <strong>python</strong> y <strong>sudo</strong>. Adicionalmente la imagen del balanceador <em>publica</em> su puerto 80 en el puerto 8000 de la máquina <em>host</em>, para poder acceder por <strong>HTTP</strong> desde nuestra máquina.</p>
+<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>docker run --name balancer -h balancer -d -p 8000:80 slave
+7a80942c69a70e729fc7090983fc59735fd0c10818a5b62b64a26a98e58fc101
+gerard@sirius:~/build<span class="nv">$ </span>docker run --name server1 -h server1 -d slave
+745acb30c5c1b7067a15f593dfefce3e769d2a7b5423f001b6a080296c3aeb3f
+gerard@sirius:~/build<span class="nv">$ </span>docker run --name server2 -h server2 -d slave
+a469c0f69bb42a3c979037b125750a4cc1bf01750c24bd7cef277b9b6e7dc2d0
+gerard@sirius:~/build<span class="nv">$ </span>
+</pre></div>
+
+
+<p>Es importante anotar las direcciones IP de las máquinas, para saber qué tenemos en cada sitio. Esta información nos sirve para montar la configuración del balanceador y para el inventario de <strong>ansible</strong>.</p>
+<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>docker inspect balancer <span class="p">|</span> grep IPAddress
+            <span class="s2">&quot;SecondaryIPAddresses&quot;</span>: null,
+            <span class="s2">&quot;IPAddress&quot;</span>: <span class="s2">&quot;172.17.0.2&quot;</span>,
+                    <span class="s2">&quot;IPAddress&quot;</span>: <span class="s2">&quot;172.17.0.2&quot;</span>,
+gerard@sirius:~/build<span class="nv">$ </span>docker inspect server1 <span class="p">|</span> grep IPAddress
+            <span class="s2">&quot;SecondaryIPAddresses&quot;</span>: null,
+            <span class="s2">&quot;IPAddress&quot;</span>: <span class="s2">&quot;172.17.0.3&quot;</span>,
+                    <span class="s2">&quot;IPAddress&quot;</span>: <span class="s2">&quot;172.17.0.3&quot;</span>,
+gerard@sirius:~/build<span class="nv">$ </span>docker inspect server2 <span class="p">|</span> grep IPAddress
+            <span class="s2">&quot;SecondaryIPAddresses&quot;</span>: null,
+            <span class="s2">&quot;IPAddress&quot;</span>: <span class="s2">&quot;172.17.0.4&quot;</span>,
+                    <span class="s2">&quot;IPAddress&quot;</span>: <span class="s2">&quot;172.17.0.4&quot;</span>,
+gerard@sirius:~/build<span class="nv">$ </span>
+</pre></div>
+
+
+<p>Ahora podemos crear un contenedor de la imagen <em>master</em> que tiene <strong>ansible</strong> para <em>empujar</em> los <em>playbooks</em> a las <em>slaves</em>. Esta máquina es de "usar y tirar".</p>
+<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>docker run -ti --rm -h ansible master
+root@ansible:/# <span class="nb">cd</span> /root/
+root@ansible:~# 
+</pre></div>
+
+
+<h2>Manos a la obra: los playbooks</h2>
+<p>Este punto es similar al uso de <strong>ansible</strong> sin <strong>docker</strong>. Se trata de definir el fichero de <em>hosts</em>, los <em>playbooks</em> y los ficheros que estos puedan necesitar. En este caso concreto, vemos que necesitamos (<em>hosts</em> y <em>playbooks</em> aparte) la aplicación <strong>python</strong> que vamos a servir, la configuracion para <strong>uwsgi</strong> y la configuración del balanceador.</p>
+<div class="highlight"><pre>root@ansible:~# tree
+.
+<span class="p">|</span>-- balancer.yml
+<span class="p">|</span>-- files
+<span class="p">|</span>   <span class="p">|</span>-- balancer
+<span class="p">|</span>   <span class="p">|</span>-- myapp.ini
+<span class="p">|</span>   <span class="sb">`</span>-- myapp.py
+<span class="p">|</span>-- hosts
+<span class="sb">`</span>-- servers.yml
+
+<span class="m">1</span> directory, <span class="m">6</span> files
+root@ansible:~# 
+</pre></div>
+
+
+<p>Un paso necesario es crear el fichero de <em>hosts</em>, que incluye los grupos, los contenedores que los forman y los parámetros de conexión a los mismos (como los declaramos en los <em>Dockerfiles</em>).</p>
+<div class="highlight"><pre>root@ansible:~# cat hosts 
+<span class="o">[</span>all:vars<span class="o">]</span>
+<span class="nv">ansible_user</span> <span class="o">=</span> ansible
+<span class="nv">ansible_ssh_pass</span> <span class="o">=</span> s3cr3t
+<span class="nv">ansible_become</span> <span class="o">=</span> <span class="nb">true</span>
+<span class="nv">ansible_become_method</span> <span class="o">=</span> sudo
+<span class="nv">ansible_become_user</span> <span class="o">=</span> root
+<span class="nv">ansible_become_pass</span> <span class="o">=</span> s3cr3t
+
+<span class="o">[</span>balancer<span class="o">]</span>
+172.17.0.2
+
+<span class="o">[</span>servers<span class="o">]</span>
+172.17.0.3
+172.17.0.4
+root@ansible:~# 
+</pre></div>
+
+
+<h3>Los servidores de aplicaciones</h3>
+<p>La idea es que este grupo va a servir una aplicación <strong>python</strong> mediante el servidor <strong>uwsgi</strong>. Esta aplicación es un ejemplo muy simple, que se limita a indicar el <em>hostname</em> de la máquina, en forma de saludo. Esta aplicación se sirve en el puerto TCP 8080. Estos son el <em>playbook</em> y los ficheros necesarios para su ejecución:</p>
+<div class="highlight"><pre>root@ansible:~# cat files/myapp.py 
+import os
+
+def application<span class="o">(</span>environ, start_response<span class="o">)</span>:
+    start_response<span class="o">(</span><span class="s1">&#39;200 OK&#39;</span>, <span class="o">[(</span><span class="s1">&#39;Content-Type&#39;</span>, <span class="s1">&#39;text/plain&#39;</span><span class="o">)])</span>
+    yield <span class="s1">&#39;Hello from %s\n&#39;</span> % os.uname<span class="o">()[</span>1<span class="o">]</span>
+root@ansible:~# cat files/myapp.ini 
+<span class="o">[</span>uwsgi<span class="o">]</span>
+<span class="nv">plugins</span> <span class="o">=</span> python
+<span class="nv">master</span> <span class="o">=</span> <span class="nb">true</span>
+<span class="nv">workers</span> <span class="o">=</span> 2
+http-socket <span class="o">=</span> 0.0.0.0:8080
+<span class="nv">chdir</span> <span class="o">=</span> /opt/
+<span class="nv">module</span> <span class="o">=</span> myapp:application
+root@ansible:~# cat servers.yml 
+- hosts: servers
+  gather_facts: <span class="nb">false</span>
+<span class="nb">  </span>tasks:
+    - apt: <span class="nv">name</span><span class="o">={{</span> item <span class="o">}}</span> <span class="nv">state</span><span class="o">=</span>installed
+      with_items:
+        - uwsgi-emperor
+        - uwsgi-plugin-python
+    - service: <span class="nv">name</span><span class="o">=</span>uwsgi-emperor <span class="nv">state</span><span class="o">=</span>started
+    - copy: <span class="nv">src</span><span class="o">=</span>files/myapp.py <span class="nv">dest</span><span class="o">=</span>/opt/myapp.py
+    - copy: <span class="nv">src</span><span class="o">=</span>files/myapp.ini <span class="nv">dest</span><span class="o">=</span>/etc/uwsgi-emperor/vassals/myapp.ini
+    - file: <span class="nv">path</span><span class="o">=</span>/etc/uwsgi-emperor/vassals/myapp.ini <span class="nv">state</span><span class="o">=</span>touch
+root@ansible:~# 
+</pre></div>
+
+
+<p>Y con esta información, es todo tan fácil como lanzar el <em>playbook</em> con el inventario creado.</p>
+<div class="highlight"><pre>root@ansible:~# ansible-playbook -i hosts servers.yml 
+
+PLAY ***************************************************************************
+
+TASK <span class="o">[</span>apt<span class="o">]</span> *********************************************************************
+changed: <span class="o">[</span>172.17.0.4<span class="o">]</span> <span class="o">=</span>&gt; <span class="o">(</span><span class="nv">item</span><span class="o">=[</span>u<span class="s1">&#39;uwsgi-emperor&#39;</span>, u<span class="s1">&#39;uwsgi-plugin-python&#39;</span><span class="o">])</span>
+changed: <span class="o">[</span>172.17.0.3<span class="o">]</span> <span class="o">=</span>&gt; <span class="o">(</span><span class="nv">item</span><span class="o">=[</span>u<span class="s1">&#39;uwsgi-emperor&#39;</span>, u<span class="s1">&#39;uwsgi-plugin-python&#39;</span><span class="o">])</span>
+
+TASK <span class="o">[</span>service<span class="o">]</span> *****************************************************************
+changed: <span class="o">[</span>172.17.0.3<span class="o">]</span>
+changed: <span class="o">[</span>172.17.0.4<span class="o">]</span>
+
+TASK <span class="o">[</span>copy<span class="o">]</span> ********************************************************************
+changed: <span class="o">[</span>172.17.0.3<span class="o">]</span>
+changed: <span class="o">[</span>172.17.0.4<span class="o">]</span>
+
+TASK <span class="o">[</span>copy<span class="o">]</span> ********************************************************************
+changed: <span class="o">[</span>172.17.0.3<span class="o">]</span>
+changed: <span class="o">[</span>172.17.0.4<span class="o">]</span>
+
+TASK <span class="o">[</span>file<span class="o">]</span> ********************************************************************
+changed: <span class="o">[</span>172.17.0.3<span class="o">]</span>
+changed: <span class="o">[</span>172.17.0.4<span class="o">]</span>
+
+PLAY RECAP *********************************************************************
+172.17.0.3                 : <span class="nv">ok</span><span class="o">=</span><span class="m">5</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">5</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>   
+172.17.0.4                 : <span class="nv">ok</span><span class="o">=</span><span class="m">5</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">5</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>   
+
+root@ansible:~# 
+</pre></div>
+
+
+<p>Y ya podríamos hacer peticiones al puerto para obtener respuestas adecuadas.</p>
+<h3>El balanceador</h3>
+<p>Vamos a utilizar <strong>nginx</strong> con una configuración propia de balanceador, que también necesitamos:</p>
+<div class="highlight"><pre>root@ansible:~# cat files/balancer 
+upstream servers <span class="o">{</span>
+    server 172.17.0.3:8080<span class="p">;</span>
+    server 172.17.0.4:8080<span class="p">;</span>
+<span class="o">}</span>
+
+server <span class="o">{</span>
+    location / <span class="o">{</span>
+        proxy_pass http://servers<span class="p">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+root@ansible:~# cat balancer.yml 
+- hosts: balancer
+  gather_facts: <span class="nb">false</span>
+<span class="nb">  </span>tasks:
+    - apt: <span class="nv">name</span><span class="o">=</span>nginx-light <span class="nv">state</span><span class="o">=</span>installed
+    - service: <span class="nv">name</span><span class="o">=</span>nginx <span class="nv">state</span><span class="o">=</span>started
+    - file: <span class="nv">path</span><span class="o">=</span>/etc/nginx/sites-enabled/default <span class="nv">state</span><span class="o">=</span>absent
+    - copy: <span class="nv">src</span><span class="o">=</span>files/balancer <span class="nv">dest</span><span class="o">=</span>/etc/nginx/sites-enabled/balancer
+    - service: <span class="nv">name</span><span class="o">=</span>nginx <span class="nv">state</span><span class="o">=</span>reloaded
+root@ansible:~# 
+</pre></div>
+
+
+<p>Y con esto tenemos lo suficiente para lanzar la provisión. Allá vamos!</p>
+<div class="highlight"><pre>root@ansible:~# ansible-playbook -i hosts balancer.yml 
+
+PLAY ***************************************************************************
+
+TASK <span class="o">[</span>apt<span class="o">]</span> *********************************************************************
+changed: <span class="o">[</span>172.17.0.2<span class="o">]</span>
+
+TASK <span class="o">[</span>service<span class="o">]</span> *****************************************************************
+changed: <span class="o">[</span>172.17.0.2<span class="o">]</span>
+
+TASK <span class="o">[</span>file<span class="o">]</span> ********************************************************************
+changed: <span class="o">[</span>172.17.0.2<span class="o">]</span>
+
+TASK <span class="o">[</span>copy<span class="o">]</span> ********************************************************************
+changed: <span class="o">[</span>172.17.0.2<span class="o">]</span>
+
+TASK <span class="o">[</span>service<span class="o">]</span> *****************************************************************
+changed: <span class="o">[</span>172.17.0.2<span class="o">]</span>
+
+PLAY RECAP *********************************************************************
+172.17.0.2                 : <span class="nv">ok</span><span class="o">=</span><span class="m">5</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">5</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>   
+
+root@ansible:~# 
+</pre></div>
+
+
+<p>Se puede verificar que funciona lanzando peticiones al puerto 80 de esta máquina.</p>
+<h2>Comprobación del resultado</h2>
+<p>La mala noticia es que la red 172.17.0.0/16 es privada, y no podemos acceder a ella a menos que sea desde un contenedor. La buena, es que tuvimos la previsión de publicar el puerto 80 del contenedor, mapeado en el puerto 8000 del <em>host</em>.</p>
+<p>Así pues, es como si el puerto 80 del balanceador fuera el puerto 8000 de nuestra máquina. Basta con hacer algunas peticiones para darse cuenta de que tenemos las máquinas perfectamente funcionales.</p>
+<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>curl http://localhost:8000/
+Hello from server1
+gerard@sirius:~/build<span class="nv">$ </span>curl http://localhost:8000/
+Hello from server2
+gerard@sirius:~/build<span class="nv">$ </span>curl http://localhost:8000/
+Hello from server1
+gerard@sirius:~/build<span class="nv">$ </span>curl http://localhost:8000/
+Hello from server2
+gerard@sirius:~/build<span class="nv">$ </span>
+</pre></div>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/05/mongodb-sharding-con-ansible.html">MongoDB sharding con ansible</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/05/evolucionando-los-contenedores-docker.html">Evolucionando los contenedores: Docker</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html">Algunas ideas sueltas sobre Ansible</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'controlando-contenedores-docker-con-ansible';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
