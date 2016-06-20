@@ -1,5 +1,255 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-02T00:00:00+02:00</updated><entry><title>MongoDB sharding con ansible</title><link href="http://www.linuxsysadmin.tk/2016/05/mongodb-sharding-con-ansible.html" rel="alternate"></link><updated>2016-05-02T00:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-02:2016/05/mongodb-sharding-con-ansible.html</id><summary type="html">&lt;p&gt;Como ya vimos en un artículo anterior, los &lt;em&gt;replica sets&lt;/em&gt; nos ofrecen alta disponibilidad para nuestros despliegues de &lt;strong&gt;mongodb&lt;/strong&gt;. Sin embargo, algunas veces, necesitamos que nuestro &lt;em&gt;cluster&lt;/em&gt; ofrezca alto rendimiento, y esto se consigue mediante &lt;em&gt;sharding&lt;/em&gt;. Como no queremos renunciar a la alta disponibilidad, podemos aplicar ambas; hoy explicamos como.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-06-20T08:30:00+02:00</updated><entry><title>Preparando un servidor de repositorios GIT</title><link href="http://www.linuxsysadmin.tk/2016/06/preparando-un-servidor-de-repositorios-git.html" rel="alternate"></link><updated>2016-06-20T08:30:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-06-20:2016/06/preparando-un-servidor-de-repositorios-git.html</id><summary type="html">&lt;p&gt;Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando &lt;strong&gt;git&lt;/strong&gt; y &lt;strong&gt;ssh&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;La idea es muy simple; solo se necesita un servidor de &lt;strong&gt;ssh&lt;/strong&gt;, que es la forma de transportar los datos, y los binarios de &lt;strong&gt;git&lt;/strong&gt; para que los organice a placer. También vamos a necesitar un usuario &lt;strong&gt;git&lt;/strong&gt;, que es el que vamos a usar para entrar, ya sea para crear y borrar repositorios, como para las operaciones remotas recibidas por el repositorio.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Podemos eliminar la petición de &lt;em&gt;password&lt;/em&gt; para todos los accesos que se hagan por &lt;strong&gt;SSH&lt;/strong&gt;, sean para entrar en las máquinas por &lt;strong&gt;SSH&lt;/strong&gt; mediante cualquier &lt;em&gt;shell&lt;/em&gt; de este artículo, o como resultado de una operación remota de &lt;strong&gt;git&lt;/strong&gt;. Esto se puede hacer usando autenticación &lt;strong&gt;SSH&lt;/strong&gt; por claves, como se explica en un &lt;a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html"&gt;artículo anterior&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Montando el servidor&lt;/h2&gt;
+&lt;p&gt;Para crear la máquina base, vamos a utilizar &lt;strong&gt;Docker&lt;/strong&gt; por comodidad. Aprovechando esta tecnología, podemos crear el contenedor partiendo de una imagen creada con un &lt;em&gt;Dockerfile&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;cat Dockerfile
+FROM debian:jessie
+RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    apt-get install -y git openssh-server &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    mkdir /var/run/sshd
+RUN useradd git -G sudo -s /bin/bash -m &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;git:git&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; chpasswd
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/sbin/sshd&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-D&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Construimos la imagen, basándonos en el anterior &lt;em&gt;Dockerfile&lt;/em&gt;, y le añadimos el &lt;em&gt;tag&lt;/em&gt; "gitserver".&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker build -t gitserver .
+Sending build context to Docker daemon 5.632 kB
+Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM debian:jessie
+ ---&amp;gt; bb5d89f9b6cb
+Step &lt;span class="m"&gt;2&lt;/span&gt; : RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     apt-get install -y git openssh-server &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     mkdir /var/run/sshd
+ ---&amp;gt; Running in 6b612781b788
+...
+ ---&amp;gt; e88e644b0a53
+Removing intermediate container 6b612781b788
+Step &lt;span class="m"&gt;3&lt;/span&gt; : RUN useradd git -G sudo -s /bin/bash -m &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;git:git&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; chpasswd
+ ---&amp;gt; Running in 0e865bda447e
+ ---&amp;gt; 81d111c19c71
+Removing intermediate container 0e865bda447e
+Step &lt;span class="m"&gt;4&lt;/span&gt; : CMD /usr/sbin/sshd -D
+ ---&amp;gt; Running in 67bbebe61c74
+ ---&amp;gt; 81c2dd7b156a
+Removing intermediate container 67bbebe61c74
+Successfully built 81c2dd7b156a
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lanzamos una instancia del contenedor para que podamos utilizarla. La parte importante es el &lt;em&gt;flag&lt;/em&gt; &lt;strong&gt;-d&lt;/strong&gt; para ejecutar el contenedor en &lt;em&gt;background&lt;/em&gt;, y el &lt;em&gt;flag&lt;/em&gt; &lt;strong&gt;-p&lt;/strong&gt; que nos permite publicar el puerto 22 del contenedor en el puerto 22222 de la máquina &lt;em&gt;host&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -d --name gitserver1 -h gitserver1 -p 22222:22 gitserver
+c26f30a94bb75b35c6d6cfe6a6bc5b1ef6929aafe1b5636acd207e019743540b
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a entrar en el servidor &lt;strong&gt;SSH&lt;/strong&gt; para crear el repositorio &lt;em&gt;myrepo.git&lt;/em&gt; que nos va a servir de ejemplo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;ssh git@localhost -p 22222
+git@localhost&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+
+The programs included with the Debian GNU/Linux system are free software&lt;span class="p"&gt;;&lt;/span&gt;
+the exact distribution terms &lt;span class="k"&gt;for&lt;/span&gt; each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+git@gitserver1:~&lt;span class="nv"&gt;$ &lt;/span&gt;git init --bare myrepo.git
+Initialized empty Git repository in /home/git/myrepo.git/
+git@gitserver1:~&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;exit&lt;/span&gt;
+&lt;span class="nb"&gt;logout&lt;/span&gt;
+Connection to localhost closed.
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Desde la máquina &lt;em&gt;host&lt;/em&gt; (o desde cualquier otra), podemos clonar el repositorio. Como tenemos el puerto del contenedor publicado en el puerto 22222 de la máquina &lt;em&gt;host&lt;/em&gt; (la de trabajo, en este caso), la usamos tal cual para clonar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;git clone ssh://git@localhost:22222/home/git/myrepo.git
+Cloning into &lt;span class="s1"&gt;&amp;#39;myrepo&amp;#39;&lt;/span&gt;...
+git@localhost&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+warning: You appear to have cloned an empty repository.
+Checking connectivity... &lt;span class="k"&gt;done&lt;/span&gt;.
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Hacemos un poco de trabajo local, con sus respectivos &lt;em&gt;commits&lt;/em&gt;. Finalmente podemos hacer un &lt;em&gt;push&lt;/em&gt; a nuestro repositorio remoto, siguiendo el &lt;em&gt;workflow&lt;/em&gt; de trabajo que queramos seguir.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;cd &lt;/span&gt;myrepo/
+gerard@sirius:~/build/myrepo&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;echo &lt;/span&gt;0.0.1 &amp;gt; VERSION
+gerard@sirius:~/build/myrepo&lt;span class="nv"&gt;$ &lt;/span&gt;git add VERSION 
+gerard@sirius:~/build/myrepo&lt;span class="nv"&gt;$ &lt;/span&gt;git commit -m &lt;span class="s2"&gt;&amp;quot;Initial commit&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;master &lt;span class="o"&gt;(&lt;/span&gt;root-commit&lt;span class="o"&gt;)&lt;/span&gt; f30b82a&lt;span class="o"&gt;]&lt;/span&gt; Initial commit
+ &lt;span class="m"&gt;1&lt;/span&gt; file changed, &lt;span class="m"&gt;1&lt;/span&gt; insertion&lt;span class="o"&gt;(&lt;/span&gt;+&lt;span class="o"&gt;)&lt;/span&gt;
+ create mode &lt;span class="m"&gt;100644&lt;/span&gt; VERSION
+gerard@sirius:~/build/myrepo&lt;span class="nv"&gt;$ &lt;/span&gt;git push -u origin master
+git@localhost&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+Counting objects: 3, &lt;span class="k"&gt;done&lt;/span&gt;.
+Writing objects: 100% &lt;span class="o"&gt;(&lt;/span&gt;3/3&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="m"&gt;222&lt;/span&gt; bytes &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt; bytes/s, &lt;span class="k"&gt;done&lt;/span&gt;.
+Total &lt;span class="m"&gt;3&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;, reused &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;
+To ssh://git@localhost:22222/home/git/myrepo.git
+ * &lt;span class="o"&gt;[&lt;/span&gt;new branch&lt;span class="o"&gt;]&lt;/span&gt;      master -&amp;gt; master
+Branch master &lt;span class="nb"&gt;set &lt;/span&gt;up to track remote branch master from origin.
+gerard@sirius:~/build/myrepo&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; ..
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Añadiendo restricciones a la sesión SSH&lt;/h2&gt;
+&lt;p&gt;Es un poco peligroso permitir que el usuario &lt;em&gt;git&lt;/em&gt; entre mediante una sesión &lt;strong&gt;SSH&lt;/strong&gt; para hacer lo que le parezca.&lt;/p&gt;
+&lt;p&gt;Los mismos binarios de &lt;strong&gt;git&lt;/strong&gt; incluyen &lt;strong&gt;git-shell&lt;/strong&gt;, que es un &lt;em&gt;shell&lt;/em&gt; que limita lo que puede hacer el usuario, aunque solo permitiría hacer las operaciones &lt;em&gt;push&lt;/em&gt; y &lt;em&gt;pull&lt;/em&gt; propias del trabajo remoto con &lt;strong&gt;git&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;¿Y como podemos crear y destruir repositorios? En principio, no se puede. Sin embargo, si creamos una carpeta &lt;em&gt;/home/git/git-shell-commands/&lt;/em&gt;, el usuario va a poder ejecutar los &lt;em&gt;scripts&lt;/em&gt; que allí pongamos.&lt;/p&gt;
+&lt;p&gt;Siguiendo esta idea, vamos a mejorar el &lt;em&gt;Dockerfile&lt;/em&gt; para asignar &lt;strong&gt;git-shell&lt;/strong&gt; al usuario &lt;em&gt;git&lt;/em&gt; y para ponerle un par de comandos.&lt;/p&gt;
+&lt;p&gt;Vamos a crear dos &lt;em&gt;scripts&lt;/em&gt; que nos permitan crear y destruir repositorios, que son los siguientes:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;cat create 
+&lt;span class="c"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="si"&gt;${#}&lt;/span&gt; -ne &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;[ERROR] Syntax: create &amp;lt;repository&amp;gt;&amp;quot;&lt;/span&gt;
+    &lt;span class="nb"&gt;exit&lt;/span&gt; -1
+&lt;span class="k"&gt;fi&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; -e &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;1&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;.git &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;[ERROR] Repository &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;1&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; exists&amp;quot;&lt;/span&gt;
+    &lt;span class="nb"&gt;exit&lt;/span&gt; -1
+&lt;span class="k"&gt;fi&lt;/span&gt;
+
+git init --bare &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;1&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;.git
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;[OK] Repository &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;1&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; created&amp;quot;&lt;/span&gt;
+&lt;span class="nb"&gt;exit &lt;/span&gt;0
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;cat destroy 
+&lt;span class="c"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="si"&gt;${#}&lt;/span&gt; -ne &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;[ERROR] Syntax: destroy &amp;lt;repository&amp;gt;&amp;quot;&lt;/span&gt;
+    &lt;span class="nb"&gt;exit&lt;/span&gt; -1
+&lt;span class="k"&gt;fi&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; -e &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;1&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;.git &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+    rm -Rf &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;1&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;.git
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;[OK] Repository &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;1&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; deleted&amp;quot;&lt;/span&gt;
+    &lt;span class="nb"&gt;exit &lt;/span&gt;0
+&lt;span class="k"&gt;fi&lt;/span&gt;
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;[ERROR] Repository &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;1&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; does not exist&amp;quot;&lt;/span&gt;
+&lt;span class="nb"&gt;exit&lt;/span&gt; -1
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;También vamos a reescribir el &lt;em&gt;Dockerfile&lt;/em&gt; con las nuevas modificaciones.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;cat Dockerfile.shell 
+FROM debian:jessie
+RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    apt-get install -y git openssh-server &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    mkdir /var/run/sshd
+RUN useradd git -G sudo -s /usr/bin/git-shell -m &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;git:git&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; chpasswd &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    mkdir /home/git/git-shell-commands
+COPY create destroy /home/git/git-shell-commands/
+RUN cp /usr/share/doc/git/contrib/git-shell-commands/help /home/git/git-shell-commands/ &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    cp /usr/share/doc/git/contrib/git-shell-commands/list /home/git/git-shell-commands/ &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    chmod &lt;span class="m"&gt;755&lt;/span&gt; /home/git/git-shell-commands/*
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/sbin/sshd&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-D&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Creamos la imagen usando el &lt;em&gt;Dockerfile&lt;/em&gt; antes mencionado, siguiendo el mismo procedimiento de la versión básica. Le ponemos un &lt;em&gt;tag&lt;/em&gt; distinto para tener ambas imágenes funcionales.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker build -f Dockerfile.shell -t gitserver:shell .
+Sending build context to Docker daemon 53.25 kB
+Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM debian:jessie
+ ---&amp;gt; bb5d89f9b6cb
+Step &lt;span class="m"&gt;2&lt;/span&gt; : RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     apt-get install -y git openssh-server &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     mkdir /var/run/sshd
+ ---&amp;gt; Using cache
+ ---&amp;gt; e88e644b0a53
+Step &lt;span class="m"&gt;3&lt;/span&gt; : RUN useradd git -G sudo -s /usr/bin/git-shell -m &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;git:git&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; chpasswd &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     mkdir /home/git/git-shell-commands
+ ---&amp;gt; Running in 387d2791d63f
+ ---&amp;gt; 0ab419cdfc2d
+Removing intermediate container 387d2791d63f
+Step &lt;span class="m"&gt;4&lt;/span&gt; : COPY create destroy /home/git/git-shell-commands/
+ ---&amp;gt; e1aa5fa9cb44
+Removing intermediate container 92fd282c6979
+Step &lt;span class="m"&gt;5&lt;/span&gt; : RUN cp /usr/share/doc/git/contrib/git-shell-commands/help /home/git/git-shell-commands/ &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     cp /usr/share/doc/git/contrib/git-shell-commands/list /home/git/git-shell-commands/ &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     chmod &lt;span class="m"&gt;755&lt;/span&gt; /home/git/git-shell-commands/*
+ ---&amp;gt; Running in 45ed8f24a547
+ ---&amp;gt; 2237b87165bc
+Removing intermediate container 45ed8f24a547
+Step &lt;span class="m"&gt;6&lt;/span&gt; : CMD /usr/sbin/sshd -D
+ ---&amp;gt; Running in b94b8c1ddf8a
+ ---&amp;gt; e484e1465480
+Removing intermediate container b94b8c1ddf8a
+Successfully built e484e1465480
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lanzamos una instancia de la imagen creada. Es importante cambiar el puerto; puesto que el 22222 está ocupado por la instancia anterior, usaré el siguiente.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -d --name gitserver2 -h gitserver2 -p 22223:22 gitserver:shell
+e732027d11b90657ff109a455f032327f0e24eebe54a7e121d86eff6eab1bc4b
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Entramos por &lt;strong&gt;SSH&lt;/strong&gt;. Nos podemos dar cuenta de que el &lt;em&gt;prompt&lt;/em&gt; ha cambiado; estamos en el &lt;strong&gt;git-shell&lt;/strong&gt; y tenemos limitados los comandos a los que añadimos en el &lt;em&gt;Dockerfile&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;ssh git@localhost -p 22223
+git@localhost&lt;span class="s1"&gt;&amp;#39;s password: &lt;/span&gt;
+
+&lt;span class="s1"&gt;The programs included with the Debian GNU/Linux system are free software;&lt;/span&gt;
+&lt;span class="s1"&gt;the exact distribution terms for each program are described in the&lt;/span&gt;
+&lt;span class="s1"&gt;individual files in /usr/share/doc/*/copyright.&lt;/span&gt;
+
+&lt;span class="s1"&gt;Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent&lt;/span&gt;
+&lt;span class="s1"&gt;permitted by applicable law.&lt;/span&gt;
+&lt;span class="s1"&gt;Run &amp;#39;&lt;/span&gt;&lt;span class="nb"&gt;help&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39; for help, or &amp;#39;&lt;/span&gt;&lt;span class="nb"&gt;exit&lt;/span&gt;&lt;span class="err"&gt;&amp;#39;&lt;/span&gt; to leave.  Available commands:
+create
+destroy
+list
+git&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Usamos el comando &lt;em&gt;create&lt;/em&gt; para crear el repositorio y verificamos que está usando el comando &lt;em&gt;list&lt;/em&gt;. Tendríamos disponible el comando &lt;em&gt;destroy&lt;/em&gt;, pero de momento no lo vamos a utilizar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;git&amp;gt; create myrepo2
+Initialized empty Git repository in /home/git/myrepo2.git/
+&lt;span class="o"&gt;[&lt;/span&gt;OK&lt;span class="o"&gt;]&lt;/span&gt; Repository myrepo2 created
+git&amp;gt; list
+myrepo2.git
+git&amp;gt; &lt;span class="nb"&gt;exit&lt;/span&gt;
+Connection to localhost closed.
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Verificamos que funciona, clonando el repositorio como hemos hecho antes.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;git clone ssh://git@localhost:22223/home/git/myrepo2.git
+Cloning into &lt;span class="s1"&gt;&amp;#39;myrepo2&amp;#39;&lt;/span&gt;...
+git@localhost&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+warning: You appear to have cloned an empty repository.
+Checking connectivity... &lt;span class="k"&gt;done&lt;/span&gt;.
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Hacemos algunos &lt;em&gt;commits&lt;/em&gt; locales y finalmente los pasamos al repositorio remoto mediante un &lt;em&gt;push&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;cd &lt;/span&gt;myrepo2/
+gerard@sirius:~/build/myrepo2&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;echo &lt;/span&gt;0.0.1 &amp;gt; VERSION
+gerard@sirius:~/build/myrepo2&lt;span class="nv"&gt;$ &lt;/span&gt;git add VERSION
+gerard@sirius:~/build/myrepo2&lt;span class="nv"&gt;$ &lt;/span&gt;git commit -m &lt;span class="s2"&gt;&amp;quot;Initial commit&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;master &lt;span class="o"&gt;(&lt;/span&gt;root-commit&lt;span class="o"&gt;)&lt;/span&gt; fd40f39&lt;span class="o"&gt;]&lt;/span&gt; Initial commit
+ &lt;span class="m"&gt;1&lt;/span&gt; file changed, &lt;span class="m"&gt;1&lt;/span&gt; insertion&lt;span class="o"&gt;(&lt;/span&gt;+&lt;span class="o"&gt;)&lt;/span&gt;
+ create mode &lt;span class="m"&gt;100644&lt;/span&gt; VERSION
+gerard@sirius:~/build/myrepo2&lt;span class="nv"&gt;$ &lt;/span&gt;git push -u origin master
+git@localhost&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+Counting objects: 3, &lt;span class="k"&gt;done&lt;/span&gt;.
+Writing objects: 100% &lt;span class="o"&gt;(&lt;/span&gt;3/3&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="m"&gt;222&lt;/span&gt; bytes &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt; bytes/s, &lt;span class="k"&gt;done&lt;/span&gt;.
+Total &lt;span class="m"&gt;3&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;, reused &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;
+To ssh://git@localhost:22223/home/git/myrepo2.git
+ * &lt;span class="o"&gt;[&lt;/span&gt;new branch&lt;span class="o"&gt;]&lt;/span&gt;      master -&amp;gt; master
+Branch master &lt;span class="nb"&gt;set &lt;/span&gt;up to track remote branch master from origin.
+gerard@sirius:~/build/myrepo2&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; ..
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="linux"></category><category term="git"></category><category term="ssh"></category><category term="docker"></category></entry><entry><title>MongoDB sharding con ansible</title><link href="http://www.linuxsysadmin.tk/2016/05/mongodb-sharding-con-ansible.html" rel="alternate"></link><updated>2016-05-02T00:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-02:2016/05/mongodb-sharding-con-ansible.html</id><summary type="html">&lt;p&gt;Como ya vimos en un artículo anterior, los &lt;em&gt;replica sets&lt;/em&gt; nos ofrecen alta disponibilidad para nuestros despliegues de &lt;strong&gt;mongodb&lt;/strong&gt;. Sin embargo, algunas veces, necesitamos que nuestro &lt;em&gt;cluster&lt;/em&gt; ofrezca alto rendimiento, y esto se consigue mediante &lt;em&gt;sharding&lt;/em&gt;. Como no queremos renunciar a la alta disponibilidad, podemos aplicar ambas; hoy explicamos como.&lt;/p&gt;
 &lt;p&gt;El mecanismo de &lt;em&gt;sharding&lt;/em&gt; es bastante simple: tenemos nuestros datos repartidos entre uno o mas &lt;em&gt;shards&lt;/em&gt;, que se van a repartir los datos del &lt;em&gt;cluster&lt;/em&gt;. Para mantener un control de donde están los datos, también vamos a necesitar unos procesos especiales llamados &lt;em&gt;config servers&lt;/em&gt;. Finalmente, habrá que poner algunos procesos &lt;em&gt;mongos&lt;/em&gt; que son unos &lt;em&gt;proxies&lt;/em&gt; al &lt;em&gt;cluster&lt;/em&gt; y sirven para ocultar la complejidad del mismo.&lt;/p&gt;
 &lt;h2&gt;Visión del conjunto&lt;/h2&gt;
 &lt;p&gt;Hay que decir que el mecanismo de &lt;em&gt;sharding&lt;/em&gt; permite poner y quitar &lt;em&gt;shards&lt;/em&gt; a &lt;em&gt;posteriori&lt;/em&gt;, igual que con los procesos &lt;em&gt;mongos&lt;/em&gt;, pero para empezar vamos a necesitar una arquitectura inicial que es lo que vamos a montar.&lt;/p&gt;
