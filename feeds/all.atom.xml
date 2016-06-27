@@ -1,5 +1,261 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-06-20T08:30:00+02:00</updated><entry><title>Preparando un servidor de repositorios GIT</title><link href="http://www.linuxsysadmin.tk/2016/06/preparando-un-servidor-de-repositorios-git.html" rel="alternate"></link><updated>2016-06-20T08:30:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-06-20:2016/06/preparando-un-servidor-de-repositorios-git.html</id><summary type="html">&lt;p&gt;Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando &lt;strong&gt;git&lt;/strong&gt; y &lt;strong&gt;ssh&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-06-27T08:00:00+02:00</updated><entry><title>Balanceando peticiones con HAProxy</title><link href="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html" rel="alternate"></link><updated>2016-06-27T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-06-27:2016/06/balanceando-peticiones-con-haproxy.html</id><summary type="html">&lt;p&gt;Cuando tenemos un entorno grande o con previsiones de crecimiento, nos interesa poder poner a trabajar varios servidores similares. En casos así nos hace falta un &lt;strong&gt;balanceador de carga&lt;/strong&gt;, que actúa como un agente de tráfico, dirigiendo las peticiones que él mismo recibe a los diferentes servidores, por ejemplo, &lt;strong&gt;haproxy&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;En este artículo vamos a montar el balanceador &lt;strong&gt;haproxy&lt;/strong&gt;, usando &lt;strong&gt;ansible&lt;/strong&gt;, basándonos en las imágenes &lt;strong&gt;docker&lt;/strong&gt; de &lt;a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html"&gt;otro artículo&lt;/a&gt;. La ideas es que vamos a poner un único balanceador que va a escuchar en dos puertos, balanceando dos &lt;em&gt;backends&lt;/em&gt; en cada uno, por ejemplo una web y una &lt;em&gt;api&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+slave               latest              22a9312a1315        About an hour ago   &lt;span class="m"&gt;186&lt;/span&gt; MB
+ansible             latest              225b431d2133        About an hour ago   245.5 MB
+debian              latest              bb5d89f9b6cb        &lt;span class="m"&gt;2&lt;/span&gt; weeks ago         125.1 MB
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Preparando el entorno&lt;/h2&gt;
+&lt;p&gt;El primer paso es disponer de una red para que todos los servidores implicados se puedan comunicar entre ellos. La red que viene por defecto nos permite eso, pero vamos a crear una red &lt;em&gt;user defined&lt;/em&gt; que nos va a permitir que los contenedores &lt;strong&gt;docker&lt;/strong&gt; se conozcan entre ellos por su nombre.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker network create --subnet&lt;span class="o"&gt;=&lt;/span&gt;172.20.0.0/16 balancing
+4585a1abd0ed69bc9d1daf0dd019e1f129a9e7328471da77541f5b4a54c19626
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Se trata de levantar 5 servidores: 1 para &lt;strong&gt;haproxy&lt;/strong&gt; y otros 4 para representar los servidores de &lt;em&gt;backend&lt;/em&gt;, que vamos a trucar para que parezca lo que no son. Es importante &lt;em&gt;publicar&lt;/em&gt; los puertos que queramos exponer, para ver que funciona la solución final; si queremos balancear los puertos 8080 (web), 8081 (api) y 1936 (haproxy stats), pondríamos algo como esto:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -d -h balancer --name balancer --net balancing -p 8080:8080 -p 8081:8081 -p 1936:1936 slave
+70e4811e6a498c7ecdec11ed91609d43749c327e33bd3b06b1532b507f3f2141
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt; host in web1 web2 api1 api2&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; docker run -d -h &lt;span class="nv"&gt;$host&lt;/span&gt; --name &lt;span class="nv"&gt;$host&lt;/span&gt; --net balancing slave&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;done&lt;/span&gt;
+82be4f7788f0186834311fe625f4ae24908a59a25df8b246aeb18d13cdff7b3d
+a0514880a44ed9109d19dc594ae991245e052554d91f0b08da80d57808df3d29
+1217fd05aa321e52e0038e4870dd29776e843d88de03520ad0bffee6cb786b54
+635c9b2d04482018053dca4b4225a34d3a11be1c366e372b9536fcadea12a15a
+gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Verificamos que tenemos todos nuestros contenedores corriendo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build$ docker ps
+CONTAINER ID        IMAGE               COMMAND               CREATED              STATUS              PORTS                                                      NAMES
+635c9b2d0448        slave               &amp;quot;/usr/sbin/sshd -D&amp;quot;   10 seconds ago       Up 8 seconds                                                                   api2
+1217fd05aa32        slave               &amp;quot;/usr/sbin/sshd -D&amp;quot;   11 seconds ago       Up 9 seconds                                                                   api1
+a0514880a44e        slave               &amp;quot;/usr/sbin/sshd -D&amp;quot;   12 seconds ago       Up 10 seconds                                                                  web2
+82be4f7788f0        slave               &amp;quot;/usr/sbin/sshd -D&amp;quot;   13 seconds ago       Up 12 seconds                                                                  web1
+70e4811e6a49        slave               &amp;quot;/usr/sbin/sshd -D&amp;quot;   About a minute ago   Up About a minute   0.0.0.0:1936-&amp;gt;1936/tcp, 0.0.0.0:8080-8081-&amp;gt;8080-8081/tcp   balancer
+gerard@sirius:~/build$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Preparando las herramientas&lt;/h2&gt;
+&lt;p&gt;Como ya hemos comentado, vamos a utilizar &lt;strong&gt;ansible&lt;/strong&gt;. Para ejecutar los &lt;em&gt;playbooks&lt;/em&gt;, vamos a levantar una máquina para usar y tirar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -ti --rm --net balancing -h ansible --name ansible ansible
+root@ansible:/# &lt;span class="nb"&gt;cd&lt;/span&gt; /root
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Especificamos un fichero de &lt;em&gt;hosts&lt;/em&gt; que va a servir para indicar los contenedores que tenemos y vamos a instalar paquetes en función de su grupo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# cat hosts 
+&lt;span class="o"&gt;[&lt;/span&gt;all:vars&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;ansible_user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; ansible
+&lt;span class="nv"&gt;ansible_ssh_pass&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; s3cr3t
+&lt;span class="nv"&gt;ansible_become&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="nv"&gt;ansible_become_method&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; sudo
+&lt;span class="nv"&gt;ansible_become_user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; root
+&lt;span class="nv"&gt;ansible_become_pass&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; s3cr3t
+
+&lt;span class="o"&gt;[&lt;/span&gt;balancers&lt;span class="o"&gt;]&lt;/span&gt;
+balancer
+
+&lt;span class="o"&gt;[&lt;/span&gt;webs&lt;span class="o"&gt;]&lt;/span&gt;
+web1
+web2
+
+&lt;span class="o"&gt;[&lt;/span&gt;apis&lt;span class="o"&gt;]&lt;/span&gt;
+api1
+api2
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Opcionalmente, verificamos que todos los contenedores son accesibles desde &lt;strong&gt;ansible&lt;/strong&gt;. Eso nos puede evitar sorpresas futuras.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible -i hosts -m ping all
+balancer &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: &lt;span class="nb"&gt;false&lt;/span&gt;, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+api2 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: &lt;span class="nb"&gt;false&lt;/span&gt;, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+api1 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: &lt;span class="nb"&gt;false&lt;/span&gt;, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+web2 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: &lt;span class="nb"&gt;false&lt;/span&gt;, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+web1 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: &lt;span class="nb"&gt;false&lt;/span&gt;, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Instalando unos backends sustitutos&lt;/h2&gt;
+&lt;p&gt;Sea lo que sea que vayan a ejecutar los &lt;em&gt;backends&lt;/em&gt; reales, los podemos ver como una caja negra que ofrecen sus servicios mediante protocolo TCP/IP en un puerto concreto.&lt;/p&gt;
+&lt;p&gt;Como no nos importa demasiado lo que hagan, y para simplificar el artículo, los vamos a reemplazar con servidores web &lt;strong&gt;nginx&lt;/strong&gt;, sirviendo un fichero HTML con su nombre (para poder distinguirlos en las pruebas). De esta forma, podremos ver el tipo de servidor que responde (api o web) y su número, ya que ambos datos están en su &lt;em&gt;hostname&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Así pues, basta con un &lt;em&gt;playbook&lt;/em&gt; que instale el servidor web y ponga el fichero &lt;em&gt;.html&lt;/em&gt; en su sitio. Como &lt;strong&gt;docker&lt;/strong&gt; está ejecutando el servidor &lt;strong&gt;ssh&lt;/strong&gt; y no &lt;strong&gt;systemd&lt;/strong&gt;, el &lt;strong&gt;nginx&lt;/strong&gt; no se levanta. Con otra tarea para asegurar que está corriendo, basta.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# cat backends.yml 
+- hosts: webs, apis
+  tasks:
+    - apt: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;nginx-light &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;present
+    - copy: &lt;span class="nv"&gt;content&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Content from {{ inventory_hostname }}&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/var/www/html/index.html
+    - service: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;nginx &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;started
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lanzamos el &lt;em&gt;playbook&lt;/em&gt;, y los dejamos preparados para que el balanceador los pueda usar. En un entorno real, dedicaríamos mas tiempo en poner servidores de aplicaciones normales, con aplicaciones adecuadas, y que posiblemente usarían algún tipo de base de datos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible-playbook -i hosts backends.yml 
+
+PLAY &lt;span class="o"&gt;[&lt;/span&gt;webs, apis&lt;span class="o"&gt;]&lt;/span&gt; **************************************************************
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;setup&lt;span class="o"&gt;]&lt;/span&gt; *******************************************************************
+ok: &lt;span class="o"&gt;[&lt;/span&gt;web2&lt;span class="o"&gt;]&lt;/span&gt;
+ok: &lt;span class="o"&gt;[&lt;/span&gt;api1&lt;span class="o"&gt;]&lt;/span&gt;
+ok: &lt;span class="o"&gt;[&lt;/span&gt;web1&lt;span class="o"&gt;]&lt;/span&gt;
+ok: &lt;span class="o"&gt;[&lt;/span&gt;api2&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;apt&lt;span class="o"&gt;]&lt;/span&gt; *********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;api1&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;api2&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;web1&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;web2&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;copy&lt;span class="o"&gt;]&lt;/span&gt; ********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;web1&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;web2&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;api2&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;api1&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;service&lt;span class="o"&gt;]&lt;/span&gt; *****************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;web1&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;web2&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;api1&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;api2&lt;span class="o"&gt;]&lt;/span&gt;
+
+PLAY RECAP *********************************************************************
+api1                       : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;   
+api2                       : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;   
+web1                       : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;   
+web2                       : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;   
+
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Montando el balanceador&lt;/h2&gt;
+&lt;p&gt;Para obtener un balanceador HTTP (o TCP, si lo necesitáramos), basta con elegir uno. Normalmente yo usaría un servidor &lt;strong&gt;nginx&lt;/strong&gt; para balancear HTTP (que además ofrece otras funcionalidades, aunque no soporte TCP directo); en este caso, y para variar un poco, vamos a poner &lt;strong&gt;haproxy&lt;/strong&gt;, que nos ofrece una bonita página de estadísticas.&lt;/p&gt;
+&lt;p&gt;El truco está en instalar &lt;strong&gt;haproxy&lt;/strong&gt;, darle un fichero de configuración adecuado y recargar su configuración. Nuevamente, al tratarse de &lt;strong&gt;docker&lt;/strong&gt; hay que asegurarse que el servicio esté levantado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# cat balancer.yml 
+- hosts: balancer
+  tasks:
+    - apt: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;haproxy &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;present
+    - service: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;haproxy &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;started
+    - copy: &lt;span class="nv"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;haproxy.cfg &lt;span class="nv"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/etc/haproxy/haproxy.cfg
+    - service: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;haproxy &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;reloaded
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La funcionalidad con la que cumpla el balanceador se controla en &lt;em&gt;/etc/haproxy/haproxy.cfg&lt;/em&gt;, que el &lt;em&gt;playbook&lt;/em&gt; pone en su sitio, desde una carpeta en el contexto.&lt;/p&gt;
+&lt;p&gt;HAProxy funciona mapeando &lt;em&gt;frontends&lt;/em&gt; (entradas del balanceador) con sus respectivos &lt;em&gt;backends&lt;/em&gt; (servidores que atienden peticiones).&lt;/p&gt;
+&lt;p&gt;Disponemos de varios algoritmos de balanceo, así que vamos a poner uno distinto para cada &lt;em&gt;backend&lt;/em&gt;. Para la web, vamos a usar &lt;em&gt;roundrobin&lt;/em&gt;, que básicamente se trata de una petición a cada uno por turnos; la &lt;em&gt;api&lt;/em&gt; va a contar con el algoritmo &lt;em&gt;leastconn&lt;/em&gt;, que significa darle una petición al servidor que menos conexiones tiene abiertas.&lt;/p&gt;
+&lt;p&gt;Como &lt;em&gt;bonus track&lt;/em&gt;, vamos a habilitar la página de estadísticas, siempre que la queramos, claro. La he copiado tal cual de la documentación de &lt;strong&gt;haproxy&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# cat haproxy.cfg 
+listen stats :1936
+    mode http
+    stats enable
+    stats hide-version
+    stats uri /
+
+frontend web
+    bind :8080
+    default_backend webs
+
+backend webs
+    balance roundrobin
+    server web1 web1:80
+    server web2 web2:80
+
+frontend api
+    bind :8081
+    default_backend apis
+
+backend apis
+    balance leastconn
+    server api1 api1:80
+    server api2 api2:80
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos faltaría lanzar el &lt;em&gt;playbook&lt;/em&gt; para que quede todo correctamente montado. Si la configuración cambiara o hubiera que corregirla, se debe modificar el fichero local &lt;em&gt;haproxy.cfg&lt;/em&gt; y relanzar el &lt;em&gt;playbook&lt;/em&gt;. &lt;strong&gt;Ansible&lt;/strong&gt; no intentará cambiar nada que ya esté como debía; no instalará &lt;strong&gt;haproxy&lt;/strong&gt; de nuevo, no lo levantará si ya estaba corriendo, no copiará el fichero a menos que haya cambiado, y siempre va a recargar la configuración del servicio.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@ansible:~# ansible-playbook -i hosts balancer.yml 
+
+PLAY &lt;span class="o"&gt;[&lt;/span&gt;balancer&lt;span class="o"&gt;]&lt;/span&gt; ****************************************************************
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;setup&lt;span class="o"&gt;]&lt;/span&gt; *******************************************************************
+ok: &lt;span class="o"&gt;[&lt;/span&gt;balancer&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;apt&lt;span class="o"&gt;]&lt;/span&gt; *********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;balancer&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;service&lt;span class="o"&gt;]&lt;/span&gt; *****************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;balancer&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;copy&lt;span class="o"&gt;]&lt;/span&gt; ********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;balancer&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;service&lt;span class="o"&gt;]&lt;/span&gt; *****************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;balancer&lt;span class="o"&gt;]&lt;/span&gt;
+
+PLAY RECAP *********************************************************************
+balancer                   : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;   
+
+root@ansible:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Comprobando el funcionamiento&lt;/h2&gt;
+&lt;p&gt;Si hacemos peticiones individuales, vemos que cada servidor funciona, pero lo que nos importa es el conjunto. Para ello vamos a solicitar peticiones a cada uno de los puertos que representan el &lt;em&gt;cluster&lt;/em&gt; de web y de &lt;em&gt;api&lt;/em&gt;. Puesto que los hemos publicado con el mismo número de puerto en la máquina anfitriona, lo podemos lanzar ahí mismo.&lt;/p&gt;
+&lt;p&gt;Hacemos unas peticines al &lt;em&gt;cluster&lt;/em&gt; de web, que se esconde detrás del puerto 8080, y comprobamos que van alternando un &lt;em&gt;backend&lt;/em&gt; u otro por turnos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;curl http://localhost:8080/ &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+Content from web1
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;curl http://localhost:8080/ &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+Content from web2
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;curl http://localhost:8080/ &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+Content from web1
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;curl http://localhost:8080/ &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+Content from web2
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Repetimos el procedimiento para la &lt;em&gt;api&lt;/em&gt;, que se esconde en el puerto 8081 del balanceador:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;curl http://localhost:8081/ &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+Content from api1
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;curl http://localhost:8081/ &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+Content from api2
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;curl http://localhost:8081/ &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+Content from api1
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;curl http://localhost:8081/ &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+Content from api2
+gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y solo nos queda ver que la página de estadísticas funciona y nos resulta útil. Puesto que devuelve una página web completa, lo vamos a ver en un navegador cualquiera.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="HAProxy Stats" src="http://www.linuxsysadmin.tk/images/haproxy-stats.jpg" /&gt;&lt;/p&gt;</summary><category term="balanceador"></category><category term="haproxy"></category><category term="ansible"></category><category term="docker"></category></entry><entry><title>Preparando un servidor de repositorios GIT</title><link href="http://www.linuxsysadmin.tk/2016/06/preparando-un-servidor-de-repositorios-git.html" rel="alternate"></link><updated>2016-06-20T08:30:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-06-20:2016/06/preparando-un-servidor-de-repositorios-git.html</id><summary type="html">&lt;p&gt;Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando &lt;strong&gt;git&lt;/strong&gt; y &lt;strong&gt;ssh&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;La idea es muy simple; solo se necesita un servidor de &lt;strong&gt;ssh&lt;/strong&gt;, que es la forma de transportar los datos, y los binarios de &lt;strong&gt;git&lt;/strong&gt; para que los organice a placer. También vamos a necesitar un usuario &lt;strong&gt;git&lt;/strong&gt;, que es el que vamos a usar para entrar, ya sea para crear y borrar repositorios, como para las operaciones remotas recibidas por el repositorio.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Podemos eliminar la petición de &lt;em&gt;password&lt;/em&gt; para todos los accesos que se hagan por &lt;strong&gt;SSH&lt;/strong&gt;, sean para entrar en las máquinas por &lt;strong&gt;SSH&lt;/strong&gt; mediante cualquier &lt;em&gt;shell&lt;/em&gt; de este artículo, o como resultado de una operación remota de &lt;strong&gt;git&lt;/strong&gt;. Esto se puede hacer usando autenticación &lt;strong&gt;SSH&lt;/strong&gt; por claves, como se explica en un &lt;a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html"&gt;artículo anterior&lt;/a&gt;.&lt;/p&gt;
 &lt;h2&gt;Montando el servidor&lt;/h2&gt;
