@@ -1,5 +1,289 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-06-27T08:00:00+02:00</updated><entry><title>Balanceando peticiones con HAProxy</title><link href="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html" rel="alternate"></link><updated>2016-06-27T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-06-27:2016/06/balanceando-peticiones-con-haproxy.html</id><summary type="html">&lt;p&gt;Cuando tenemos un entorno grande o con previsiones de crecimiento, nos interesa poder poner a trabajar varios servidores similares. En casos así nos hace falta un &lt;strong&gt;balanceador de carga&lt;/strong&gt;, que actúa como un agente de tráfico, dirigiendo las peticiones que él mismo recibe a los diferentes servidores, por ejemplo, &lt;strong&gt;haproxy&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-07-04T20:00:00+02:00</updated><entry><title>Instalando una máquina con Archlinux</title><link href="http://www.linuxsysadmin.tk/2016/07/instalando-una-maquina-con-archlinux.html" rel="alternate"></link><updated>2016-07-04T20:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-07-04:2016/07/instalando-una-maquina-con-archlinux.html</id><summary type="html">&lt;p&gt;Hoy quiero presentar una distribución de &lt;em&gt;linux&lt;/em&gt; que es una maravilla; es rápida, altamente actualizada, y lo último en innovación. Se trata de una distribución tipo &lt;em&gt;rolling&lt;/em&gt;, con una filosofía de última tendencia que es especialmente útil en un entorno no tan crítico, como puede ser una máquina tipo escritorio.&lt;/p&gt;
+&lt;p&gt;La parte menos buena, a parte del hecho de que los paquetes cambian mucho y pueden entrar algunos con algún fallo menor, es que la instalación no cuenta con un &lt;em&gt;wizard&lt;/em&gt;, aunque en el proceso podemos aprender como funciona fácilmente.&lt;/p&gt;
+&lt;p&gt;Vamos a seguir bastante el procedimiento oficial de instalación, que podemos encontrar &lt;a href="https://wiki.archlinux.org/index.php/installation_guide"&gt;aquí&lt;/a&gt;. Este procedimiento de instalación lo vamos a lanzar sobre una máquina virtual, con un disco de 4gb y 512mb de memoria, aunque sin entorno gráfico necesita muchos menos recursos.&lt;/p&gt;
+&lt;p&gt;El primer paso consiste en descargar una imagen de instalación que vamos a introducir (o montar, que es el equivalente en &lt;em&gt;VirtualBox&lt;/em&gt;), previo encendido de la máquina.&lt;/p&gt;
+&lt;p&gt;Un detalle es que la imagen de instalación lleva instalado un servidor &lt;em&gt;SSH&lt;/em&gt;, que nos viene muy bien para capturar la salida de los diferentes comandos. Solo hay que levantar el servicio y darle una contraseña al usuario &lt;strong&gt;root&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@archiso ~ &lt;span class="c"&gt;# passwd&lt;/span&gt;
+Enter new UNIX password:
+Retype new UNIX password:
+passwd: password updated successfully
+root@archiso ~ &lt;span class="c"&gt;# systemctl start sshd&lt;/span&gt;
+root@archiso ~ &lt;span class="c"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A partir de aquí, sigo el procedimiento desde una sesión &lt;em&gt;SSH&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Preparaciones&lt;/h2&gt;
+&lt;p&gt;Aunque esto no es necesario, es recomendable usar nuestro teclado favorito. No hay nada mas frustrante que darle a una tecla pensando en un carácter y que te salga otro. Así que vamos a cargar la distribución de teclado que nos parezca.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@archiso ~ &lt;span class="c"&gt;# loadkeys es&lt;/span&gt;
+root@archiso ~ &lt;span class="c"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El siguiente paso consiste en configurar la red que se va a usar durante la instalación. Por defecto viene preparado para usar &lt;em&gt;DHCP&lt;/em&gt;, que nos vale, así que la dejamos como está.&lt;/p&gt;
+&lt;p&gt;Uno de los pasos mas importantes de toda la instalación es el particionado. Hacerlo mal en este punto es un problema futuro, y de hecho, mucha gente utiliza tecnologías como &lt;em&gt;LVM&lt;/em&gt; que les dan cierta flexibilidad para cambios futuros.&lt;/p&gt;
+&lt;p&gt;En nuestro caso concreto, se trata de una máquina virtual que no va a durar mucho, así que nos basta con hacerlo a un nivel aceptable. Como disponemos de un solo disco de 4gb, vamos a particionarlo en dos, uno para el disco local, y otro para la partición de &lt;em&gt;swap&lt;/em&gt; (una pequeña, que no nos sobra el disco). Personalmente he usado &lt;strong&gt;cfdisk&lt;/strong&gt;, que me parece mas intuitivo que el resto, dejando las particiones de esta manera:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@archiso ~ &lt;span class="c"&gt;# fdisk -l&lt;/span&gt;
+Disk /dev/sda: &lt;span class="m"&gt;4&lt;/span&gt; GiB, &lt;span class="m"&gt;4294967296&lt;/span&gt; bytes, &lt;span class="m"&gt;8388608&lt;/span&gt; sectors
+Units: sectors of &lt;span class="m"&gt;1&lt;/span&gt; * &lt;span class="nv"&gt;512&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;512&lt;/span&gt; bytes
+Sector size &lt;span class="o"&gt;(&lt;/span&gt;logical/physical&lt;span class="o"&gt;)&lt;/span&gt;: &lt;span class="m"&gt;512&lt;/span&gt; bytes / &lt;span class="m"&gt;512&lt;/span&gt; bytes
+I/O size &lt;span class="o"&gt;(&lt;/span&gt;minimum/optimal&lt;span class="o"&gt;)&lt;/span&gt;: &lt;span class="m"&gt;512&lt;/span&gt; bytes / &lt;span class="m"&gt;512&lt;/span&gt; bytes
+Disklabel &lt;span class="nb"&gt;type&lt;/span&gt;: gpt
+Disk identifier: A45FE619-7FFC-4EA2-8253-628FD2138198
+
+Device       Start     End Sectors  Size Type
+/dev/sda1     &lt;span class="m"&gt;2048&lt;/span&gt; &lt;span class="m"&gt;7317503&lt;/span&gt; &lt;span class="m"&gt;7315456&lt;/span&gt;  3.5G Linux filesystem
+/dev/sda2  &lt;span class="m"&gt;7317504&lt;/span&gt; &lt;span class="m"&gt;8388574&lt;/span&gt; &lt;span class="m"&gt;1071071&lt;/span&gt;  523M Linux swap
+
+
+Disk /dev/loop0: 318.9 MiB, &lt;span class="m"&gt;334385152&lt;/span&gt; bytes, &lt;span class="m"&gt;653096&lt;/span&gt; sectors
+Units: sectors of &lt;span class="m"&gt;1&lt;/span&gt; * &lt;span class="nv"&gt;512&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;512&lt;/span&gt; bytes
+Sector size &lt;span class="o"&gt;(&lt;/span&gt;logical/physical&lt;span class="o"&gt;)&lt;/span&gt;: &lt;span class="m"&gt;512&lt;/span&gt; bytes / &lt;span class="m"&gt;512&lt;/span&gt; bytes
+I/O size &lt;span class="o"&gt;(&lt;/span&gt;minimum/optimal&lt;span class="o"&gt;)&lt;/span&gt;: &lt;span class="m"&gt;512&lt;/span&gt; bytes / &lt;span class="m"&gt;512&lt;/span&gt; bytes
+root@archiso ~ &lt;span class="c"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Siguiendo el manual, necesitamos formatear las particiones según las funciones que van a desempeñar, montando los discos en &lt;em&gt;/mnt/&lt;/em&gt; y sus subcarpetas. Como no tenemos particiones para &lt;em&gt;/home/&lt;/em&gt;, &lt;em&gt;/var/&lt;/em&gt; y &lt;em&gt;/tmp/&lt;/em&gt;, con montar la primera nos basta.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@archiso ~ &lt;span class="c"&gt;# mkfs.ext4 /dev/sda1&lt;/span&gt;
+mke2fs 1.42.13 &lt;span class="o"&gt;(&lt;/span&gt;17-May-2015&lt;span class="o"&gt;)&lt;/span&gt;
+Creating filesystem with &lt;span class="m"&gt;914432&lt;/span&gt; 4k blocks and &lt;span class="m"&gt;228928&lt;/span&gt; inodes
+Filesystem UUID: 295665be-7b09-4cad-9689-7fed5471bf25
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376, 294912, 819200, 884736
+
+Allocating group tables: &lt;span class="k"&gt;done&lt;/span&gt;
+Writing inode tables: &lt;span class="k"&gt;done&lt;/span&gt;
+Creating journal &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;16384&lt;/span&gt; blocks&lt;span class="o"&gt;)&lt;/span&gt;: &lt;span class="k"&gt;done&lt;/span&gt;
+Writing superblocks and filesystem accounting information: &lt;span class="k"&gt;done&lt;/span&gt;
+
+root@archiso ~ &lt;span class="c"&gt;# mount /dev/sda1 /mnt&lt;/span&gt;
+root@archiso ~ &lt;span class="c"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Preparamos la partición de &lt;em&gt;swap&lt;/em&gt; y la dejamos activada. Eso nos permitirá utilizarla durante la instalación, y que esta la detecte automáticamente para crear el fichero &lt;em&gt;/etc/fstab&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@archiso ~ &lt;span class="c"&gt;# mkswap /dev/sda2&lt;/span&gt;
+Setting up swapspace version 1, &lt;span class="nv"&gt;size&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;523&lt;/span&gt; MiB &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;548380672&lt;/span&gt; bytes&lt;span class="o"&gt;)&lt;/span&gt;
+no label, &lt;span class="nv"&gt;UUID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;85cf7f55-cd3c-4002-9729-2d89ebadf942
+root@archiso ~ &lt;span class="c"&gt;# swapon /dev/sda2&lt;/span&gt;
+root@archiso ~ &lt;span class="c"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos verificar que está activada con un comando &lt;strong&gt;free&lt;/strong&gt;, por ejemplo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@archiso ~ &lt;span class="c"&gt;# free -m&lt;/span&gt;
+              total        used        free      shared  buff/cache   available
+Mem:            &lt;span class="m"&gt;498&lt;/span&gt;          &lt;span class="m"&gt;20&lt;/span&gt;         &lt;span class="m"&gt;252&lt;/span&gt;          &lt;span class="m"&gt;44&lt;/span&gt;         &lt;span class="m"&gt;224&lt;/span&gt;         413
+Swap:           &lt;span class="m"&gt;522&lt;/span&gt;           &lt;span class="m"&gt;0&lt;/span&gt;         522
+root@archiso ~ &lt;span class="c"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Instalación y configuración&lt;/h2&gt;
+&lt;p&gt;El primer paso es descargar todos los paquetes de internet, mediante el comando &lt;strong&gt;pacstrap&lt;/strong&gt;. Para ello se recomienda editar el fichero &lt;em&gt;/etc/pacman.d/mirrorlist&lt;/em&gt; para utilizar los &lt;em&gt;mirrors&lt;/em&gt; que nos convengan, y que serán también los que use el sistema instalado. Como se pueden cambiar a &lt;em&gt;posteriori&lt;/em&gt; y los que hay me parecen bien, no vamos a cambiar nada.&lt;/p&gt;
+&lt;p&gt;Así pues, lanzamos el &lt;strong&gt;pacstrap&lt;/strong&gt; tal como indica el manual de instalación.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@archiso ~ &lt;span class="c"&gt;# pacstrap /mnt base&lt;/span&gt;
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Creating install root at /mnt
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Installing packages to /mnt
+:: Synchronizing package databases...
+ core                                                 119.7 KiB   783K/s 00:00 &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="c"&gt;############################################] 100%&lt;/span&gt;
+ extra                                               1755.7 KiB   810K/s 00:02 &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="c"&gt;############################################] 100%&lt;/span&gt;
+ community                                              3.5 MiB   851K/s 00:04 &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="c"&gt;############################################] 100%&lt;/span&gt;
+:: There are &lt;span class="m"&gt;50&lt;/span&gt; members in group base:
+:: Repository core
+   1&lt;span class="o"&gt;)&lt;/span&gt; bash  2&lt;span class="o"&gt;)&lt;/span&gt; bzip2  3&lt;span class="o"&gt;)&lt;/span&gt; coreutils  4&lt;span class="o"&gt;)&lt;/span&gt; cryptsetup  5&lt;span class="o"&gt;)&lt;/span&gt; device-mapper  6&lt;span class="o"&gt;)&lt;/span&gt; dhcpcd  7&lt;span class="o"&gt;)&lt;/span&gt; diffutils  8&lt;span class="o"&gt;)&lt;/span&gt; e2fsprogs  9&lt;span class="o"&gt;)&lt;/span&gt; file
+   10&lt;span class="o"&gt;)&lt;/span&gt; filesystem  11&lt;span class="o"&gt;)&lt;/span&gt; findutils  12&lt;span class="o"&gt;)&lt;/span&gt; gawk  13&lt;span class="o"&gt;)&lt;/span&gt; gcc-libs  14&lt;span class="o"&gt;)&lt;/span&gt; gettext  15&lt;span class="o"&gt;)&lt;/span&gt; glibc  16&lt;span class="o"&gt;)&lt;/span&gt; grep  17&lt;span class="o"&gt;)&lt;/span&gt; gzip  18&lt;span class="o"&gt;)&lt;/span&gt; inetutils  19&lt;span class="o"&gt;)&lt;/span&gt; iproute2
+   20&lt;span class="o"&gt;)&lt;/span&gt; iputils  21&lt;span class="o"&gt;)&lt;/span&gt; jfsutils  22&lt;span class="o"&gt;)&lt;/span&gt; less  23&lt;span class="o"&gt;)&lt;/span&gt; licenses  24&lt;span class="o"&gt;)&lt;/span&gt; linux  25&lt;span class="o"&gt;)&lt;/span&gt; logrotate  26&lt;span class="o"&gt;)&lt;/span&gt; lvm2  27&lt;span class="o"&gt;)&lt;/span&gt; man-db  28&lt;span class="o"&gt;)&lt;/span&gt; man-pages  29&lt;span class="o"&gt;)&lt;/span&gt; mdadm
+   30&lt;span class="o"&gt;)&lt;/span&gt; nano  31&lt;span class="o"&gt;)&lt;/span&gt; netctl  32&lt;span class="o"&gt;)&lt;/span&gt; pacman  33&lt;span class="o"&gt;)&lt;/span&gt; pciutils  34&lt;span class="o"&gt;)&lt;/span&gt; pcmciautils  35&lt;span class="o"&gt;)&lt;/span&gt; perl  36&lt;span class="o"&gt;)&lt;/span&gt; procps-ng  37&lt;span class="o"&gt;)&lt;/span&gt; psmisc  38&lt;span class="o"&gt;)&lt;/span&gt; reiserfsprogs
+   39&lt;span class="o"&gt;)&lt;/span&gt; s-nail  40&lt;span class="o"&gt;)&lt;/span&gt; sed  41&lt;span class="o"&gt;)&lt;/span&gt; shadow  42&lt;span class="o"&gt;)&lt;/span&gt; sysfsutils  43&lt;span class="o"&gt;)&lt;/span&gt; systemd-sysvcompat  44&lt;span class="o"&gt;)&lt;/span&gt; tar  45&lt;span class="o"&gt;)&lt;/span&gt; texinfo  46&lt;span class="o"&gt;)&lt;/span&gt; usbutils  47&lt;span class="o"&gt;)&lt;/span&gt; util-linux
+   48&lt;span class="o"&gt;)&lt;/span&gt; vi  49&lt;span class="o"&gt;)&lt;/span&gt; which  50&lt;span class="o"&gt;)&lt;/span&gt; xfsprogs
+
+Enter a selection &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;default&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;all&lt;span class="o"&gt;)&lt;/span&gt;:
+...  
+Total Download Size:   185.14 MiB
+Total Installed Size:  572.80 MiB
+
+:: Proceed with installation? &lt;span class="o"&gt;[&lt;/span&gt;Y/n&lt;span class="o"&gt;]&lt;/span&gt;
+...
+pacstrap /mnt base  51.53s user 124.01s system 39% cpu 7:25.44 total
+root@archiso ~ &lt;span class="c"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con todos los paquetes instalados, empezaremos a configurar el sistema. El primer candidato es generar el fichero &lt;em&gt;/etc/fstab&lt;/em&gt;. Existe un &lt;em&gt;script&lt;/em&gt; llamado &lt;strong&gt;genfstab&lt;/strong&gt; que va a generar un fichero &lt;em&gt;fstab&lt;/em&gt; basado en lo que tenemos ahora mismo activado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@archiso ~ &lt;span class="c"&gt;# genfstab -p /mnt &amp;gt;&amp;gt; /mnt/etc/fstab&lt;/span&gt;
+root@archiso ~ &lt;span class="c"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El resto de configuración se hace en un entorno &lt;strong&gt;chroot&lt;/strong&gt; sobre la carpeta instalada, que es donde tenemos montado el disco raíz. La imagen de instalación nos ofrece un &lt;em&gt;script&lt;/em&gt; de &lt;strong&gt;chroot&lt;/strong&gt; que ya se encarga de montar los sistemas de ficheros especiales como &lt;em&gt;/proc/&lt;/em&gt;, &lt;em&gt;/dev/&lt;/em&gt; o &lt;em&gt;/sys/&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;root@archiso ~ &lt;span class="c"&gt;# arch-chroot /mnt&lt;/span&gt;
+sh-4.3#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Los siguientes pasos son burocráticos y los mismos que en otras distribuciones: poner un nombre a la máquina, configurar el huso horario, generar &lt;em&gt;locales&lt;/em&gt; y configurar el teclado a nivel permanente.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sh-4.3# &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;archlinux&amp;quot;&lt;/span&gt; &amp;gt; /etc/hostname
+sh-4.3# ln -s /usr/share/zoneinfo/Europe/Madrid /etc/localtime
+sh-4.3# grep -v ^# /etc/locale.gen
+es_ES.UTF-8 UTF-8
+sh-4.3# locale-gen
+Generating locales...
+  es_ES.UTF-8... &lt;span class="k"&gt;done&lt;/span&gt;
+Generation complete.
+sh-4.3# &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;LANG=es_ES.UTF-8&amp;quot;&lt;/span&gt; &amp;gt; /etc/locale.conf
+sh-4.3# &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;KEYMAP=es&amp;quot;&lt;/span&gt; &amp;gt; /etc/vconsole.conf
+sh-4.3#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El siguiente paso no es fácil, y aunque puede hacerse a &lt;em&gt;posteriori&lt;/em&gt;, merece la pena prestar atención. Para la configuración de red, necesitamos activar el servicio &lt;em&gt;systemd-networkd&lt;/em&gt;, que va a leer los ficheros de configuración en &lt;em&gt;/etc/systemd/network/&lt;/em&gt; para levantar las interfaces con los parámetros adecuados.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sh-4.3# systemctl &lt;span class="nb"&gt;enable &lt;/span&gt;systemd-networkd
+Created symlink /etc/systemd/system/multi-user.target.wants/systemd-networkd.service → /usr/lib/systemd/system/systemd-networkd.service.
+Created symlink /etc/systemd/system/sockets.target.wants/systemd-networkd.socket → /usr/lib/systemd/system/systemd-networkd.socket.
+sh-4.3# cat /etc/systemd/network/wired.network
+&lt;span class="o"&gt;[&lt;/span&gt;Match&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;Name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;enp0s3
+
+&lt;span class="o"&gt;[&lt;/span&gt;Network&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;DHCP&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ipv4
+sh-4.3#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En caso de querer obtener los &lt;em&gt;DNS&lt;/em&gt; de forma automática necesitamos habilitar el servicio &lt;em&gt;systemd-resolved&lt;/em&gt;, que nos va a dejar un &lt;em&gt;resolv.conf&lt;/em&gt; en &lt;em&gt;/run/systemd/resolve/&lt;/em&gt;; con un simple enlace va a ser suficiente.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sh-4.3# systemctl &lt;span class="nb"&gt;enable &lt;/span&gt;systemd-resolved
+Created symlink /etc/systemd/system/multi-user.target.wants/systemd-resolved.service → /usr/lib/systemd/system/systemd-resolved.service.
+sh-4.3# rm /etc/resolv.conf
+sh-4.3# ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+sh-4.3#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Generamos un &lt;em&gt;initramfs&lt;/em&gt; para que en el siguiente arranque podamos disfrutar de todo lo nuevo que hemos configurado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sh-4.3# mkinitcpio -p &lt;span class="nv"&gt;linux&lt;/span&gt;
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Building image from preset: /etc/mkinitcpio.d/linux.preset: &lt;span class="s1"&gt;&amp;#39;default&amp;#39;&lt;/span&gt;
+  -&amp;gt; -k /boot/vmlinuz-linux -c /etc/mkinitcpio.conf -g /boot/initramfs-linux.img
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Starting build: 4.5.4-1-ARCH
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;base&lt;span class="o"&gt;]&lt;/span&gt;
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;udev&lt;span class="o"&gt;]&lt;/span&gt;
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;autodetect&lt;span class="o"&gt;]&lt;/span&gt;
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;modconf&lt;span class="o"&gt;]&lt;/span&gt;
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;block&lt;span class="o"&gt;]&lt;/span&gt;
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;filesystems&lt;span class="o"&gt;]&lt;/span&gt;
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;keyboard&lt;span class="o"&gt;]&lt;/span&gt;
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;fsck&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Generating module &lt;span class="nv"&gt;dependencies&lt;/span&gt;
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Creating gzip-compressed initcpio image: /boot/initramfs-linux.img
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Image generation &lt;span class="nv"&gt;successful&lt;/span&gt;
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Building image from preset: /etc/mkinitcpio.d/linux.preset: &lt;span class="s1"&gt;&amp;#39;fallback&amp;#39;&lt;/span&gt;
+  -&amp;gt; -k /boot/vmlinuz-linux -c /etc/mkinitcpio.conf -g /boot/initramfs-linux-fallback.img -S &lt;span class="nv"&gt;autodetect&lt;/span&gt;
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Starting build: 4.5.4-1-ARCH
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;base&lt;span class="o"&gt;]&lt;/span&gt;
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;udev&lt;span class="o"&gt;]&lt;/span&gt;
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;modconf&lt;span class="o"&gt;]&lt;/span&gt;
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;block&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; WARNING: Possibly missing firmware &lt;span class="k"&gt;for&lt;/span&gt; module: &lt;span class="nv"&gt;aic94xx&lt;/span&gt;
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; WARNING: Possibly missing firmware &lt;span class="k"&gt;for&lt;/span&gt; module: wd719x
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;filesystems&lt;span class="o"&gt;]&lt;/span&gt;
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;keyboard&lt;span class="o"&gt;]&lt;/span&gt;
+  -&amp;gt; Running build hook: &lt;span class="o"&gt;[&lt;/span&gt;fsck&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Generating module &lt;span class="nv"&gt;dependencies&lt;/span&gt;
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Creating gzip-compressed initcpio image: /boot/initramfs-linux-fallback.img
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Image generation successful
+sh-4.3#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y finalmente nos podemos dedicar a administrar usuarios y sus contraseñas. Como esto también se puede hacer a &lt;em&gt;posteriori&lt;/em&gt;, voy solo a desbloquear al usuario &lt;strong&gt;root&lt;/strong&gt;, dándole una &lt;em&gt;password&lt;/em&gt; adecuada.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sh-4.3# passwd
+Enter new UNIX password:
+Retype new UNIX password:
+passwd: password updated successfully
+sh-4.3#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos el disco raíz perfectamente preparado, y un &lt;em&gt;kernel&lt;/em&gt; listo para el arranque.&lt;/p&gt;
+&lt;h2&gt;Instalando el bootloader&lt;/h2&gt;
+&lt;p&gt;Para que el &lt;em&gt;kernel&lt;/em&gt;, &lt;em&gt;initrd&lt;/em&gt; y el disco puedan funcionar, es necesario que el disco tenga algún tipo de estructura que le indique como hacerlo. El nombre genérico para esta pieza de &lt;em&gt;software&lt;/em&gt; es &lt;em&gt;bootloader&lt;/em&gt;. De todos los que hay (que no son pocos), vamos a usar un viejo amigo: &lt;strong&gt;GRUB&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sh-4.3# pacman -S grub
+resolving dependencies...
+looking &lt;span class="k"&gt;for&lt;/span&gt; conflicting packages...
+
+Packages &lt;span class="o"&gt;(&lt;/span&gt;1&lt;span class="o"&gt;)&lt;/span&gt; grub-1:2.02.beta2-6
+
+Total Download Size:    5.27 MiB
+Total Installed Size:  25.27 MiB
+
+:: Proceed with installation? &lt;span class="o"&gt;[&lt;/span&gt;Y/n&lt;span class="o"&gt;]&lt;/span&gt; y
+...
+sh-4.3#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Instalamos el código de &lt;em&gt;boot&lt;/em&gt; en el &lt;em&gt;MBR&lt;/em&gt; con la herramienta que &lt;strong&gt;GRUB&lt;/strong&gt; nos ofrece, siguiendo el manual.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sh-4.3# grub-install --target&lt;span class="o"&gt;=&lt;/span&gt;i386-pc /dev/sda
+Installing &lt;span class="k"&gt;for&lt;/span&gt; i386-pc platform.
+grub-install: warning: this GPT partition label contains no BIOS Boot Partition&lt;span class="p"&gt;;&lt;/span&gt; embedding won&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;t be possible.
+grub-install: warning: Embedding is not possible.  GRUB can only be installed in this setup by using blocklists.  However, blocklists are UNRELIABLE and their use is discouraged..
+grub-install: error: will not proceed with blocklists.
+sh-4.3#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso ha fallado, pero siguiendo el manual de instalación, eso se corrige mediante el uso del &lt;em&gt;flag&lt;/em&gt; &lt;strong&gt;--force&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sh-4.3# grub-install --target&lt;span class="o"&gt;=&lt;/span&gt;i386-pc /dev/sda --force
+Installing &lt;span class="k"&gt;for&lt;/span&gt; i386-pc platform.
+grub-install: warning: this GPT partition label contains no BIOS Boot Partition&lt;span class="p"&gt;;&lt;/span&gt; embedding won&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;t be possible.
+grub-install: warning: Embedding is not possible.  GRUB can only be installed in this setup by using blocklists.  However, blocklists are UNRELIABLE and their use is discouraged..
+Installation finished. No error reported.
+sh-4.3#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como ya hemos conseguido instalar &lt;strong&gt;GRUB&lt;/strong&gt; de forma exitosa, nos queda generar un fichero de configuración del &lt;em&gt;bootloader&lt;/em&gt;, tal como dice el manual de instalación.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sh-4.3# grub-mkconfig -o /boot/grub/grub.cfg
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-linux
+Found initrd image: /boot/initramfs-linux.img
+Found fallback initramfs image: /boot/initramfs-linux-fallback.img
+&lt;span class="k"&gt;done&lt;/span&gt;
+sh-4.3#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto queda una instalación básica. Solo nos queda salir del entorno enjaulado, apagar la máquina, quitar el disco de instalación y encender.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sh-4.3# &lt;span class="nb"&gt;exit&lt;/span&gt;
+&lt;span class="nb"&gt;exit&lt;/span&gt;
+arch-chroot /mnt  10.17s user 19.71s system 3% cpu 14:10.46 total
+root has logged on pts/1 from 10.0.2.2.
+root@archiso ~ &lt;span class="c"&gt;# reboot&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Resultado final&lt;/h2&gt;
+&lt;p&gt;Tras actualizar y limpiar caché de paquetes, vemos que tenemos una distribución minimalista con 743mb de disco ocupados y 10mb de memoria.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@archlinux ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# df -h&lt;/span&gt;
+S.ficheros     Tamaño Usados  Disp Uso% Montado en
+dev              247M      &lt;span class="m"&gt;0&lt;/span&gt;  247M   0% /dev
+run              250M   292K  249M   1% /run
+/dev/sda1        3,4G   743M  2,5G  23% /
+tmpfs            250M      &lt;span class="m"&gt;0&lt;/span&gt;  250M   0% /dev/shm
+tmpfs            250M      &lt;span class="m"&gt;0&lt;/span&gt;  250M   0% /sys/fs/cgroup
+tmpfs            250M      &lt;span class="m"&gt;0&lt;/span&gt;  250M   0% /tmp
+tmpfs             50M      &lt;span class="m"&gt;0&lt;/span&gt;   50M   0% /run/user/0
+&lt;span class="o"&gt;[&lt;/span&gt;root@archlinux ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# free -m&lt;/span&gt;
+              total        used        free      shared  buff/cache   available
+Mem:            &lt;span class="m"&gt;498&lt;/span&gt;          &lt;span class="m"&gt;10&lt;/span&gt;         &lt;span class="m"&gt;441&lt;/span&gt;           &lt;span class="m"&gt;0&lt;/span&gt;          &lt;span class="m"&gt;46&lt;/span&gt;         470
+Swap:           &lt;span class="m"&gt;522&lt;/span&gt;           &lt;span class="m"&gt;0&lt;/span&gt;         522
+&lt;span class="o"&gt;[&lt;/span&gt;root@archlinux ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A partir de aquí podemos construir a base de instalar aquellos paquetes que necesitemos (escritorio, servicios, ...); sin embargo, esto queda para futuros artículos.&lt;/p&gt;</summary><category term="linux"></category><category term="archlinux"></category><category term="distribución"></category></entry><entry><title>Balanceando peticiones con HAProxy</title><link href="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html" rel="alternate"></link><updated>2016-06-27T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-06-27:2016/06/balanceando-peticiones-con-haproxy.html</id><summary type="html">&lt;p&gt;Cuando tenemos un entorno grande o con previsiones de crecimiento, nos interesa poder poner a trabajar varios servidores similares. En casos así nos hace falta un &lt;strong&gt;balanceador de carga&lt;/strong&gt;, que actúa como un agente de tráfico, dirigiendo las peticiones que él mismo recibe a los diferentes servidores, por ejemplo, &lt;strong&gt;haproxy&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;En este artículo vamos a montar el balanceador &lt;strong&gt;haproxy&lt;/strong&gt;, usando &lt;strong&gt;ansible&lt;/strong&gt;, basándonos en las imágenes &lt;strong&gt;docker&lt;/strong&gt; de &lt;a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html"&gt;otro artículo&lt;/a&gt;. La ideas es que vamos a poner un único balanceador que va a escuchar en dos puertos, balanceando dos &lt;em&gt;backends&lt;/em&gt; en cada uno, por ejemplo una web y una &lt;em&gt;api&lt;/em&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
