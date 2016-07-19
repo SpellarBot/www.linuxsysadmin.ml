@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>nmap - Linux Sysadmin</title>
+    <title>Tipos de volúmenes en Docker - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,22 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/07/tipos-de-volumenes-en-docker.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="nmap" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="docker,volumenes" />
+        <meta name="description" content="Una de las mas importantes funcionalidades de Docker son los volúmenes. Estos no son mas que carpetas en nuestro sistema de ficheros y son capaces de sobrevivir al ciclo de vida normal del contenedor. Eso nos permite, entre otras cosas, compartir varios ficheros con otros contenedores o con el host ..." />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Tipos de volúmenes en Docker"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/07/tipos-de-volumenes-en-docker.html"/>
+        <meta property="og:description" content="Una de las mas importantes funcionalidades de Docker son los volúmenes. Estos no son mas que carpetas en nuestro sistema de ficheros y son capaces de sobrevivir al ciclo de vida normal del contenedor. Eso nos permite, entre otras cosas, compartir varios ficheros con otros contenedores o con el host ..."/>
+        <meta property="article:published_time" content="2016-07-18" />
+            <meta property="article:section" content="Operaciones" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:tag" content="volumenes" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,6 +40,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -75,11 +83,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.tk/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
-        <li class="active">nmap</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
+                <li class="active">Tipos de volúmenes en Docker</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -92,13 +100,166 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></h2>
-                <div class="summary"><p>En este artículo vamos a enseñar como ocultar un puerto tras el firewall, de forma que solamente se abra tras utilizar el protocolo <em>port knocking</em>. Las tecnologías usadas van a ser <em>firehol</em> como firewall y el demonio <em>knockd</em> ocultando el <em>SSH</em>, aunque vamos a permitir acceder al puerto de HTTP ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Seguir leyendo</a>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2016/07/tipos-de-volumenes-en-docker.html"
+                       rel="bookmark"
+                       title="Permalink to Tipos de volúmenes en Docker">
+                        Tipos de volúmenes en Docker
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-07-18T08:00:00+02:00"> 2016-07-18</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 4 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/docker.html">docker</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/volumenes.html">volumenes</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 </div>
-            </article>
-            <hr/>
+                <p>Una de las mas importantes funcionalidades de <strong>Docker</strong> son los volúmenes. Estos no son mas que carpetas en nuestro sistema de ficheros y son capaces de sobrevivir al ciclo de vida normal del contenedor. Eso nos permite, entre otras cosas, compartir varios ficheros con otros contenedores o con el <em>host</em>.</p>
+<p>Los volúmenes son bastante útiles porque permiten compartirse entre contenedores, o el propio <em>host</em>. Eso nos permite consultar todos los <em>logs</em> cómodamente desde un contenedor dedicado, hacer <em>backups</em> de un contenedor desde otro dedicado, o recuperar esos mismo <em>backups</em> hacia nuestro <em>host</em>.</p>
+<p>De hecho, he visto contenedores con la única función de producir ficheros (<em>.tar.gz</em>, <em>.deb</em>, ...) en volúmenes que luego son consumidos por servicios de <em>runtime</em>, por ejemplo un servidor web, un repositorio o simplemente un NFS.</p>
+<p>Los volúmenes pueden ser de 3 tipos distintos, y se categorizan según esta lista:</p>
+<ul>
+<li>Data volumes<ul>
+<li>Anonymous data volumes</li>
+<li>Named data volumes</li>
+</ul>
+</li>
+<li>Mounted volumes</li>
+</ul>
+<h2>Data volumes</h2>
+<p>Se trata de carpetas que se crean en <em>/var/lib/docker/</em> y que pueden compartirse entre diferentes contenedores.</p>
+<h3>Anonymous data volumes</h3>
+<p>Se crean cuando se levanta un contenedor, mediante el comando <em>docker run</em>, por ejemplo:</p>
+<div class="highlight"><pre>gerard@sirius:~<span class="nv">$ </span>docker run -ti --rm -v /data alpine:3.4 sh
+/ <span class="c"># </span>
+</pre></div>
+
+
+<p>Esto nos crea un volumen asociado al contenedor creado.</p>
+<div class="highlight"><pre>root@sirius:~# docker volume ls
+DRIVER              VOLUME NAME
+<span class="nb">local               </span>1b39e6601cd3711c27f3a1a4eb50d82e182151fd14b82048f47b0d50ad22b97a
+root@sirius:~# tree /var/lib/docker/volumes/
+/var/lib/docker/volumes/
+├── 1b39e6601cd3711c27f3a1a4eb50d82e182151fd14b82048f47b0d50ad22b97a
+│   └── _data
+└── metadata.db
+
+<span class="m">2</span> directories, <span class="m">1</span> file
+root@sirius:~# 
+</pre></div>
+
+
+<p>A su vez, otro contenedor puede montar los volúmenes de otro contenedor, ya sea porque los creó o porque los ha montado de un tercero.</p>
+<div class="highlight"><pre>root@sirius:~# docker run -ti --rm --volumes-from adoring_lovelace alpine:3.4 sh
+/ <span class="c"># </span>
+</pre></div>
+
+
+<p>Ahora mismo, la carpeta <em>/data/</em> pertenece al primer contendor, pero es la misma para ambos contenedores.</p>
+<p><strong>Docker</strong> mantiene una cuenta de los contenedores que están usando un volumen, y estos solo se eliminan cuando el último contenedor que lo usa sale con el parámetro <em>--rm</em> o si se hace un <em>docker rm -v</em>. En cualquier otro caso, el volumen se queda parasitando, hasta que lo eliminamos manualmente usado <em>docker volume rm</em>.</p>
+<h3>Named data volumes</h3>
+<p>Estos volúmenes no dependen de ningún contenedor concreto, y se pueden montar en cualquier contenedor. Se crean específicamente usando el comando <em>docker volume create</em>, o al ejecutar un contenedor si le damos un nombre en la línea de comandos.</p>
+<div class="highlight"><pre>gerard@sirius:~<span class="nv">$ </span>docker volume create --name vol1
+vol1
+gerard@sirius:~<span class="nv">$ </span>docker run -ti --rm -v vol2:/data alpine:3.4 <span class="nb">true</span>
+gerard@sirius:~<span class="nv">$ </span>docker volume ls
+DRIVER              VOLUME NAME
+<span class="nb">local               </span>vol1
+<span class="nb">local               </span>vol2
+gerard@sirius:~<span class="nv">$ </span>
+</pre></div>
+
+
+<p>Estos volúmenes no se eliminan por si solos nunca y persisten cuando su contenedor desaparece. Para eliminarlos se necesita una intervención manual mediante el comando <em>docker volume rm</em>.</p>
+<div class="highlight"><pre>gerard@sirius:~<span class="nv">$ </span>docker volume ls
+DRIVER              VOLUME NAME
+<span class="nb">local               </span>vol1
+<span class="nb">local               </span>vol2
+gerard@sirius:~<span class="nv">$ </span>docker volume rm vol1 vol2
+vol1
+vol2
+gerard@sirius:~<span class="nv">$ </span>docker volume ls
+DRIVER              VOLUME NAME
+gerard@sirius:~<span class="nv">$ </span>
+</pre></div>
+
+
+<h2>Mounted volumes</h2>
+<p>Otras veces nos interesa montar ficheros o carpetas desde la máquina <em>host</em>. En este caso, podemos montar la carpeta o el fichero especificando la ruta completa desde la máquina <em>host</em>, y la ruta completa en el contenedor. Es posible también especificar si el volumen es de lectura y escritura (por defecto) o de solo lectura.</p>
+<div class="highlight"><pre>gerard@sirius:~/docker<span class="nv">$ </span>docker run -ti --rm -v /etc/hostname:/root/parent_name:ro -v /opt/:/data alpine:3.4 sh
+/ <span class="c"># cat /root/parent_name </span>
+sirius
+/ <span class="c"># ls /data/</span>
+/ <span class="c"># </span>
+</pre></div>
+
+
+<p>Este último caso es ideal para recuperar <em>backups</em> o ficheros generados en un contenedor, en vistas a su utilización futura por parte de otros contenedores o del mismo <em>host</em>.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/05/evolucionando-los-contenedores-docker.html">Evolucionando los contenedores: Docker</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html">Balanceando peticiones con HAProxy</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'tipos-de-volumenes-en-docker';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/07/tipos-de-volumenes-en-docker.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
 
         </div>
         <div class="col-sm-3" id="sidebar">
@@ -650,7 +811,7 @@ Linux Sysadmin            </a>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2015 Gerard
+         <div class="col-xs-10">&copy; 2016 Gerard
             &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
