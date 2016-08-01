@@ -155,7 +155,7 @@ Linux Sysadmin            </a>
 <p>La idea es crear un sistema de ficheros que sea el resultado de mezclar otros dos: una capa de solo lectura y una capa de cambios, que podría ser de lectura y escritura. Esta nueva capa puede, a su vez, servir de base para otro sistema de ficheros.</p>
 <p>De hecho, esta técnica de "apilado" se utiliza en la distribución de pendrive llamada <a href="http://www.slax.org/">Slax</a>. Mediante el apilado de módulos, mas una capa final de cambios, consiguen crear un sistema de ficheros linux entero, con una capa de cambios que se puede descartar en cualquier momento.</p>
 <p>Empezaremos con un sistema de ficheros simulado en una carpeta, que llamaremos <em>base</em>. También pondremos una carpeta <em>unified</em> que va a ser el sistema de ficheros resultante, y una carpeta <em>changes</em> que va a alojar los cambios del sistema de ficheros respecto al sistema <em>base</em>.</p>
-<div class="highlight"><pre>root@server:~# tree
+<div class="highlight"><pre><span></span>root@server:~# tree
 .
 ├── base
 │   ├── bin
@@ -172,10 +172,10 @@ root@server:~#
 
 <p>Para esta demostración nos vale poca cosa, por ejemplo un binario y su configuración. En casos algo mas complejos podría tratarse de una jaula entera de sistema operativo.</p>
 <p>La "aplicación" y su configuración son simples, se muestran como guía, para ver como lo evolucionamos.</p>
-<div class="highlight"><pre>root@server:~# cat base/bin/hello.sh
-<span class="c">#!/bin/bash</span>
+<div class="highlight"><pre><span></span>root@server:~# cat base/bin/hello.sh
+<span class="c1">#!/bin/bash</span>
 
-<span class="nb">source </span>conf/hello.conf
+<span class="nb">source</span> conf/hello.conf
 
 <span class="nb">echo</span> <span class="s2">&quot;Hello </span><span class="si">${</span><span class="nv">NAME</span><span class="si">}</span><span class="s2">!&quot;</span>
 root@server:~# cat base/conf/hello.conf
@@ -185,13 +185,13 @@ root@server:~#
 
 
 <p>Ahora vamos a crear el sistema combinado en la carpeta <em>unified</em>, usando la <em>base</em> como capa de solo lectura, y la carpeta <em>changes</em> como la capa de lectura escritura.</p>
-<div class="highlight"><pre>root@server:~# mount -t aufs -o br:changes<span class="o">=</span>rw:base<span class="o">=</span>ro none unified
+<div class="highlight"><pre><span></span>root@server:~# mount -t aufs -o br:changes<span class="o">=</span>rw:base<span class="o">=</span>ro none unified
 root@server:~#
 </pre></div>
 
 
 <p>Podemos ver que la carpeta <em>unified</em> es una unión de la capa base con la de cambios. Puesto que no hay cambios, por ahora las carpetas coinciden en contenido.</p>
-<div class="highlight"><pre>root@server:~# tree
+<div class="highlight"><pre><span></span>root@server:~# tree
 .
 ├── base
 │   ├── bin
@@ -211,47 +211,47 @@ root@server:~#
 
 
 <p>De ahora en adelante, solo queda trabajar con el sistema de ficheros <em>unified</em>, así que vamos a trabajar en esa carpeta.</p>
-<div class="highlight"><pre>root@server:~# <span class="nb">cd </span>unified/
+<div class="highlight"><pre><span></span>root@server:~# <span class="nb">cd</span> unified/
 root@server:~/unified#
 </pre></div>
 
 
 <p>Si ejecutamos el binario, vemos que reacciona como se supone que debe hacerlo.</p>
-<div class="highlight"><pre>root@server:~/unified# ./bin/hello.sh
+<div class="highlight"><pre><span></span>root@server:~/unified# ./bin/hello.sh
 Hello Gerard!
 root@server:~/unified#
 </pre></div>
 
 
 <p>En un momento dado, vemos que queremos modificar un fichero, por ejemplo, el de configuración, cambiando el parámetro <strong>NAME</strong>.</p>
-<div class="highlight"><pre>root@server:~/unified# cat conf/hello.conf
+<div class="highlight"><pre><span></span>root@server:~/unified# cat conf/hello.conf
 <span class="nv">NAME</span><span class="o">=</span><span class="s2">&quot;Gerard Monells&quot;</span>
 root@server:~/unified#
 </pre></div>
 
 
 <p>Efectivamente, el resultado es el esperado.</p>
-<div class="highlight"><pre>root@server:~/unified# ./bin/hello.sh
+<div class="highlight"><pre><span></span>root@server:~/unified# ./bin/hello.sh
 Hello Gerard Monells!
 root@server:~/unified#
 </pre></div>
 
 
 <p>Ahora vamos a crear nuevas carpetas y nuevos ficheros, por ejemplo, una carpeta <em>data</em> con un fichero <em>greetings</em>.</p>
-<div class="highlight"><pre>root@server:~/unified# mkdir data
+<div class="highlight"><pre><span></span>root@server:~/unified# mkdir data
 root@server:~/unified# ./bin/hello.sh &gt; data/greetings
 root@server:~/unified#
 </pre></div>
 
 
 <p>Volvemos al nivel de carpetas anteriores, para investigar lo que está pasando.</p>
-<div class="highlight"><pre>root@server:~/unified# <span class="nb">cd</span> ..
+<div class="highlight"><pre><span></span>root@server:~/unified# <span class="nb">cd</span> ..
 root@server:~#
 </pre></div>
 
 
 <p>Podemos ver que el sistema <em>base</em> ha quedado intacto. De la misma forma, todas las modificaciones respecto a la base se han almacenado en la carpeta <em>changes</em>. En conjunto, nos queda la carpeta <em>unified</em> con la suma de ambos.</p>
-<div class="highlight"><pre>root@server:~# tree
+<div class="highlight"><pre><span></span>root@server:~# tree
 .
 ├── base
 │   ├── bin
@@ -277,7 +277,7 @@ root@server:~#
 
 
 <p>Es fácil intuir que el fichero <em>greetings</em> es el de la capa de cambios, ya que no hay otro. En el caso del fichero <em>hello.conf</em> modificado, se ha modificado el de la capa de cambios, y es el que vemos en el punto de montaje <em>unified</em>, aunque hayan dos.</p>
-<div class="highlight"><pre>root@server:~# cat base/conf/hello.conf
+<div class="highlight"><pre><span></span>root@server:~# cat base/conf/hello.conf
 <span class="nv">NAME</span><span class="o">=</span><span class="s2">&quot;Gerard&quot;</span>
 root@server:~# cat unified/conf/hello.conf
 <span class="nv">NAME</span><span class="o">=</span><span class="s2">&quot;Gerard Monells&quot;</span>
@@ -289,14 +289,14 @@ root@server:~#
 
 <p><strong>TRUCO</strong>: el sistema de ficheros de solo lectura <em>base</em> no tiene porque estar en una carpeta; podría tratarse se un sistema de fichero simulado montado en un fichero, montado mediante un <strong>mount -o loop</strong>; por ejemplo, un sistema de ficheros <strong>squashfs</strong>.</p>
 <p>De hecho, como la capa <em>base</em> no se modifica, nada nos impide crear otro sistema de ficheros, a base de sumar esta misma <em>base</em> con otra capa de cambios.</p>
-<div class="highlight"><pre>root@server:~# mkdir changes2 unified2
+<div class="highlight"><pre><span></span>root@server:~# mkdir changes2 unified2
 root@server:~# mount -t aufs -o br:changes2<span class="o">=</span>rw:base<span class="o">=</span>ro none unified2
 root@server:~#
 </pre></div>
 
 
 <p>Y con esto tenemos dos sistemas de ficheros, <em>unified</em> y <em>unified2</em>, que comparten una capa <em>base</em> común.</p>
-<div class="highlight"><pre>root@server:~# tree
+<div class="highlight"><pre><span></span>root@server:~# tree
 .
 ├── base
 │   ├── bin
@@ -335,8 +335,8 @@ root@server:~#
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html">Creación de un livecd con Debian</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
     </ul>
 </section>
     <hr/>
@@ -743,9 +743,19 @@ root@server:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -819,6 +829,11 @@ root@server:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -868,7 +883,7 @@ root@server:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

@@ -158,7 +158,7 @@ Linux Sysadmin            </a>
 <p>Con este problema, puse <strong>dnsmasq</strong> en mi anfitrión (que usaba <strong>DHCP</strong> y recibía el <strong>DNS</strong> automáticamente), y configuré todas las máquinas para que usaran el anfitrión como servidor <strong>DNS</strong>; nunca mas tuve que configurarlos.</p>
 <h2>Instalación</h2>
 <p>La instalación en una máquina derivada de <em>Debian</em> es muy simple; está en los repositorios oficiales.</p>
-<div class="highlight"><pre>root@proxy:~# apt-get install dnsmasq
+<div class="highlight"><pre><span></span>root@proxy:~# apt-get install dnsmasq
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias       
 Leyendo la información de estado... Hecho
@@ -182,7 +182,7 @@ root@proxy:~#
 <p><strong>TRUCO</strong>: En caso de querer resolver localmente, <em>dnsmasq</em> sirve los nombres alojados en <em>/etc/hosts</em>, a menos que se indique lo contrario en la configuración. Basta con modificar ese fichero.</p>
 <h2>Comprobación y uso</h2>
 <p>Para comprobar que funciona, vamos a poner otra máquina, configurada para usar el nuevo servidor <strong>DNS</strong>:</p>
-<div class="highlight"><pre>root@client:~# cat /etc/resolv.conf 
+<div class="highlight"><pre><span></span>root@client:~# cat /etc/resolv.conf 
 nameserver 192.168.56.1
 root@client:~# 
 </pre></div>
@@ -190,12 +190,12 @@ root@client:~#
 
 <p>En principio basta con comprobar que resuelve el nombre de una petición cualquiera, por ejemplo, con un <strong>ping</strong>.</p>
 <p>Sin embargo, podemos apreciar la mejora de la <em>caché</em> mediante una herramienta mas avanzada de resolución <strong>DNS</strong>, por ejemplo, con <strong>dig</strong></p>
-<div class="highlight"><pre>root@client:~# dig www.linuxsysadmin.tk <span class="p">|</span> grep <span class="s2">&quot;Query time&quot;</span>
-<span class="p">;;</span> Query <span class="nb">time</span>: <span class="m">118</span> msec
+<div class="highlight"><pre><span></span>root@client:~# dig www.linuxsysadmin.tk <span class="p">|</span> grep <span class="s2">&quot;Query time&quot;</span>
+<span class="p">;;</span> Query time: <span class="m">118</span> msec
 root@client:~# dig www.linuxsysadmin.tk <span class="p">|</span> grep <span class="s2">&quot;Query time&quot;</span>
-<span class="p">;;</span> Query <span class="nb">time</span>: <span class="m">5</span> msec
+<span class="p">;;</span> Query time: <span class="m">5</span> msec
 root@client:~# dig www.linuxsysadmin.tk <span class="p">|</span> grep <span class="s2">&quot;Query time&quot;</span>
-<span class="p">;;</span> Query <span class="nb">time</span>: <span class="m">4</span> msec
+<span class="p">;;</span> Query time: <span class="m">4</span> msec
 root@client:~# 
 </pre></div>
 
@@ -207,8 +207,8 @@ root@client:~#
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html">Utilizando apt-cacher-ng para agilizar la instalación de paquetes</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
     </ul>
 </section>
     <hr/>
@@ -615,9 +615,19 @@ root@client:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -691,6 +701,11 @@ root@client:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -740,7 +755,7 @@ root@client:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

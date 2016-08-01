@@ -157,24 +157,24 @@ Linux Sysadmin            </a>
 <h2>Levantando los procesos de mongodb</h2>
 <p>Este punto se repite en las máquinas que van a formar la <strong>replica set</strong>, que son <em>mongo1</em>, <em>mongo2</em> y <em>backoffice</em>. Vamos a seguir solamente una de ellas; el resto son análogas.</p>
 <p>Crearemos una estructura en <em>/opt/</em> para alojar los binarios, las configuraciones, los datos y los logs.</p>
-<div class="highlight"><pre>root@mongo1:~# mkdir -p /opt/mongodb/<span class="o">{</span>bin,conf,data,logs<span class="o">}</span>
+<div class="highlight"><pre><span></span>root@mongo1:~# mkdir -p /opt/mongodb/<span class="o">{</span>bin,conf,data,logs<span class="o">}</span>
 root@mongo1:~#
 </pre></div>
 
 
 <p>En la carpeta de binarios vamos a poner el único que se necesita: el <em>mongod</em>. Lo podemos sacar descomprimiendo el 
 fichero comprimido <em>.tar.gz</em> de la página de descargas de <strong>mongodb</strong>. En nuestro caso concreto, lo he sacado de <a href="https://fastdl.mongodb.org/linux/mongodb-linux-i686-3.2.3.tgz">https://fastdl.mongodb.org/linux/mongodb-linux-i686-3.2.3.tgz</a>.</p>
-<div class="highlight"><pre>root@mongo1:~# cp mongodb-linux-i686-3.2.3/bin/mongod /opt/mongodb/bin/
+<div class="highlight"><pre><span></span>root@mongo1:~# cp mongodb-linux-i686-3.2.3/bin/mongod /opt/mongodb/bin/
 root@mongo1:~#
 </pre></div>
 
 
 <p>Ponemos un fichero de configuración para la instancia que queremos correr. Esta configuración puede variar mucho, pero un ejemplo básico para salir del paso con una máquina de 32 bits (que no soportan <em>WiredTiger</em>) podría ser:</p>
-<div class="highlight"><pre>root@mongo1:~# cat /opt/mongodb/conf/mongo.conf
+<div class="highlight"><pre><span></span>root@mongo1:~# cat /opt/mongodb/conf/mongo.conf
 systemLog:
     path: /opt/mongodb/logs/mongo.log
     logAppend: <span class="nb">true</span>
-<span class="nb">    </span>destination: file
+    destination: file
 
 net:
     port: 27017
@@ -194,19 +194,19 @@ root@mongo1:~#
 
 <p><strong>Truco</strong>: Es un buen momento para montar un sistema de ficheros alternativo para almacenar los datos, sea poner <a href="http://www.linuxsysadmin.tk/2016/01/lvm-logical-volume-manager.html">LVM</a> (para tener crecimiento dinámico o <a href="http://www.linuxsysadmin.tk/2016/02/haciendo-snapshots-con-lvm.html">snapshots</a>, sea un <a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">RAID</a> (por ejemplo para tener alto rendimiento y/o replicación de datos), o incluso ambos.</p>
 <p>Cumpliendo con una política de seguridad básica, vamos a crear un usuario de sistema para correr el proceso.</p>
-<div class="highlight"><pre>root@mongo1:~# useradd -s /usr/sbin/nologin -r -M mongo -d /opt/mongodb/
+<div class="highlight"><pre><span></span>root@mongo1:~# useradd -s /usr/sbin/nologin -r -M mongo -d /opt/mongodb/
 root@mongo1:~#
 </pre></div>
 
 
 <p>Le damos la propiedad de toda la estructura de <strong>mongodb</strong>, para ahorrarnos problemas de permisos.</p>
-<div class="highlight"><pre>root@mongo1:~# chown -R mongo:mongo /opt/mongodb/
+<div class="highlight"><pre><span></span>root@mongo1:~# chown -R mongo:mongo /opt/mongodb/
 root@mongo1:~#
 </pre></div>
 
 
 <p>Y ya como resumen, ponemos una salida para ver como nos queda la estructura:</p>
-<div class="highlight"><pre>root@mongo1:~# tree /opt/mongodb/
+<div class="highlight"><pre><span></span>root@mongo1:~# tree /opt/mongodb/
 /opt/mongodb/
 ├── bin
 │   └── mongod
@@ -221,7 +221,7 @@ root@mongo1:~#
 
 
 <p>El último paso consiste en crear una <em>unit</em> en <strong>systemd</strong> (o un <em>init script</em>, dependiendo de la distribución usada; de hecho, cada máquina puede ir con una distribución distinta).</p>
-<div class="highlight"><pre>root@mongo1:~# cat /etc/systemd/system/mongo.service
+<div class="highlight"><pre><span></span>root@mongo1:~# cat /etc/systemd/system/mongo.service
 <span class="o">[</span>Unit<span class="o">]</span>
 <span class="nv">Description</span><span class="o">=</span>MongoDB
 
@@ -242,7 +242,7 @@ root@mongo1:~#
 
 
 <p>Lo activamos para que se levante solo en los siguientes arranques, y lo levantamos para la sesión actual.</p>
-<div class="highlight"><pre>root@mongo1:~# systemctl <span class="nb">enable </span>mongo
+<div class="highlight"><pre><span></span>root@mongo1:~# systemctl <span class="nb">enable</span> mongo
 Created symlink from /etc/systemd/system/multi-user.target.wants/mongo.service to /etc/systemd/system/mongo.service.
 root@mongo1:~# systemctl start mongo
 root@mongo1:~#
@@ -253,7 +253,7 @@ root@mongo1:~#
 <h2>Consideraciones de seguridad</h2>
 <p>Para que una <strong>replica set</strong> funcione como debe, todos los procesos deben comunicarse entre sí. Como los hemos puesto en el mismo puerto, podemos agruparlo todo en una sola regla.</p>
 <p>Como en nuestro caso estamos virtualizando con <strong>LXC</strong>, vamos a controlar el tráfico con el <strong>firehol</strong> de la máquina anfitriona.</p>
-<div class="highlight"><pre>...
+<div class="highlight"><pre><span></span>...
 root@lxc:~# cat /etc/firehol/firehol.conf
 <span class="nv">mongo_servers</span><span class="o">=</span><span class="s2">&quot;10.0.0.5 10.0.0.6 10.0.0.7&quot;</span>
 ...  
@@ -268,18 +268,18 @@ root@lxc:~#
 <h2>Atando la replica set</h2>
 <p>Este paso se ejecuta en una sola máquina, que va a reproducir los cambios a las demás, por efecto de la <strong>replica set</strong>. Por ejemplo, lo hago en <em>mongo1</em>, por hacer alguna.</p>
 <p>Entramos en el <em>mongo shell</em>, desde donde lanzaremos el resto de comandos.</p>
-<div class="highlight"><pre>root@mongo1:~# ./mongodb-linux-i686-3.2.3/bin/mongo
+<div class="highlight"><pre><span></span>root@mongo1:~# ./mongodb-linux-i686-3.2.3/bin/mongo
 MongoDB shell version: 3.2.3
 connecting to: <span class="nb">test</span>
 Welcome to the MongoDB shell.
-For interactive <span class="nb">help</span>, <span class="nb">type</span> <span class="s2">&quot;help&quot;</span>.
+For interactive help, <span class="nb">type</span> <span class="s2">&quot;help&quot;</span>.
 ...
 &gt; 
 </pre></div>
 
 
 <p>Siguiendo los pasos estándares, creamos una configuración vacía en la máquina elegida, y añadimos las otras dos. Tened en cuenta que la máquina <em>backoffice</em> se declara como un árbitro, por decisión de diseño.</p>
-<div class="highlight"><pre>&gt; rs.initiate<span class="o">()</span>
+<div class="highlight"><pre><span></span>&gt; rs.initiate<span class="o">()</span>
 <span class="o">{</span>
         <span class="s2">&quot;info2&quot;</span> : <span class="s2">&quot;no configuration specified. Using a default configuration for the set&quot;</span>,
         <span class="s2">&quot;me&quot;</span> : <span class="s2">&quot;mongo1:27017&quot;</span>,
@@ -294,7 +294,7 @@ rs:PRIMARY&gt;
 
 
 <p>Podemos verificar que todo está bien mediante el comando <em>rs.status()</em>, como sigue:</p>
-<div class="highlight"><pre>rs:PRIMARY&gt; rs.status<span class="o">()</span>
+<div class="highlight"><pre><span></span>rs:PRIMARY&gt; rs.status<span class="o">()</span>
 <span class="o">{</span>
         <span class="s2">&quot;set&quot;</span> : <span class="s2">&quot;rs&quot;</span>,
 ...  
@@ -325,7 +325,7 @@ rs:PRIMARY&gt;
 
 
 <p>Y salimos del <em>mongo shell</em>, que ya no necesitamos; las aplicaciones de <em>backend</em> y de <em>backoffice</em> ya incluyen una librería para conectarse por sí mismos.</p>
-<div class="highlight"><pre>rs:PRIMARY&gt; <span class="nb">exit</span>
+<div class="highlight"><pre><span></span>rs:PRIMARY&gt; <span class="nb">exit</span>
 bye
 root@mongo1:~#
 </pre></div>
@@ -759,9 +759,19 @@ root@mongo1:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -835,6 +845,11 @@ root@mongo1:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -884,7 +899,7 @@ root@mongo1:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

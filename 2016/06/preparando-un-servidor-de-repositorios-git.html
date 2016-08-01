@@ -147,7 +147,7 @@ Linux Sysadmin            </a>
 <p><strong>TRUCO</strong>: Podemos eliminar la petición de <em>password</em> para todos los accesos que se hagan por <strong>SSH</strong>, sean para entrar en las máquinas por <strong>SSH</strong> mediante cualquier <em>shell</em> de este artículo, o como resultado de una operación remota de <strong>git</strong>. Esto se puede hacer usando autenticación <strong>SSH</strong> por claves, como se explica en un <a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">artículo anterior</a>.</p>
 <h2>Montando el servidor</h2>
 <p>Para crear la máquina base, vamos a utilizar <strong>Docker</strong> por comodidad. Aprovechando esta tecnología, podemos crear el contenedor partiendo de una imagen creada con un <em>Dockerfile</em>.</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>cat Dockerfile
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ cat Dockerfile
 FROM debian:jessie
 RUN apt-get update <span class="o">&amp;&amp;</span> <span class="se">\</span>
     apt-get install -y git openssh-server <span class="o">&amp;&amp;</span> <span class="se">\</span>
@@ -155,12 +155,12 @@ RUN apt-get update <span class="o">&amp;&amp;</span> <span class="se">\</span>
 RUN useradd git -G sudo -s /bin/bash -m <span class="o">&amp;&amp;</span> <span class="se">\</span>
     <span class="nb">echo</span> <span class="s2">&quot;git:git&quot;</span> <span class="p">|</span> chpasswd
 CMD <span class="o">[</span><span class="s2">&quot;/usr/sbin/sshd&quot;</span>, <span class="s2">&quot;-D&quot;</span><span class="o">]</span>
-gerard@sirius:~/build<span class="nv">$ </span>
+gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Construimos la imagen, basándonos en el anterior <em>Dockerfile</em>, y le añadimos el <em>tag</em> "gitserver".</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>docker build -t gitserver .
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker build -t gitserver .
 Sending build context to Docker daemon 5.632 kB
 Step <span class="m">1</span> : FROM debian:jessie
  ---&gt; bb5d89f9b6cb
@@ -178,19 +178,19 @@ Step <span class="m">4</span> : CMD /usr/sbin/sshd -D
  ---&gt; 81c2dd7b156a
 Removing intermediate container 67bbebe61c74
 Successfully built 81c2dd7b156a
-gerard@sirius:~/build<span class="nv">$ </span>
+gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Lanzamos una instancia del contenedor para que podamos utilizarla. La parte importante es el <em>flag</em> <strong>-d</strong> para ejecutar el contenedor en <em>background</em>, y el <em>flag</em> <strong>-p</strong> que nos permite publicar el puerto 22 del contenedor en el puerto 22222 de la máquina <em>host</em>.</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>docker run -d --name gitserver1 -h gitserver1 -p 22222:22 gitserver
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker run -d --name gitserver1 -h gitserver1 -p 22222:22 gitserver
 c26f30a94bb75b35c6d6cfe6a6bc5b1ef6929aafe1b5636acd207e019743540b
-gerard@sirius:~/build<span class="nv">$ </span>
+gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Vamos a entrar en el servidor <strong>SSH</strong> para crear el repositorio <em>myrepo.git</em> que nos va a servir de ejemplo.</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>ssh git@localhost -p 22222
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ ssh git@localhost -p 22222
 git@localhost<span class="err">&#39;</span>s password: 
 
 The programs included with the Debian GNU/Linux system are free software<span class="p">;</span>
@@ -199,43 +199,43 @@ individual files in /usr/share/doc/*/copyright.
 
 Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
-git@gitserver1:~<span class="nv">$ </span>git init --bare myrepo.git
+git@gitserver1:~$ git init --bare myrepo.git
 Initialized empty Git repository in /home/git/myrepo.git/
-git@gitserver1:~<span class="nv">$ </span><span class="nb">exit</span>
+git@gitserver1:~$ <span class="nb">exit</span>
 <span class="nb">logout</span>
 Connection to localhost closed.
-gerard@sirius:~/build<span class="nv">$ </span>
+gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Desde la máquina <em>host</em> (o desde cualquier otra), podemos clonar el repositorio. Como tenemos el puerto del contenedor publicado en el puerto 22222 de la máquina <em>host</em> (la de trabajo, en este caso), la usamos tal cual para clonar.</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>git clone ssh://git@localhost:22222/home/git/myrepo.git
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ git clone ssh://git@localhost:22222/home/git/myrepo.git
 Cloning into <span class="s1">&#39;myrepo&#39;</span>...
 git@localhost<span class="err">&#39;</span>s password: 
 warning: You appear to have cloned an empty repository.
 Checking connectivity... <span class="k">done</span>.
-gerard@sirius:~/build<span class="nv">$ </span>
+gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Hacemos un poco de trabajo local, con sus respectivos <em>commits</em>. Finalmente podemos hacer un <em>push</em> a nuestro repositorio remoto, siguiendo el <em>workflow</em> de trabajo que queramos seguir.</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span><span class="nb">cd </span>myrepo/
-gerard@sirius:~/build/myrepo<span class="nv">$ </span><span class="nb">echo </span>0.0.1 &gt; VERSION
-gerard@sirius:~/build/myrepo<span class="nv">$ </span>git add VERSION 
-gerard@sirius:~/build/myrepo<span class="nv">$ </span>git commit -m <span class="s2">&quot;Initial commit&quot;</span>
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ <span class="nb">cd</span> myrepo/
+gerard@sirius:~/build/myrepo$ <span class="nb">echo</span> 0.0.1 &gt; VERSION
+gerard@sirius:~/build/myrepo$ git add VERSION 
+gerard@sirius:~/build/myrepo$ git commit -m <span class="s2">&quot;Initial commit&quot;</span>
 <span class="o">[</span>master <span class="o">(</span>root-commit<span class="o">)</span> f30b82a<span class="o">]</span> Initial commit
  <span class="m">1</span> file changed, <span class="m">1</span> insertion<span class="o">(</span>+<span class="o">)</span>
  create mode <span class="m">100644</span> VERSION
-gerard@sirius:~/build/myrepo<span class="nv">$ </span>git push -u origin master
+gerard@sirius:~/build/myrepo$ git push -u origin master
 git@localhost<span class="err">&#39;</span>s password: 
 Counting objects: 3, <span class="k">done</span>.
 Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, <span class="m">222</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
 Total <span class="m">3</span> <span class="o">(</span>delta 0<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>
 To ssh://git@localhost:22222/home/git/myrepo.git
  * <span class="o">[</span>new branch<span class="o">]</span>      master -&gt; master
-Branch master <span class="nb">set </span>up to track remote branch master from origin.
-gerard@sirius:~/build/myrepo<span class="nv">$ </span><span class="nb">cd</span> ..
-gerard@sirius:~/build<span class="nv">$ </span>
+Branch master <span class="nb">set</span> up to track remote branch master from origin.
+gerard@sirius:~/build/myrepo$ <span class="nb">cd</span> ..
+gerard@sirius:~/build$ 
 </pre></div>
 
 
@@ -245,8 +245,8 @@ gerard@sirius:~/build<span class="nv">$ </span>
 <p>¿Y como podemos crear y destruir repositorios? En principio, no se puede. Sin embargo, si creamos una carpeta <em>/home/git/git-shell-commands/</em>, el usuario va a poder ejecutar los <em>scripts</em> que allí pongamos.</p>
 <p>Siguiendo esta idea, vamos a mejorar el <em>Dockerfile</em> para asignar <strong>git-shell</strong> al usuario <em>git</em> y para ponerle un par de comandos.</p>
 <p>Vamos a crear dos <em>scripts</em> que nos permitan crear y destruir repositorios, que son los siguientes:</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>cat create 
-<span class="c">#!/bin/bash</span>
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ cat create 
+<span class="c1">#!/bin/bash</span>
 
 <span class="k">if</span> <span class="o">[</span> <span class="si">${#}</span> -ne <span class="m">1</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
     <span class="nb">echo</span> <span class="s2">&quot;[ERROR] Syntax: create &lt;repository&gt;&quot;</span>
@@ -260,9 +260,9 @@ gerard@sirius:~/build<span class="nv">$ </span>
 
 git init --bare <span class="si">${</span><span class="nv">1</span><span class="si">}</span>.git
 <span class="nb">echo</span> <span class="s2">&quot;[OK] Repository </span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2"> created&quot;</span>
-<span class="nb">exit </span>0
-gerard@sirius:~/build<span class="nv">$ </span>cat destroy 
-<span class="c">#!/bin/bash</span>
+<span class="nb">exit</span> 0
+gerard@sirius:~/build$ cat destroy 
+<span class="c1">#!/bin/bash</span>
 
 <span class="k">if</span> <span class="o">[</span> <span class="si">${#}</span> -ne <span class="m">1</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
     <span class="nb">echo</span> <span class="s2">&quot;[ERROR] Syntax: destroy &lt;repository&gt;&quot;</span>
@@ -272,17 +272,17 @@ gerard@sirius:~/build<span class="nv">$ </span>cat destroy
 <span class="k">if</span> <span class="o">[</span> -e <span class="si">${</span><span class="nv">1</span><span class="si">}</span>.git <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
     rm -Rf <span class="si">${</span><span class="nv">1</span><span class="si">}</span>.git
     <span class="nb">echo</span> <span class="s2">&quot;[OK] Repository </span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2"> deleted&quot;</span>
-    <span class="nb">exit </span>0
+    <span class="nb">exit</span> 0
 <span class="k">fi</span>
 
 <span class="nb">echo</span> <span class="s2">&quot;[ERROR] Repository </span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2"> does not exist&quot;</span>
 <span class="nb">exit</span> -1
-gerard@sirius:~/build<span class="nv">$ </span>
+gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>También vamos a reescribir el <em>Dockerfile</em> con las nuevas modificaciones.</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>cat Dockerfile.shell 
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ cat Dockerfile.shell 
 FROM debian:jessie
 RUN apt-get update <span class="o">&amp;&amp;</span> <span class="se">\</span>
     apt-get install -y git openssh-server <span class="o">&amp;&amp;</span> <span class="se">\</span>
@@ -295,12 +295,12 @@ RUN cp /usr/share/doc/git/contrib/git-shell-commands/help /home/git/git-shell-co
     cp /usr/share/doc/git/contrib/git-shell-commands/list /home/git/git-shell-commands/ <span class="o">&amp;&amp;</span> <span class="se">\</span>
     chmod <span class="m">755</span> /home/git/git-shell-commands/*
 CMD <span class="o">[</span><span class="s2">&quot;/usr/sbin/sshd&quot;</span>, <span class="s2">&quot;-D&quot;</span><span class="o">]</span>
-gerard@sirius:~/build<span class="nv">$ </span>
+gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Creamos la imagen usando el <em>Dockerfile</em> antes mencionado, siguiendo el mismo procedimiento de la versión básica. Le ponemos un <em>tag</em> distinto para tener ambas imágenes funcionales.</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>docker build -f Dockerfile.shell -t gitserver:shell .
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker build -f Dockerfile.shell -t gitserver:shell .
 Sending build context to Docker daemon 53.25 kB
 Step <span class="m">1</span> : FROM debian:jessie
  ---&gt; bb5d89f9b6cb
@@ -323,19 +323,19 @@ Step <span class="m">6</span> : CMD /usr/sbin/sshd -D
  ---&gt; e484e1465480
 Removing intermediate container b94b8c1ddf8a
 Successfully built e484e1465480
-gerard@sirius:~/build<span class="nv">$ </span>
+gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Lanzamos una instancia de la imagen creada. Es importante cambiar el puerto; puesto que el 22222 está ocupado por la instancia anterior, usaré el siguiente.</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>docker run -d --name gitserver2 -h gitserver2 -p 22223:22 gitserver:shell
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker run -d --name gitserver2 -h gitserver2 -p 22223:22 gitserver:shell
 e732027d11b90657ff109a455f032327f0e24eebe54a7e121d86eff6eab1bc4b
-gerard@sirius:~/build<span class="nv">$ </span>
+gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Entramos por <strong>SSH</strong>. Nos podemos dar cuenta de que el <em>prompt</em> ha cambiado; estamos en el <strong>git-shell</strong> y tenemos limitados los comandos a los que añadimos en el <em>Dockerfile</em>.</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>ssh git@localhost -p 22223
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ ssh git@localhost -p 22223
 git@localhost<span class="s1">&#39;s password: </span>
 
 <span class="s1">The programs included with the Debian GNU/Linux system are free software;</span>
@@ -344,7 +344,7 @@ git@localhost<span class="s1">&#39;s password: </span>
 
 <span class="s1">Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent</span>
 <span class="s1">permitted by applicable law.</span>
-<span class="s1">Run &#39;</span><span class="nb">help</span><span class="s1">&#39; for help, or &#39;</span><span class="nb">exit</span><span class="err">&#39;</span> to leave.  Available commands:
+<span class="s1">Run &#39;</span>help<span class="s1">&#39; for help, or &#39;</span>exit<span class="err">&#39;</span> to leave.  Available commands:
 create
 destroy
 list
@@ -353,54 +353,54 @@ git&gt;
 
 
 <p>Usamos el comando <em>create</em> para crear el repositorio y verificamos que está usando el comando <em>list</em>. Tendríamos disponible el comando <em>destroy</em>, pero de momento no lo vamos a utilizar.</p>
-<div class="highlight"><pre>git&gt; create myrepo2
+<div class="highlight"><pre><span></span>git&gt; create myrepo2
 Initialized empty Git repository in /home/git/myrepo2.git/
 <span class="o">[</span>OK<span class="o">]</span> Repository myrepo2 created
 git&gt; list
 myrepo2.git
 git&gt; <span class="nb">exit</span>
 Connection to localhost closed.
-gerard@sirius:~/build<span class="nv">$ </span>
+gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Verificamos que funciona, clonando el repositorio como hemos hecho antes.</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>git clone ssh://git@localhost:22223/home/git/myrepo2.git
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ git clone ssh://git@localhost:22223/home/git/myrepo2.git
 Cloning into <span class="s1">&#39;myrepo2&#39;</span>...
 git@localhost<span class="err">&#39;</span>s password: 
 warning: You appear to have cloned an empty repository.
 Checking connectivity... <span class="k">done</span>.
-gerard@sirius:~/build<span class="nv">$ </span>
+gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Hacemos algunos <em>commits</em> locales y finalmente los pasamos al repositorio remoto mediante un <em>push</em>.</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span><span class="nb">cd </span>myrepo2/
-gerard@sirius:~/build/myrepo2<span class="nv">$ </span><span class="nb">echo </span>0.0.1 &gt; VERSION
-gerard@sirius:~/build/myrepo2<span class="nv">$ </span>git add VERSION
-gerard@sirius:~/build/myrepo2<span class="nv">$ </span>git commit -m <span class="s2">&quot;Initial commit&quot;</span>
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ <span class="nb">cd</span> myrepo2/
+gerard@sirius:~/build/myrepo2$ <span class="nb">echo</span> 0.0.1 &gt; VERSION
+gerard@sirius:~/build/myrepo2$ git add VERSION
+gerard@sirius:~/build/myrepo2$ git commit -m <span class="s2">&quot;Initial commit&quot;</span>
 <span class="o">[</span>master <span class="o">(</span>root-commit<span class="o">)</span> fd40f39<span class="o">]</span> Initial commit
  <span class="m">1</span> file changed, <span class="m">1</span> insertion<span class="o">(</span>+<span class="o">)</span>
  create mode <span class="m">100644</span> VERSION
-gerard@sirius:~/build/myrepo2<span class="nv">$ </span>git push -u origin master
+gerard@sirius:~/build/myrepo2$ git push -u origin master
 git@localhost<span class="err">&#39;</span>s password: 
 Counting objects: 3, <span class="k">done</span>.
 Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, <span class="m">222</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
 Total <span class="m">3</span> <span class="o">(</span>delta 0<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>
 To ssh://git@localhost:22223/home/git/myrepo2.git
  * <span class="o">[</span>new branch<span class="o">]</span>      master -&gt; master
-Branch master <span class="nb">set </span>up to track remote branch master from origin.
-gerard@sirius:~/build/myrepo2<span class="nv">$ </span><span class="nb">cd</span> ..
-gerard@sirius:~/build<span class="nv">$ </span>
+Branch master <span class="nb">set</span> up to track remote branch master from origin.
+gerard@sirius:~/build/myrepo2$ <span class="nb">cd</span> ..
+gerard@sirius:~/build$ 
 </pre></div>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Enjaulado de usuarios para uso de rsync</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">Autenticación SSH por claves</a></li>
     </ul>
 </section>
     <hr/>
@@ -807,9 +807,19 @@ gerard@sirius:~/build<span class="nv">$ </span>
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -883,6 +893,11 @@ gerard@sirius:~/build<span class="nv">$ </span>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -932,7 +947,7 @@ gerard@sirius:~/build<span class="nv">$ </span>
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

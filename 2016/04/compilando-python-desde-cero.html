@@ -144,14 +144,14 @@ Linux Sysadmin            </a>
                 </div>
                 <p>Siempre que estoy trabajando en un servidor CentOS o RedHat, veo que las versiones de <em>python</em> que usan son bastante viejas. De hecho, hay una gran mejora de <em>python</em> entre las versiones 2.4, 2.6 y 2.7; así que es frecuente compilar una versión superior para nuestro uso.</p>
 <p>Para este tutorial he usado una máquina virtual con un sistema operativo <em>RedHat</em>. Realmente no necesita ninguna configuración <em>hardware</em> adicional. Lo único relevante es que estamos tratando con una versión de <em>RedHat</em> 6.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry ~<span class="o">]</span><span class="nv">$ </span>cat /etc/redhat-release
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry ~<span class="o">]</span>$ cat /etc/redhat-release
 Red Hat Enterprise Linux Server release 6.7 <span class="o">(</span>Santiago<span class="o">)</span>
-<span class="o">[</span>gerard@foundry ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>El otro requisito necesario es el fichero <em>tarball</em> con las fuentes de <em>python</em>. Esto lo podemos encontrar en <a href="https://www.python.org/">la página de <em>python</em></a>. Al tiempo de escritura, la última <em>release</em> de la serie de <em>python</em> 2 era la 2.7.11.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry ~<span class="o">]</span><span class="nv">$ </span>wget https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry ~<span class="o">]</span>$ wget https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz
 --2016-03-29 16:27:54--  https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz
 Resolving www.python.org... 185.31.17.223
 Connecting to www.python.org<span class="p">|</span>185.31.17.223<span class="p">|</span>:443... connected.
@@ -163,20 +163,20 @@ Saving to: “Python-2.7.11.tgz”
 
 2016-03-29 16:27:55 <span class="o">(</span>17.3 MB/s<span class="o">)</span> - “Python-2.7.11.tgz” saved <span class="o">[</span>16856409/16856409<span class="o">]</span>
 
-<span class="o">[</span>gerard@foundry ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry ~<span class="o">]</span>$
 </pre></div>
 
 
 <h2>Compilar las fuentes</h2>
 <p>Descomprimimos el <em>tarball</em> y nos situamos en la carpeta recién creada.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry ~<span class="o">]</span><span class="nv">$ </span>tar xzf Python-2.7.11.tgz
-<span class="o">[</span>gerard@foundry ~<span class="o">]</span><span class="nv">$ </span><span class="nb">cd </span>Python-2.7.11
-<span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span><span class="err">$</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry ~<span class="o">]</span>$ tar xzf Python-2.7.11.tgz
+<span class="o">[</span>gerard@foundry ~<span class="o">]</span>$ <span class="nb">cd</span> Python-2.7.11
+<span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span>$
 </pre></div>
 
 
 <p>El procedimiento de compilación es el estándar: <strong>configure</strong>, <strong>make</strong> y <strong>make install</strong>. Empezamos por configurarlo. Solo voy a añadir una carpeta que no interfiera con el sistema operativo, por ejemplo, <em>/opt/python27/</em>. Otro punto interesante es el modificador <strong>--enable-shared</strong>, para generar la librería <em>libpython2.7.so</em>, por si nos hiciera falta.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span><span class="nv">$ </span>./configure --prefix<span class="o">=</span>/opt/python27
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span>$ ./configure --prefix<span class="o">=</span>/opt/python27
 checking build system type... x86_64-unknown-linux-gnu
 checking host system type... x86_64-unknown-linux-gnu
 ...
@@ -190,12 +190,12 @@ config.status: pyconfig.h is unchanged
 creating Modules/Setup
 creating Modules/Setup.local
 creating Makefile
-<span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span>$
 </pre></div>
 
 
 <p>Compilamos usando <strong>make</strong> con el <em>Makefile</em> recién generado por el <em>script</em> <strong>configure</strong>.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span><span class="nv">$ </span>make
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span>$ make
 ...
 Python build finished, but the necessary bits to build these modules were not found:
 _bsddb             _curses            _curses_panel
@@ -206,155 +206,155 @@ sunaudiodev
 To find the necessary bits, look in setup.py in detect_modules<span class="o">()</span> <span class="k">for</span> the module<span class="err">&#39;</span>s name.
 
 running build_scripts
-<span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span>$
 </pre></div>
 
 
 <p>Hay algunos módulos de la librería estándar que necesitan las versiones <strong>-devel</strong> de algunas librerías, aunque se pueden obviar y no se construyen.</p>
 <p>Opcionalmente podemos instalar algunas de esas librerías, y tras volver a ejecutar <strong>configure</strong> y <strong>make</strong>, se construirían esos módulos.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span><span class="nv">$ </span>yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel
-<span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span><span class="err">$</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span>$ yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel
+<span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span>$
 </pre></div>
 
 
 <p>Finalmente lo ponemos en su carpeta (<em>--prefix</em>) mediante <strong>make install</strong>. No tengo permiso de escritura en <em>/opt/</em>, así que vamos a usar <strong>sudo</strong> para todos los comandos que impliquen la carpeta <em>/opt/</em>.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span><span class="nv">$ </span>sudo make install
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span>$ sudo make install
 Creating directory /opt/python27/bin
 Creating directory /opt/python27/lib
 ...
-<span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span>$
 </pre></div>
 
 
 <h2>Comprobar que funciona</h2>
 <p>Vamos a ejecutar el binario <strong>python</strong> para verificar que funciona y que estamos mirando la versión que toca. Vamos a usar la ruta completa para referirnos al binario, aunque lo ideal sería que estuviera en el <em>PATH</em>.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry ~<span class="o">]</span><span class="nv">$ </span>/opt/python27/bin/python -V
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry ~<span class="o">]</span>$ /opt/python27/bin/python -V
 Python 2.7.11
-<span class="o">[</span>gerard@foundry ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>Para ver que la librería estándar funciona y es utilizable, basta con importar alguno de sus módulos e invocar alguna de sus funciones.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry ~<span class="o">]</span><span class="nv">$ </span>/opt/python27/bin/python
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry ~<span class="o">]</span>$ /opt/python27/bin/python
 Python 2.7.11 <span class="o">(</span>default, Mar <span class="m">29</span> 2016, 16:42:10<span class="o">)</span>
 <span class="o">[</span>GCC 4.4.7 <span class="m">20120313</span> <span class="o">(</span>Red Hat 4.4.7-16<span class="o">)]</span> on linux2
 Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for</span> more information.
 &gt;&gt;&gt; import os
 &gt;&gt;&gt; os.uname<span class="o">()</span>
 <span class="o">(</span><span class="s1">&#39;Linux&#39;</span>, <span class="s1">&#39;foundry&#39;</span>, <span class="s1">&#39;3.10.0-327.10.1.el7.x86_64&#39;</span>, <span class="s1">&#39;#1 SMP Sat Jan 23 04:54:55 EST 2016&#39;</span>, <span class="s1">&#39;x86_64&#39;</span><span class="o">)</span>
-&gt;&gt;&gt; <span class="nb">exit</span><span class="o">()</span>
-<span class="o">[</span>gerard@foundry ~<span class="o">]</span><span class="err">$</span>
+&gt;&gt;&gt; exit<span class="o">()</span>
+<span class="o">[</span>gerard@foundry ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>Y con esto lo damos por bueno.</p>
 <h2>Opcional: reduciendo el espacio ocupado en disco</h2>
 <p>Nos posicionamos en la carpeta para analizar lo que ocupa.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span><span class="nv">$ </span><span class="nb">cd</span> /opt/python27/
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="err">$</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry Python-2.7.11<span class="o">]</span>$ <span class="nb">cd</span> /opt/python27/
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$
 </pre></div>
 
 
 <p>Miramos lo que ocupa cada carpeta dentro de la carpeta contendora.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>du -sh * <span class="p">|</span> sort -h
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ du -sh * <span class="p">|</span> sort -h
 16K     share
 676K    include
 6.1M    bin
 94M     lib
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$
 </pre></div>
 
 
 <p>El paso mas obvio es lanzar el comando <strong>strip</strong>. Esto va a eliminar los símbolos de <em>debug</em> y va a reducir el tamaño de los binarios y las librerías <em>.so</em>. El resto va a ignorarse, previo mensaje de error, que vamos a ignorar.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>find -type f <span class="p">|</span> sudo xargs strip 2&gt;/dev/null
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>du -sh * <span class="p">|</span> sort -h
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ find -type f <span class="p">|</span> sudo xargs strip 2&gt;/dev/null
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ du -sh * <span class="p">|</span> sort -h
 16K     share
 676K    include
 1.8M    bin
 76M     lib
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$
 </pre></div>
 
 
 <p>Algo hemos ganado; se han liberado unos 24 mb. Como nos resulta insuficiente, inspeccionemos la carpeta mas grande, que es la carpeta <em>lib/</em>.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>du -sh lib/* <span class="p">|</span> sort -h
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ du -sh lib/* <span class="p">|</span> sort -h
 4.0K    lib/pkgconfig
 1.8M    lib/libpython2.7.a
 74M     lib/python2.7
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$
 </pre></div>
 
 
 <p>La librería <em>libpython2.7.a</em> es necesaria para compilar estáticamente binarios que vayan a incorporar la librería de <em>python</em>. En este caso no la necesitamos y podemos liberar 1.8 mb adicionales.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>sudo rm lib/libpython2.7.a
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>du -sh * <span class="p">|</span> sort -h
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ sudo rm lib/libpython2.7.a
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ du -sh * <span class="p">|</span> sort -h
 16K     share
 676K    include
 1.8M    bin
 73M     lib
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$
 </pre></div>
 
 
 <p>Continuamos mirando la carpeta mas grande, que es <em>lib/python2.7/</em>.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>du -sh lib/python2.7/* <span class="p">|</span> sort -h <span class="p">|</span> tail -5
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ du -sh lib/python2.7/* <span class="p">|</span> sort -h <span class="p">|</span> tail -5
 2.9M    lib/python2.7/encodings
 3.1M    lib/python2.7/idlelib
 3.4M    lib/python2.7/distutils
 3.5M    lib/python2.7/lib-dynload
 29M     lib/python2.7/test
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$
 </pre></div>
 
 
 <p>Es bastante inútil que el <em>runtime</em> de <em>python</em> incluya los tests que usan los desarrolladores de <em>python</em>, y son 29 mb que podemos eliminar de forma segura.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>sudo rm -R lib/python2.7/test/
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>du -sh * <span class="p">|</span> sort -h
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ sudo rm -R lib/python2.7/test/
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ du -sh * <span class="p">|</span> sort -h
 16K     share
 676K    include
 1.8M    bin
 44M     lib
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$
 </pre></div>
 
 
 <p>Si miramos el contenido de la carpeta con detenimiento, podemos ver que cada módulo tiene 3 versiones: <em>.py</em>, <em>.pyc</em> y <em>.pyo</em>; se trata del módulo en versión código, compilado y optimizado, respectivamente.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>ls -lh lib/python2.7/os.*
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ ls -lh lib/python2.7/os.*
 -rw-r--r--. <span class="m">1</span> root root 26K Mar <span class="m">29</span> 16:43 lib/python2.7/os.py
 -rw-r--r--. <span class="m">1</span> root root 26K Mar <span class="m">29</span> 16:43 lib/python2.7/os.pyc
 -rw-r--r--. <span class="m">1</span> root root 26K Mar <span class="m">29</span> 16:43 lib/python2.7/os.pyo
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$
 </pre></div>
 
 
 <p>Realmente solo se necesita la versión <em>.py</em>, siendo las otras para acelerar la carga del módulo. Los otros se crean al importar el módulo, y si es posible, se escriben de nuevo en la carpeta. Vamos a borrarlas.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>find -name <span class="s2">&quot;*.pyo&quot;</span> <span class="p">|</span> sudo xargs rm
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>find -name <span class="s2">&quot;*.pyc&quot;</span> <span class="p">|</span> sudo xargs rm
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>du -sh * <span class="p">|</span> sort -h
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ find -name <span class="s2">&quot;*.pyo&quot;</span> <span class="p">|</span> sudo xargs rm
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ find -name <span class="s2">&quot;*.pyc&quot;</span> <span class="p">|</span> sudo xargs rm
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ du -sh * <span class="p">|</span> sort -h
 16K     share
 676K    include
 1.8M    bin
 21M     lib
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$
 </pre></div>
 
 
 <p>Mucho mejor, pero... ¿sigue funcionando <strong>python</strong>? Lo comprobamos como antes, y vemos que si. </p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>./bin/python -V
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ ./bin/python -V
 Python 2.7.11
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="nv">$ </span>./bin/python -c <span class="s2">&quot;import os; print os.uname()&quot;</span>
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$ ./bin/python -c <span class="s2">&quot;import os; print os.uname()&quot;</span>
 <span class="o">(</span><span class="s1">&#39;Linux&#39;</span>, <span class="s1">&#39;foundry&#39;</span>, <span class="s1">&#39;3.10.0-327.10.1.el7.x86_64&#39;</span>, <span class="s1">&#39;#1 SMP Sat Jan 23 04:54:55 EST 2016&#39;</span>, <span class="s1">&#39;x86_64&#39;</span><span class="o">)</span>
-<span class="o">[</span>gerard@foundry python27<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry python27<span class="o">]</span>$
 </pre></div>
 
 
 <h2>Empaquetado para usos futuros</h2>
 <p>Esta carpeta va a servir para todas las máquinas <em>CentOS</em> y <em>RedHat</em> versión 6, con la misma família de procesador (en este caso x86_64). Hacemos un fichero comprimido y lo ponemos a buen recaudo.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@foundry opt<span class="o">]</span><span class="nv">$ </span>tar czf ~/python27.tar.gz python27/
-<span class="o">[</span>gerard@foundry opt<span class="o">]</span><span class="nv">$ </span>ls -lh ~
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@foundry opt<span class="o">]</span>$ tar czf ~/python27.tar.gz python27/
+<span class="o">[</span>gerard@foundry opt<span class="o">]</span>$ ls -lh ~
 total 7.2M
 -rw-rw-r--. <span class="m">1</span> gerard gerard 7.2M Mar <span class="m">29</span> 17:01 python27.tar.gz
-<span class="o">[</span>gerard@foundry opt<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@foundry opt<span class="o">]</span>$
 </pre></div>
 
 
@@ -773,9 +773,19 @@ total 7.2M
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -849,6 +859,11 @@ total 7.2M
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -898,7 +913,7 @@ total 7.2M
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

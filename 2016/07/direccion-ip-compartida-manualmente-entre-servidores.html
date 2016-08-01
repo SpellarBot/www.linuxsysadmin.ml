@@ -144,7 +144,7 @@ Linux Sysadmin            </a>
 <p>Realmente esto es un intento mío para hacer una solución de alta disponibilidad, pero se quedó a medias. Lo escribo porque creo que puede ser útil en otro momento.</p>
 <h2>Punto de partida</h2>
 <p>Tenemos dos servidores normales, que vamos a convertir en un <strong>cluster</strong> con configuración manual de <strong>failover</strong>.</p>
-<div class="highlight"><pre>root@lxc:~# lxc-ls -f
+<div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
 NAME     STATE    IPV4      IPV6  AUTOSTART
 -------------------------------------------
 server1  RUNNING  10.0.0.3  -     NO
@@ -156,7 +156,7 @@ root@lxc:~#
 <p>Digamos que queremos dar un servicio web, aunque podríamos hacer de balanceadores, servidores de aplicación o lo que se necesite, en general.</p>
 <p>Vamos a poner un servidor web <strong>nginx</strong>, que sirva una página HTML que nos indique la máquina que recibe las peticiones, a modo de comprobación.</p>
 <p>Vamos a instalar el servicio <strong>nginx</strong> en ambas máquinas:</p>
-<div class="highlight"><pre>root@server1:~# apt-get install -y nginx-light
+<div class="highlight"><pre><span></span>root@server1:~# apt-get install -y nginx-light
 ...  
 root@server1:~#
 
@@ -167,7 +167,7 @@ root@server2:~#
 
 
 <p>Creamos una página HTML con el nombre de cada máquina para ver quien recibe la petición HTTP:</p>
-<div class="highlight"><pre>root@server1:~# hostname &gt; /var/www/html/index.html
+<div class="highlight"><pre><span></span>root@server1:~# hostname &gt; /var/www/html/index.html
 root@server1:~#
 
 root@server2:~# hostname &gt; /var/www/html/index.html
@@ -176,7 +176,7 @@ root@server2:~#
 
 
 <p>Y comprobamos que podemos diferenciar el servidor destino que recibe cada una de las peticiones:</p>
-<div class="highlight"><pre>root@lxc:~# wget -qO- http://10.0.0.3/
+<div class="highlight"><pre><span></span>root@lxc:~# wget -qO- http://10.0.0.3/
 server1
 root@lxc:~# wget -qO- http://10.0.0.4/
 server2
@@ -188,7 +188,7 @@ root@lxc:~#
 <p>Además de la dirección IP de cada máquina, vamos a tener una que represente al miembro activo del <strong>cluster</strong>, que por ejemplo, será la 10.0.0.2</p>
 <p>Si solo una de las máquinas tiene esa dirección IP asignada, el truco ya está hecho. Sin embargo, ¿que pasará si los dos nodos tienen la dirección IP compartida asignada? Puede pasará cualquier cosa.</p>
 <p>Para evitar este caso, un nodo que asuma el rol de primario también va a forzar a sus vecinos a actualizar sus tablas ARP, consiguiendo así <strong>robar</strong> la dirección IP. Esto se puede conseguir con el comando <strong>arping</strong> y por lo tanto, hay que instalarlo.</p>
-<div class="highlight"><pre>root@server1:~# apt-get install -y iputils-arping
+<div class="highlight"><pre><span></span>root@server1:~# apt-get install -y iputils-arping
 ...  
 root@server1:~#
 
@@ -200,7 +200,7 @@ root@server2:~#
 
 <h3>Promocionando server1 a primario</h3>
 <p>El proceso de <strong>failover</strong> consiste en agenciarse la dirección compartida. Para ello, tenemos que añadir una nueva dirección IP en nuestra interfaz de red. Como es posible que esta IP pertenezca a otro servidor, hay que lanzar el comando <strong>arping</strong>.</p>
-<div class="highlight"><pre>root@server1:~# ip addr add 10.0.0.2/24 dev eth0
+<div class="highlight"><pre><span></span>root@server1:~# ip addr add 10.0.0.2/24 dev eth0
 root@server1:~# arping -U -c1 10.0.0.2
 ARPING 10.0.0.2 from 10.0.0.2 eth0
 Sent <span class="m">1</span> probes <span class="o">(</span><span class="m">1</span> broadcast<span class="o">(</span>s<span class="o">))</span>
@@ -210,14 +210,14 @@ root@server1:~#
 
 
 <p>El siguiente paso, aunque opcional, es educado; el servidor desplazado de primario a reserva, no necesita tener esa dirección asignada, en caso de que la tuviera (que no es el caso, pero no importa y lo ignoramos).</p>
-<div class="highlight"><pre>root@server2:~# ip addr del 10.0.0.2/24 dev eth0
+<div class="highlight"><pre><span></span>root@server2:~# ip addr del 10.0.0.2/24 dev eth0
 RTNETLINK answers: Cannot assign requested address
 root@server2:~#
 </pre></div>
 
 
 <p>El resultado es que <em>server1</em> tiene dos direcciones asignadas: la suya propia y la compartida, mientras que <em>server2</em> solo tiene la suya.</p>
-<div class="highlight"><pre>root@lxc:~# lxc-ls -f
+<div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
 NAME     STATE    IPV4                IPV6  AUTOSTART
 -----------------------------------------------------
 server1  RUNNING  10.0.0.2, 10.0.0.3  -     NO
@@ -227,7 +227,7 @@ root@lxc:~#
 
 
 <p>Y nuestras peticiones web, caen efectivamente en <em>server1</em>.</p>
-<div class="highlight"><pre>root@lxc:~# wget -qO- http://10.0.0.2/
+<div class="highlight"><pre><span></span>root@lxc:~# wget -qO- http://10.0.0.2/
 server1
 root@lxc:~#
 </pre></div>
@@ -235,7 +235,7 @@ root@lxc:~#
 
 <h3>Cambiando el primario de server1 a server2</h3>
 <p>El proceso es el mismo, pero al revés: <em>server2</em> reclama la dirección compartida y <em>server1</em> se deshace de ella por cortesía.</p>
-<div class="highlight"><pre>root@server2:~# ip addr add 10.0.0.2/24 dev eth0
+<div class="highlight"><pre><span></span>root@server2:~# ip addr add 10.0.0.2/24 dev eth0
 root@server2:~# arping -U -c1 10.0.0.2
 ARPING 10.0.0.2 from 10.0.0.2 eth0
 Sent <span class="m">1</span> probes <span class="o">(</span><span class="m">1</span> broadcast<span class="o">(</span>s<span class="o">))</span>
@@ -248,7 +248,7 @@ root@server1:~#
 
 
 <p>Y nuevamente, podemos ver donde está la dirección compartida y en que servidor caen nuestras peticiones.</p>
-<div class="highlight"><pre>root@lxc:~# lxc-ls -f
+<div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
 NAME     STATE    IPV4                IPV6  AUTOSTART
 -----------------------------------------------------
 server1  RUNNING  10.0.0.3            -     NO
@@ -269,9 +269,9 @@ root@lxc:~#
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/07/instalando-una-maquina-con-archlinux.html">Instalando una máquina con Archlinux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/04/compilando-python-desde-cero.html">Compilando python desde cero</a></li>
     </ul>
 </section>
     <hr/>
@@ -678,9 +678,19 @@ root@lxc:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -754,6 +764,11 @@ root@lxc:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -803,7 +818,7 @@ root@lxc:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

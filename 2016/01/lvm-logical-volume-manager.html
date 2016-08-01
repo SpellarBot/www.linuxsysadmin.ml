@@ -151,7 +151,7 @@ Linux Sysadmin            </a>
 </ul>
 <h2>Un ejemplo</h2>
 <p>Partimos de una máquina virtual con cualquier distribución <em>Linux</em>, por ejemplo <em>Debian</em>, que dispone de 2 discos adicionales dedicados para <strong>LVM</strong>. Con uno bastaría, pero ya pongo los dos para tenerlo hecho cuando el tutorial avance.</p>
-<div class="highlight"><pre>root@server:~# fdisk -l /dev/sdb
+<div class="highlight"><pre><span></span>root@server:~# fdisk -l /dev/sdb
 
 Disco /dev/sdb: <span class="m">8</span> GiB, <span class="m">8589934592</span> bytes, <span class="m">16777216</span> sectores
 Unidades: sectores de <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
@@ -169,7 +169,7 @@ root@server:~#
 
 <p>Los discos que forman un <em>volume group</em> no necesitan tener el mismo tamaño; así que con uno de 8 GB y otro de 4 GB tendremos bastante.</p>
 <p>Nos aseguramos que tenemos el paquete <strong>lvm2</strong> instalado, y si no lo estuviera, lo instalamos.</p>
-<div class="highlight"><pre>root@server:~# apt-get install lvm2
+<div class="highlight"><pre><span></span>root@server:~# apt-get install lvm2
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias       
 Leyendo la información de estado... Hecho
@@ -186,14 +186,14 @@ root@server:~#
 
 
 <p>Vamos a crear un <em>volume group</em> con 1 solo disco. Así que primero vamos a preparar <em>/dev/sdb</em> como <em>physical volume</em>.</p>
-<div class="highlight"><pre>root@server:~# pvcreate /dev/sdb 
+<div class="highlight"><pre><span></span>root@server:~# pvcreate /dev/sdb 
   Physical volume <span class="s2">&quot;/dev/sdb&quot;</span> successfully created
 root@server:~# 
 </pre></div>
 
 
 <p>Y ahora creamos un <em>volume group</em> a partir del nuevo <em>physical volume</em></p>
-<div class="highlight"><pre>root@server:~# vgcreate vg1 /dev/sdb 
+<div class="highlight"><pre><span></span>root@server:~# vgcreate vg1 /dev/sdb 
   /proc/devices: No entry <span class="k">for</span> device-mapper found
   Volume group <span class="s2">&quot;vg1&quot;</span> successfully created
 root@server:~# 
@@ -201,26 +201,26 @@ root@server:~#
 
 
 <p>Vemos que tenemos un <em>volume group</em> llamado <strong>vg1</strong> y que dispone de 8 GB, todos ellos libres.</p>
-<div class="highlight"><pre>root@server:~# vgs
-  VG   <span class="c">#PV #LV #SN Attr   VSize VFree</span>
+<div class="highlight"><pre><span></span>root@server:~# vgs
+  VG   <span class="c1">#PV #LV #SN Attr   VSize VFree</span>
   vg1    <span class="m">1</span>   <span class="m">0</span>   <span class="m">0</span> wz--n- 8,00g 8,00g
 root@server:~# 
 </pre></div>
 
 
 <p>Nos gustaría que nuestros usuarios tuvieran una partición dedicada, así quedarán limitados en el espacio que pueden usar, sin molestar el resto del sistema operativo. En el argot de <strong>LVM</strong> se trata de un <em>logical volume</em>. Lo creamos, por ejemplo de 5 GB:</p>
-<div class="highlight"><pre>root@server:~# lvcreate vg1 -L 5G -n users
+<div class="highlight"><pre><span></span>root@server:~# lvcreate vg1 -L 5G -n users
   Logical volume <span class="s2">&quot;users&quot;</span> created
 root@server:~# 
 </pre></div>
 
 
 <p>Miramos la salida de los comandos <strong>lvs</strong>, <strong>vgs</strong> y <strong>pvs</strong>: sin sorpresas. Tenemos un <em>logical volume</em> de 5 GB, al <em>volume group</em> le quedan 3 GB igual que al <em>physical volume</em> subyacente.</p>
-<div class="highlight"><pre>root@server:~# lvs
+<div class="highlight"><pre><span></span>root@server:~# lvs
   LV    VG   Attr       LSize Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
   users vg1  -wi-a----- 5,00g                                                    
 root@server:~# vgs
-  VG   <span class="c">#PV #LV #SN Attr   VSize VFree</span>
+  VG   <span class="c1">#PV #LV #SN Attr   VSize VFree</span>
   vg1    <span class="m">1</span>   <span class="m">1</span>   <span class="m">0</span> wz--n- 8,00g 3,00g
 root@server:~# pvs
   PV         VG   Fmt  Attr PSize PFree
@@ -230,7 +230,7 @@ root@server:~#
 
 
 <p>Sabiendo que ahora tenemos un dispositivo nuevo de 5 GB en <em>/dev/vg1-users</em>, lo formateamos y lo montamos como cualquier otra partición.</p>
-<div class="highlight"><pre>root@server:~# mkfs.ext4 /dev/mapper/vg1-users 
+<div class="highlight"><pre><span></span>root@server:~# mkfs.ext4 /dev/mapper/vg1-users 
 mke2fs 1.42.12 <span class="o">(</span>29-Aug-2014<span class="o">)</span>
 Se está creando El sistema de ficheros con <span class="m">1310720</span> 4k bloques y <span class="m">327680</span> nodos-i
 
@@ -256,7 +256,7 @@ root@server:~#
 
 <p>Tal como pasa el tiempo, vemos que los 5 GB de los usuarios se nos quedan cortos y decidimos que necesitan 10 GB. Como el <em>volume group</em> no tiene 5 GB mas, hay que ampliarlo.</p>
 <p>Así pues, ponemos otro disco en la máquina, lo preparamos como <em>physical volume</em> y lo asignamos al <em>volume group</em>.</p>
-<div class="highlight"><pre>root@server:~# pvcreate /dev/sdc
+<div class="highlight"><pre><span></span>root@server:~# pvcreate /dev/sdc
   Physical volume <span class="s2">&quot;/dev/sdc&quot;</span> successfully created
 root@server:~# vgextend vg1 /dev/sdc
   Volume group <span class="s2">&quot;vg1&quot;</span> successfully extended
@@ -265,8 +265,8 @@ root@server:~#
 
 
 <p>Así nos queda el <em>volume group</em>: tiene 12 GB y se compone de dos <em>physical volumes</em>, uno de 8 GB y el otro de 4 GB, aunque para nosotros, el <em>volume group</em> es una masa uniforme de información, sin importar en que disco cae.</p>
-<div class="highlight"><pre>root@server:~# vgs
-  VG   <span class="c">#PV #LV #SN Attr   VSize  VFree</span>
+<div class="highlight"><pre><span></span>root@server:~# vgs
+  VG   <span class="c1">#PV #LV #SN Attr   VSize  VFree</span>
   vg1    <span class="m">2</span>   <span class="m">1</span>   <span class="m">0</span> wz--n- 11,99g 6,99g
 root@server:~# pvs
   PV         VG   Fmt  Attr PSize PFree
@@ -277,7 +277,7 @@ root@server:~#
 
 
 <p>Ya estamos en disposición de reclamar los 10 GB que necesitamos, asó que <strong>extendemos</strong> el <em>logical volume</em>.</p>
-<div class="highlight"><pre>root@server:~# lvs
+<div class="highlight"><pre><span></span>root@server:~# lvs
   LV    VG   Attr       LSize Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
   users vg1  -wi-ao---- 5,00g                                                    
 root@server:~# lvextend /dev/mapper/vg1-users -L 10G
@@ -291,7 +291,7 @@ root@server:~#
 
 
 <p>Como curiosidad, se han absorbido 2 GB adicionales de cada <em>physical volume</em>.</p>
-<div class="highlight"><pre>root@server:~# pvs
+<div class="highlight"><pre><span></span>root@server:~# pvs
   PV         VG   Fmt  Attr PSize PFree
   /dev/sdb   vg1  lvm2 a--  8,00g    0 
   /dev/sdc   vg1  lvm2 a--  4,00g 1,99g
@@ -300,7 +300,7 @@ root@server:~#
 
 
 <p>Y un último detalle: a pesar de que la nueva "partición" dispone de 10 GB, el sistema de fichero subyacente no lo sabe, y solo tiene <em>inodos</em> para indexar 5 GB de datos.</p>
-<div class="highlight"><pre>root@server:~# df -h /home/
+<div class="highlight"><pre><span></span>root@server:~# df -h /home/
 S.ficheros            Tamaño Usados  Disp Uso% Montado en
 /dev/mapper/vg1-users   4,8G    10M  4,8G   1% /home
 root@server:~# 
@@ -308,7 +308,7 @@ root@server:~#
 
 
 <p>Por suerte para nosotros, el sistema de ficheros usado es <em>ext4</em>, que nos permite redimensionarlo.</p>
-<div class="highlight"><pre>root@server:~# resize2fs /dev/mapper/vg1-users 
+<div class="highlight"><pre><span></span>root@server:~# resize2fs /dev/mapper/vg1-users 
 resize2fs 1.42.12 <span class="o">(</span>29-Aug-2014<span class="o">)</span>
 El sistema de ficheros de /dev/mapper/vg1-users está montado en /home<span class="p">;</span> hace falta cambiar el tamaño en línea
 <span class="nv">old_desc_blocks</span> <span class="o">=</span> 1, <span class="nv">new_desc_blocks</span> <span class="o">=</span> 1
@@ -319,7 +319,7 @@ root@server:~#
 
 
 <p>Y con esto, el sistema de ficheros de <em>/home</em> ya tiene el nuevo tamaño disponible y listo para usar:</p>
-<div class="highlight"><pre>root@server:~# df -h /home/
+<div class="highlight"><pre><span></span>root@server:~# df -h /home/
 S.ficheros            Tamaño Usados  Disp Uso% Montado en
 /dev/mapper/vg1-users   9,8G    12M  9,7G   1% /home
 root@server:~# 
@@ -333,8 +333,8 @@ root@server:~#
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/02/haciendo-snapshots-con-lvm.html">Haciendo snapshots con LVM</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
     </ul>
 </section>
     <hr/>
@@ -741,9 +741,19 @@ root@server:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -817,6 +827,11 @@ root@server:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -866,7 +881,7 @@ root@server:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

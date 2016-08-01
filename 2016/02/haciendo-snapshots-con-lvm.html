@@ -153,7 +153,7 @@ Linux Sysadmin            </a>
 <p>Los únicos requisitos para seguir esta guía son el paquete <strong>lvm</strong> y un disco físico sobre el que vamos a construir el <em>volume group</em> que va a alojar los <em>logical volumes</em>; al menos van a ser la partición original y algo de espacio para servir como volumen para el <em>snapshot</em>.</p>
 <h2>Preparación</h2>
 <p>Empezamos instalando los requisitos software:</p>
-<div class="highlight"><pre>root@server:~# apt-get install lvm2
+<div class="highlight"><pre><span></span>root@server:~# apt-get install lvm2
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias
 Leyendo la información de estado... Hecho
@@ -173,14 +173,14 @@ root@server:~#
 
 
 <p>Suponiendo que el disco que vamos a usar es <em>/dev/sdb</em>, vamos a acondicionarlo para que pueda actuar como <em>physical volume</em>.</p>
-<div class="highlight"><pre>root@server:~# pvcreate /dev/sdb
+<div class="highlight"><pre><span></span>root@server:~# pvcreate /dev/sdb
   Physical volume <span class="s2">&quot;/dev/sdb&quot;</span> successfully created
 root@server:~#
 </pre></div>
 
 
 <p>Ahora vamos a usar este <em>physical volume</em> para crear el <em>volume group</em>.</p>
-<div class="highlight"><pre>root@server:~# vgcreate lvm /dev/sdb
+<div class="highlight"><pre><span></span>root@server:~# vgcreate lvm /dev/sdb
   /proc/devices: No entry <span class="k">for</span> device-mapper found
   Volume group <span class="s2">&quot;lvm&quot;</span> successfully created
 root@server:~#
@@ -188,14 +188,14 @@ root@server:~#
 
 
 <p>Vamos a sacar un <em>logical volume</em> para crear el sistema de ficheros que va a ser el objeto del <em>snapshot</em>. El tamaño del volumen puede ser el que nos convenga, e incluso crecer según sea necesario. De momento, nos basta con 1 GB.</p>
-<div class="highlight"><pre>root@server:~# lvcreate lvm -L 1G -n datos
+<div class="highlight"><pre><span></span>root@server:~# lvcreate lvm -L 1G -n datos
   Logical volume <span class="s2">&quot;datos&quot;</span> created
 root@server:~#
 </pre></div>
 
 
 <p>Lo formateamos como si de un disco mas se tratara.</p>
-<div class="highlight"><pre>root@server:~# mkfs.ext4 /dev/lvm/datos
+<div class="highlight"><pre><span></span>root@server:~# mkfs.ext4 /dev/lvm/datos
 mke2fs 1.42.12 <span class="o">(</span>29-Aug-2014<span class="o">)</span>
 Se está creando El sistema de ficheros con <span class="m">262144</span> 4k bloques y <span class="m">65536</span> nodos-i
 
@@ -213,27 +213,27 @@ root@server:~#
 
 
 <p>Vamos a asumir que nuestro servicio necesita dejar sus datos en <em>/data</em>; como no existe, vamos a crearlo.</p>
-<div class="highlight"><pre>root@server:~# mkdir /data
+<div class="highlight"><pre><span></span>root@server:~# mkdir /data
 root@server:~#
 </pre></div>
 
 
 <p>El siguiente paso es montar ese volumen en su sitio, en este caso, en <em>/data</em>. Se deja como ejercicio personal ponerlo en el <em>/etc/fstab</em>.</p>
-<div class="highlight"><pre>root@server:~# mount /dev/lvm/datos /data/
+<div class="highlight"><pre><span></span>root@server:~# mount /dev/lvm/datos /data/
 root@server:~#
 </pre></div>
 
 
 <p>Vamos a crear algo de contenido en la carpeta para simular los datos que dejaría el servicio que supuestamente usaría esta carpeta.</p>
-<div class="highlight"><pre>root@server:~# <span class="nb">echo </span><span class="m">1</span> &gt; /data/a
-root@server:~# <span class="nb">echo </span><span class="m">1</span> &gt; /data/b
+<div class="highlight"><pre><span></span>root@server:~# <span class="nb">echo</span> <span class="m">1</span> &gt; /data/a
+root@server:~# <span class="nb">echo</span> <span class="m">1</span> &gt; /data/b
 root@server:~#
 </pre></div>
 
 
 <h2>Creación del snapshot</h2>
 <p>Hacer un <em>snapshot</em> es tan fácil como invocar el binario <strong>lvcreate</strong> con el parámetro <em>-s</em>, especificando el tamaño, el nombre y el volumen objetivo.</p>
-<div class="highlight"><pre>root@server:~# lvcreate -L 100M -n datos-snap -s /dev/lvm/datos
+<div class="highlight"><pre><span></span>root@server:~# lvcreate -L 100M -n datos-snap -s /dev/lvm/datos
   Logical volume <span class="s2">&quot;datos-snap&quot;</span> created
 root@server:~#
 </pre></div>
@@ -242,13 +242,13 @@ root@server:~#
 <p>El volumen <em>datos-snap</em> solo contiene las diferencias con el volumen original, así que no necesita tener el mismo tamaño que el original. Sin embargo, si hubiera mas de 100 MB de cambios, este <em>snapshot</em> quedaría inválido.</p>
 <p>De momento, creo que con 100 MB va a ser suficiente, ya que solo pretendo sacar un fichero comprimido de ese <em>snapshot</em>, eliminándolo después. Un tamaño seguro habría sido el mismo que el volumen original. Sin embargo, como se trata de otro volumen <strong>LVM</strong>, podremos extenderla a posteriori con <em>lvextend</em>.</p>
 <p>Vamos a analizar el contenido; lo montamos en una carpeta cualquiera para ver su contenido.</p>
-<div class="highlight"><pre>root@server:~# mount /dev/lvm/datos-snap /mnt/
+<div class="highlight"><pre><span></span>root@server:~# mount /dev/lvm/datos-snap /mnt/
 root@server:~#
 </pre></div>
 
 
 <p>Es fácil de verificar que tienen el mismo contenido.</p>
-<div class="highlight"><pre>root@server:~# grep . /data/* /mnt/*
+<div class="highlight"><pre><span></span>root@server:~# grep . /data/* /mnt/*
 /data/a:1
 /data/b:1
 /mnt/a:1
@@ -258,13 +258,13 @@ root@server:~#
 
 
 <p>Vamos a continuar simulando que el servicio escribe en el volumen original, por ejemplo, modificando uno de los ficheros.</p>
-<div class="highlight"><pre>root@server:~# <span class="nb">echo </span><span class="m">2</span> &gt; /data/a
+<div class="highlight"><pre><span></span>root@server:~# <span class="nb">echo</span> <span class="m">2</span> &gt; /data/a
 root@server:~#
 </pre></div>
 
 
 <p>Y verificamos que el <em>snapshot point-in-time</em> se quedó en el momento temporal en el que lo hicimos, quedando como estaba entonces:</p>
-<div class="highlight"><pre>root@server:~# grep . /data/* /mnt/*
+<div class="highlight"><pre><span></span>root@server:~# grep . /data/* /mnt/*
 /data/a:2
 /data/b:1
 /mnt/a:1
@@ -274,7 +274,7 @@ root@server:~#
 
 
 <p>Verificando los <em>logical volume</em> con el comando <em>lvs</em>, vemos que es un volumen de 100 MB, con una ocupación baja, del 0,08%. El <em>snapshot</em> quedaría inservible si llegara a superar el 100%.</p>
-<div class="highlight"><pre>root@server:~# lvs
+<div class="highlight"><pre><span></span>root@server:~# lvs
   LV         VG   Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
   datos      lvm  owi-aos---   1,00g
   datos-snap lvm  swi-aos--- 100,00m      datos  0,08
@@ -285,13 +285,13 @@ root@server:~#
 <h2>Sacando el backup</h2>
 <p>El objetivo inicial era sacar una copia de los datos, congelados en un momento concreto. Tenemos ese momento en el volumen <em>datos-snap</em>.</p>
 <p>Empezaremos montándolo en alguna carpeta cualquiera, si no lo teníamos ya (lo hemos montado en el punto anterior).</p>
-<div class="highlight"><pre>root@server:~# mount /dev/lvm/datos-snap /mnt/
+<div class="highlight"><pre><span></span>root@server:~# mount /dev/lvm/datos-snap /mnt/
 root@server:~#
 </pre></div>
 
 
 <p>Con el volumen montado, el resto es procedimiento estándar. En este caso, vamos a sacar un fichero <em>.tar.gz</em> con el contenido de la carpeta:</p>
-<div class="highlight"><pre>root@server:~# <span class="nb">cd</span> /mnt/
+<div class="highlight"><pre><span></span>root@server:~# <span class="nb">cd</span> /mnt/
 root@server:/mnt# tar cvzf /root/backup.tar.gz *
 a
 b
@@ -300,14 +300,14 @@ root@server:/mnt#
 
 
 <p>Y finalmente vamos a limpiar el <em>snapshot</em>, empezando por desmontar el volumen. Como estamos dentro de la carpeta no vamos a poder desmontar el volumen, así que salimos.</p>
-<div class="highlight"><pre>root@server:/mnt# <span class="nb">cd</span>
+<div class="highlight"><pre><span></span>root@server:/mnt# <span class="nb">cd</span>
 root@server:~# umount /mnt/
 root@server:~#
 </pre></div>
 
 
 <p>Y ahora que no lo tenemos montado, lo eliminamos sin problemas con las herramientas propias de <strong>LVM</strong>.</p>
-<div class="highlight"><pre>root@server:~# lvremove /dev/lvm/datos-snap
+<div class="highlight"><pre><span></span>root@server:~# lvremove /dev/lvm/datos-snap
 Do you really want to remove active logical volume datos-snap? <span class="o">[</span>y/n<span class="o">]</span>: y
   Logical volume <span class="s2">&quot;datos-snap&quot;</span> successfully removed
 root@server:~#
@@ -321,8 +321,8 @@ root@server:~#
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/01/lvm-logical-volume-manager.html">LVM: logical volume manager</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
     </ul>
 </section>
     <hr/>
@@ -729,9 +729,19 @@ root@server:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -805,6 +815,11 @@ root@server:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -854,7 +869,7 @@ root@server:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

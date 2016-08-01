@@ -1,54 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/seguridad.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-16T13:00:00+02:00</updated><entry><title>Reduciendo el tamaño de nuestros binarios con musl libc</title><link href="http://www.linuxsysadmin.tk/2016/05/reduciendo-el-tamano-de-nuestros-binarios-con-musl-libc.html" rel="alternate"></link><updated>2016-05-16T13:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-16:2016/05/reduciendo-el-tamano-de-nuestros-binarios-con-musl-libc.html</id><summary type="html">&lt;p&gt;Cuando construimos jaulas, por el motivo que sea, vemos que no quedan pequeñas. El problema es el conjunto de librerías que hay que poner en el caso de los binarios &lt;em&gt;dinámicos&lt;/em&gt;, o el exceso de tamaño en el caso de los &lt;em&gt;estáticos&lt;/em&gt;. Cambiando la librería base, podemos reducir su tamaño.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/seguridad.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-16T13:00:00+02:00</updated><entry><title>Reduciendo el tamaño de nuestros binarios con musl libc</title><link href="http://www.linuxsysadmin.tk/2016/05/reduciendo-el-tamano-de-nuestros-binarios-con-musl-libc.html" rel="alternate"></link><published>2016-05-16T13:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-16:2016/05/reduciendo-el-tamano-de-nuestros-binarios-con-musl-libc.html</id><summary type="html">&lt;p&gt;Cuando construimos jaulas, por el motivo que sea, vemos que no quedan pequeñas. El problema es el conjunto de librerías que hay que poner en el caso de los binarios &lt;em&gt;dinámicos&lt;/em&gt;, o el exceso de tamaño en el caso de los &lt;em&gt;estáticos&lt;/em&gt;. Cambiando la librería base, podemos reducir su tamaño.&lt;/p&gt;
 &lt;p&gt;La mayoría de los binarios de un sistema &lt;em&gt;linux&lt;/em&gt; necesitan una librería llamada &lt;em&gt;libc&lt;/em&gt;. La que suelen poner en todas las distribuciones es la &lt;strong&gt;GNU libc&lt;/strong&gt;, que es compatible con todos los proyectos de software libre y no suele dar problemas.&lt;/p&gt;
 &lt;p&gt;Sin embargo, no es la única; si tenemos un binario que se puede compilar con estas otras librerías, la reducción de tamaño suele ser importante. Esto no nos preocupa en un sistema "normal" porque el disco es barato, pero es frustrante cuando tenemos que cargar cientos de megas para poner solamente un par de servicios en una jaula.&lt;/p&gt;
 &lt;p&gt;Así que vamos a crear una jaula usando &lt;strong&gt;musl libc&lt;/strong&gt; como demostración, para ver como se reducen la cantidad de librerías y el tamaño de la jaula.&lt;/p&gt;
 &lt;h2&gt;El compilador que enlaza con musl libc&lt;/h2&gt;
 &lt;p&gt;La librería de &lt;strong&gt;musl libc&lt;/strong&gt; puede usarse de dos formas: construir una &lt;em&gt;toolchain&lt;/em&gt; dedicada o usar un &lt;em&gt;wrapper&lt;/em&gt; de la que tengamos en el sistema. Como la primera merecería un artículo por sí misma, usaremos la segunda. Es digno de mención indicar que existen &lt;em&gt;toolchains&lt;/em&gt; prefabricadas.&lt;/p&gt;
 &lt;p&gt;El procedimiento para instalar el &lt;em&gt;wrapper&lt;/em&gt; de &lt;strong&gt;musl libc&lt;/strong&gt; es relativamente simple; se trata del típico procedimiento &lt;em&gt;configure &amp;amp;&amp;amp; make &amp;amp;&amp;amp; make install&lt;/em&gt;. Para ello vamos a necesitar algunas herramientas:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~# apt-get install wget gcc make
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~# apt-get install wget gcc make
 ...
 root@musl:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Nos descargamos la versión de &lt;strong&gt;musl libc&lt;/strong&gt; que queramos utilizar usando el comando &lt;em&gt;wget&lt;/em&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~# wget https://www.musl-libc.org/releases/musl-1.1.14.tar.gz
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~# wget https://www.musl-libc.org/releases/musl-1.1.14.tar.gz
 ...
 root@musl:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Descomprimimos el &lt;em&gt;tarball&lt;/em&gt; descargado y nos ponemos en la carpeta creada.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~# tar xzf musl-1.1.14.tar.gz
-root@musl:~# &lt;span class="nb"&gt;cd &lt;/span&gt;musl-1.1.14
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~# tar xzf musl-1.1.14.tar.gz
+root@musl:~# &lt;span class="nb"&gt;cd&lt;/span&gt; musl-1.1.14
 root@musl:~/musl-1.1.14#
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Vamos a configurar el paquete, con lo que se va a generar un &lt;em&gt;Makefile&lt;/em&gt; compatible con nuestro sistema. Es un buen momento para indicar la carpeta que va a contener el "compilador".&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~/musl-1.1.14# ./configure --prefix&lt;span class="o"&gt;=&lt;/span&gt;/opt/musl/
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~/musl-1.1.14# ./configure --prefix&lt;span class="o"&gt;=&lt;/span&gt;/opt/musl/
 ...
 root@musl:~/musl-1.1.14#
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Una vez obtenido el &lt;em&gt;Makefile&lt;/em&gt;, podemos construir el "compilador" con la orden &lt;em&gt;make&lt;/em&gt;. Si tenéis la suerte de contar con mas de un procesador, podéis acelerar este paso con el &lt;em&gt;flag&lt;/em&gt; &lt;strong&gt;-j2&lt;/strong&gt;, por ejemplo (serían dos threads); lo ideal poner el número de núcleos disponibles.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~/musl-1.1.14# make
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~/musl-1.1.14# make
 ...
 root@musl:~/musl-1.1.14#
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Y con los binarios construidos, los ponemos en su sitio con &lt;em&gt;make install&lt;/em&gt;. Puesto que indicamos un &lt;em&gt;prefix&lt;/em&gt; en el &lt;em&gt;configure&lt;/em&gt;, va a crear esa carpeta, creando en ella las carpetas necesarias (por ejemplo, &lt;em&gt;bin&lt;/em&gt; y &lt;em&gt;lib&lt;/em&gt;).&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~/musl-1.1.14# make install
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~/musl-1.1.14# make install
 ...
 root@musl:~/musl-1.1.14#
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Cuando el &lt;em&gt;make install&lt;/em&gt; haya funcionado, podemos salir de la carpeta de fuentes y eliminarla. En este caso, lo importante ha quedado en &lt;em&gt;/opt/musl/&lt;/em&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~/musl-1.1.14# &lt;span class="nb"&gt;cd&lt;/span&gt; ..
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~/musl-1.1.14# &lt;span class="nb"&gt;cd&lt;/span&gt; ..
 root@musl:~# rm -R musl-1.1.14*
 root@musl:~#
 &lt;/pre&gt;&lt;/div&gt;
@@ -56,13 +56,13 @@ root@musl:~#
 
 &lt;h2&gt;Construyendo una jaula de ejemplo&lt;/h2&gt;
 &lt;p&gt;Supongamos que tenemos un código fuente de un ejecutable que queremos en la jaula. En este caso vamos a hacer un sencillo programa:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~# cat hello.c
-&lt;span class="c"&gt;#include &amp;quot;stdio.h&amp;quot;&lt;/span&gt;
-&lt;span class="c"&gt;#include &amp;quot;stdlib.h&amp;quot;&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~# cat hello.c
+&lt;span class="c1"&gt;#include &amp;quot;stdio.h&amp;quot;&lt;/span&gt;
+&lt;span class="c1"&gt;#include &amp;quot;stdlib.h&amp;quot;&lt;/span&gt;
 
 int main&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
-    &lt;span class="nb"&gt;printf&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Hello world!\n&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    &lt;span class="nb"&gt;exit&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;0&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    printf&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Hello world!\n&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    exit&lt;span class="o"&gt;(&lt;/span&gt;0&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 &lt;span class="o"&gt;}&lt;/span&gt;
 root@musl:~#
 &lt;/pre&gt;&lt;/div&gt;
@@ -70,14 +70,14 @@ root@musl:~#
 
 &lt;h3&gt;Versión estática&lt;/h3&gt;
 &lt;p&gt;Compilamos nuestro binario con el &lt;em&gt;flag&lt;/em&gt; &lt;strong&gt;-static&lt;/strong&gt;. Eso hace que el binario incluya lo que necesita de &lt;strong&gt;musl libc&lt;/strong&gt;, con lo que no va a necesitar ninguna librería de sistema. Este binario debería funcionar en todas las máquinas con la misma arquitectura (en mi caso, x86). No os olvidéis del &lt;em&gt;strip&lt;/em&gt;, que va a eliminar los símbolos de &lt;em&gt;debug&lt;/em&gt; y reduce el tamaño del binario.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~# /opt/musl/bin/musl-gcc -static -o hello hello.c
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~# /opt/musl/bin/musl-gcc -static -o hello hello.c
 root@musl:~# strip hello
 root@musl:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Creamos una carpeta para la jaula, en la que ponemos nuestro ejecutable, sin nada mas, porque no lo necesita.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~# mkdir jail_static
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~# mkdir jail_static
 root@musl:~# cp hello jail_static/
 root@musl:~# tree jail_static/ -h
 jail_static/
@@ -89,7 +89,7 @@ root@musl:~#
 
 
 &lt;p&gt;Lanzamos un &lt;em&gt;chroot&lt;/em&gt; que va modificar la percepción de las carpetas; a todos los efectos, &lt;em&gt;jail_static/&lt;/em&gt; va a ser &lt;em&gt;/&lt;/em&gt; mientras el comando lanzado no acabe. Esto implica que nuestro binario estaría en la raíz de la jaula.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~# chroot jail_static/ /hello
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~# chroot jail_static/ /hello
 Hello world!
 root@musl:~#
 &lt;/pre&gt;&lt;/div&gt;
@@ -100,21 +100,21 @@ root@musl:~#
 &lt;h3&gt;Versión dinámica&lt;/h3&gt;
 &lt;p&gt;Que nuestro binario sea dinámico implica que no incluye ningún código de &lt;strong&gt;musl libc&lt;/strong&gt;, así que la va a necesitar cerca para funcionar. La ventaja es los binarios son independientes de la librería usada, que podemos actualizar simplemente cambiándola por la nueva, sin recompilar los binarios.&lt;/p&gt;
 &lt;p&gt;Para compilar este caso no vamos a indicar ningún &lt;em&gt;flag&lt;/em&gt; de compilación, ya que el formato dinámico es el habitual.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~# /opt/musl/bin/musl-gcc -o hello hello.c
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~# /opt/musl/bin/musl-gcc -o hello hello.c
 root@musl:~# strip hello
 root@musl:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;La parte mala es que este binario no funciona sin sus librerías, que podemos buscar con &lt;em&gt;ldd&lt;/em&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~# ldd hello
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~# ldd hello
 ./hello: error &lt;span class="k"&gt;while&lt;/span&gt; loading shared libraries: /usr/lib/i386-linux-gnu/libc.so: invalid ELF header
 root@musl:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Desgraciadamente, el &lt;em&gt;ldd&lt;/em&gt; del sistema funciona con la librería del sistema. La funcionalidad del &lt;em&gt;ldd&lt;/em&gt; para &lt;strong&gt;musl libc&lt;/strong&gt; la proporciona la misma librería, siempre que se llame &lt;em&gt;ldd&lt;/em&gt;. Hacer un enlace nos basta.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~# ln -s /opt/musl/lib/libc.so ldd
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~# ln -s /opt/musl/lib/libc.so ldd
 root@musl:~# ./ldd hello
         /lib/ld-musl-i386.so.1 (0xb7757000)
         libc.so =&amp;gt; /lib/ld-musl-i386.so.1 (0xb7757000)
@@ -125,7 +125,7 @@ root@musl:~#
 
 
 &lt;p&gt;Como vemos, nuestro binario necesita el fichero &lt;em&gt;/lib/ld-musl-i386.so.1&lt;/em&gt;, y este a ninguno mas. Con esta información podemos montar la jaula. Cabe decir que la librería puede reducirse con el comando &lt;em&gt;strip&lt;/em&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~# mkdir jail_dynamic
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~# mkdir jail_dynamic
 root@musl:~# mkdir jail_dynamic/lib
 root@musl:~# cp hello jail_dynamic/
 root@musl:~# cp /lib/ld-musl-i386.so.1 jail_dynamic/lib/
@@ -142,41 +142,41 @@ root@musl:~#
 
 
 &lt;p&gt;Y como es de esperar, la jaula funciona como se espera:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@musl:~# chroot jail_dynamic/ /hello
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@musl:~# chroot jail_dynamic/ /hello
 Hello world!
 root@musl:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;En este caso, la jaula ocupa mas que la versión estática. En el caso de haber mas binarios, podría salirnos a cuenta; desde luego, en este caso no hay beneficio ninguno, y además tenemos una complejidad adicional. Valorad cada caso individualmente.&lt;/p&gt;</summary><category term="linux"></category><category term="musl"></category><category term="libc"></category><category term="chroot"></category><category term="jaula"></category></entry><entry><title>Creando una jaula CentOS</title><link href="http://www.linuxsysadmin.tk/2016/01/creando-una-jaula-centos.html" rel="alternate"></link><updated>2016-01-25T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-01-25:2016/01/creando-una-jaula-centos.html</id><summary type="html">&lt;p&gt;Algunas veces nos puede interesar levantar procesos o demonios en entornos controlados, por ejemplo en una jaula, o para crear un contenedor. Otras veces, por comodidad o conocimiento, nos puede interesar cambiar la distribución, por ejemplo, servicios &lt;em&gt;CentOS&lt;/em&gt; en un servidor &lt;em&gt;Ubuntu&lt;/em&gt;. Hoy vamos a construir una jaula con &lt;em&gt;CentOS&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;En este caso, la jaula ocupa mas que la versión estática. En el caso de haber mas binarios, podría salirnos a cuenta; desde luego, en este caso no hay beneficio ninguno, y además tenemos una complejidad adicional. Valorad cada caso individualmente.&lt;/p&gt;</summary><category term="linux"></category><category term="musl"></category><category term="libc"></category><category term="chroot"></category><category term="jaula"></category></entry><entry><title>Creando una jaula CentOS</title><link href="http://www.linuxsysadmin.tk/2016/01/creando-una-jaula-centos.html" rel="alternate"></link><published>2016-01-25T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-01-25:2016/01/creando-una-jaula-centos.html</id><summary type="html">&lt;p&gt;Algunas veces nos puede interesar levantar procesos o demonios en entornos controlados, por ejemplo en una jaula, o para crear un contenedor. Otras veces, por comodidad o conocimiento, nos puede interesar cambiar la distribución, por ejemplo, servicios &lt;em&gt;CentOS&lt;/em&gt; en un servidor &lt;em&gt;Ubuntu&lt;/em&gt;. Hoy vamos a construir una jaula con &lt;em&gt;CentOS&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Vamos a crear una jaula de &lt;em&gt;CentOS&lt;/em&gt;, partiendo de una distribución basada en &lt;strong&gt;yum&lt;/strong&gt;. En este caso, se trata de una distribución &lt;em&gt;RedHat&lt;/em&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# cat /etc/redhat-release&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# cat /etc/redhat-release&lt;/span&gt;
 Red Hat Enterprise Linux Server release 7.2 &lt;span class="o"&gt;(&lt;/span&gt;Maipo&lt;span class="o"&gt;)&lt;/span&gt;
-&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;#&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;#&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;h2&gt;Creación de la jaula&lt;/h2&gt;
 &lt;p&gt;Empezaremos declarando una variable para indicar donde vamos a crear la jaula.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# export JAIL=/root/jail&lt;/span&gt;
-&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;#&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# export JAIL=/root/jail&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;#&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Vamos a crear la carpeta de la jaula y la estructura necesaria para albergar los datos del comando &lt;strong&gt;rpm&lt;/strong&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# mkdir -p ${JAIL}/var/lib/rpm&lt;/span&gt;
-&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;#&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# mkdir -p ${JAIL}/var/lib/rpm&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;#&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Como la base de datos de &lt;strong&gt;rpm&lt;/strong&gt; no existe, la vamos a recrear con el mismo comando:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# rpm --rebuilddb --root=${JAIL}&lt;/span&gt;
-&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# &lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# rpm --rebuilddb --root=${JAIL}&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# &lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Vemos ahora que tenemos una estructura de carpetas que empieza a parecerse a lo que debería.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# tree $JAIL&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# tree $JAIL&lt;/span&gt;
 /root/jail
 &lt;span class="sb"&gt;`&lt;/span&gt;-- var
     &lt;span class="sb"&gt;`&lt;/span&gt;-- lib
@@ -184,28 +184,28 @@ Red Hat Enterprise Linux Server release 7.2 &lt;span class="o"&gt;(&lt;/span&gt;
             &lt;span class="sb"&gt;`&lt;/span&gt;-- Packages
 
 &lt;span class="m"&gt;3&lt;/span&gt; directories, &lt;span class="m"&gt;1&lt;/span&gt; file
-&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;#&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;#&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;El siguiente paso consiste en localizar el fichero &lt;em&gt;.rpm&lt;/em&gt; relativo a la &lt;em&gt;release&lt;/em&gt; de &lt;em&gt;CentOS&lt;/em&gt; que queramos en nuestra jaula. Apuntamos el navegador al servidor web con el repositorio base en &lt;a href="http://mirror.centos.org/centos/"&gt;http://mirror.centos.org/centos/&lt;/a&gt; y buscamos el &lt;em&gt;link&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Suponiendo que queramos un &lt;em&gt;CentOS&lt;/em&gt; versión 7 y con una arquitectura &lt;em&gt;x64_64&lt;/em&gt;, el &lt;em&gt;link&lt;/em&gt; podría ser &lt;a href="http://mirror.centos.org/centos/7/os/x86_64/Packages/centos-release-7-2.1511.el7.centos.2.10.x86_64.rpm"&gt;http://mirror.centos.org/centos/7/os/x86_64/Packages/centos-release-7-2.1511.el7.centos.2.10.x86_64.rpm&lt;/a&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# rpm -i --root=${JAIL} --nodeps http://mirror.centos.org/centos/7/os/x86_64/Packages/centos-release-7-2.1511.el7.centos.2.10.x86_64.rpm&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# rpm -i --root=${JAIL} --nodeps http://mirror.centos.org/centos/7/os/x86_64/Packages/centos-release-7-2.1511.el7.centos.2.10.x86_64.rpm&lt;/span&gt;
 warning: Generating &lt;span class="m"&gt;12&lt;/span&gt; missing index&lt;span class="o"&gt;(&lt;/span&gt;es&lt;span class="o"&gt;)&lt;/span&gt;, please wait...
 warning: /root/jail/var/tmp/rpm-tmp.Vy1z44: Header V3 RSA/SHA256 Signature, key ID f4a80eb5: NOKEY
-&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;#&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;#&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;El siguiente paso consiste en instalar &lt;strong&gt;yum&lt;/strong&gt; en la jaula, que va a traer todas las dependencias necesarias para completar la jaula.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;WARNING&lt;/strong&gt;: El comando &lt;strong&gt;yum&lt;/strong&gt; busca las llaves del repositorio en &lt;em&gt;/etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7&lt;/em&gt;, y no en la jaula. Esto se puede solventar con un &lt;em&gt;link&lt;/em&gt; simbólico:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# ln -s ${JAIL}/etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7&lt;/span&gt;
-&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;#&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# ln -s ${JAIL}/etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;#&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Y ya podemos instalar &lt;strong&gt;yum&lt;/strong&gt; y sus dependencias:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# yum --installroot=${JAIL} install -y yum&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# yum --installroot=${JAIL} install -y yum&lt;/span&gt;
 ...
 Resolving Dependencies
 ...
@@ -217,17 +217,17 @@ Total download size: &lt;span class="m"&gt;49&lt;/span&gt; M
 Installed size: &lt;span class="m"&gt;245&lt;/span&gt; M
 ...
 Complete!
-&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;#&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;#&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Si queremos una jaula mas mínima todavía, en vez de &lt;em&gt;yum&lt;/em&gt; podemos instalar los paquetes necesarios, dejando que las dependencias hagan el resto:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# yum --installroot=${JAIL} install bash httpd&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# yum --installroot=${JAIL} install bash httpd&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Alternativamente, se puede construir una jaula completa instalando el grupo &lt;em&gt;core&lt;/em&gt; en vez de &lt;em&gt;yum&lt;/em&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# yum --installroot=${JAIL} groupinstall core&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@mars ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# yum --installroot=${JAIL} groupinstall core&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -235,13 +235,13 @@ Complete!
 &lt;h2&gt;Uso de la jaula&lt;/h2&gt;
 &lt;p&gt;Esta copia es transferible a otras máquinas, aunque no sean derivadas de &lt;em&gt;RedHat&lt;/em&gt;. En este caso, la jaula se puso a funcionar en una máquina con &lt;em&gt;Debian&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Declaramos la carpeta donde tenemos la jaula, copiada o descomprimida.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@uranus ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# export JAIL=/root/jail&lt;/span&gt;
-&lt;span class="o"&gt;[&lt;/span&gt;root@uranus ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;#&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@uranus ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# export JAIL=/root/jail&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;root@uranus ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;#&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Opcionalmente, podemos copiar el esqueleto de configuración para el usuario &lt;strong&gt;root&lt;/strong&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@uranus:~# cp &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;JAIL&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/etc/skel/.* &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;JAIL&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/root
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@uranus:~# cp &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;JAIL&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/etc/skel/.* &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;JAIL&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/root
 cp: se omite el directorio «/root/jail/etc/skel/.»
 cp: se omite el directorio «/root/jail/etc/skel/..»
 root@uranus:~# 
@@ -249,22 +249,22 @@ root@uranus:~#
 
 
 &lt;p&gt;Es hora de entrar en la jaula para definir la contraseña de &lt;strong&gt;root&lt;/strong&gt;, configuración de red  y otros detalles.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@uranus:~# chroot &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;JAIL&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; /bin/bash -l
-&lt;span class="o"&gt;[&lt;/span&gt;root@uranus /&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# &lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@uranus:~# chroot &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;JAIL&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; /bin/bash -l
+&lt;span class="o"&gt;[&lt;/span&gt;root@uranus /&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# &lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Verificamos que estamos dentro de la jaula, por ejemplo, mirando la versión y distribución instalada.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@uranus /&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# cat /etc/redhat-release &lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@uranus /&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# cat /etc/redhat-release &lt;/span&gt;
 CentOS Linux release 7.2.1511 &lt;span class="o"&gt;(&lt;/span&gt;Core&lt;span class="o"&gt;)&lt;/span&gt; 
-&lt;span class="o"&gt;[&lt;/span&gt;root@uranus /&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c"&gt;# exit&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;root@uranus /&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# exit&lt;/span&gt;
 root@uranus:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Podemos instalar cualquier paquete deseado en el interior de la jaula, sea mediante el comando &lt;strong&gt;chroot&lt;/strong&gt; o el comando &lt;strong&gt;systemd-nspawn&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Finalmente, y suponiendo que hay &lt;strong&gt;systemd&lt;/strong&gt; instalado en la máquina anfitriona, podemos ejecutar la jaula como un contenedor.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@uranus:~# systemd-nspawn -b -D jail/
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@uranus:~# systemd-nspawn -b -D jail/
 Spawning container jail on /root/jail.
 ...
 Welcome to CentOS Linux &lt;span class="m"&gt;7&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;Core&lt;span class="o"&gt;)&lt;/span&gt;!
@@ -276,10 +276,10 @@ jail login:
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y con esto ya tenemos nuestra jaula.&lt;/p&gt;</summary><category term="linux"></category><category term="centos"></category><category term="maipo"></category><category term="jaula"></category></entry><entry><title>Enjaulado de usuarios para uso de rsync</title><link href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html" rel="alternate"></link><updated>2016-01-04T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-01-04:2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html</id><summary type="html">&lt;p&gt;Todos nos hemos encontrado alguna vez con una web, sea en &lt;em&gt;HTML&lt;/em&gt; o en &lt;em&gt;PHP&lt;/em&gt;, que se compone de centenares o miles de ficheros, y que hay que ir actualizando cada vez que cambian unos pocos ficheros. En estos casos la capacidad incremental de la herramienta &lt;strong&gt;rsync&lt;/strong&gt; puede ayudarnos mucho.&lt;/p&gt;
+&lt;p&gt;Y con esto ya tenemos nuestra jaula.&lt;/p&gt;</summary><category term="linux"></category><category term="centos"></category><category term="maipo"></category><category term="jaula"></category></entry><entry><title>Enjaulado de usuarios para uso de rsync</title><link href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html" rel="alternate"></link><published>2016-01-04T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-01-04:2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html</id><summary type="html">&lt;p&gt;Todos nos hemos encontrado alguna vez con una web, sea en &lt;em&gt;HTML&lt;/em&gt; o en &lt;em&gt;PHP&lt;/em&gt;, que se compone de centenares o miles de ficheros, y que hay que ir actualizando cada vez que cambian unos pocos ficheros. En estos casos la capacidad incremental de la herramienta &lt;strong&gt;rsync&lt;/strong&gt; puede ayudarnos mucho.&lt;/p&gt;
 &lt;p&gt;Sin embargo, la herramienta &lt;strong&gt;rsync&lt;/strong&gt; funciona por el puerto de &lt;em&gt;SSH&lt;/em&gt;, y dar acceso al mismo es un problema desde el punto de vista de la seguridad del sistema. Vamos a crear una jaula para los usuarios que lo necesiten, y vamos a limitar los comandos que puede utilizar, de forma que solo pueda hacer &lt;strong&gt;rsync&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Para poder continuar, necesitamos las 2 herramientas que se van a usar: &lt;strong&gt;rsync&lt;/strong&gt; y &lt;strong&gt;rssh&lt;/strong&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# apt-get install rssh rsync
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# apt-get install rssh rsync
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias       
 Leyendo la información de estado... Hecho
@@ -296,13 +296,13 @@ root@webserver:~#
 
 &lt;h2&gt;Preparación del sistema de enjaulado&lt;/h2&gt;
 &lt;p&gt;Como decisión de diseño, he decidido que voy a enjaular todos los usuarios que pertenezcan a un grupo, al que llamaremos &lt;em&gt;restricted&lt;/em&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# groupadd restricted
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# groupadd restricted
 root@webserver:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Ahora vamos a configurar el demonio &lt;strong&gt;SSH&lt;/strong&gt; para que todos los usuarios del grupo &lt;em&gt;restricted&lt;/em&gt; queden enjaulados en &lt;em&gt;/srv/jails/&lt;/em&gt;, en una carpeta por usuario. La directiva &lt;em&gt;X11Forwarding&lt;/em&gt; y &lt;em&gt;AllowTcpForwarding&lt;/em&gt; son restricciones adicionales y no son necesarias.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# cat /etc/ssh/sshd_config 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# cat /etc/ssh/sshd_config 
 ...
 Match group restricted
     ChrootDirectory /srv/jails/%u
@@ -313,20 +313,20 @@ root@webserver:~#
 
 
 &lt;p&gt;Y reiniciamos el demonio para que se apliquen las modificaciones en la configuración.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# service ssh restart
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# service ssh restart
 root@webserver:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;h2&gt;Creando una jaula para el primer usuario&lt;/h2&gt;
 &lt;p&gt;Para tener un usuario enjaulado, necesitamos un usuario, en este caso, el usuario &lt;em&gt;web&lt;/em&gt;. Le vamos a poner &lt;em&gt;rssh&lt;/em&gt; como shell, su carpeta personal como &lt;em&gt;/&lt;/em&gt; y le asignamos el grupo &lt;em&gt;restricted&lt;/em&gt; para que quede enjaulado.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# useradd -d / -s /usr/bin/rssh -G restricted web
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# useradd -d / -s /usr/bin/rssh -G restricted web
 root@webserver:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Para que el usuario &lt;em&gt;web&lt;/em&gt; pueda entrar en esta máquina, necesita una contraseña. Alternativamente, podríamos haber montado una autenticación por claves &lt;em&gt;SSH&lt;/em&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# passwd web
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# passwd web
 Introduzca la nueva contraseña de UNIX: 
 Vuelva a escribir la nueva contraseña de UNIX: 
 passwd: contraseña actualizada correctamente
@@ -336,20 +336,20 @@ root@webserver:~#
 
 &lt;p&gt;Y ahora vamos a crearle una estructura de carpetas muy básica en donde deberá estar su jaula. Puesto que se trata del usuario &lt;em&gt;web&lt;/em&gt;, la carpeta de la jaula (la que el usuario verá como &lt;em&gt;/&lt;/em&gt;) va a ser &lt;em&gt;/srv/jails/web/&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;IMPORTANTE&lt;/strong&gt;: Esta carpeta y todas las de la ruta deben perteneces al usuario &lt;em&gt;root&lt;/em&gt; y tener permisos de escritura solo por el &lt;em&gt;owner&lt;/em&gt;; de otra manera, el &lt;em&gt;SSH&lt;/em&gt; falla al enjaular.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# mkdir -p /srv/jails/web/&lt;span class="o"&gt;{&lt;/span&gt;usr/bin,etc,lib&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# mkdir -p /srv/jails/web/&lt;span class="o"&gt;{&lt;/span&gt;usr/bin,etc,lib&lt;span class="o"&gt;}&lt;/span&gt;
 root@webserver:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Para limitar que el usuario solo pueda hacer &lt;em&gt;rsync&lt;/em&gt; vamos a necesitar la ayuda de &lt;em&gt;rssh&lt;/em&gt;; así pues, vamos a poner ambos binarios en la jaula.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# cp /usr/bin/rssh /srv/jails/web/usr/bin/
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# cp /usr/bin/rssh /srv/jails/web/usr/bin/
 root@webserver:~# cp /usr/bin/rsync /srv/jails/web/usr/bin/
 root@webserver:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Estos dos comandos son binarios &lt;em&gt;linkados&lt;/em&gt; dinámicamente que necesitan librerías. Vamos a buscarlos con el comando &lt;strong&gt;ldd&lt;/strong&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# ldd /usr/bin/rssh 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# ldd /usr/bin/rssh 
     linux-gate.so.1 &lt;span class="o"&gt;(&lt;/span&gt;0xb7789000&lt;span class="o"&gt;)&lt;/span&gt;
     libc.so.6 &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; /lib/i386-linux-gnu/libc.so.6 &lt;span class="o"&gt;(&lt;/span&gt;0xb760a000&lt;span class="o"&gt;)&lt;/span&gt;
     /lib/ld-linux.so.2 &lt;span class="o"&gt;(&lt;/span&gt;0xb778c000&lt;span class="o"&gt;)&lt;/span&gt;
@@ -365,7 +365,7 @@ root@webserver:~#
 
 
 &lt;p&gt;Y las copiamos en la carpeta &lt;em&gt;lib&lt;/em&gt; de la jaula.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# cp /lib/ld-linux.so.2 /srv/jails/web/lib/
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# cp /lib/ld-linux.so.2 /srv/jails/web/lib/
 root@webserver:~# cp /lib/i386-linux-gnu/libc.so.6 /srv/jails/web/lib/
 root@webserver:~# cp /lib/i386-linux-gnu/libattr.so.1 /srv/jails/web/lib/
 root@webserver:~# cp /lib/i386-linux-gnu/libacl.so.1 /srv/jails/web/lib/
@@ -375,13 +375,13 @@ root@webserver:~#
 
 
 &lt;p&gt;Voy a quitar los permisos de ejecución de la librería &lt;em&gt;libc&lt;/em&gt; porque no lo necesita.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# chmod &lt;span class="m"&gt;644&lt;/span&gt; /srv/jails/web/lib/libc.so.6 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# chmod &lt;span class="m"&gt;644&lt;/span&gt; /srv/jails/web/lib/libc.so.6 
 root@webserver:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Ahora que tenemos las librerías en la jaula, volvemos a mirar que otras librerías puedan necesitar con &lt;strong&gt;ldd&lt;/strong&gt;, para evitar dejarnos ninguna.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# ldd /srv/jails/web/lib/*
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# ldd /srv/jails/web/lib/*
 /srv/jails/web/lib/ld-linux.so.2:
     statically linked
 /srv/jails/web/lib/libacl.so.1:
@@ -405,40 +405,40 @@ root@webserver:~#
 
 
 &lt;p&gt;Y como no han entrado de nuevas, hemos acabado con esto. Ahora vamos a copiar la configuración de &lt;strong&gt;rssh&lt;/strong&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# cp /etc/rssh.conf /srv/jails/web/etc/
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# cp /etc/rssh.conf /srv/jails/web/etc/
 root@webserver:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Vamos a añadir la directiva &lt;em&gt;allowrsync&lt;/em&gt; ya que, por defecto, no se permite nada:&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;ANTES&lt;/strong&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# grep allowrsync /srv/jails/web/etc/rssh.conf 
-&lt;span class="c"&gt;#allowrsync&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# grep allowrsync /srv/jails/web/etc/rssh.conf 
+&lt;span class="c1"&gt;#allowrsync&lt;/span&gt;
 root@webserver:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;&lt;strong&gt;DESPUES&lt;/strong&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# grep allowrsync /srv/jails/web/etc/rssh.conf 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# grep allowrsync /srv/jails/web/etc/rssh.conf 
 allowrsync
 root@webserver:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Como estamos esperando que el usuario &lt;em&gt;web&lt;/em&gt; deje sus cosas en una carpeta &lt;em&gt;www&lt;/em&gt;, vamos a crearla, ya que va a ser la única en la que pueda copiar sus cosas.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# mkdir /srv/jails/web/www
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# mkdir /srv/jails/web/www
 root@webserver:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Y le damos permisos necesarios para que escriba en ella; por ejemplo, le damos la propiedad de la carpeta.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# chown web:web /srv/jails/web/www/
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# chown web:web /srv/jails/web/www/
 root@webserver:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Y con esto queda completa la jaula. Como demostración, muestro la salida del comando &lt;strong&gt;tree&lt;/strong&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# tree /srv/jails/web/
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# tree /srv/jails/web/
 /srv/jails/web/
 ├── etc
 │   └── rssh.conf
@@ -461,17 +461,17 @@ root@webserver:~#
 
 &lt;h2&gt;Uso de la jaula&lt;/h2&gt;
 &lt;p&gt;Supongamos que tenemos un proyecto web en una máquina &lt;em&gt;developer&lt;/em&gt;, por ejemplo:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;tree web/
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@developer:~$ tree web/
 web/
 └── index.html
 
 &lt;span class="m"&gt;0&lt;/span&gt; directories, &lt;span class="m"&gt;1&lt;/span&gt; file
-gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@developer:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Intentamos entrar por &lt;em&gt;SSH&lt;/em&gt; y vemos que falla:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;ssh web@10.0.0.2
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@developer:~$ ssh web@10.0.0.2
 web@10.0.0.2&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
 
 The programs included with the Debian GNU/Linux system are free software&lt;span class="p"&gt;;&lt;/span&gt;
@@ -488,37 +488,37 @@ Allowed commands: rsync
 If you believe this is in error, please contact your system administrator.
 
 Connection to 10.0.0.2 closed.
-gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@developer:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Vamos a usar &lt;em&gt;rsync&lt;/em&gt; para sincronizar este proyecto con el servidor que acabamos de montar. Para eso, la máquina cliente necesita tener instalado el paquete &lt;strong&gt;rsync&lt;/strong&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;rsync -rvzc --delete web/ web@10.0.0.2:/www
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@developer:~$ rsync -rvzc --delete web/ web@10.0.0.2:/www
 web@10.0.0.2&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
 sending incremental file list
 index.html
 
 sent &lt;span class="m"&gt;139&lt;/span&gt; bytes  received &lt;span class="m"&gt;35&lt;/span&gt; bytes  49.71 bytes/sec
 total size is &lt;span class="m"&gt;12&lt;/span&gt;  speedup is 0.07
-gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@developer:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Si repetimos el comando, vemos que la lista de ficheros no incluye el &lt;em&gt;index.html&lt;/em&gt;, porque no ha cambiado respecto a lo que tenemos en el servidor, así que no lo manda.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;rsync -rvzc --delete web/ web@10.0.0.2:/www
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@developer:~$ rsync -rvzc --delete web/ web@10.0.0.2:/www
 web@10.0.0.2&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
 sending incremental file list
 
 sent &lt;span class="m"&gt;83&lt;/span&gt; bytes  received &lt;span class="m"&gt;12&lt;/span&gt; bytes  7.60 bytes/sec
 total size is &lt;span class="m"&gt;12&lt;/span&gt;  speedup is 0.13
-gerard@developer:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@developer:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;los &lt;em&gt;flags&lt;/em&gt; elegidos son &lt;strong&gt;-r&lt;/strong&gt; (recursivo), &lt;strong&gt;-v&lt;/strong&gt; (verbose), &lt;strong&gt;-z&lt;/strong&gt; (comprimido), &lt;strong&gt;-c&lt;/strong&gt; (diferenciar por &lt;em&gt;checksum&lt;/em&gt;) y &lt;strong&gt;--delete&lt;/strong&gt; (para borrar fichero que estén en el servidor y no deban).&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;IMPORTANTE&lt;/strong&gt;: la carpeta origen acaba con &lt;em&gt;/&lt;/em&gt;. Esa es la diferencia entre copiar el contenido de la carpeta y copiar la carpeta misma.&lt;/p&gt;
 &lt;p&gt;Analizamos el resultado y vemos que lo hemos copiado en &lt;em&gt;/www/&lt;/em&gt;, siempre desde el punto de vista de la jaula.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@webserver:~# ls /www
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@webserver:~# ls /www
 ls: no se puede acceder a /www: No existe el fichero o el directorio
 root@webserver:~# tree /srv/jails/web/
 /srv/jails/web/
@@ -542,7 +542,7 @@ root@webserver:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y con esto está todo hecho. Solo falta instalar el servidor web, pero eso lo dejo pendiente.&lt;/p&gt;</summary><category term="linux"></category><category term="rsync"></category><category term="rssh"></category><category term="ssh"></category><category term="ldd"></category><category term="jaula"></category></entry><entry><title>Ocultando puertos con port knocking</title><link href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html" rel="alternate"></link><updated>2015-10-29T11:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-10-29:2015/10/ocultando-puertos-con-port-knocking.html</id><summary type="html">&lt;p&gt;En este artículo vamos a enseñar como ocultar un puerto tras el firewall, de forma que solamente se abra tras utilizar el protocolo &lt;em&gt;port knocking&lt;/em&gt;. Las tecnologías usadas van a ser &lt;em&gt;firehol&lt;/em&gt; como firewall y el demonio &lt;em&gt;knockd&lt;/em&gt; ocultando el &lt;em&gt;SSH&lt;/em&gt;, aunque vamos a permitir acceder al puerto de HTTP.&lt;/p&gt;
+&lt;p&gt;Y con esto está todo hecho. Solo falta instalar el servidor web, pero eso lo dejo pendiente.&lt;/p&gt;</summary><category term="linux"></category><category term="rsync"></category><category term="rssh"></category><category term="ssh"></category><category term="ldd"></category><category term="jaula"></category></entry><entry><title>Ocultando puertos con port knocking</title><link href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html" rel="alternate"></link><published>2015-10-29T11:30:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-10-29:2015/10/ocultando-puertos-con-port-knocking.html</id><summary type="html">&lt;p&gt;En este artículo vamos a enseñar como ocultar un puerto tras el firewall, de forma que solamente se abra tras utilizar el protocolo &lt;em&gt;port knocking&lt;/em&gt;. Las tecnologías usadas van a ser &lt;em&gt;firehol&lt;/em&gt; como firewall y el demonio &lt;em&gt;knockd&lt;/em&gt; ocultando el &lt;em&gt;SSH&lt;/em&gt;, aunque vamos a permitir acceder al puerto de HTTP.&lt;/p&gt;
 &lt;p&gt;El protocolo de &lt;em&gt;port knocking&lt;/em&gt; es un sistema en el que para abrir la conectividad en un puerto se debe primero abrir una secuencia concreta a otros puertos, sean &lt;em&gt;TCP&lt;/em&gt; o &lt;em&gt;UDP&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Para conseguir este objetivo, se van a usar las siguientes tecnologías:&lt;/p&gt;
 &lt;ul&gt;
@@ -559,7 +559,7 @@ root@webserver:~#
 &lt;p&gt;La instalación base es una &lt;em&gt;Debian&lt;/em&gt; mínima instalada con el CD netinstall, con todo desmarcado y con el servidor de &lt;em&gt;SSH&lt;/em&gt; previamente instalado.&lt;/p&gt;
 &lt;h2&gt;Instalación del servidor&lt;/h2&gt;
 &lt;p&gt;Para empezar, vamos a instalar los dos servicios implicados:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# apt-get install firehol knockd
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@server:~# apt-get install firehol knockd
 ...
 root@server:~# 
 &lt;/pre&gt;&lt;/div&gt;
@@ -567,7 +567,7 @@ root@server:~#
 
 &lt;p&gt;Configuramos las reglas del firewall, de acuerdo a la documentación relacionada con &lt;em&gt;port knocking&lt;/em&gt;. Se define un nivel de protección máximo, ya que se trata de la interfaz que deberá estar accesible desde internet; esto nos evita la mayoría de ataques conocidos en la capa 3 y 4.&lt;/p&gt;
 &lt;p&gt;En cuanto a las conectividad, vamos a permitir que este servidor acceda a servicios &lt;em&gt;DNS&lt;/em&gt; y &lt;em&gt;HTTP&lt;/em&gt;, que es lo justo para actualizarse. Como servidor vamos a permitir el acceso a &lt;em&gt;HTTP&lt;/em&gt; (ya que en el ejemplo, esta máquina va a servir como servidor &lt;em&gt;HTTP&lt;/em&gt;) y a &lt;em&gt;SSH&lt;/em&gt; siempre y cuando se cumpla con el protocolo de seguridad.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/firehol/firehol.conf 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@server:~# cat /etc/firehol/firehol.conf 
 version 5
 
 interface any world
@@ -582,7 +582,7 @@ root@server:~#
 &lt;p&gt;Acto seguido vamos a definir las reglas para que se abra el &lt;em&gt;knock hidden&lt;/em&gt; (que corresponde con el puerto &lt;em&gt;SSH&lt;/em&gt;) si se completa la secuencia de &lt;em&gt;knock&lt;/em&gt;. En este caso concreto, se indica una secuencia de los puertos &lt;em&gt;TCP&lt;/em&gt; 123, 456 y 789; aunque es posible definir puertos &lt;em&gt;UDP&lt;/em&gt;, dejamos sin indicarlo, que nos los va a definir como &lt;em&gt;TCP&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Como medida de seguridad vamos a indicar un tiempo máximo de 10 segundos para completar la secuencia de &lt;em&gt;knock&lt;/em&gt; y un autocierre del puerto a los 5 segundos (aunque firehol va a permitir las conexiones que se hayan establecido en esos 5 segundos).&lt;/p&gt;
 &lt;p&gt;Es especialmente interesante ver que la regla incluye la dirección origen, con lo que la apertura de puerto solo será visible desde la máquina que completó la secuencia de &lt;em&gt;knock&lt;/em&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/knockd.conf 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@server:~# cat /etc/knockd.conf 
 &lt;span class="o"&gt;[&lt;/span&gt;options&lt;span class="o"&gt;]&lt;/span&gt;
     UseSyslog
 
@@ -597,7 +597,7 @@ root@server:~#
 
 
 &lt;p&gt;Como medida de seguridad, &lt;em&gt;Debian&lt;/em&gt; tiene una protección para levantar ambos servicios, así que tenemos que indicarle que queremos que se puedan levantar, editando otros ficheros de configuración.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# cat /etc/default/knockd 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@server:~# cat /etc/default/knockd 
 ...
 &lt;span class="nv"&gt;START_KNOCKD&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1
 ...
@@ -610,7 +610,7 @@ root@server:~#
 
 
 &lt;p&gt;Finalmente podemos levantar los servicios de &lt;em&gt;port knocking&lt;/em&gt; y de &lt;em&gt;firewall&lt;/em&gt;, usando las herramientas estándares que nos ofrece la distribución.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@server:~# service knockd restart
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@server:~# service knockd restart
 root@server:~# service firehol restart
 root@server:~# 
 &lt;/pre&gt;&lt;/div&gt;
@@ -618,7 +618,7 @@ root@server:~#
 
 &lt;h2&gt;Comprobación de funcionamiento&lt;/h2&gt;
 &lt;p&gt;Para comprobar el funcionamiento basta con comprobar que el puerto está normalmente cerrado. Personalmente he usado &lt;em&gt;nmap&lt;/em&gt;, aunque se podría usar &lt;em&gt;netcat&lt;/em&gt; o &lt;em&gt;telnet&lt;/em&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;nmap -PN 192.168.56.3 -p 22
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@workstation:~$ nmap -PN 192.168.56.3 -p 22
 
 Starting Nmap 5.21 &lt;span class="o"&gt;(&lt;/span&gt; http://nmap.org &lt;span class="o"&gt;)&lt;/span&gt; at 2015-10-28 17:33 CET
 Nmap scan report &lt;span class="k"&gt;for&lt;/span&gt; server &lt;span class="o"&gt;(&lt;/span&gt;192.168.56.3&lt;span class="o"&gt;)&lt;/span&gt;
@@ -627,13 +627,13 @@ PORT   STATE    SERVICE
 22/tcp filtered ssh
 
 Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&gt; IP address &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; host up&lt;span class="o"&gt;)&lt;/span&gt; scanned in 2.13 seconds
-gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@workstation:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Vemos que sale &lt;strong&gt;filtered&lt;/strong&gt;, que significa que el firewall lo está bloqueando. Ahora vamos a lanzar la secuencia de &lt;em&gt;knock&lt;/em&gt; usando el helper &lt;strong&gt;knock&lt;/strong&gt;, que en &lt;em&gt;Debian&lt;/em&gt; se encuentra en el mismo paquete &lt;em&gt;knockd&lt;/em&gt;. Acto seguido, el puerto de &lt;em&gt;SSH&lt;/em&gt; queda abierto (en otras palabras: escuchando). Ahora sería posible iniciar sesión por &lt;em&gt;SSH&lt;/em&gt; en la máquina.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;knock 192.168.56.3 &lt;span class="m"&gt;123&lt;/span&gt; &lt;span class="m"&gt;456&lt;/span&gt; 789
-gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;nmap -PN 192.168.56.3 -p 22
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@workstation:~$ knock 192.168.56.3 &lt;span class="m"&gt;123&lt;/span&gt; &lt;span class="m"&gt;456&lt;/span&gt; 789
+gerard@workstation:~$ nmap -PN 192.168.56.3 -p 22
 
 Starting Nmap 5.21 &lt;span class="o"&gt;(&lt;/span&gt; http://nmap.org &lt;span class="o"&gt;)&lt;/span&gt; at 2015-10-28 17:34 CET
 Nmap scan report &lt;span class="k"&gt;for&lt;/span&gt; server &lt;span class="o"&gt;(&lt;/span&gt;192.168.56.3&lt;span class="o"&gt;)&lt;/span&gt;
@@ -642,12 +642,12 @@ PORT   STATE SERVICE
 22/tcp open  ssh
 
 Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&gt; IP address &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; host up&lt;span class="o"&gt;)&lt;/span&gt; scanned in 0.07 seconds
-gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@workstation:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Finalmente comprobamos que, transcurridos los 5 segundos configurados, el puerto vuelve a verse como &lt;strong&gt;filtrado&lt;/strong&gt;, con lo que no se puede establecer nuevas conexiones en este puerto.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;nmap -PN 192.168.56.3 -p 22
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@workstation:~$ nmap -PN 192.168.56.3 -p 22
 
 Starting Nmap 5.21 &lt;span class="o"&gt;(&lt;/span&gt; http://nmap.org &lt;span class="o"&gt;)&lt;/span&gt; at 2015-10-28 17:34 CET
 Nmap scan report &lt;span class="k"&gt;for&lt;/span&gt; server &lt;span class="o"&gt;(&lt;/span&gt;192.168.56.3&lt;span class="o"&gt;)&lt;/span&gt;
@@ -656,7 +656,7 @@ PORT   STATE    SERVICE
 22/tcp filtered ssh
 
 Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&gt; IP address &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; host up&lt;span class="o"&gt;)&lt;/span&gt; scanned in 2.08 seconds
-gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@workstation:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 

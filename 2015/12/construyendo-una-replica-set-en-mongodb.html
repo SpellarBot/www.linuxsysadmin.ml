@@ -154,7 +154,7 @@ Linux Sysadmin            </a>
 <h2>Descripción del entorno</h2>
 <p>Disponemos de 3 máquinas que vamos a llamar <strong>mongo1</strong>, <strong>mongo2</strong> y <strong>mongo3</strong>. Cada una funciona con un sistema operativo <em>Debian jessie</em> con <em>systemd</em> y cuenta 1 gb de disco y con 256 mb de memoria; para esta demostración no se necesita mas.</p>
 <p>Como pequeño detalle, las máquinas se van referir entre ellas por nombre, pero como no me interesa poner una solución completa de <em>DNS</em>, he puesto en el fichero <em>/etc/hosts</em> de todas las máquinas las equivalencias.</p>
-<div class="highlight"><pre>root@mongo1:~# grep mongo /etc/hosts
+<div class="highlight"><pre><span></span>root@mongo1:~# grep mongo /etc/hosts
 10.0.0.2    mongo1
 10.0.0.3    mongo2
 10.0.0.4    mongo3
@@ -167,23 +167,23 @@ root@mongo1:~#
 <h2>Preparación de las máquinas individuales</h2>
 <p>Queremos una versión de <em>mongodb</em> un poco reciente, así que no vamos a usar los paquetes oficiales de la distribución, y la empresa de <em>mongodb</em> no ofrece paquete para <em>Debian jessie</em>. Por ello vamos a montar un esqueleto de ficheros como se describe en <a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">un artículo anterior</a>. Vamos a describir el proceso en la máquina <strong>mongo1</strong>, para replicarlo a posteriori en las otras 2.</p>
 <p>Creamos la estructura de carpetas que van a contener todo lo relativo a <strong>mongodb</strong>.</p>
-<div class="highlight"><pre>root@mongo1:~# mkdir -p /opt/mongodb/<span class="o">{</span>bin,conf,data/replica,logs<span class="o">}</span>
+<div class="highlight"><pre><span></span>root@mongo1:~# mkdir -p /opt/mongodb/<span class="o">{</span>bin,conf,data/replica,logs<span class="o">}</span>
 root@mongo1:~# 
 </pre></div>
 
 
 <p>Copiamos el binario <strong>mongod</strong> que encontraremos en el fichero <em>.tar.gz</em> de la página de descargas de la página web.</p>
-<div class="highlight"><pre>root@mongo1:~# cp mongod /opt/mongodb/bin/
+<div class="highlight"><pre><span></span>root@mongo1:~# cp mongod /opt/mongodb/bin/
 root@mongo1:~# 
 </pre></div>
 
 
 <p>Creamos un fichero de configuración con el que vamos a levantar el proceso en esta máquina.</p>
-<div class="highlight"><pre>root@mongo1:~# cat /opt/mongodb/conf/replica.conf
+<div class="highlight"><pre><span></span>root@mongo1:~# cat /opt/mongodb/conf/replica.conf
 systemLog:
     path: /opt/mongodb/logs/replica.log
     logAppend: <span class="nb">true</span>
-<span class="nb">    </span>destination: file
+    destination: file
 
 net:
     port: 27017
@@ -200,19 +200,19 @@ root@mongo1:~#
 
 
 <p>Por razones de seguridad vamos a lanzar el servicio con un usuario propio de sistema.</p>
-<div class="highlight"><pre>root@mongo1:~# useradd -s /usr/sbin/nologin -r -M mongo -d /opt/mongodb/
+<div class="highlight"><pre><span></span>root@mongo1:~# useradd -s /usr/sbin/nologin -r -M mongo -d /opt/mongodb/
 root@mongo1:~# 
 </pre></div>
 
 
 <p>Y para ahorrarnos problemas de permisos, lo hacemos propietario de todo lo referente al servicio:</p>
-<div class="highlight"><pre>root@mongo1:~# chown -R mongo:mongo /opt/mongodb/
+<div class="highlight"><pre><span></span>root@mongo1:~# chown -R mongo:mongo /opt/mongodb/
 root@mongo1:~# 
 </pre></div>
 
 
 <p>Vamos a crearle una <strong>unit</strong> para que el sistema se encargue de levantar automáticamente el servicio en caso de reinicio de la máquina:</p>
-<div class="highlight"><pre>root@mongo1:~# cat /etc/systemd/system/mongo.service
+<div class="highlight"><pre><span></span>root@mongo1:~# cat /etc/systemd/system/mongo.service
 <span class="o">[</span>Unit<span class="o">]</span>
 <span class="nv">Description</span><span class="o">=</span>MongoDB
 
@@ -233,7 +233,7 @@ root@mongo1:~#
 
 
 <p>Finalmente activamos la <strong>unit</strong> e iniciamos el servicio.</p>
-<div class="highlight"><pre>root@mongo1:~# systemctl <span class="nb">enable </span>mongo
+<div class="highlight"><pre><span></span>root@mongo1:~# systemctl <span class="nb">enable</span> mongo
 Created symlink from /etc/systemd/system/multi-user.target.wants/mongo.service to /etc/systemd/system/mongo.service.
 root@mongo1:~# systemctl start mongo
 root@mongo1:~# 
@@ -243,17 +243,17 @@ root@mongo1:~#
 <p>Ahora toca repetir el proceso en las otras 2 máquinas, exactamente igual.</p>
 <h2>Configuración del clúster</h2>
 <p>Accedemos a una de las máquinas del futuro clúster desde cualquier máquina que pueda hacerlo y que disponga del binario <strong>mongo</strong> (el mongo shell), que también viene en el archivo <em>.tar.gz</em> descargado de la página oficial; este shell no es necesario para la aplicación que use el clúster ya que el <strong>driver</strong> de cada lenguaje suple sus funciones, pero es muy útil tenerlo a mano para tareas de administración y consultas varias.</p>
-<div class="highlight"><pre>root@client:~# ./mongo --host 10.0.0.2
+<div class="highlight"><pre><span></span>root@client:~# ./mongo --host 10.0.0.2
 MongoDB shell version: 3.0.7
 connecting to: 10.0.0.2:27017/test
 Welcome to the MongoDB shell.
-For interactive <span class="nb">help</span>, <span class="nb">type</span> <span class="s2">&quot;help&quot;</span>.
+For interactive help, <span class="nb">type</span> <span class="s2">&quot;help&quot;</span>.
 &gt; 
 </pre></div>
 
 
 <p>Hay dos formas de crear la configuración del clúster: pasando el documento de configuración en el método <em>initiate</em> o añadir los nodos a posteriori con el método <em>add</em>. Voy a usar este método por ser mas fácil.</p>
-<div class="highlight"><pre>&gt; rs.initiate<span class="o">()</span>
+<div class="highlight"><pre><span></span>&gt; rs.initiate<span class="o">()</span>
 <span class="o">{</span>
     <span class="s2">&quot;info2&quot;</span> : <span class="s2">&quot;no configuration explicitly specified -- making one&quot;</span>,
     <span class="s2">&quot;me&quot;</span> : <span class="s2">&quot;mongo1:27017&quot;</span>,
@@ -268,7 +268,7 @@ replica:PRIMARY&gt;
 
 
 <p>Vamos a lanzar el método <em>status</em> hasta que todos los nodos sean primarios o secundarios, momento en el que la <em>replica</em> va a quedar correctamente montada.</p>
-<div class="highlight"><pre>replica:PRIMARY&gt; rs.status<span class="o">()</span>
+<div class="highlight"><pre><span></span>replica:PRIMARY&gt; rs.status<span class="o">()</span>
 <span class="o">{</span>
     <span class="s2">&quot;set&quot;</span> : <span class="s2">&quot;replica&quot;</span>,
 ...
@@ -307,8 +307,8 @@ replica:PRIMARY&gt;
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/05/mongodb-sharding-con-ansible.html">MongoDB sharding con ansible</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Escribiendo units en systemd</a></li>
     </ul>
 </section>
@@ -716,9 +716,19 @@ replica:PRIMARY&gt;
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -792,6 +802,11 @@ replica:PRIMARY&gt;
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -841,7 +856,7 @@ replica:PRIMARY&gt;
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

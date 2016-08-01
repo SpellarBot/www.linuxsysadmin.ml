@@ -149,21 +149,21 @@ Linux Sysadmin            </a>
 <p>Con la entrada en escena de <em>systemd</em> en la mayoría de distribuciones grandes de <em>linux</em> este problema se ha acabado; el mismo proceso que hace de <strong>init</strong> puede encargarse de mantener los procesos levantados, y reiniciarlos en caso de caída.</p>
 <p>En este tutorial pretendo hacer que un servicio estándar se vea beneficiado de un <strong>override</strong>, que permita el inicio automático de un servicio cuando se cae, sin tener que reescribir la <strong>unit</strong> que se encarga del servicio o proceso.</p>
 <p>Partimos de un servidor básico <em>Linux</em> con <em>systemd</em>. En este caso vamos a utilizar la última versión estable de <em>Debian</em>, a la que le vamos a instalar un servicio estándar como <em>nginx</em> que nos va a servir como conejillo de indias.</p>
-<div class="highlight"><pre>root@server:~# apt-get install nginx-light
+<div class="highlight"><pre><span></span>root@server:~# apt-get install nginx-light
 root@server:~# 
 </pre></div>
 
 
 <h2>Procedimiento</h2>
 <p>Como comprobación previa, observemos como este <strong>restart</strong> automático no funciona; tenemos el servicio en ejecución, lo matamos y observamos que no se levanta de nuevo, por mucho que esperemos.</p>
-<div class="highlight"><pre>root@server:~# ps faux <span class="p">|</span> grep nginx
+<div class="highlight"><pre><span></span>root@server:~# ps faux <span class="p">|</span> grep nginx
 root       <span class="m">685</span>  0.0  0.8   <span class="m">4556</span>  <span class="m">2240</span> pts/0    S+   11:41   0:00          <span class="se">\_</span> grep nginx
 root       <span class="m">662</span>  0.0  0.7   <span class="m">6356</span>  <span class="m">1856</span> ?        Ss   11:41   0:00 nginx: master process /usr/sbin/nginx -g daemon on<span class="p">;</span> master_process on<span class="p">;</span>
 www-data   <span class="m">663</span>  0.1  0.9   <span class="m">6504</span>  <span class="m">2456</span> ?        S    11:41   0:00  <span class="se">\_</span> nginx: worker process                           
 www-data   <span class="m">664</span>  0.0  0.9   <span class="m">6504</span>  <span class="m">2456</span> ?        S    11:41   0:00  <span class="se">\_</span> nginx: worker process                           
 www-data   <span class="m">665</span>  0.0  0.9   <span class="m">6504</span>  <span class="m">2456</span> ?        S    11:41   0:00  <span class="se">\_</span> nginx: worker process                           
 www-data   <span class="m">666</span>  0.1  0.9   <span class="m">6504</span>  <span class="m">2456</span> ?        S    11:41   0:00  <span class="se">\_</span> nginx: worker process                           
-root@server:~# <span class="nb">kill </span>662
+root@server:~# <span class="nb">kill</span> 662
 root@server:~# ps faux <span class="p">|</span> grep nginx
 root       <span class="m">691</span>  0.0  0.8   <span class="m">4556</span>  <span class="m">2220</span> pts/0    S+   11:41   0:00          <span class="se">\_</span> grep nginx
 root@server:~# 
@@ -171,14 +171,14 @@ root@server:~#
 
 
 <p>Ahora necesitamos localizar el nombre de la <strong>unit</strong> que se encarga de ese servicio, puesto que la carpeta de <strong>overrides</strong> debe llamarse igual.</p>
-<div class="highlight"><pre>root@server:~# systemctl list-units -a <span class="p">|</span> grep nginx
+<div class="highlight"><pre><span></span>root@server:~# systemctl list-units -a <span class="p">|</span> grep nginx
   nginx.service    loaded    inactive dead    A high performance web server and a reverse proxy server
 root@server:~# 
 </pre></div>
 
 
 <p>Como curiosidad, este fichero se encuentra en <em>/lib/systemd/system/</em>, siguiendo las convenciones del empaquetado de <em>Debian</em>. Alternativamente, podemos localizar los ficheros instalados por un paquete con el comando <em>dpkg -L nginx-light</em>.</p>
-<div class="highlight"><pre>root@server:~# ls -lh /lib/systemd/system/nginx.service 
+<div class="highlight"><pre><span></span>root@server:~# ls -lh /lib/systemd/system/nginx.service 
 -rw-r--r-- <span class="m">1</span> root root <span class="m">986</span> dic  <span class="m">1</span>  <span class="m">2014</span> /lib/systemd/system/nginx.service
 root@server:~# 
 </pre></div>
@@ -190,7 +190,7 @@ root@server:~#
 <li><em>/etc/systemd/system/</em> &rarr; <strong>units</strong> o <strong>overrides</strong> puestos por el usuario (nosotros)</li>
 </ul>
 <p>Para añadir nuevas directivas (<strong>overrides</strong>) a una <strong>unit</strong> sin reescribirla entera, basta con crear una carpeta con su mismo nombre, concatenando <strong>.d</strong>. Dentro podemos poner tantos ficheros <em>.conf</em> como creamos necesarios, añadiendo las directivas que queramos añadir o modificar.</p>
-<div class="highlight"><pre>root@server:~# mkdir /etc/systemd/system/nginx.service.d
+<div class="highlight"><pre><span></span>root@server:~# mkdir /etc/systemd/system/nginx.service.d
 root@server:~# cat /etc/systemd/system/nginx.service.d/autorestart.conf
 <span class="o">[</span>Service<span class="o">]</span>
 <span class="nv">Restart</span><span class="o">=</span>always
@@ -201,21 +201,21 @@ root@server:~#
 
 <p>En este caso, se ha indicado que queremos un <strong>restart</strong> siempre, sean cuales sean las circunstancias en las que se cayó el proceso, y que espere 1 segundo antes de intentarlo. Por como está hecho <em>systemd</em>, <strong>no</strong> va a levantar un servicio que hemos parado invocando el comando <em>systemctl</em>.</p>
 <p>Para que los cambios en el fichero de configuración se apliquen es necesario recargar las configuraciones, indicando a <em>systemd</em> que tienen que recargarlas.</p>
-<div class="highlight"><pre>root@server:~# systemctl daemon-reload
+<div class="highlight"><pre><span></span>root@server:~# systemctl daemon-reload
 root@server:~# 
 </pre></div>
 
 
 <h2>Comprobación</h2>
 <p>Básicamente vamos a repetir el paso de la comprobación; se localiza el proceso <strong>master</strong> y se finaliza (por ejemplo, con un <strong>SIGTERM</strong> normal).</p>
-<div class="highlight"><pre>root@server:~# ps faux <span class="p">|</span> grep nginx
+<div class="highlight"><pre><span></span>root@server:~# ps faux <span class="p">|</span> grep nginx
 root       <span class="m">782</span>  0.0  0.8   <span class="m">4556</span>  <span class="m">2252</span> pts/0    S+   11:56   0:00          <span class="se">\_</span> grep nginx
 root       <span class="m">776</span>  0.0  0.7   <span class="m">6356</span>  <span class="m">1936</span> ?        Ss   11:56   0:00 nginx: master process /usr/sbin/nginx -g daemon on<span class="p">;</span> master_process on<span class="p">;</span>
 www-data   <span class="m">777</span>  0.0  1.0   <span class="m">6504</span>  <span class="m">2536</span> ?        S    11:56   0:00  <span class="se">\_</span> nginx: worker process                           
 www-data   <span class="m">778</span>  0.0  1.0   <span class="m">6504</span>  <span class="m">2536</span> ?        S    11:56   0:00  <span class="se">\_</span> nginx: worker process                           
 www-data   <span class="m">779</span>  0.0  1.0   <span class="m">6504</span>  <span class="m">2536</span> ?        S    11:56   0:00  <span class="se">\_</span> nginx: worker process                           
 www-data   <span class="m">780</span>  0.0  1.0   <span class="m">6504</span>  <span class="m">2536</span> ?        S    11:56   0:00  <span class="se">\_</span> nginx: worker process                           
-root@server:~# <span class="nb">kill </span>776
+root@server:~# <span class="nb">kill</span> 776
 root@server:~# ps faux <span class="p">|</span> grep nginx
 root       <span class="m">787</span>  0.0  0.9   <span class="m">4556</span>  <span class="m">2280</span> pts/0    S+   11:56   0:00          <span class="se">\_</span> grep nginx
 root@server:~# 
@@ -223,7 +223,7 @@ root@server:~#
 
 
 <p>Ahora solo hay que esperar el paso de los segundos configurados, y volver a ver si el servicio está corriendo; aunque en este esperé algo menos de lo configurado; la paciencia no es una de mis virtudes...</p>
-<div class="highlight"><pre>root@server:~# ps faux <span class="p">|</span> grep nginx
+<div class="highlight"><pre><span></span>root@server:~# ps faux <span class="p">|</span> grep nginx
 root       <span class="m">789</span>  0.0  0.8   <span class="m">4556</span>  <span class="m">2192</span> pts/0    S+   11:56   0:00          <span class="se">\_</span> grep nginx
 root@server:~# ps faux <span class="p">|</span> grep nginx
 root       <span class="m">791</span>  0.0  0.9   <span class="m">4556</span>  <span class="m">2280</span> pts/0    S+   11:56   0:00          <span class="se">\_</span> grep nginx
@@ -244,9 +244,9 @@ root@server:~#
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html">Restringiendo accesos web mediante autenticación básica</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Construyendo una replica set en mongodb</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/05/mongodb-sharding-con-ansible.html">MongoDB sharding con ansible</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html">Creando un entorno escalable (IV)</a></li>
     </ul>
 </section>
     <hr/>
@@ -653,9 +653,19 @@ root@server:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -729,6 +739,11 @@ root@server:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -778,7 +793,7 @@ root@server:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

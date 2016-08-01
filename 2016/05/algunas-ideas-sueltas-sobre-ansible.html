@@ -139,7 +139,7 @@ Linux Sysadmin            </a>
                 <p>En un <a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">artículo anterior</a> vimos qué era <strong>Ansible</strong> y como instalarlo, dejando su funcionamiento para el lector; Hay miles de tutoriales por internet, y muchos son mejores de los que pueda poner aquí. Sin embargo, hay algunas ideas que no son fáciles de ver juntas, así que aquí las dejo.</p>
 <h2>Playbooks plantilla</h2>
 <p>Si solo queremos los <em>playbooks</em> como una manera fácil de aprovisionar una máquina, nos conviene que no tenga un <em>host</em> asignado en el mismo, para poder pasar el objetivo por parámetro. Por ejemplo:</p>
-<div class="highlight"><pre>root@ansible:~# cat ping.yml
+<div class="highlight"><pre><span></span>root@ansible:~# cat ping.yml
 - hosts: <span class="s1">&#39;{{ target }}&#39;</span>
   tasks:
     - ping:
@@ -148,7 +148,7 @@ root@ansible:~#
 
 
 <p>En este caso hay que pasar un argumento extra como <em>target</em>, y en caso de no ponerlo, el <em>playbook</em> no haría nada. Con este truco, podemos ir variando el objetivo, siempre que esté en el fichero <em>hosts</em>.</p>
-<div class="highlight"><pre>root@ansible:~# ansible-playbook ping.yml
+<div class="highlight"><pre><span></span>root@ansible:~# ansible-playbook ping.yml
 
 PLAY <span class="o">[{{</span> target <span class="o">}}]</span> ***********************************************************
 skipping: no hosts matched
@@ -191,7 +191,7 @@ root@ansible:~#
 <h2>Variar el entorno sin cambiar los playbooks</h2>
 <p>Aunque las máquinas y las redes asignadas a cada entorno sean variables, los grupos y funcionalidades son las mismas. Suponiendo que los <em>playbooks</em> actúen contra los grupos, variando el fichero de <em>hosts</em> podemos conseguir todos los entornos necesarios.</p>
 <p>De hecho, podemos tener varios ficheros de <em>hosts</em> y especificarlos por parámetro en el momento de lanzar <strong>ansible-playbook</strong>. Por ejemplo, para el entorno de <em>preproducción</em>:</p>
-<div class="highlight"><pre>root@ansible:~# cat hosts-pre
+<div class="highlight"><pre><span></span>root@ansible:~# cat hosts-pre
 <span class="o">[</span>loadbalancer<span class="o">]</span>
 172.20.0.2
 
@@ -205,18 +205,18 @@ root@ansible:~# ansible-playbook -i hosts-pre --list-hosts setup.yml
 
 playbook: setup.yml
 
-  play <span class="c">#1 (loadbalancer): Setup load balancer...        TAGS: []</span>
+  play <span class="c1">#1 (loadbalancer): Setup load balancer...        TAGS: []</span>
     pattern: <span class="o">[</span>u<span class="s1">&#39;loadbalancer&#39;</span><span class="o">]</span>
     hosts <span class="o">(</span>1<span class="o">)</span>:
       172.20.0.2
 
-  play <span class="c">#2 (appservers): Setup application servers...    TAGS: []</span>
+  play <span class="c1">#2 (appservers): Setup application servers...    TAGS: []</span>
     pattern: <span class="o">[</span>u<span class="s1">&#39;appservers&#39;</span><span class="o">]</span>
     hosts <span class="o">(</span>2<span class="o">)</span>:
       172.20.0.3
       172.20.0.4
 
-  play <span class="c">#3 (dbservers): Setup database servers...        TAGS: []</span>
+  play <span class="c1">#3 (dbservers): Setup database servers...        TAGS: []</span>
     pattern: <span class="o">[</span>u<span class="s1">&#39;dbservers&#39;</span><span class="o">]</span>
     hosts <span class="o">(</span>1<span class="o">)</span>:
       172.20.0.5
@@ -225,7 +225,7 @@ root@ansible:~#
 
 
 <p>Y casi lo mismo para el entono de <em>producción</em>:</p>
-<div class="highlight"><pre>root@ansible:~# cat hosts-pro
+<div class="highlight"><pre><span></span>root@ansible:~# cat hosts-pro
 <span class="o">[</span>loadbalancer<span class="o">]</span>
 10.0.0.2
 
@@ -244,12 +244,12 @@ root@ansible:~# ansible-playbook -i hosts-pro --list-hosts setup.yml
 
 playbook: setup.yml
 
-  play <span class="c">#1 (loadbalancer): Setup load balancer...        TAGS: []</span>
+  play <span class="c1">#1 (loadbalancer): Setup load balancer...        TAGS: []</span>
     pattern: <span class="o">[</span>u<span class="s1">&#39;loadbalancer&#39;</span><span class="o">]</span>
     hosts <span class="o">(</span>1<span class="o">)</span>:
       10.0.0.2
 
-  play <span class="c">#2 (appservers): Setup application servers...    TAGS: []</span>
+  play <span class="c1">#2 (appservers): Setup application servers...    TAGS: []</span>
     pattern: <span class="o">[</span>u<span class="s1">&#39;appservers&#39;</span><span class="o">]</span>
     hosts <span class="o">(</span>5<span class="o">)</span>:
       10.0.0.5
@@ -258,7 +258,7 @@ playbook: setup.yml
       10.0.0.6
       10.0.0.3
 
-  play <span class="c">#3 (dbservers): Setup database servers...        TAGS: []</span>
+  play <span class="c1">#3 (dbservers): Setup database servers...        TAGS: []</span>
     pattern: <span class="o">[</span>u<span class="s1">&#39;dbservers&#39;</span><span class="o">]</span>
     hosts <span class="o">(</span>3<span class="o">)</span>:
       10.0.0.9
@@ -271,8 +271,8 @@ root@ansible:~#
 <h2>Inventario autogenerado</h2>
 <p>A veces nos conviene sacar la lista de <em>hosts</em> y de <em>grupos</em> de otro lugar, por ejemplo, de una base de datos corporativa. En estos casos, basta con saber que el fichero <em>hosts</em> puede ser ejecutable y se espera que devuelva un diccionario JSON de <em>grupos</em>, cada uno con una lista de los <em>hosts</em> que lo componen. <strong>Ansible</strong> va a ejecutar el <em>script</em> para sacar esa información.</p>
 <p>Vamos a hacer un ejercicio de imaginación: supongamos este <em>script</em> saca los datos de algún sitio (LDAP, BBDD, una API de nuestra CMDB, ...), y los saca en formato JSON:</p>
-<div class="highlight"><pre>root@ansible:~# cat hosts.py
-<span class="c">#!/usr/bin/env python</span>
+<div class="highlight"><pre><span></span>root@ansible:~# cat hosts.py
+<span class="c1">#!/usr/bin/env python</span>
 
 import json
 
@@ -291,7 +291,7 @@ root@ansible:~#
 
 
 <p>Veamos que es capaz de sacar los grupos que le pidamos de forma fácil:</p>
-<div class="highlight"><pre>root@ansible:~# ansible -i hosts.py --list-hosts loadbalancer
+<div class="highlight"><pre><span></span>root@ansible:~# ansible -i hosts.py --list-hosts loadbalancer
   hosts <span class="o">(</span>1<span class="o">)</span>:
     10.0.0.2
 root@ansible:~# ansible -i hosts.py --list-hosts appservers
@@ -314,7 +314,7 @@ root@ansible:~#
 <h2>Desplegar ficheros según el host</h2>
 <p>En los <em>playbooks</em> podemos usar variables, bien sean de ejecución, o las que indiquemos nosotros. Esto puede jugar a nuestro favor en caso, por ejemplo, de querer desplegar ficheros distintos en cada servidor. Un ejemplo:</p>
 <p>Supongamos que tenemos esta estructura de ficheros, con su fichero de <em>hosts</em> y su <em>playbook</em>:</p>
-<div class="highlight"><pre>root@ansible:~/multiple_webservers# tree
+<div class="highlight"><pre><span></span>root@ansible:~/multiple_webservers# tree
 .
 ├── hosts
 ├── playbook.yml
@@ -334,14 +334,14 @@ server2
 root@ansible:~/multiple_webservers# cat playbook.yml
 - hosts: webservers
   gather_facts: <span class="nb">false</span>
-<span class="nb">  </span>tasks:
+  tasks:
     - copy: <span class="nv">src</span><span class="o">=</span>webs/<span class="o">{{</span> inventory_hostname <span class="o">}}</span>/ <span class="nv">dest</span><span class="o">=</span>/var/www/
 root@ansible:~/multiple_webservers#
 </pre></div>
 
 
 <p>Lanzamos el <em>playbook</em> para aprovisionar los ficheros <em>web</em> a los servidores:</p>
-<div class="highlight"><pre>root@ansible:~/multiple_webservers# ansible-playbook -i hosts playbook.yml
+<div class="highlight"><pre><span></span>root@ansible:~/multiple_webservers# ansible-playbook -i hosts playbook.yml
 
 PLAY ***************************************************************************
 
@@ -358,7 +358,7 @@ root@ansible:~/multiple_webservers#
 
 
 <p>Y fácilmente comprobamos que cada servidor tiene los suyos:</p>
-<div class="highlight"><pre>root@ansible:~/multiple_webservers# ssh root@server1 ls /var/www/
+<div class="highlight"><pre><span></span>root@ansible:~/multiple_webservers# ssh root@server1 ls /var/www/
 index.html
 sitemap.xml
 root@ansible:~/multiple_webservers# ssh root@server2 ls /var/www/
@@ -370,7 +370,7 @@ root@ansible:~/multiple_webservers#
 
 <h2>Variables en el inventario</h2>
 <p>Hay algunas variables que dependen de la máquina en la que se ejecutan. Aunque es posible definir estructuras condicionales en los <em>playbooks</em>, no escala. Para no ensuciar los <em>playbooks</em>, las podemos definir en el fichero de <em>hosts</em>. Así pues, cada <em>grupo</em> puede tener sus propias variables; pueden ser variables "nuestras" o variables que entienda <strong>ansible</strong>. Como ejemplo, un <em>inventario</em> con variables de acceso:</p>
-<div class="highlight"><pre>root@ansible:~# cat hosts
+<div class="highlight"><pre><span></span>root@ansible:~# cat hosts
 [slaves]
 10.0.0.2
 10.0.0.3
@@ -387,7 +387,7 @@ root@ansible:~#
 
 
 <p>De esta forma, y de acuerdo con la <a href="http://docs.ansible.com/ansible/intro_inventory.html#list-of-behavioral-inventory-parameters">documentación oficial</a> de <strong>ansible</strong>, entraríamos con el usuario <em>ansible</em> para hacer seguidamente <strong>sudo</strong> para actuar con el usuario <em>root</em>.</p>
-<div class="highlight"><pre>root@ansible:~# ansible -i hosts -m command -a id slaves
+<div class="highlight"><pre><span></span>root@ansible:~# ansible -i hosts -m command -a id slaves
 10.0.0.3 | SUCCESS | rc=0 &gt;&gt;
 uid=0(root) gid=0(root) grupos=0(root)
 
@@ -401,9 +401,9 @@ root@ansible:~#
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/05/mongodb-sharding-con-ansible.html">MongoDB sharding con ansible</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html">Balanceando peticiones con HAProxy</a></li>
     </ul>
 </section>
     <hr/>
@@ -810,9 +810,19 @@ root@ansible:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -886,6 +896,11 @@ root@ansible:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -935,7 +950,7 @@ root@ansible:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

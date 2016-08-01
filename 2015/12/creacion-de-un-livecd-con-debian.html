@@ -166,15 +166,15 @@ Linux Sysadmin            </a>
 <h2>Preparación del entorno</h2>
 <p>Todo el proceso va a ser ejecutado con el usuario <em>root</em> por comodidad.</p>
 <p>Empezaremos por instalar todas las tecnologías que hemos mencionado:</p>
-<div class="highlight"><pre>root@desktop:~# apt-get install debootstrap isolinux squashfs-tools genisoimage
+<div class="highlight"><pre><span></span>root@desktop:~# apt-get install debootstrap isolinux squashfs-tools genisoimage
 ...
 root@desktop:~# 
 </pre></div>
 
 
 <p>Creamos una carpeta de trabajo para contener todos los ficheros temporales y el producto final, por limpieza:</p>
-<div class="highlight"><pre>root@desktop:~# mkdir live_boot
-root@desktop:~# <span class="nb">cd </span>live_boot
+<div class="highlight"><pre><span></span>root@desktop:~# mkdir live_boot
+root@desktop:~# <span class="nb">cd</span> live_boot
 root@desktop:~/live_boot# 
 </pre></div>
 
@@ -182,7 +182,7 @@ root@desktop:~/live_boot#
 <p>Todos los comandos que se detallan a continuación se hacen desde dentro de esta carpeta.</p>
 <h2>Preparación del sistema de ficheros, el kernel y el initrd</h2>
 <p>El sistema de ficheros se hace a partir de una jaula estándar de una distribución normal. En este paso, las distribuciones que usan <em>debootstrap</em> nos facilitan mucho las cosas (aunque esta es la operación mas larga de este tutorial):</p>
-<div class="highlight"><pre>root@desktop:~/live_boot# debootstrap --variant<span class="o">=</span>minbase jessie chroot
+<div class="highlight"><pre><span></span>root@desktop:~/live_boot# debootstrap --variant<span class="o">=</span>minbase jessie chroot
 I: Retrieving Release 
 I: Retrieving Release.gpg 
 I: Checking Release signature
@@ -198,7 +198,7 @@ root@desktop:~/live_boot#
 
 
 <p>Ahora se trata de preparar esta jaula con los paquetes que necesitemos y las configuraciones adecuadas. Vamos a montar los pseudo sistemas de ficheros <em>/proc</em>, <em>/sys</em>, <em>/dev</em> y <em>/dev/pts</em>, que posiblemente nos van a hacer falta cuando estemos dentro de la jaula.</p>
-<div class="highlight"><pre>root@desktop:~/live_boot# mount -o <span class="nb">bind</span> /proc/ chroot/proc/
+<div class="highlight"><pre><span></span>root@desktop:~/live_boot# mount -o <span class="nb">bind</span> /proc/ chroot/proc/
 root@desktop:~/live_boot# mount -o <span class="nb">bind</span> /sys/ chroot/sys/
 root@desktop:~/live_boot# mount -o <span class="nb">bind</span> /dev/ chroot/dev/
 root@desktop:~/live_boot# mount -o <span class="nb">bind</span> /dev/pts/ chroot/dev/pts/
@@ -207,14 +207,14 @@ root@desktop:~/live_boot#
 
 
 <p>Entramos en la jaula:</p>
-<div class="highlight"><pre>root@desktop:~/live_boot# chroot chroot
+<div class="highlight"><pre><span></span>root@desktop:~/live_boot# chroot chroot
 root@desktop:/# 
 </pre></div>
 
 
 <p><strong>CUIDADO</strong>: A partir de ahora, y hasta nuevo aviso, todos los comandos se hacen <strong>dentro</strong> de la jaula.</p>
 <p>Antes de nada, vamos a asignar una password al usuario <em>root</em>, porque sino, no vamos a poder entrar en el <em>livecd</em>.</p>
-<div class="highlight"><pre>root@desktop:/# passwd    
+<div class="highlight"><pre><span></span>root@desktop:/# passwd    
 Enter new UNIX password: 
 Retype new UNIX password: 
 passwd: password updated successfully
@@ -223,13 +223,13 @@ root@desktop:/#
 
 
 <p>Asignamos el nombre de máquina que mostrará el <em>livecd</em> una vez haya hecho el <em>boot</em>:</p>
-<div class="highlight"><pre>root@desktop:/# <span class="nb">echo</span> <span class="s2">&quot;zerofree&quot;</span> &gt; /etc/hostname
+<div class="highlight"><pre><span></span>root@desktop:/# <span class="nb">echo</span> <span class="s2">&quot;zerofree&quot;</span> &gt; /etc/hostname
 root@desktop:/# 
 </pre></div>
 
 
 <p>Para que el <em>livecd</em> pueda hacer <em>boot</em>, vamos a necesitar el paquete <strong>live-boot</strong> y un <em>kernel</em> adecuado a la máquina que va a usar el <em>livecd</em>. El paquete del <em>kernel</em> ya nos va a dotar de un <em>initrd</em> que también vamos a necesitar para el <em>livecd</em>. Este paso también tarda un poco.</p>
-<div class="highlight"><pre>root@desktop:/# apt-get install linux-image-486 live-boot
+<div class="highlight"><pre><span></span>root@desktop:/# apt-get install linux-image-486 live-boot
 Reading package lists... Done
 Building dependency tree... Done
 ...
@@ -243,7 +243,7 @@ root@desktop:/#
 
 
 <p>Ahora vamos a instalar los paquetes que queramos en el <em>livecd</em>; yo voy a poner <em>zerofree</em> que es la herramienta que motivó este <em>livecd</em>.</p>
-<div class="highlight"><pre>root@desktop:/# apt-get install zerofree
+<div class="highlight"><pre><span></span>root@desktop:/# apt-get install zerofree
 ...
 Unpacking zerofree <span class="o">(</span>1.0.3-1<span class="o">)</span> ...
 Setting up zerofree <span class="o">(</span>1.0.3-1<span class="o">)</span> ...
@@ -252,7 +252,7 @@ root@desktop:/#
 
 
 <p><strong>OPCIONAL</strong>: Para reducir el tamaño final, voy a limpiar todos los archivos temporales que usa <em>apt</em>, tanto los archivos <em>.deb</em> en <em>/var/cache/apt</em>, como las listas de paquetes disponibles en <em>/var/lib/apt</em>.</p>
-<div class="highlight"><pre>root@desktop:/# cat /dev/null &gt; /etc/apt/sources.list
+<div class="highlight"><pre><span></span>root@desktop:/# cat /dev/null &gt; /etc/apt/sources.list
 root@desktop:/# apt-get update
 Reading package lists... Done
 root@desktop:/# apt-get clean 
@@ -261,7 +261,7 @@ root@desktop:/#
 
 
 <p>Y finalmente salimos de la jaula:</p>
-<div class="highlight"><pre>root@desktop:/# <span class="nb">exit</span>
+<div class="highlight"><pre><span></span>root@desktop:/# <span class="nb">exit</span>
 <span class="nb">exit</span>
 root@desktop:~/live_boot# 
 </pre></div>
@@ -269,7 +269,7 @@ root@desktop:~/live_boot#
 
 <p><strong>CUIDADO</strong>: A partir de ahora, todos los comandos se hacen <strong>fuera</strong> de la jaula.</p>
 <p>Vamos a desmontar los pseudo sistemas de ficheros que ya no son necesarios, y que van a molestar cuando compactemos la jaula. Como apunte, la jaula había levantado un proceso <em>/usr/sbin/uuidd</em> que evitaba desmontar <em>chroot/dev</em>, por lo que tuve que finalizar el proceso con un <em>kill</em>.</p>
-<div class="highlight"><pre>root@desktop:~/live_boot# umount chroot/dev/pts/
+<div class="highlight"><pre><span></span>root@desktop:~/live_boot# umount chroot/dev/pts/
 root@desktop:~/live_boot# umount chroot/dev/
 root@desktop:~/live_boot# umount chroot/sys/
 root@desktop:~/live_boot# umount chroot/proc/
@@ -278,7 +278,7 @@ root@desktop:~/live_boot#
 
 
 <p><strong>OPCIONAL</strong>: Sabiendo que mis máquinas virtuales son clones y el comando que va a correr siempre el comando <em>zerofree</em> contra el disco <em>/dev/sda1</em>, se puede poner los comandos en el <em>.bash_history</em> de <em>root</em> para poderlos recuperar mediante el uso de flechas.</p>
-<div class="highlight"><pre>root@desktop:~/live_boot# cat chroot/root/.bash_history 
+<div class="highlight"><pre><span></span>root@desktop:~/live_boot# cat chroot/root/.bash_history 
 zerofree /dev/sda1
 poweroff
 root@desktop:~/live_boot# 
@@ -287,13 +287,13 @@ root@desktop:~/live_boot#
 
 <h2>Empaquetando la imagen</h2>
 <p>Vamos a crear una carpeta contenedora, que va a servir como raíz del <em>livecd</em>. Dentro le vamos a poner una carpeta <em>live</em> (para el sistema de ficheros, el <em>kernel</em> y el <em>initrd</em>) y una carpeta <em>isolinux</em> (para todo lo referente al <em>bootloader</em>).</p>
-<div class="highlight"><pre>root@desktop:~/live_boot# mkdir -p image/<span class="o">{</span>live,isolinux<span class="o">}</span>
+<div class="highlight"><pre><span></span>root@desktop:~/live_boot# mkdir -p image/<span class="o">{</span>live,isolinux<span class="o">}</span>
 root@desktop:~/live_boot# 
 </pre></div>
 
 
 <p>Vamos a poner el sistema de ficheros en formato <em>SquashFS</em>. Como apunte, el <em>kernel</em> y el <em>initrd</em> (ambos en la carpeta <em>/boot</em>) se excluyen porque el <em>bootloader</em> es incapaz de leerlos de allí; así que los copiamos a la misma carpeta.</p>
-<div class="highlight"><pre>root@desktop:~/live_boot# mksquashfs chroot image/live/filesystem.squashfs -e boot
+<div class="highlight"><pre><span></span>root@desktop:~/live_boot# mksquashfs chroot image/live/filesystem.squashfs -e boot
 Parallel mksquashfs: Using <span class="m">1</span> processor
 Creating 4.0 filesystem on image/live/filesystem.squashfs, block size 131072.
 ...  
@@ -304,7 +304,7 @@ root@desktop:~/live_boot#
 
 
 <p>Ahora vamos con el <em>bootloader</em>. Lo primero es poner una configuración para saber qué menú nos va a mostrar:</p>
-<div class="highlight"><pre>root@desktop:~/live_boot# cat image/isolinux/isolinux.cfg 
+<div class="highlight"><pre><span></span>root@desktop:~/live_boot# cat image/isolinux/isolinux.cfg 
 UI menu.c32
 
 prompt 0
@@ -322,7 +322,7 @@ root@desktop:~/live_boot#
 
 
 <p>Copiamos la imagen del <em>bootloader</em> <strong>isolinux</strong> y los módulos que se necesitan, tanto porque nuestra configuración los usa o porque se usan desde otros módulos.</p>
-<div class="highlight"><pre>root@desktop:~/live_boot# cp /usr/lib/ISOLINUX/isolinux.bin image/isolinux/
+<div class="highlight"><pre><span></span>root@desktop:~/live_boot# cp /usr/lib/ISOLINUX/isolinux.bin image/isolinux/
 root@desktop:~/live_boot# cp /usr/lib/syslinux/modules/bios/ldlinux.c32 image/isolinux/
 root@desktop:~/live_boot# cp /usr/lib/syslinux/modules/bios/menu.c32 image/isolinux/
 root@desktop:~/live_boot# cp /usr/lib/syslinux/modules/bios/libutil.c32 image/isolinux/
@@ -331,7 +331,7 @@ root@desktop:~/live_boot#
 
 
 <p>Finalmente empaquetamos la imagen <em>.iso</em>. Para ello usaremos la herramienta <em>genisoimage</em> en la carpeta raíz de lo que sería el <em>livecd</em>.</p>
-<div class="highlight"><pre>root@desktop:~/live_boot# <span class="nb">cd </span>image/
+<div class="highlight"><pre><span></span>root@desktop:~/live_boot# <span class="nb">cd</span> image/
 root@desktop:~/live_boot/image# genisoimage -rational-rock -volid <span class="s2">&quot;Debian Zerofree&quot;</span> -cache-inodes -joliet -full-iso9660-filenames -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size <span class="m">4</span> -boot-info-table -output ../debian-zerofree.iso .
 I: -input-charset not specified, using utf-8 <span class="o">(</span>detected in locale settings<span class="o">)</span>
 Size of boot image is <span class="m">4</span> sectors -&gt; No emulation
@@ -357,7 +357,7 @@ root@desktop:~/live_boot#
 
 
 <p>Y nuestra imagen <em>.iso</em> queda en la carpeta de trabajo, junto a la jaula y a la estructura del <em>livecd</em>. Solo necesitamos la imagen <em>.iso</em>, pero podemos dejar los ficheros intermedios hasta que estemos satisfechos con la imagen; es mas fácil modificar la jaula, el empaquetado <em>filesystem.squashfs</em> y la imagen <em>.iso</em> que volver a hacer un <em>debootstrap</em> entero...</p>
-<div class="highlight"><pre>root@desktop:~/live_boot# ls -lh
+<div class="highlight"><pre><span></span>root@desktop:~/live_boot# ls -lh
 total 106M
 drwxr-xr-x <span class="m">20</span> root root 4,0K dic  <span class="m">2</span> 11:30 chroot
 -rw-r--r--  <span class="m">1</span> root root 106M dic  <span class="m">2</span> 12:06 debian-zerofree.iso
@@ -368,9 +368,9 @@ root@desktop:~/live_boot#
 
 <h2>Conclusión</h2>
 <p>Copiando esta imagen <em>.iso</em> a mi máquina con <em>VirtualBox</em> y montándola antes de hacer el <em>boot</em> de cada máquina, puedo usar la herramienta <em>zerofree</em> libremente, sin instalarla en las máquinas virtuales. Tras ello, el compactado de los ficheros <em>.vdi</em> libera los megabytes a cientos.</p>
-<div class="highlight"><pre>gerard@virtualbox:~/VirtualBox VMs<span class="nv">$ </span>VBoxManage modifyvdi Debian/Debian.vdi --compact
+<div class="highlight"><pre><span></span>gerard@virtualbox:~/VirtualBox VMs$ VBoxManage modifyvdi Debian/Debian.vdi --compact
 ...
-gerard@virtualbox:~/VirtualBox VMs<span class="nv">$ </span>
+gerard@virtualbox:~/VirtualBox VMs$ 
 </pre></div>
 
 
@@ -381,8 +381,8 @@ gerard@virtualbox:~/VirtualBox VMs<span class="nv">$ </span>
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">Sistemas de ficheros multicapa con aufs</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
     </ul>
 </section>
     <hr/>
@@ -789,9 +789,19 @@ gerard@virtualbox:~/VirtualBox VMs<span class="nv">$ </span>
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -865,6 +875,11 @@ gerard@virtualbox:~/VirtualBox VMs<span class="nv">$ </span>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -914,7 +929,7 @@ gerard@virtualbox:~/VirtualBox VMs<span class="nv">$ </span>
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

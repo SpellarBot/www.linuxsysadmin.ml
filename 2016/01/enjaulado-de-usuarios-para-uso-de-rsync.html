@@ -151,7 +151,7 @@ Linux Sysadmin            </a>
                 <p>Todos nos hemos encontrado alguna vez con una web, sea en <em>HTML</em> o en <em>PHP</em>, que se compone de centenares o miles de ficheros, y que hay que ir actualizando cada vez que cambian unos pocos ficheros. En estos casos la capacidad incremental de la herramienta <strong>rsync</strong> puede ayudarnos mucho.</p>
 <p>Sin embargo, la herramienta <strong>rsync</strong> funciona por el puerto de <em>SSH</em>, y dar acceso al mismo es un problema desde el punto de vista de la seguridad del sistema. Vamos a crear una jaula para los usuarios que lo necesiten, y vamos a limitar los comandos que puede utilizar, de forma que solo pueda hacer <strong>rsync</strong>.</p>
 <p>Para poder continuar, necesitamos las 2 herramientas que se van a usar: <strong>rsync</strong> y <strong>rssh</strong>.</p>
-<div class="highlight"><pre>root@webserver:~# apt-get install rssh rsync
+<div class="highlight"><pre><span></span>root@webserver:~# apt-get install rssh rsync
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias       
 Leyendo la información de estado... Hecho
@@ -168,13 +168,13 @@ root@webserver:~#
 
 <h2>Preparación del sistema de enjaulado</h2>
 <p>Como decisión de diseño, he decidido que voy a enjaular todos los usuarios que pertenezcan a un grupo, al que llamaremos <em>restricted</em>.</p>
-<div class="highlight"><pre>root@webserver:~# groupadd restricted
+<div class="highlight"><pre><span></span>root@webserver:~# groupadd restricted
 root@webserver:~# 
 </pre></div>
 
 
 <p>Ahora vamos a configurar el demonio <strong>SSH</strong> para que todos los usuarios del grupo <em>restricted</em> queden enjaulados en <em>/srv/jails/</em>, en una carpeta por usuario. La directiva <em>X11Forwarding</em> y <em>AllowTcpForwarding</em> son restricciones adicionales y no son necesarias.</p>
-<div class="highlight"><pre>root@webserver:~# cat /etc/ssh/sshd_config 
+<div class="highlight"><pre><span></span>root@webserver:~# cat /etc/ssh/sshd_config 
 ...
 Match group restricted
     ChrootDirectory /srv/jails/%u
@@ -185,20 +185,20 @@ root@webserver:~#
 
 
 <p>Y reiniciamos el demonio para que se apliquen las modificaciones en la configuración.</p>
-<div class="highlight"><pre>root@webserver:~# service ssh restart
+<div class="highlight"><pre><span></span>root@webserver:~# service ssh restart
 root@webserver:~# 
 </pre></div>
 
 
 <h2>Creando una jaula para el primer usuario</h2>
 <p>Para tener un usuario enjaulado, necesitamos un usuario, en este caso, el usuario <em>web</em>. Le vamos a poner <em>rssh</em> como shell, su carpeta personal como <em>/</em> y le asignamos el grupo <em>restricted</em> para que quede enjaulado.</p>
-<div class="highlight"><pre>root@webserver:~# useradd -d / -s /usr/bin/rssh -G restricted web
+<div class="highlight"><pre><span></span>root@webserver:~# useradd -d / -s /usr/bin/rssh -G restricted web
 root@webserver:~# 
 </pre></div>
 
 
 <p>Para que el usuario <em>web</em> pueda entrar en esta máquina, necesita una contraseña. Alternativamente, podríamos haber montado una autenticación por claves <em>SSH</em>.</p>
-<div class="highlight"><pre>root@webserver:~# passwd web
+<div class="highlight"><pre><span></span>root@webserver:~# passwd web
 Introduzca la nueva contraseña de UNIX: 
 Vuelva a escribir la nueva contraseña de UNIX: 
 passwd: contraseña actualizada correctamente
@@ -208,20 +208,20 @@ root@webserver:~#
 
 <p>Y ahora vamos a crearle una estructura de carpetas muy básica en donde deberá estar su jaula. Puesto que se trata del usuario <em>web</em>, la carpeta de la jaula (la que el usuario verá como <em>/</em>) va a ser <em>/srv/jails/web/</em>.</p>
 <p><strong>IMPORTANTE</strong>: Esta carpeta y todas las de la ruta deben perteneces al usuario <em>root</em> y tener permisos de escritura solo por el <em>owner</em>; de otra manera, el <em>SSH</em> falla al enjaular.</p>
-<div class="highlight"><pre>root@webserver:~# mkdir -p /srv/jails/web/<span class="o">{</span>usr/bin,etc,lib<span class="o">}</span>
+<div class="highlight"><pre><span></span>root@webserver:~# mkdir -p /srv/jails/web/<span class="o">{</span>usr/bin,etc,lib<span class="o">}</span>
 root@webserver:~# 
 </pre></div>
 
 
 <p>Para limitar que el usuario solo pueda hacer <em>rsync</em> vamos a necesitar la ayuda de <em>rssh</em>; así pues, vamos a poner ambos binarios en la jaula.</p>
-<div class="highlight"><pre>root@webserver:~# cp /usr/bin/rssh /srv/jails/web/usr/bin/
+<div class="highlight"><pre><span></span>root@webserver:~# cp /usr/bin/rssh /srv/jails/web/usr/bin/
 root@webserver:~# cp /usr/bin/rsync /srv/jails/web/usr/bin/
 root@webserver:~# 
 </pre></div>
 
 
 <p>Estos dos comandos son binarios <em>linkados</em> dinámicamente que necesitan librerías. Vamos a buscarlos con el comando <strong>ldd</strong>.</p>
-<div class="highlight"><pre>root@webserver:~# ldd /usr/bin/rssh 
+<div class="highlight"><pre><span></span>root@webserver:~# ldd /usr/bin/rssh 
     linux-gate.so.1 <span class="o">(</span>0xb7789000<span class="o">)</span>
     libc.so.6 <span class="o">=</span>&gt; /lib/i386-linux-gnu/libc.so.6 <span class="o">(</span>0xb760a000<span class="o">)</span>
     /lib/ld-linux.so.2 <span class="o">(</span>0xb778c000<span class="o">)</span>
@@ -237,7 +237,7 @@ root@webserver:~#
 
 
 <p>Y las copiamos en la carpeta <em>lib</em> de la jaula.</p>
-<div class="highlight"><pre>root@webserver:~# cp /lib/ld-linux.so.2 /srv/jails/web/lib/
+<div class="highlight"><pre><span></span>root@webserver:~# cp /lib/ld-linux.so.2 /srv/jails/web/lib/
 root@webserver:~# cp /lib/i386-linux-gnu/libc.so.6 /srv/jails/web/lib/
 root@webserver:~# cp /lib/i386-linux-gnu/libattr.so.1 /srv/jails/web/lib/
 root@webserver:~# cp /lib/i386-linux-gnu/libacl.so.1 /srv/jails/web/lib/
@@ -247,13 +247,13 @@ root@webserver:~#
 
 
 <p>Voy a quitar los permisos de ejecución de la librería <em>libc</em> porque no lo necesita.</p>
-<div class="highlight"><pre>root@webserver:~# chmod <span class="m">644</span> /srv/jails/web/lib/libc.so.6 
+<div class="highlight"><pre><span></span>root@webserver:~# chmod <span class="m">644</span> /srv/jails/web/lib/libc.so.6 
 root@webserver:~# 
 </pre></div>
 
 
 <p>Ahora que tenemos las librerías en la jaula, volvemos a mirar que otras librerías puedan necesitar con <strong>ldd</strong>, para evitar dejarnos ninguna.</p>
-<div class="highlight"><pre>root@webserver:~# ldd /srv/jails/web/lib/*
+<div class="highlight"><pre><span></span>root@webserver:~# ldd /srv/jails/web/lib/*
 /srv/jails/web/lib/ld-linux.so.2:
     statically linked
 /srv/jails/web/lib/libacl.so.1:
@@ -277,40 +277,40 @@ root@webserver:~#
 
 
 <p>Y como no han entrado de nuevas, hemos acabado con esto. Ahora vamos a copiar la configuración de <strong>rssh</strong>.</p>
-<div class="highlight"><pre>root@webserver:~# cp /etc/rssh.conf /srv/jails/web/etc/
+<div class="highlight"><pre><span></span>root@webserver:~# cp /etc/rssh.conf /srv/jails/web/etc/
 root@webserver:~# 
 </pre></div>
 
 
 <p>Vamos a añadir la directiva <em>allowrsync</em> ya que, por defecto, no se permite nada:</p>
 <p><strong>ANTES</strong>:</p>
-<div class="highlight"><pre>root@webserver:~# grep allowrsync /srv/jails/web/etc/rssh.conf 
-<span class="c">#allowrsync</span>
+<div class="highlight"><pre><span></span>root@webserver:~# grep allowrsync /srv/jails/web/etc/rssh.conf 
+<span class="c1">#allowrsync</span>
 root@webserver:~# 
 </pre></div>
 
 
 <p><strong>DESPUES</strong>:</p>
-<div class="highlight"><pre>root@webserver:~# grep allowrsync /srv/jails/web/etc/rssh.conf 
+<div class="highlight"><pre><span></span>root@webserver:~# grep allowrsync /srv/jails/web/etc/rssh.conf 
 allowrsync
 root@webserver:~# 
 </pre></div>
 
 
 <p>Como estamos esperando que el usuario <em>web</em> deje sus cosas en una carpeta <em>www</em>, vamos a crearla, ya que va a ser la única en la que pueda copiar sus cosas.</p>
-<div class="highlight"><pre>root@webserver:~# mkdir /srv/jails/web/www
+<div class="highlight"><pre><span></span>root@webserver:~# mkdir /srv/jails/web/www
 root@webserver:~# 
 </pre></div>
 
 
 <p>Y le damos permisos necesarios para que escriba en ella; por ejemplo, le damos la propiedad de la carpeta.</p>
-<div class="highlight"><pre>root@webserver:~# chown web:web /srv/jails/web/www/
+<div class="highlight"><pre><span></span>root@webserver:~# chown web:web /srv/jails/web/www/
 root@webserver:~# 
 </pre></div>
 
 
 <p>Y con esto queda completa la jaula. Como demostración, muestro la salida del comando <strong>tree</strong>:</p>
-<div class="highlight"><pre>root@webserver:~# tree /srv/jails/web/
+<div class="highlight"><pre><span></span>root@webserver:~# tree /srv/jails/web/
 /srv/jails/web/
 ├── etc
 │   └── rssh.conf
@@ -333,17 +333,17 @@ root@webserver:~#
 
 <h2>Uso de la jaula</h2>
 <p>Supongamos que tenemos un proyecto web en una máquina <em>developer</em>, por ejemplo:</p>
-<div class="highlight"><pre>gerard@developer:~<span class="nv">$ </span>tree web/
+<div class="highlight"><pre><span></span>gerard@developer:~$ tree web/
 web/
 └── index.html
 
 <span class="m">0</span> directories, <span class="m">1</span> file
-gerard@developer:~<span class="nv">$ </span>
+gerard@developer:~$ 
 </pre></div>
 
 
 <p>Intentamos entrar por <em>SSH</em> y vemos que falla:</p>
-<div class="highlight"><pre>gerard@developer:~<span class="nv">$ </span>ssh web@10.0.0.2
+<div class="highlight"><pre><span></span>gerard@developer:~$ ssh web@10.0.0.2
 web@10.0.0.2<span class="err">&#39;</span>s password: 
 
 The programs included with the Debian GNU/Linux system are free software<span class="p">;</span>
@@ -360,37 +360,37 @@ Allowed commands: rsync
 If you believe this is in error, please contact your system administrator.
 
 Connection to 10.0.0.2 closed.
-gerard@developer:~<span class="nv">$ </span>
+gerard@developer:~$ 
 </pre></div>
 
 
 <p>Vamos a usar <em>rsync</em> para sincronizar este proyecto con el servidor que acabamos de montar. Para eso, la máquina cliente necesita tener instalado el paquete <strong>rsync</strong>.</p>
-<div class="highlight"><pre>gerard@developer:~<span class="nv">$ </span>rsync -rvzc --delete web/ web@10.0.0.2:/www
+<div class="highlight"><pre><span></span>gerard@developer:~$ rsync -rvzc --delete web/ web@10.0.0.2:/www
 web@10.0.0.2<span class="err">&#39;</span>s password: 
 sending incremental file list
 index.html
 
 sent <span class="m">139</span> bytes  received <span class="m">35</span> bytes  49.71 bytes/sec
 total size is <span class="m">12</span>  speedup is 0.07
-gerard@developer:~<span class="nv">$ </span>
+gerard@developer:~$ 
 </pre></div>
 
 
 <p>Si repetimos el comando, vemos que la lista de ficheros no incluye el <em>index.html</em>, porque no ha cambiado respecto a lo que tenemos en el servidor, así que no lo manda.</p>
-<div class="highlight"><pre>gerard@developer:~<span class="nv">$ </span>rsync -rvzc --delete web/ web@10.0.0.2:/www
+<div class="highlight"><pre><span></span>gerard@developer:~$ rsync -rvzc --delete web/ web@10.0.0.2:/www
 web@10.0.0.2<span class="err">&#39;</span>s password: 
 sending incremental file list
 
 sent <span class="m">83</span> bytes  received <span class="m">12</span> bytes  7.60 bytes/sec
 total size is <span class="m">12</span>  speedup is 0.13
-gerard@developer:~<span class="nv">$ </span>
+gerard@developer:~$ 
 </pre></div>
 
 
 <p>los <em>flags</em> elegidos son <strong>-r</strong> (recursivo), <strong>-v</strong> (verbose), <strong>-z</strong> (comprimido), <strong>-c</strong> (diferenciar por <em>checksum</em>) y <strong>--delete</strong> (para borrar fichero que estén en el servidor y no deban).</p>
 <p><strong>IMPORTANTE</strong>: la carpeta origen acaba con <em>/</em>. Esa es la diferencia entre copiar el contenido de la carpeta y copiar la carpeta misma.</p>
 <p>Analizamos el resultado y vemos que lo hemos copiado en <em>/www/</em>, siempre desde el punto de vista de la jaula.</p>
-<div class="highlight"><pre>root@webserver:~# ls /www
+<div class="highlight"><pre><span></span>root@webserver:~# ls /www
 ls: no se puede acceder a /www: No existe el fichero o el directorio
 root@webserver:~# tree /srv/jails/web/
 /srv/jails/web/
@@ -420,8 +420,8 @@ root@webserver:~#
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/06/preparando-un-servidor-de-repositorios-git.html">Preparando un servidor de repositorios GIT</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">Autenticación SSH por claves</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/01/creando-una-jaula-centos.html">Creando una jaula CentOS</a></li>
     </ul>
 </section>
@@ -829,9 +829,19 @@ root@webserver:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -905,6 +915,11 @@ root@webserver:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -954,7 +969,7 @@ root@webserver:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

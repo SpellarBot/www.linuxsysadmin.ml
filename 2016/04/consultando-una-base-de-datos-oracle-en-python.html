@@ -170,7 +170,7 @@ Linux Sysadmin            </a>
 <li>gcc</li>
 </ul>
 <p>Adicionalmente, se necesita descargar el <a href="https://www.oracle.com/downloads/index.html">Oracle instant client</a>, concretamente el <strong>basic</strong> y, en caso de la construcción de la <em>wheel</em>, también el <strong>sdk</strong>.</p>
-<div class="highlight"><pre>root@oracle:~# ls -1
+<div class="highlight"><pre><span></span>root@oracle:~# ls -1
 instantclient-basic-linux-12.1.0.2.0.zip
 instantclient-sdk-linux-12.1.0.2.0.zip
 root@oracle:~#
@@ -179,7 +179,7 @@ root@oracle:~#
 
 <h2>Construyendo el fichero wheel</h2>
 <p>El primer paso consiste en descomprimir el <em>instant client</em> de Oracle, necesario para cualquier programa que intente conectarse a sus bases de datos.</p>
-<div class="highlight"><pre>root@oracle:~# unzip instantclient-basic-linux-12.1.0.2.0.zip
+<div class="highlight"><pre><span></span>root@oracle:~# unzip instantclient-basic-linux-12.1.0.2.0.zip
 Archive:  instantclient-basic-linux-12.1.0.2.0.zip
   inflating: instantclient_12_1/adrci
   inflating: instantclient_12_1/BASIC_README
@@ -249,13 +249,13 @@ root@oracle:~#
 
 
 <p>Para que el sistema sepa donde lo hemos descomprimido, hay que definir la variable de entorno <strong>ORACLE_HOME</strong>.</p>
-<div class="highlight"><pre>root@oracle:~# <span class="nb">export </span><span class="nv">ORACLE_HOME</span><span class="o">=</span>/root/instantclient_12_1/
+<div class="highlight"><pre><span></span>root@oracle:~# <span class="nb">export</span> <span class="nv">ORACLE_HOME</span><span class="o">=</span>/root/instantclient_12_1/
 root@oracle:~#
 </pre></div>
 
 
 <p>La compilación de las librerías contenidas en el <em>package</em> <strong>cx_Oracle</strong> tiene un error y busca una librería llamada <em>libclntsh.so</em>, que no se llama así en el <em>runtime</em>. Se puede evitar el problema copiando la librería con el nuevo nombre, o mediante un enlace simbólico.</p>
-<div class="highlight"><pre>root@oracle:~# <span class="nb">cd </span>instantclient_12_1/
+<div class="highlight"><pre><span></span>root@oracle:~# <span class="nb">cd</span> instantclient_12_1/
 root@oracle:~/instantclient_12_1# ln -s libclntsh.so.12.1 libclntsh.so
 root@oracle:~/instantclient_12_1# <span class="nb">cd</span> ..
 root@oracle:~#
@@ -263,7 +263,7 @@ root@oracle:~#
 
 
 <p>Y con esto ya podemos empezar. Creamos un <strong>virtualenv</strong> que nos va a servir como plataforma de construcción del fichero <em>wheel</em>.</p>
-<div class="highlight"><pre>root@oracle:~# virtualenv env
+<div class="highlight"><pre><span></span>root@oracle:~# virtualenv env
 New python executable in /root/env/bin/python
 Installing setuptools, pip, wheel...done.
 root@oracle:~#
@@ -271,7 +271,7 @@ root@oracle:~#
 
 
 <p>Se activa el entorno virtual y se instala la librería mediante <strong>pip</strong>.</p>
-<div class="highlight"><pre>root@oracle:~# . env/bin/activate
+<div class="highlight"><pre><span></span>root@oracle:~# . env/bin/activate
 <span class="o">(</span>env<span class="o">)</span> root@oracle:~# pip install cx_Oracle
 Collecting cx-Oracle
   Using cached cx_Oracle-5.2.1.tar.gz
@@ -286,7 +286,7 @@ Successfully installed cx-Oracle-5.2.1
 
 
 <p>Podemos verificar si funciona cargando el módulo, y por ejemplo, preguntando la versión del mismo.</p>
-<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle:~# python -c <span class="s2">&quot;import cx_Oracle; print cx_Oracle.version&quot;</span>
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@oracle:~# python -c <span class="s2">&quot;import cx_Oracle; print cx_Oracle.version&quot;</span>
 Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
   File <span class="s2">&quot;&lt;string&gt;&quot;</span>, line 1, in &lt;module&gt;
 ImportError: libclntsh.so.12.1: cannot open shared object file: No such file or directory
@@ -295,13 +295,13 @@ ImportError: libclntsh.so.12.1: cannot open shared object file: No such file or 
 
 
 <p>Este es un mal resultado; nos indica que no se encuentra un fichero <em>.so</em>. Este fichero está en <strong>ORACLE_HOME</strong>, pero el sistema intenta buscar en <strong>LD_LIBRARY_PATH</strong>. Con modificar esta variable de entorno funciona.</p>
-<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle:~# <span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$ORACLE_HOME</span>:<span class="nv">$LD_LIBRARY_PATH</span>
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@oracle:~# <span class="nb">export</span> <span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$ORACLE_HOME</span>:<span class="nv">$LD_LIBRARY_PATH</span>
 <span class="o">(</span>env<span class="o">)</span> root@oracle:~#
 </pre></div>
 
 
 <p>Otro error es que se queje de que no encuentra <em>libaio.so</em>. Esto indica que os habéis saltado los requisitos y necesitáis instalarlos.</p>
-<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle:~# python -c <span class="s2">&quot;import cx_Oracle; print cx_Oracle.version&quot;</span>
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@oracle:~# python -c <span class="s2">&quot;import cx_Oracle; print cx_Oracle.version&quot;</span>
 Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
   File <span class="s2">&quot;&lt;string&gt;&quot;</span>, line 1, in &lt;module&gt;
 ImportError: libaio.so.1: cannot open shared object file: No such file or directory
@@ -320,14 +320,14 @@ Se utilizarán 13,3 kB de espacio de disco adicional después de esta operación
 
 
 <p>Finalmente obtenemos un resultado correcto, que nos indica que tenemos instalada la librería en nuestro entorno virtual.</p>
-<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle:~# python -c <span class="s2">&quot;import cx_Oracle; print cx_Oracle.version&quot;</span>
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@oracle:~# python -c <span class="s2">&quot;import cx_Oracle; print cx_Oracle.version&quot;</span>
 5.2.1
 <span class="o">(</span>env<span class="o">)</span> root@oracle:~#
 </pre></div>
 
 
 <p>Podemos aprovechar esta compilación para máquinas con el mismo tipo de procesador y con la misma versión de <strong>python</strong>, creando un fichero <em>wheel</em> con la librería ya compilada.</p>
-<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle:~# pip wheel cx_Oracle
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@oracle:~# pip wheel cx_Oracle
 Collecting cx-Oracle
   Saved ./cx_Oracle-5.2.1-cp27-cp27mu-linux_i686.whl
 Skipping cx-Oracle, due to already being wheel.
@@ -339,7 +339,7 @@ Skipping cx-Oracle, due to already being wheel.
 <h2>Instalando en otras máquinas</h2>
 <p>Vamos a suponer que nos interesa poner el <em>runtime</em> de Oracle y la carpeta con nuestros <em>scripts</em> en <em>/opt/</em>. De hecho, nada impide que se haga en una carpeta personal, en la que tengamos privilegios completos.</p>
 <p>También vamos a necesitar un <em>instant client</em> para poder funcionar, aunque esta vez no se necesitan enlaces simbólicos ni declarar la variable de entorno <strong>ORACLE_HOME</strong>. Lo descargamos en su localización deseada.</p>
-<div class="highlight"><pre>root@oracle2:/opt# unzip /root/instantclient-basic-linux-12.1.0.2.0.zip
+<div class="highlight"><pre><span></span>root@oracle2:/opt# unzip /root/instantclient-basic-linux-12.1.0.2.0.zip
 Archive:  /root/instantclient-basic-linux-12.1.0.2.0.zip
   inflating: instantclient_12_1/adrci
   inflating: instantclient_12_1/BASIC_README
@@ -361,7 +361,7 @@ root@oracle2:/opt#
 
 
 <p>Las dependencias deberían estar ya instaladas, pero en mi caso no lo estaban. Las instalamos.</p>
-<div class="highlight"><pre>root@oracle2:/opt# apt-get install python libaio1
+<div class="highlight"><pre><span></span>root@oracle2:/opt# apt-get install python libaio1
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias
 Leyendo la información de estado... Hecho
@@ -383,8 +383,8 @@ root@oracle2:/opt#
 
 
 <p>Creamos la carpeta que va a contener el entorno virtual y los <em>scripts</em>, y creamos en ella el entorno virtual.</p>
-<div class="highlight"><pre>root@oracle2:/opt# mkdir scripts
-root@oracle2:/opt# <span class="nb">cd </span>scripts/
+<div class="highlight"><pre><span></span>root@oracle2:/opt# mkdir scripts
+root@oracle2:/opt# <span class="nb">cd</span> scripts/
 root@oracle2:/opt/scripts# virtualenv env
 New python executable in /opt/scripts/env/bin/python
 Installing setuptools, pip, wheel...done.
@@ -393,7 +393,7 @@ root@oracle2:/opt/scripts#
 
 
 <p>Activamos el entorno virtual y le instalamos el fichero <em>wheel</em>, que habremos copiado en algún sitio. Este fichero es local a la máquina, y no se consulta el repositorio de <strong>python</strong> remoto para nada. De hecho, un <em>wheel</em> es un fichero <em>.zip</em> normal, que se descomprime en la carpeta adecuada del <strong>virtualenv</strong>.</p>
-<div class="highlight"><pre>root@oracle2:/opt/scripts# . env/bin/activate
+<div class="highlight"><pre><span></span>root@oracle2:/opt/scripts# . env/bin/activate
 <span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# pip install /root/cx_Oracle-5.2.1-cp27-cp27mu-linux_i686.whl
 Processing /root/cx_Oracle-5.2.1-cp27-cp27mu-linux_i686.whl
 Installing collected packages: cx-Oracle
@@ -403,7 +403,7 @@ Successfully installed cx-Oracle-5.2.1
 
 
 <p>Probamos que funcione; es importante definir la variable de entorno <strong>LD_LIBRARY_PATH</strong> para que encuentre el <em>runtime</em> de Oracle. Es muy útil ponerlo en el fichero <em>~/.bashrc</em> para que se cargue solo al abrir el <em>shell</em>.</p>
-<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# <span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span>/opt/instantclient_12_1/
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# <span class="nb">export</span> <span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span>/opt/instantclient_12_1/
 <span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# python -c <span class="s2">&quot;import cx_Oracle; print cx_Oracle.version&quot;</span>
 5.2.1
 <span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts#
@@ -411,14 +411,14 @@ Successfully installed cx-Oracle-5.2.1
 
 
 <p>Opcionalmente, podemos reducir la cantidad de librerías que conforman el <em>instant client</em>, ya que solo se necesitan 4, y reduce su tamaño de forma dramática.</p>
-<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# du -sh /opt/instantclient_12_1/
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# du -sh /opt/instantclient_12_1/
 169M    /opt/instantclient_12_1/
 <span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts#
 </pre></div>
 
 
 <p>Podemos ver que el <em>package</em> <strong>cx_Oracle</strong> es un fichero <em>.so</em> y que este requiere de los otros 4 en el <em>runtime</em>.</p>
-<div class="highlight"><pre>(env) root@oracle2:/opt/scripts# find env/ -name &quot;*.so&quot;
+<div class="highlight"><pre><span></span>(env) root@oracle2:/opt/scripts# find env/ -name &quot;*.so&quot;
 env/lib/python2.7/site-packages/cx_Oracle.so
 (env) root@oracle2:/opt/scripts# ldd env/lib/python2.7/site-packages/cx_Oracle.so | grep instant
         libclntsh.so.12.1 =&gt; /opt/instantclient_12_1/libclntsh.so.12.1 (0xb5387000)
@@ -440,7 +440,7 @@ env/lib/python2.7/site-packages/cx_Oracle.so
 
 <p>Lo que significa que debería ser seguro eliminar el resto. Así que lo hacemos. Guardad una copia de seguridad antes de eliminar nada.</p>
 <p>Tras eliminar lo que no nos sirve, la carpeta queda así:</p>
-<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# tree /opt/instantclient_12_1/
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# tree /opt/instantclient_12_1/
 /opt/instantclient_12_1/
 ├── libclntshcore.so.12.1
 ├── libclntsh.so.12.1
@@ -455,7 +455,7 @@ env/lib/python2.7/site-packages/cx_Oracle.so
 
 
 <p>No está nada mal; hemos pasado de 169mb a 55mb. Comprobamos que sigue funcionando:</p>
-<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# python -c <span class="s2">&quot;import cx_Oracle; print cx_Oracle.version&quot;</span>
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# python -c <span class="s2">&quot;import cx_Oracle; print cx_Oracle.version&quot;</span>
 5.2.1
 <span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts#
 </pre></div>
@@ -465,8 +465,8 @@ env/lib/python2.7/site-packages/cx_Oracle.so
 <h2>Uso del package cx_Oracle</h2>
 <p>En este punto hay que seguir la documentación del módulo, que no es muy diferente de otras bases de datos; <strong>cx_Oracle</strong> sigue la misma especificación para todos los módulos de bases de datos.</p>
 <p>La idea es que se crea un objeto <strong>conexión</strong>, del que se saca un <strong>cursor</strong> para cada consulta que queramos ejecutar, y que se itera para obtener las <strong>filas</strong>. Pongamos un ejemplo simple:</p>
-<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# cat list_fruits.py
-<span class="c">#!/usr/bin/env python</span>
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# cat list_fruits.py
+<span class="c1">#!/usr/bin/env python</span>
 
 import cx_Oracle
 
@@ -493,7 +493,7 @@ connection.close<span class="o">()</span>
 
 
 <p>Ejecutamos como cualquier otro <em>script</em>:</p>
-<div class="highlight"><pre><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# ./list_fruits.py
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@oracle2:/opt/scripts# ./list_fruits.py
 Apple<span class="p">;</span>0.99
 Orange<span class="p">;</span>0.89
 Pear<span class="p">;</span>1.19
@@ -508,8 +508,8 @@ Pear<span class="p">;</span>1.19
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
     </ul>
 </section>
     <hr/>
@@ -916,9 +916,19 @@ Pear<span class="p">;</span>1.19
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -992,6 +1002,11 @@ Pear<span class="p">;</span>1.19
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -1041,7 +1056,7 @@ Pear<span class="p">;</span>1.19
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

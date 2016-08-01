@@ -143,29 +143,29 @@ Linux Sysadmin            </a>
 </footer><!-- /.post-info -->                    </div>
                 </div>
                 <p>A veces nos encontramos que nuestro sistema linux parece tener la memoria <em>virtual</em> ocupada, cuando no tenemos nada de memoria <em>RSS</em>; esto no es un problema, ya que por la forma de funcionar del <em>memory manager</em> de linux, se conserva "por si acaso" y se libera cuando realmente se necesita.</p>
-<div class="highlight"><pre>gerard@desktop:~<span class="nv">$ </span>free -m
+<div class="highlight"><pre><span></span>gerard@desktop:~$ free -m
              total       used       free     shared    buffers     cached
 Mem:          <span class="m">3858</span>       <span class="m">3226</span>        <span class="m">632</span>          <span class="m">0</span>        <span class="m">114</span>       2545
 -/+ buffers/cache:        <span class="m">566</span>       3291
 Swap:         <span class="m">2381</span>          <span class="m">0</span>       2381
-gerard@desktop:~<span class="nv">$ </span>
+gerard@desktop:~$ 
 </pre></div>
 
 
 <p>Sin embargo este detalle nos puede resultar molesto y puede que queramos <strong>liberar</strong> esa memoria de verdad, por ejemplo, para comparar memoria real ocupada por el sistema o sencillamente porque así lo queremos.</p>
 <p>En este caso no tenemos mas remedio que solicitar el <em>memory manager</em> que la libere, escribiendo en el fichero de control habilitado para ello, de acuerdo a la <a href="https://www.kernel.org/doc/Documentation/sysctl/vm.txt">documentación del <em>kernel</em> de linux</a>.</p>
-<div class="highlight"><pre>drop_caches
+<div class="highlight"><pre><span></span>drop_caches
 
 Writing to this will cause the kernel to drop clean caches, as well as
 reclaimable slab objects like dentries and inodes.  Once dropped, their
 memory becomes free.
 
 To free pagecache:
-    <span class="nb">echo </span><span class="m">1</span> &gt; /proc/sys/vm/drop_caches
+    <span class="nb">echo</span> <span class="m">1</span> &gt; /proc/sys/vm/drop_caches
 To free reclaimable slab objects <span class="o">(</span>includes dentries and inodes<span class="o">)</span>:
-    <span class="nb">echo </span><span class="m">2</span> &gt; /proc/sys/vm/drop_caches
+    <span class="nb">echo</span> <span class="m">2</span> &gt; /proc/sys/vm/drop_caches
 To free slab objects and pagecache:
-    <span class="nb">echo </span><span class="m">3</span> &gt; /proc/sys/vm/drop_caches
+    <span class="nb">echo</span> <span class="m">3</span> &gt; /proc/sys/vm/drop_caches
 
 This is a non-destructive operation and will not free any dirty objects.
 To increase the number of objects freed by this operation, the user may run
@@ -176,25 +176,25 @@ dropped.
 
 
 <p>Este fichero viene por defecto con permisos de escritura solamente para el usuario <strong>root</strong> y no se puede escribir sin el mismo. Como no queremos trabajar con el usuario <strong>root</strong>, vamos a usar el comando <em>sudo</em> con un usuario normal:</p>
-<div class="highlight"><pre>gerard@desktop:~<span class="nv">$ </span>sudo bash -c <span class="s2">&quot;echo 3 &gt; /proc/sys/vm/drop_caches&quot;</span>
-gerard@desktop:~<span class="nv">$ </span>
+<div class="highlight"><pre><span></span>gerard@desktop:~$ sudo bash -c <span class="s2">&quot;echo 3 &gt; /proc/sys/vm/drop_caches&quot;</span>
+gerard@desktop:~$ 
 </pre></div>
 
 
 <p>Alternativamente, podemos utilizar el comando <em>tee</em> para realizar la misma operación, sin el envoltorio de <em>bash</em>:</p>
-<div class="highlight"><pre>gerard@desktop:~<span class="nv">$ </span><span class="nb">echo </span><span class="m">3</span> <span class="p">|</span> sudo tee /proc/sys/vm/drop_caches
+<div class="highlight"><pre><span></span>gerard@desktop:~$ <span class="nb">echo</span> <span class="m">3</span> <span class="p">|</span> sudo tee /proc/sys/vm/drop_caches
 3
-gerard@desktop:~<span class="nv">$ </span>
+gerard@desktop:~$ 
 </pre></div>
 
 
 <p>Y finalmente nuestra memoria queda vacía de todo aquello que no era indispensable para la ejecución del sistema.</p>
-<div class="highlight"><pre>gerard@desktop:~<span class="nv">$ </span>free -m
+<div class="highlight"><pre><span></span>gerard@desktop:~$ free -m
              total       used       free     shared    buffers     cached
 Mem:          <span class="m">3858</span>        <span class="m">752</span>       <span class="m">3105</span>          <span class="m">0</span>          <span class="m">2</span>        207
 -/+ buffers/cache:        <span class="m">542</span>       3315
 Swap:         <span class="m">2381</span>          <span class="m">0</span>       2381
-gerard@desktop:~<span class="nv">$ </span>
+gerard@desktop:~$ 
 </pre></div>
 
 
@@ -205,9 +205,9 @@ gerard@desktop:~<span class="nv">$ </span>
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/07/instalando-una-maquina-con-archlinux.html">Instalando una máquina con Archlinux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/04/compilando-python-desde-cero.html">Compilando python desde cero</a></li>
     </ul>
 </section>
     <hr/>
@@ -614,9 +614,19 @@ gerard@desktop:~<span class="nv">$ </span>
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -690,6 +700,11 @@ gerard@desktop:~<span class="nv">$ </span>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -739,7 +754,7 @@ gerard@desktop:~<span class="nv">$ </span>
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

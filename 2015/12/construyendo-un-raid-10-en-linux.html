@@ -145,7 +145,7 @@ Linux Sysadmin            </a>
                 <p>El otro día estaba habilitando un servidor de <em>mongodb</em> para un entorno de producción. Como me interesaba mejorar el rendimiento de los accesos a disco y no disponía de discos SSD con una durabilidad aceptable, me propuse montar un <em>array de discos</em> en configuración de <strong>RAID 10</strong>, como se recomienda.</p>
 <p>Para este tutorial vamos a tener una máquina virtual (es una <em>Debian</em>, pero vale cualquier otra distribución) con 5 discos, 1 de sistema y otros 4 para usar en la configuración <strong>RAID 10</strong>, cada uno con 8gb, a efecto de demostración.</p>
 <p>En este caso, el sistema operativo estaba en <em>/dev/sda</em> y sus particiones, mientras que los discos para los datos de <em>mongodb</em> fueron <em>/dev/sdb</em>, <em>/dev/sdc</em>, <em>/dev/sdd</em>, <em>/dev/sde</em>.</p>
-<div class="highlight"><pre>root@server:~# ls /dev/sd* -1
+<div class="highlight"><pre><span></span>root@server:~# ls /dev/sd* -1
 /dev/sda
 /dev/sda1
 /dev/sdb
@@ -158,7 +158,7 @@ root@server:~#
 
 <h2>Creación del dispositivo RAID 10</h2>
 <p>Empezamos instalando el controlador de <strong>RAID</strong> por software:</p>
-<div class="highlight"><pre>root@server:~# apt-get install mdadm
+<div class="highlight"><pre><span></span>root@server:~# apt-get install mdadm
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias       
 Leyendo la información de estado... Hecho
@@ -176,11 +176,11 @@ root@server:~#
 
 
 <p>Con las herramientas instaladas, procedemos a crear un <em>/dev/md0</em> que será nuestro <strong>disco RAID</strong>, indicando el nivel <strong>RAID 10</strong> y los 4 discos reales que van a formarlo.</p>
-<div class="highlight"><pre>root@server:~# mdadm -v --create /dev/md0 --level<span class="o">=</span>raid10 --raid-devices<span class="o">=</span><span class="m">4</span> /dev/sdb /dev/sdc /dev/sdd /dev/sde
+<div class="highlight"><pre><span></span>root@server:~# mdadm -v --create /dev/md0 --level<span class="o">=</span>raid10 --raid-devices<span class="o">=</span><span class="m">4</span> /dev/sdb /dev/sdc /dev/sdd /dev/sde
 mdadm: layout defaults to n2
 mdadm: layout defaults to n2
 mdadm: chunk size defaults to 512K
-mdadm: size <span class="nb">set </span>to 8380416K
+mdadm: size <span class="nb">set</span> to 8380416K
 mdadm: Defaulting to version 1.2 metadata
 mdadm: array /dev/md0 started.
 root@server:~# 
@@ -188,7 +188,7 @@ root@server:~#
 
 
 <p>Para que ese array de discos sea reconocido en cada inicio del sistema, hay que añadir en <em>/etc/mdadm/mdadm.conf</em> la información relacionada al array, de la misma forma que la tengamos en este momento.</p>
-<div class="highlight"><pre>root@server:~# mdadm --detail --scan --verbose &gt;&gt; /etc/mdadm/mdadm.conf
+<div class="highlight"><pre><span></span>root@server:~# mdadm --detail --scan --verbose &gt;&gt; /etc/mdadm/mdadm.conf
 root@server:~# 
 </pre></div>
 
@@ -199,7 +199,7 @@ root@server:~#
 <p>Este dispositivo es transparente para nosotros y no es diferente de cualquier otro dispositivo de bloques, con lo que se puede particionar, formatear e incluso actuar como un <em>physical volume</em> en caso de usar <strong>LVM</strong>.</p>
 <p>Para esta demostración, se creará una única partición que ocupe todo el disco y que será montada en <em>/data</em>.</p>
 <p>Así pues, sin mas preámbulo la particionamos; en mi caso lo hice con <em>cfdisk</em>. Este es el resultado:</p>
-<div class="highlight"><pre>root@server:~# fdisk -l /dev/md0
+<div class="highlight"><pre><span></span>root@server:~# fdisk -l /dev/md0
 
 Disco /dev/md0: <span class="m">16</span> GiB, <span class="m">17163091968</span> bytes, <span class="m">33521664</span> sectores
 Unidades: sectores de <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
@@ -216,7 +216,7 @@ root@server:~#
 
 
 <p>La primera (y única partición) se llama <em>/dev/md0p1</em> y es el dispositivo que vamos a formatear, para posteriormente montarlo.</p>
-<div class="highlight"><pre>root@server:~# mkfs.ext4 /dev/md0p1 
+<div class="highlight"><pre><span></span>root@server:~# mkfs.ext4 /dev/md0p1 
 mke2fs 1.42.12 <span class="o">(</span>29-Aug-2014<span class="o">)</span>
 Se está creando El sistema de ficheros con <span class="m">4189947</span> 4k bloques y <span class="m">1048576</span> nodos-i
 
@@ -235,20 +235,20 @@ root@server:~#
 
 
 <p>Creamos la carpeta que va a servir de <em>mountpoint</em> para esta nueva partición:</p>
-<div class="highlight"><pre>root@server:~# mkdir /data
+<div class="highlight"><pre><span></span>root@server:~# mkdir /data
 root@server:~# 
 </pre></div>
 
 
 <p>Añadimos la partición en el fichero <em>/etc/fstab</em>, para que se monte automáticamente tras cada reinicio:</p>
-<div class="highlight"><pre>root@server:~# grep md0p1 /etc/fstab 
+<div class="highlight"><pre><span></span>root@server:~# grep md0p1 /etc/fstab 
 /dev/md0p1 /data ext4 defaults <span class="m">0</span> 0
 root@server:~# 
 </pre></div>
 
 
 <p>Finalmente la montamos. Como esta información ya está en el fichero <em>/etc/fstab</em> no es necesario especificar los detalles.</p>
-<div class="highlight"><pre>root@server:~# mount /data
+<div class="highlight"><pre><span></span>root@server:~# mount /data
 root@server:~# df -h
 S.ficheros     Tamaño Usados  Disp Uso% Montado en
 /dev/sda1        2,0G   651M  1,2G  35% /
@@ -263,7 +263,7 @@ root@server:~#
 
 
 <p>Como detalle, al no tratarse de una partición raíz de sistema operativo, no hace falta reservar bloques de emergencia; se trata de un 5% de la capacidad que podemos liberar (5% de 16gb son 800mb que podemos usar).</p>
-<div class="highlight"><pre>root@server:~# tune2fs -m <span class="m">0</span> /dev/md0p1 
+<div class="highlight"><pre><span></span>root@server:~# tune2fs -m <span class="m">0</span> /dev/md0p1 
 tune2fs 1.42.12 <span class="o">(</span>29-Aug-2014<span class="o">)</span>
 Se pone el porcentaje de bloques reservados a 0% <span class="o">(</span><span class="m">0</span> bloques<span class="o">)</span>
 root@server:~# df -h
@@ -281,7 +281,7 @@ root@server:~#
 
 <h2>Verificación</h2>
 <p>Podemos ver la información de estado del array de discos con el mismo comando <em>mdadm</em>, como sigue:</p>
-<div class="highlight"><pre>root@server:~# mdadm --detail /dev/md0
+<div class="highlight"><pre><span></span>root@server:~# mdadm --detail /dev/md0
 /dev/md0:
         Version : 1.2
   Creation Time : Sat Dec <span class="m">12</span> 21:19:42 2015
@@ -302,15 +302,15 @@ Working Devices : 4
          Layout : <span class="nv">near</span><span class="o">=</span>2
      Chunk Size : 512K
 
-           Name : server:0  <span class="o">(</span><span class="nb">local </span>to host server<span class="o">)</span>
+           Name : server:0  <span class="o">(</span><span class="nb">local</span> to host server<span class="o">)</span>
            UUID : 217558a7:bc1cb1d4:9530ecda:ea477a6b
          Events : 19
 
     Number   Major   Minor   RaidDevice State
-       <span class="m">0</span>       <span class="m">8</span>       <span class="m">16</span>        <span class="m">0</span>      active sync <span class="nb">set</span>-A   /dev/sdb
-       <span class="m">1</span>       <span class="m">8</span>       <span class="m">32</span>        <span class="m">1</span>      active sync <span class="nb">set</span>-B   /dev/sdc
-       <span class="m">2</span>       <span class="m">8</span>       <span class="m">48</span>        <span class="m">2</span>      active sync <span class="nb">set</span>-A   /dev/sdd
-       <span class="m">3</span>       <span class="m">8</span>       <span class="m">64</span>        <span class="m">3</span>      active sync <span class="nb">set</span>-B   /dev/sde
+       <span class="m">0</span>       <span class="m">8</span>       <span class="m">16</span>        <span class="m">0</span>      active sync set-A   /dev/sdb
+       <span class="m">1</span>       <span class="m">8</span>       <span class="m">32</span>        <span class="m">1</span>      active sync set-B   /dev/sdc
+       <span class="m">2</span>       <span class="m">8</span>       <span class="m">48</span>        <span class="m">2</span>      active sync set-A   /dev/sdd
+       <span class="m">3</span>       <span class="m">8</span>       <span class="m">64</span>        <span class="m">3</span>      active sync set-B   /dev/sde
 root@server:~# 
 </pre></div>
 
@@ -321,9 +321,9 @@ root@server:~#
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Construyendo una replica set en mongodb</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html">Restringiendo accesos web mediante autenticación básica</a></li>
     </ul>
 </section>
     <hr/>
@@ -730,9 +730,19 @@ root@server:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -806,6 +816,11 @@ root@server:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -855,7 +870,7 @@ root@server:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

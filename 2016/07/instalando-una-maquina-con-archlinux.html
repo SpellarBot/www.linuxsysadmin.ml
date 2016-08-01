@@ -144,32 +144,32 @@ Linux Sysadmin            </a>
 <p>Vamos a seguir bastante el procedimiento oficial de instalación, que podemos encontrar <a href="https://wiki.archlinux.org/index.php/installation_guide">aquí</a>. Este procedimiento de instalación lo vamos a lanzar sobre una máquina virtual, con un disco de 4gb y 512mb de memoria, aunque sin entorno gráfico necesita muchos menos recursos.</p>
 <p>El primer paso consiste en descargar una imagen de instalación que vamos a introducir (o montar, que es el equivalente en <em>VirtualBox</em>), previo encendido de la máquina.</p>
 <p>Un detalle es que la imagen de instalación lleva instalado un servidor <em>SSH</em>, que nos viene muy bien para capturar la salida de los diferentes comandos. Solo hay que levantar el servicio y darle una contraseña al usuario <strong>root</strong>.</p>
-<div class="highlight"><pre>root@archiso ~ <span class="c"># passwd</span>
+<div class="highlight"><pre><span></span>root@archiso ~ <span class="c1"># passwd</span>
 Enter new UNIX password:
 Retype new UNIX password:
 passwd: password updated successfully
-root@archiso ~ <span class="c"># systemctl start sshd</span>
-root@archiso ~ <span class="c"># </span>
+root@archiso ~ <span class="c1"># systemctl start sshd</span>
+root@archiso ~ <span class="c1"># </span>
 </pre></div>
 
 
 <p>A partir de aquí, sigo el procedimiento desde una sesión <em>SSH</em>.</p>
 <h2>Preparaciones</h2>
 <p>Aunque esto no es necesario, es recomendable usar nuestro teclado favorito. No hay nada mas frustrante que darle a una tecla pensando en un carácter y que te salga otro. Así que vamos a cargar la distribución de teclado que nos parezca.</p>
-<div class="highlight"><pre>root@archiso ~ <span class="c"># loadkeys es</span>
-root@archiso ~ <span class="c">#</span>
+<div class="highlight"><pre><span></span>root@archiso ~ <span class="c1"># loadkeys es</span>
+root@archiso ~ <span class="c1">#</span>
 </pre></div>
 
 
 <p>El siguiente paso consiste en configurar la red que se va a usar durante la instalación. Por defecto viene preparado para usar <em>DHCP</em>, que nos vale, así que la dejamos como está.</p>
 <p>Uno de los pasos mas importantes de toda la instalación es el particionado. Hacerlo mal en este punto es un problema futuro, y de hecho, mucha gente utiliza tecnologías como <em>LVM</em> que les dan cierta flexibilidad para cambios futuros.</p>
 <p>En nuestro caso concreto, se trata de una máquina virtual que no va a durar mucho, así que nos basta con hacerlo a un nivel aceptable. Como disponemos de un solo disco de 4gb, vamos a particionarlo en dos, uno para el disco local, y otro para la partición de <em>swap</em> (una pequeña, que no nos sobra el disco). Personalmente he usado <strong>cfdisk</strong>, que me parece mas intuitivo que el resto, dejando las particiones de esta manera:</p>
-<div class="highlight"><pre>root@archiso ~ <span class="c"># fdisk -l</span>
+<div class="highlight"><pre><span></span>root@archiso ~ <span class="c1"># fdisk -l</span>
 Disk /dev/sda: <span class="m">4</span> GiB, <span class="m">4294967296</span> bytes, <span class="m">8388608</span> sectors
 Units: sectors of <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
 Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
 I/O size <span class="o">(</span>minimum/optimal<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
-Disklabel <span class="nb">type</span>: gpt
+Disklabel type: gpt
 Disk identifier: A45FE619-7FFC-4EA2-8253-628FD2138198
 
 Device       Start     End Sectors  Size Type
@@ -181,12 +181,12 @@ Disk /dev/loop0: 318.9 MiB, <span class="m">334385152</span> bytes, <span class=
 Units: sectors of <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
 Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
 I/O size <span class="o">(</span>minimum/optimal<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
-root@archiso ~ <span class="c">#</span>
+root@archiso ~ <span class="c1">#</span>
 </pre></div>
 
 
 <p>Siguiendo el manual, necesitamos formatear las particiones según las funciones que van a desempeñar, montando los discos en <em>/mnt/</em> y sus subcarpetas. Como no tenemos particiones para <em>/home/</em>, <em>/var/</em> y <em>/tmp/</em>, con montar la primera nos basta.</p>
-<div class="highlight"><pre>root@archiso ~ <span class="c"># mkfs.ext4 /dev/sda1</span>
+<div class="highlight"><pre><span></span>root@archiso ~ <span class="c1"># mkfs.ext4 /dev/sda1</span>
 mke2fs 1.42.13 <span class="o">(</span>17-May-2015<span class="o">)</span>
 Creating filesystem with <span class="m">914432</span> 4k blocks and <span class="m">228928</span> inodes
 Filesystem UUID: 295665be-7b09-4cad-9689-7fed5471bf25
@@ -198,39 +198,39 @@ Writing inode tables: <span class="k">done</span>
 Creating journal <span class="o">(</span><span class="m">16384</span> blocks<span class="o">)</span>: <span class="k">done</span>
 Writing superblocks and filesystem accounting information: <span class="k">done</span>
 
-root@archiso ~ <span class="c"># mount /dev/sda1 /mnt</span>
-root@archiso ~ <span class="c">#</span>
+root@archiso ~ <span class="c1"># mount /dev/sda1 /mnt</span>
+root@archiso ~ <span class="c1">#</span>
 </pre></div>
 
 
 <p>Preparamos la partición de <em>swap</em> y la dejamos activada. Eso nos permitirá utilizarla durante la instalación, y que esta la detecte automáticamente para crear el fichero <em>/etc/fstab</em>.</p>
-<div class="highlight"><pre>root@archiso ~ <span class="c"># mkswap /dev/sda2</span>
+<div class="highlight"><pre><span></span>root@archiso ~ <span class="c1"># mkswap /dev/sda2</span>
 Setting up swapspace version 1, <span class="nv">size</span> <span class="o">=</span> <span class="m">523</span> MiB <span class="o">(</span><span class="m">548380672</span> bytes<span class="o">)</span>
 no label, <span class="nv">UUID</span><span class="o">=</span>85cf7f55-cd3c-4002-9729-2d89ebadf942
-root@archiso ~ <span class="c"># swapon /dev/sda2</span>
-root@archiso ~ <span class="c">#</span>
+root@archiso ~ <span class="c1"># swapon /dev/sda2</span>
+root@archiso ~ <span class="c1">#</span>
 </pre></div>
 
 
 <p>Podemos verificar que está activada con un comando <strong>free</strong>, por ejemplo.</p>
-<div class="highlight"><pre>root@archiso ~ <span class="c"># free -m</span>
+<div class="highlight"><pre><span></span>root@archiso ~ <span class="c1"># free -m</span>
               total        used        free      shared  buff/cache   available
 Mem:            <span class="m">498</span>          <span class="m">20</span>         <span class="m">252</span>          <span class="m">44</span>         <span class="m">224</span>         413
 Swap:           <span class="m">522</span>           <span class="m">0</span>         522
-root@archiso ~ <span class="c">#</span>
+root@archiso ~ <span class="c1">#</span>
 </pre></div>
 
 
 <h2>Instalación y configuración</h2>
 <p>El primer paso es descargar todos los paquetes de internet, mediante el comando <strong>pacstrap</strong>. Para ello se recomienda editar el fichero <em>/etc/pacman.d/mirrorlist</em> para utilizar los <em>mirrors</em> que nos convengan, y que serán también los que use el sistema instalado. Como se pueden cambiar a <em>posteriori</em> y los que hay me parecen bien, no vamos a cambiar nada.</p>
 <p>Así pues, lanzamos el <strong>pacstrap</strong> tal como indica el manual de instalación.</p>
-<div class="highlight"><pre>root@archiso ~ <span class="c"># pacstrap /mnt base</span>
+<div class="highlight"><pre><span></span>root@archiso ~ <span class="c1"># pacstrap /mnt base</span>
 <span class="o">==</span>&gt; Creating install root at /mnt
 <span class="o">==</span>&gt; Installing packages to /mnt
 :: Synchronizing package databases...
- core                                                 119.7 KiB   783K/s 00:00 <span class="o">[</span><span class="c">############################################] 100%</span>
- extra                                               1755.7 KiB   810K/s 00:02 <span class="o">[</span><span class="c">############################################] 100%</span>
- community                                              3.5 MiB   851K/s 00:04 <span class="o">[</span><span class="c">############################################] 100%</span>
+ core                                                 119.7 KiB   783K/s 00:00 <span class="o">[</span><span class="c1">############################################] 100%</span>
+ extra                                               1755.7 KiB   810K/s 00:02 <span class="o">[</span><span class="c1">############################################] 100%</span>
+ community                                              3.5 MiB   851K/s 00:04 <span class="o">[</span><span class="c1">############################################] 100%</span>
 :: There are <span class="m">50</span> members in group base:
 :: Repository core
    1<span class="o">)</span> bash  2<span class="o">)</span> bzip2  3<span class="o">)</span> coreutils  4<span class="o">)</span> cryptsetup  5<span class="o">)</span> device-mapper  6<span class="o">)</span> dhcpcd  7<span class="o">)</span> diffutils  8<span class="o">)</span> e2fsprogs  9<span class="o">)</span> file
@@ -248,24 +248,24 @@ Total Installed Size:  572.80 MiB
 :: Proceed with installation? <span class="o">[</span>Y/n<span class="o">]</span>
 ...
 pacstrap /mnt base  51.53s user 124.01s system 39% cpu 7:25.44 total
-root@archiso ~ <span class="c">#</span>
+root@archiso ~ <span class="c1">#</span>
 </pre></div>
 
 
 <p>Y con todos los paquetes instalados, empezaremos a configurar el sistema. El primer candidato es generar el fichero <em>/etc/fstab</em>. Existe un <em>script</em> llamado <strong>genfstab</strong> que va a generar un fichero <em>fstab</em> basado en lo que tenemos ahora mismo activado.</p>
-<div class="highlight"><pre>root@archiso ~ <span class="c"># genfstab -p /mnt &gt;&gt; /mnt/etc/fstab</span>
-root@archiso ~ <span class="c">#</span>
+<div class="highlight"><pre><span></span>root@archiso ~ <span class="c1"># genfstab -p /mnt &gt;&gt; /mnt/etc/fstab</span>
+root@archiso ~ <span class="c1">#</span>
 </pre></div>
 
 
 <p>El resto de configuración se hace en un entorno <strong>chroot</strong> sobre la carpeta instalada, que es donde tenemos montado el disco raíz. La imagen de instalación nos ofrece un <em>script</em> de <strong>chroot</strong> que ya se encarga de montar los sistemas de ficheros especiales como <em>/proc/</em>, <em>/dev/</em> o <em>/sys/</em>.</p>
-<div class="highlight"><pre>root@archiso ~ <span class="c"># arch-chroot /mnt</span>
+<div class="highlight"><pre><span></span>root@archiso ~ <span class="c1"># arch-chroot /mnt</span>
 sh-4.3#
 </pre></div>
 
 
 <p>Los siguientes pasos son burocráticos y los mismos que en otras distribuciones: poner un nombre a la máquina, configurar el huso horario, generar <em>locales</em> y configurar el teclado a nivel permanente.</p>
-<div class="highlight"><pre>sh-4.3# <span class="nb">echo</span> <span class="s2">&quot;archlinux&quot;</span> &gt; /etc/hostname
+<div class="highlight"><pre><span></span>sh-4.3# <span class="nb">echo</span> <span class="s2">&quot;archlinux&quot;</span> &gt; /etc/hostname
 sh-4.3# ln -s /usr/share/zoneinfo/Europe/Madrid /etc/localtime
 sh-4.3# grep -v ^# /etc/locale.gen
 es_ES.UTF-8 UTF-8
@@ -280,7 +280,7 @@ sh-4.3#
 
 
 <p>El siguiente paso no es fácil, y aunque puede hacerse a <em>posteriori</em>, merece la pena prestar atención. Para la configuración de red, necesitamos activar el servicio <em>systemd-networkd</em>, que va a leer los ficheros de configuración en <em>/etc/systemd/network/</em> para levantar las interfaces con los parámetros adecuados.</p>
-<div class="highlight"><pre>sh-4.3# systemctl <span class="nb">enable </span>systemd-networkd
+<div class="highlight"><pre><span></span>sh-4.3# systemctl <span class="nb">enable</span> systemd-networkd
 Created symlink /etc/systemd/system/multi-user.target.wants/systemd-networkd.service → /usr/lib/systemd/system/systemd-networkd.service.
 Created symlink /etc/systemd/system/sockets.target.wants/systemd-networkd.socket → /usr/lib/systemd/system/systemd-networkd.socket.
 sh-4.3# cat /etc/systemd/network/wired.network
@@ -294,7 +294,7 @@ sh-4.3#
 
 
 <p>En caso de querer obtener los <em>DNS</em> de forma automática necesitamos habilitar el servicio <em>systemd-resolved</em>, que nos va a dejar un <em>resolv.conf</em> en <em>/run/systemd/resolve/</em>; con un simple enlace va a ser suficiente.</p>
-<div class="highlight"><pre>sh-4.3# systemctl <span class="nb">enable </span>systemd-resolved
+<div class="highlight"><pre><span></span>sh-4.3# systemctl <span class="nb">enable</span> systemd-resolved
 Created symlink /etc/systemd/system/multi-user.target.wants/systemd-resolved.service → /usr/lib/systemd/system/systemd-resolved.service.
 sh-4.3# rm /etc/resolv.conf
 sh-4.3# ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
@@ -303,7 +303,7 @@ sh-4.3#
 
 
 <p>Generamos un <em>initramfs</em> para que en el siguiente arranque podamos disfrutar de todo lo nuevo que hemos configurado.</p>
-<div class="highlight"><pre>sh-4.3# mkinitcpio -p <span class="nv">linux</span>
+<div class="highlight"><pre><span></span>sh-4.3# mkinitcpio -p <span class="nv">linux</span>
 <span class="o">==</span>&gt; Building image from preset: /etc/mkinitcpio.d/linux.preset: <span class="s1">&#39;default&#39;</span>
   -&gt; -k /boot/vmlinuz-linux -c /etc/mkinitcpio.conf -g /boot/initramfs-linux.img
 <span class="o">==</span>&gt; Starting build: 4.5.4-1-ARCH
@@ -338,7 +338,7 @@ sh-4.3#
 
 
 <p>Y finalmente nos podemos dedicar a administrar usuarios y sus contraseñas. Como esto también se puede hacer a <em>posteriori</em>, voy solo a desbloquear al usuario <strong>root</strong>, dándole una <em>password</em> adecuada.</p>
-<div class="highlight"><pre>sh-4.3# passwd
+<div class="highlight"><pre><span></span>sh-4.3# passwd
 Enter new UNIX password:
 Retype new UNIX password:
 passwd: password updated successfully
@@ -349,7 +349,7 @@ sh-4.3#
 <p>Y con esto tenemos el disco raíz perfectamente preparado, y un <em>kernel</em> listo para el arranque.</p>
 <h2>Instalando el bootloader</h2>
 <p>Para que el <em>kernel</em>, <em>initrd</em> y el disco puedan funcionar, es necesario que el disco tenga algún tipo de estructura que le indique como hacerlo. El nombre genérico para esta pieza de <em>software</em> es <em>bootloader</em>. De todos los que hay (que no son pocos), vamos a usar un viejo amigo: <strong>GRUB</strong>.</p>
-<div class="highlight"><pre>sh-4.3# pacman -S grub
+<div class="highlight"><pre><span></span>sh-4.3# pacman -S grub
 resolving dependencies...
 looking <span class="k">for</span> conflicting packages...
 
@@ -365,7 +365,7 @@ sh-4.3#
 
 
 <p>Instalamos el código de <em>boot</em> en el <em>MBR</em> con la herramienta que <strong>GRUB</strong> nos ofrece, siguiendo el manual.</p>
-<div class="highlight"><pre>sh-4.3# grub-install --target<span class="o">=</span>i386-pc /dev/sda
+<div class="highlight"><pre><span></span>sh-4.3# grub-install --target<span class="o">=</span>i386-pc /dev/sda
 Installing <span class="k">for</span> i386-pc platform.
 grub-install: warning: this GPT partition label contains no BIOS Boot Partition<span class="p">;</span> embedding won<span class="err">&#39;</span>t be possible.
 grub-install: warning: Embedding is not possible.  GRUB can only be installed in this setup by using blocklists.  However, blocklists are UNRELIABLE and their use is discouraged..
@@ -375,7 +375,7 @@ sh-4.3#
 
 
 <p>En este caso ha fallado, pero siguiendo el manual de instalación, eso se corrige mediante el uso del <em>flag</em> <strong>--force</strong>.</p>
-<div class="highlight"><pre>sh-4.3# grub-install --target<span class="o">=</span>i386-pc /dev/sda --force
+<div class="highlight"><pre><span></span>sh-4.3# grub-install --target<span class="o">=</span>i386-pc /dev/sda --force
 Installing <span class="k">for</span> i386-pc platform.
 grub-install: warning: this GPT partition label contains no BIOS Boot Partition<span class="p">;</span> embedding won<span class="err">&#39;</span>t be possible.
 grub-install: warning: Embedding is not possible.  GRUB can only be installed in this setup by using blocklists.  However, blocklists are UNRELIABLE and their use is discouraged..
@@ -385,7 +385,7 @@ sh-4.3#
 
 
 <p>Como ya hemos conseguido instalar <strong>GRUB</strong> de forma exitosa, nos queda generar un fichero de configuración del <em>bootloader</em>, tal como dice el manual de instalación.</p>
-<div class="highlight"><pre>sh-4.3# grub-mkconfig -o /boot/grub/grub.cfg
+<div class="highlight"><pre><span></span>sh-4.3# grub-mkconfig -o /boot/grub/grub.cfg
 Generating grub configuration file ...
 Found linux image: /boot/vmlinuz-linux
 Found initrd image: /boot/initramfs-linux.img
@@ -396,17 +396,17 @@ sh-4.3#
 
 
 <p>Y con esto queda una instalación básica. Solo nos queda salir del entorno enjaulado, apagar la máquina, quitar el disco de instalación y encender.</p>
-<div class="highlight"><pre>sh-4.3# <span class="nb">exit</span>
+<div class="highlight"><pre><span></span>sh-4.3# <span class="nb">exit</span>
 <span class="nb">exit</span>
 arch-chroot /mnt  10.17s user 19.71s system 3% cpu 14:10.46 total
 root has logged on pts/1 from 10.0.2.2.
-root@archiso ~ <span class="c"># reboot</span>
+root@archiso ~ <span class="c1"># reboot</span>
 </pre></div>
 
 
 <h2>Resultado final</h2>
 <p>Tras actualizar y limpiar caché de paquetes, vemos que tenemos una distribución minimalista con 743mb de disco ocupados y 10mb de memoria.</p>
-<div class="highlight"><pre><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># df -h</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># df -h</span>
 S.ficheros     Tamaño Usados  Disp Uso% Montado en
 dev              247M      <span class="m">0</span>  247M   0% /dev
 run              250M   292K  249M   1% /run
@@ -415,11 +415,11 @@ tmpfs            250M      <span class="m">0</span>  250M   0% /dev/shm
 tmpfs            250M      <span class="m">0</span>  250M   0% /sys/fs/cgroup
 tmpfs            250M      <span class="m">0</span>  250M   0% /tmp
 tmpfs             50M      <span class="m">0</span>   50M   0% /run/user/0
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># free -m</span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># free -m</span>
               total        used        free      shared  buff/cache   available
 Mem:            <span class="m">498</span>          <span class="m">10</span>         <span class="m">441</span>           <span class="m">0</span>          <span class="m">46</span>         470
 Swap:           <span class="m">522</span>           <span class="m">0</span>         522
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c">#</span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
 </pre></div>
 
 
@@ -430,8 +430,8 @@ Swap:           <span class="m">522</span>           <span class="m">0</span>   
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/07/un-escritorio-con-archlinux.html">Un escritorio con Archlinux</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
     </ul>
 </section>
     <hr/>
@@ -838,9 +838,19 @@ Swap:           <span class="m">522</span>           <span class="m">0</span>   
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -914,6 +924,11 @@ Swap:           <span class="m">522</span>           <span class="m">0</span>   
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -963,7 +978,7 @@ Swap:           <span class="m">522</span>           <span class="m">0</span>   
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

@@ -144,37 +144,37 @@ Linux Sysadmin            </a>
                 </div>
                 <p>Cuando tenemos un entorno grande o con previsiones de crecimiento, nos interesa poder poner a trabajar varios servidores similares. En casos así nos hace falta un <strong>balanceador de carga</strong>, que actúa como un agente de tráfico, dirigiendo las peticiones que él mismo recibe a los diferentes servidores, por ejemplo, <strong>haproxy</strong>.</p>
 <p>En este artículo vamos a montar el balanceador <strong>haproxy</strong>, usando <strong>ansible</strong>, basándonos en las imágenes <strong>docker</strong> de <a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">otro artículo</a>. La ideas es que vamos a poner un único balanceador que va a escuchar en dos puertos, balanceando dos <em>backends</em> en cada uno, por ejemplo una web y una <em>api</em>.</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>docker images
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 slave               latest              22a9312a1315        About an hour ago   <span class="m">186</span> MB
 ansible             latest              225b431d2133        About an hour ago   245.5 MB
 debian              latest              bb5d89f9b6cb        <span class="m">2</span> weeks ago         125.1 MB
-gerard@sirius:~/build<span class="nv">$ </span>
+gerard@sirius:~/build$ 
 </pre></div>
 
 
 <h2>Preparando el entorno</h2>
 <p>El primer paso es disponer de una red para que todos los servidores implicados se puedan comunicar entre ellos. La red que viene por defecto nos permite eso, pero vamos a crear una red <em>user defined</em> que nos va a permitir que los contenedores <strong>docker</strong> se conozcan entre ellos por su nombre.</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>docker network create --subnet<span class="o">=</span>172.20.0.0/16 balancing
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker network create --subnet<span class="o">=</span>172.20.0.0/16 balancing
 4585a1abd0ed69bc9d1daf0dd019e1f129a9e7328471da77541f5b4a54c19626
-gerard@sirius:~/build<span class="nv">$ </span>
+gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Se trata de levantar 5 servidores: 1 para <strong>haproxy</strong> y otros 4 para representar los servidores de <em>backend</em>, que vamos a trucar para que parezca lo que no son. Es importante <em>publicar</em> los puertos que queramos exponer, para ver que funciona la solución final; si queremos balancear los puertos 8080 (web), 8081 (api) y 1936 (haproxy stats), pondríamos algo como esto:</p>
-<div class="highlight"><pre>gerard@sirius:~<span class="nv">$ </span>docker run -d -h balancer --name balancer --net balancing -p 8080:8080 -p 8081:8081 -p 1936:1936 slave
+<div class="highlight"><pre><span></span>gerard@sirius:~$ docker run -d -h balancer --name balancer --net balancing -p 8080:8080 -p 8081:8081 -p 1936:1936 slave
 70e4811e6a498c7ecdec11ed91609d43749c327e33bd3b06b1532b507f3f2141
-gerard@sirius:~/build<span class="nv">$ </span><span class="k">for</span> host in web1 web2 api1 api2<span class="p">;</span> <span class="k">do</span> docker run -d -h <span class="nv">$host</span> --name <span class="nv">$host</span> --net balancing slave<span class="p">;</span> <span class="k">done</span>
+gerard@sirius:~/build$ <span class="k">for</span> host in web1 web2 api1 api2<span class="p">;</span> <span class="k">do</span> docker run -d -h <span class="nv">$host</span> --name <span class="nv">$host</span> --net balancing slave<span class="p">;</span> <span class="k">done</span>
 82be4f7788f0186834311fe625f4ae24908a59a25df8b246aeb18d13cdff7b3d
 a0514880a44ed9109d19dc594ae991245e052554d91f0b08da80d57808df3d29
 1217fd05aa321e52e0038e4870dd29776e843d88de03520ad0bffee6cb786b54
 635c9b2d04482018053dca4b4225a34d3a11be1c366e372b9536fcadea12a15a
-gerard@sirius:~/build<span class="nv">$ </span>
+gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Verificamos que tenemos todos nuestros contenedores corriendo:</p>
-<div class="highlight"><pre>gerard@sirius:~/build$ docker ps
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker ps
 CONTAINER ID        IMAGE               COMMAND               CREATED              STATUS              PORTS                                                      NAMES
 635c9b2d0448        slave               &quot;/usr/sbin/sshd -D&quot;   10 seconds ago       Up 8 seconds                                                                   api2
 1217fd05aa32        slave               &quot;/usr/sbin/sshd -D&quot;   11 seconds ago       Up 9 seconds                                                                   api1
@@ -187,14 +187,14 @@ gerard@sirius:~/build$
 
 <h2>Preparando las herramientas</h2>
 <p>Como ya hemos comentado, vamos a utilizar <strong>ansible</strong>. Para ejecutar los <em>playbooks</em>, vamos a levantar una máquina para usar y tirar.</p>
-<div class="highlight"><pre>gerard@sirius:~/build<span class="nv">$ </span>docker run -ti --rm --net balancing -h ansible --name ansible ansible
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker run -ti --rm --net balancing -h ansible --name ansible ansible
 root@ansible:/# <span class="nb">cd</span> /root
 root@ansible:~# 
 </pre></div>
 
 
 <p>Especificamos un fichero de <em>hosts</em> que va a servir para indicar los contenedores que tenemos y vamos a instalar paquetes en función de su grupo.</p>
-<div class="highlight"><pre>root@ansible:~# cat hosts 
+<div class="highlight"><pre><span></span>root@ansible:~# cat hosts 
 <span class="o">[</span>all:vars<span class="o">]</span>
 <span class="nv">ansible_user</span> <span class="o">=</span> ansible
 <span class="nv">ansible_ssh_pass</span> <span class="o">=</span> s3cr3t
@@ -218,25 +218,25 @@ root@ansible:~#
 
 
 <p>Opcionalmente, verificamos que todos los contenedores son accesibles desde <strong>ansible</strong>. Eso nos puede evitar sorpresas futuras.</p>
-<div class="highlight"><pre>root@ansible:~# ansible -i hosts -m ping all
+<div class="highlight"><pre><span></span>root@ansible:~# ansible -i hosts -m ping all
 balancer <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
-    <span class="s2">&quot;changed&quot;</span>: <span class="nb">false</span>, 
+    <span class="s2">&quot;changed&quot;</span>: false, 
     <span class="s2">&quot;ping&quot;</span>: <span class="s2">&quot;pong&quot;</span>
 <span class="o">}</span>
 api2 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
-    <span class="s2">&quot;changed&quot;</span>: <span class="nb">false</span>, 
+    <span class="s2">&quot;changed&quot;</span>: false, 
     <span class="s2">&quot;ping&quot;</span>: <span class="s2">&quot;pong&quot;</span>
 <span class="o">}</span>
 api1 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
-    <span class="s2">&quot;changed&quot;</span>: <span class="nb">false</span>, 
+    <span class="s2">&quot;changed&quot;</span>: false, 
     <span class="s2">&quot;ping&quot;</span>: <span class="s2">&quot;pong&quot;</span>
 <span class="o">}</span>
 web2 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
-    <span class="s2">&quot;changed&quot;</span>: <span class="nb">false</span>, 
+    <span class="s2">&quot;changed&quot;</span>: false, 
     <span class="s2">&quot;ping&quot;</span>: <span class="s2">&quot;pong&quot;</span>
 <span class="o">}</span>
 web1 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
-    <span class="s2">&quot;changed&quot;</span>: <span class="nb">false</span>, 
+    <span class="s2">&quot;changed&quot;</span>: false, 
     <span class="s2">&quot;ping&quot;</span>: <span class="s2">&quot;pong&quot;</span>
 <span class="o">}</span>
 root@ansible:~# 
@@ -247,7 +247,7 @@ root@ansible:~#
 <p>Sea lo que sea que vayan a ejecutar los <em>backends</em> reales, los podemos ver como una caja negra que ofrecen sus servicios mediante protocolo TCP/IP en un puerto concreto.</p>
 <p>Como no nos importa demasiado lo que hagan, y para simplificar el artículo, los vamos a reemplazar con servidores web <strong>nginx</strong>, sirviendo un fichero HTML con su nombre (para poder distinguirlos en las pruebas). De esta forma, podremos ver el tipo de servidor que responde (api o web) y su número, ya que ambos datos están en su <em>hostname</em>.</p>
 <p>Así pues, basta con un <em>playbook</em> que instale el servidor web y ponga el fichero <em>.html</em> en su sitio. Como <strong>docker</strong> está ejecutando el servidor <strong>ssh</strong> y no <strong>systemd</strong>, el <strong>nginx</strong> no se levanta. Con otra tarea para asegurar que está corriendo, basta.</p>
-<div class="highlight"><pre>root@ansible:~# cat backends.yml 
+<div class="highlight"><pre><span></span>root@ansible:~# cat backends.yml 
 - hosts: webs, apis
   tasks:
     - apt: <span class="nv">name</span><span class="o">=</span>nginx-light <span class="nv">state</span><span class="o">=</span>present
@@ -258,7 +258,7 @@ root@ansible:~#
 
 
 <p>Lanzamos el <em>playbook</em>, y los dejamos preparados para que el balanceador los pueda usar. En un entorno real, dedicaríamos mas tiempo en poner servidores de aplicaciones normales, con aplicaciones adecuadas, y que posiblemente usarían algún tipo de base de datos.</p>
-<div class="highlight"><pre>root@ansible:~# ansible-playbook -i hosts backends.yml 
+<div class="highlight"><pre><span></span>root@ansible:~# ansible-playbook -i hosts backends.yml 
 
 PLAY <span class="o">[</span>webs, apis<span class="o">]</span> **************************************************************
 
@@ -299,7 +299,7 @@ root@ansible:~#
 <h2>Montando el balanceador</h2>
 <p>Para obtener un balanceador HTTP (o TCP, si lo necesitáramos), basta con elegir uno. Normalmente yo usaría un servidor <strong>nginx</strong> para balancear HTTP (que además ofrece otras funcionalidades, aunque no soporte TCP directo); en este caso, y para variar un poco, vamos a poner <strong>haproxy</strong>, que nos ofrece una bonita página de estadísticas.</p>
 <p>El truco está en instalar <strong>haproxy</strong>, darle un fichero de configuración adecuado y recargar su configuración. Nuevamente, al tratarse de <strong>docker</strong> hay que asegurarse que el servicio esté levantado.</p>
-<div class="highlight"><pre>root@ansible:~# cat balancer.yml 
+<div class="highlight"><pre><span></span>root@ansible:~# cat balancer.yml 
 - hosts: balancer
   tasks:
     - apt: <span class="nv">name</span><span class="o">=</span>haproxy <span class="nv">state</span><span class="o">=</span>present
@@ -314,7 +314,7 @@ root@ansible:~#
 <p>HAProxy funciona mapeando <em>frontends</em> (entradas del balanceador) con sus respectivos <em>backends</em> (servidores que atienden peticiones).</p>
 <p>Disponemos de varios algoritmos de balanceo, así que vamos a poner uno distinto para cada <em>backend</em>. Para la web, vamos a usar <em>roundrobin</em>, que básicamente se trata de una petición a cada uno por turnos; la <em>api</em> va a contar con el algoritmo <em>leastconn</em>, que significa darle una petición al servidor que menos conexiones tiene abiertas.</p>
 <p>Como <em>bonus track</em>, vamos a habilitar la página de estadísticas, siempre que la queramos, claro. La he copiado tal cual de la documentación de <strong>haproxy</strong>.</p>
-<div class="highlight"><pre>root@ansible:~# cat haproxy.cfg 
+<div class="highlight"><pre><span></span>root@ansible:~# cat haproxy.cfg 
 listen stats :1936
     mode http
     stats enable
@@ -343,7 +343,7 @@ root@ansible:~#
 
 
 <p>Solo nos faltaría lanzar el <em>playbook</em> para que quede todo correctamente montado. Si la configuración cambiara o hubiera que corregirla, se debe modificar el fichero local <em>haproxy.cfg</em> y relanzar el <em>playbook</em>. <strong>Ansible</strong> no intentará cambiar nada que ya esté como debía; no instalará <strong>haproxy</strong> de nuevo, no lo levantará si ya estaba corriendo, no copiará el fichero a menos que haya cambiado, y siempre va a recargar la configuración del servicio.</p>
-<div class="highlight"><pre>root@ansible:~# ansible-playbook -i hosts balancer.yml 
+<div class="highlight"><pre><span></span>root@ansible:~# ansible-playbook -i hosts balancer.yml 
 
 PLAY <span class="o">[</span>balancer<span class="o">]</span> ****************************************************************
 
@@ -372,28 +372,28 @@ root@ansible:~#
 <h2>Comprobando el funcionamiento</h2>
 <p>Si hacemos peticiones individuales, vemos que cada servidor funciona, pero lo que nos importa es el conjunto. Para ello vamos a solicitar peticiones a cada uno de los puertos que representan el <em>cluster</em> de web y de <em>api</em>. Puesto que los hemos publicado con el mismo número de puerto en la máquina anfitriona, lo podemos lanzar ahí mismo.</p>
 <p>Hacemos unas peticines al <em>cluster</em> de web, que se esconde detrás del puerto 8080, y comprobamos que van alternando un <em>backend</em> u otro por turnos.</p>
-<div class="highlight"><pre>gerard@sirius:~<span class="nv">$ </span>curl http://localhost:8080/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
+<div class="highlight"><pre><span></span>gerard@sirius:~$ curl http://localhost:8080/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
 Content from web1
-gerard@sirius:~<span class="nv">$ </span>curl http://localhost:8080/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
+gerard@sirius:~$ curl http://localhost:8080/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
 Content from web2
-gerard@sirius:~<span class="nv">$ </span>curl http://localhost:8080/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
+gerard@sirius:~$ curl http://localhost:8080/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
 Content from web1
-gerard@sirius:~<span class="nv">$ </span>curl http://localhost:8080/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
+gerard@sirius:~$ curl http://localhost:8080/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
 Content from web2
-gerard@sirius:~<span class="nv">$ </span>
+gerard@sirius:~$ 
 </pre></div>
 
 
 <p>Repetimos el procedimiento para la <em>api</em>, que se esconde en el puerto 8081 del balanceador:</p>
-<div class="highlight"><pre>gerard@sirius:~<span class="nv">$ </span>curl http://localhost:8081/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
+<div class="highlight"><pre><span></span>gerard@sirius:~$ curl http://localhost:8081/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
 Content from api1
-gerard@sirius:~<span class="nv">$ </span>curl http://localhost:8081/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
+gerard@sirius:~$ curl http://localhost:8081/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
 Content from api2
-gerard@sirius:~<span class="nv">$ </span>curl http://localhost:8081/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
+gerard@sirius:~$ curl http://localhost:8081/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
 Content from api1
-gerard@sirius:~<span class="nv">$ </span>curl http://localhost:8081/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
+gerard@sirius:~$ curl http://localhost:8081/ <span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
 Content from api2
-gerard@sirius:~<span class="nv">$ </span>
+gerard@sirius:~$ 
 </pre></div>
 
 
@@ -405,8 +405,8 @@ gerard@sirius:~<span class="nv">$ </span>
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/05/mongodb-sharding-con-ansible.html">MongoDB sharding con ansible</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/preparando-un-servidor-de-repositorios-git.html">Preparando un servidor de repositorios GIT</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html">Algunas ideas sueltas sobre Ansible</a></li>
     </ul>
 </section>
     <hr/>
@@ -813,9 +813,19 @@ gerard@sirius:~<span class="nv">$ </span>
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -889,6 +899,11 @@ gerard@sirius:~<span class="nv">$ </span>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -938,7 +953,7 @@ gerard@sirius:~<span class="nv">$ </span>
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

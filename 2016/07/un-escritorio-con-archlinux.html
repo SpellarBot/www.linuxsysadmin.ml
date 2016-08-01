@@ -145,14 +145,14 @@ Linux Sysadmin            </a>
                 <p>En <a href="http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html">otro articulo</a> vimos como instalar <strong>Archlinux</strong>. Como tantas otras distribuciones nos vale para servidor y como distribución de escritorio. Sin embargo, debido a su filosofía como <em>rolling release</em>, puede asustarnos un poco como servidor; aunque tener un escritorio "a la última" es un caramelo que muy pocos podemos rechazar.</p>
 <p>Vamos a instalar un escritorio basado en <strong>XFCE</strong>, que es bueno, bonito y barato. Me encanta personalmente porque no usa muchos recursos, responde rápido y tiene muchas herramientas de configuración, a diferencia de otros, por ejemplo <strong>LXDE</strong>.</p>
 <p>Empezaremos instalando la capa gráfica. Esto se consigue mediante el paquete <strong>xorg</strong>.</p>
-<div class="highlight"><pre><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># pacman -S xorg</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># pacman -S xorg</span>
 ...
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c">#</span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
 </pre></div>
 
 
 <p>Alternativamente, podemos instalar solamente el servidor gráfico y los <em>drivers</em> necesarios. Esto es especialmente importante en <strong>Archlinux</strong> porque los paquetes se actualizan muy a menudo, y por lo tanto, tener paquetes que no vamos a usar solo incrementa el tiempo del <em>update</em>.</p>
-<div class="highlight"><pre><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># pacman -S xorg-server xf86-input-mouse xf86-input-keyboard xf86-input-synaptics xf86-video-vesa</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># pacman -S xorg-server xf86-input-mouse xf86-input-keyboard xf86-input-synaptics xf86-video-vesa</span>
 resolviendo dependencias…
 :: Existen <span class="m">4</span> proveedores disponibles para libgl:
 :: Repositorio extra
@@ -187,19 +187,19 @@ Tamaño total de la instalación:  150,38 MiB
 
 :: ¿Continuar con la instalación? <span class="o">[</span>S/n<span class="o">]</span> s
 ...
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c">#</span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
 </pre></div>
 
 
 <p>Una vez tenemos el servidor gráfico, el siguiente paso es el escritorio que elijamos. Tras buscar el <a href="https://www.archlinux.org/groups/">el índice de grupos</a>, me decanté por <strong>XFCE</strong>, aunque hay para todos los gustos.</p>
-<div class="highlight"><pre><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># pacman -S xfce4 xfce4-goodies</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># pacman -S xfce4 xfce4-goodies</span>
 ...
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c">#</span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
 </pre></div>
 
 
 <p>Si lo queréis un poco mas <em>minimal</em>, solo haría falta el paquete <strong>xfce4</strong>. Para ser breves, me limito a este solamente.</p>
-<div class="highlight"><pre><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># pacman -S xfce4</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># pacman -S xfce4</span>
 :: Hay <span class="m">17</span> miembros en el grupo xfce4:
 :: Repositorio extra
    1<span class="o">)</span> exo  2<span class="o">)</span> garcon  3<span class="o">)</span> gtk-xfce-engine  4<span class="o">)</span> thunar  5<span class="o">)</span> thunar-volman  6<span class="o">)</span> tumbler  7<span class="o">)</span> xfce4-appfinder  8<span class="o">)</span> xfce4-mixer
@@ -239,13 +239,13 @@ Tamaño total de la instalación:  298,53 MiB
 
 :: ¿Continuar con la instalación? <span class="o">[</span>S/n<span class="o">]</span> s
 ...
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># </span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># </span>
 </pre></div>
 
 
 <p>Como pequeño inconveniente ante otras distribuciones, como <strong>Debian</strong>, los paquetes no tienen tantas dependencias, dejando al usuario elegir lo que pone o no.</p>
 <p>Como requisito para tener algunas de las funcionalidades del escritorio, por ejemplo la papelera, es necesario instalar otros paquetes. En el caso concreto de la papelera, se necesita el paquete <strong>gvfs</strong>.</p>
-<div class="highlight"><pre><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># pacman -S gvfs</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># pacman -S gvfs</span>
 resolviendo dependencias…
 buscando conflictos entre paquetes…
 
@@ -257,12 +257,12 @@ Tamaño total de la instalación:  23,45 MiB
 
 :: ¿Continuar con la instalación? <span class="o">[</span>S/n<span class="o">]</span> s
 ...
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c">#</span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
 </pre></div>
 
 
 <p>El siguiente paso es el gestor de entrada. Podemos entrar mediante un <em>login</em> texto, y escalar a gráficos con <em>startx</em>, pero es mas bonito y cómodo usar un gestor gráfico como <strong>lightdm</strong>. En caso de <strong>Archlinux</strong>, no depende de ninguna librería gráfica, y hay que decidirlo por nosotros mismos. Puesto que <strong>XFCE</strong> usa las librerías <strong>GTK</strong>, vamos a aprovecharnos de ello.</p>
-<div class="highlight"><pre><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># pacman -S lightdm lightdm-gtk-greeter</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># pacman -S lightdm lightdm-gtk-greeter</span>
 resolviendo dependencias…
 buscando conflictos entre paquetes…
 
@@ -273,19 +273,19 @@ Tamaño total de la instalación:  2,68 MiB
 
 :: ¿Continuar con la instalación? <span class="o">[</span>S/n<span class="o">]</span> s
 ...
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c">#</span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
 </pre></div>
 
 
 <p>Activamos el <em>login manager</em> para que salte automáticamente en cada <em>boot</em> de nuestro sistema, usando <strong>systemd</strong>.</p>
-<div class="highlight"><pre><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># systemctl enable lightdm</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># systemctl enable lightdm</span>
 Created symlink /etc/systemd/system/display-manager.service → /usr/lib/systemd/system/lightdm.service.
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c">#</span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
 </pre></div>
 
 
 <p>Y ya como detalles opcionales, vamos a habilitar el sonido y un gestor de redes, que nos van a hacer la vida mas fácil.</p>
-<div class="highlight"><pre><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># pacman -S wicd wicd-gtk alsa-utils</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># pacman -S wicd wicd-gtk alsa-utils</span>
 resolviendo dependencias…
 buscando conflictos entre paquetes…
 
@@ -300,41 +300,41 @@ Tamaño total de la instalación:  110,79 MiB
 
 :: ¿Continuar con la instalación? <span class="o">[</span>S/n<span class="o">]</span> s
 ...
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c">#</span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
 </pre></div>
 
 
 <p>El paquete <strong>wicd</strong> usa un frontal para el escritorio, pero todas las operaciones delicadas se delegan a un <em>daemon</em> que funciona en segundo plano. De forma similar a <strong>Redhat</strong>, los servicios no se instalan preparados para arrancar, y hay que activarlos manualmente.</p>
-<div class="highlight"><pre><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># systemctl enable wicd</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># systemctl enable wicd</span>
 Created symlink /etc/systemd/system/dbus-org.wicd.daemon.service → /usr/lib/systemd/system/wicd.service.
 Created symlink /etc/systemd/system/multi-user.target.wants/wicd.service → /usr/lib/systemd/system/wicd.service.
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c">#</span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
 </pre></div>
 
 
 <p>El subsistema de sonido funciona solo, salvo por el hecho de que hay que inicializar el dispositivo, y guardar los niveles de audio, para que se puedan restablecer tras cada <em>reboot</em>.</p>
-<div class="highlight"><pre><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># alsactl init</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># alsactl init</span>
 alsactl: sysfs_init:48: sysfs path <span class="s1">&#39;/sys&#39;</span> is invalid
 
 Found hardware: <span class="s2">&quot;ICH&quot;</span> <span class="s2">&quot;Analog Devices AD1980&quot;</span> <span class="s2">&quot;AC97a:41445370&quot;</span> <span class="s2">&quot;0x1028&quot;</span> <span class="s2">&quot;0x0177&quot;</span>
 Hardware is initialized using a generic method
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># alsactl store</span>
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c">#</span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># alsactl store</span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
 </pre></div>
 
 
 <p>Como paso final, vamos a necesitar un usuario con el que trabajar habitualmente, sin privilegios y sin la capacidad de romper nada.</p>
-<div class="highlight"><pre><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># useradd -m gerard</span>
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># passwd gerard</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># useradd -m gerard</span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># passwd gerard</span>
 Introduzca la nueva contraseña de UNIX:
 Vuelva a escribir la nueva contraseña de UNIX:
 passwd: contraseña actualizada correctamente
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c">#</span>
+<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
 </pre></div>
 
 
 <p>Finalmente podemos reiniciar la máquina, y ver como nos queda de bonito.</p>
-<div class="highlight"><pre><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c"># reboot</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># reboot</span>
 ...
 </pre></div>
 
@@ -342,13 +342,13 @@ passwd: contraseña actualizada correctamente
 <p>Si todo ha salido bien, nos queda un escritorio de esta apariencia, que tendremos que personalizar a nuestro gusto.</p>
 <p><img alt="Escritorio XFCE" src="http://www.linuxsysadmin.tk/images/escritorio-xfce-archlinux.jpg" /></p>
 <p>Y todo esto, con un consumo de recursos bastante escaso...</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@archlinux ~<span class="o">]</span><span class="nv">$ </span>free -m
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@archlinux ~<span class="o">]</span>$ free -m
               total        used        free      shared  buff/cache   
 available
 Mem:            <span class="m">498</span>          <span class="m">97</span>         <span class="m">310</span>           <span class="m">1</span>          <span class="m">89</span>         
 379
 Swap:           <span class="m">522</span>           <span class="m">0</span>         522
-<span class="o">[</span>gerard@archlinux ~<span class="o">]</span><span class="nv">$ </span>
+<span class="o">[</span>gerard@archlinux ~<span class="o">]</span>$ 
 </pre></div>
             </div>
             <!-- /.entry-content -->
@@ -357,7 +357,7 @@ Swap:           <span class="m">522</span>           <span class="m">0</span>   
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html">Un escritorio mínimo con Debian</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/07/instalando-una-maquina-con-archlinux.html">Instalando una máquina con Archlinux</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
     </ul>
 </section>
     <hr/>
@@ -764,9 +764,19 @@ Swap:           <span class="m">522</span>           <span class="m">0</span>   
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -840,6 +850,11 @@ Swap:           <span class="m">522</span>           <span class="m">0</span>   
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -889,7 +904,7 @@ Swap:           <span class="m">522</span>           <span class="m">0</span>   
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

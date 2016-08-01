@@ -155,26 +155,26 @@ Linux Sysadmin            </a>
 <p>Para ello existen algunas herramientas capaces de modificar los servidores, sea mediante un protocolo de <strong>pull</strong> (<strong>puppet</strong>, <strong>chef</strong>) que tienen agentes capaces de pedir a un servidor central las reglas a aplicarse, o mediante un protocolo de <strong>push</strong> (<strong>fabric</strong>, <strong>ansible</strong>) que simplemente son formas de enviar esas órdenes desde el servidor central.</p>
 <p>Hoy vamos a instalar <strong>ansible</strong>, herramienta que considero muy interesante por su simplicidad; carece de agentes activos, funcionando como un conjunto de <em>scripts</em> en una máquina cualquiera que actúa de servidor y utilizando el protocolo <strong>SSH</strong> para empujar los <em>scripts</em>, que se ejecutan con un <strong>python</strong> en el servidor destino.</p>
 <p>Si estuviéramos en una máquina tipo <strong>Debian</strong>/<strong>Ubuntu</strong>, la instalación es tan fácil como lanzar <strong>apt-get</strong>:</p>
-<div class="highlight"><pre>root@server:~<span class="nv">$ </span>apt-get install ansible
+<div class="highlight"><pre><span></span>root@server:~$ apt-get install ansible
 ...  
-root@server:~<span class="nv">$ </span>
+root@server:~$ 
 </pre></div>
 
 
 <p>Sin embargo, instalarlo a nivel de sistema es un problema en algunos entornos, así que podemos instalarlo en una carpeta local, concretamente en un <strong>virtualenv</strong> dedicado en nuestra carpeta personal. Esta es la forma que se explica en este tutorial.</p>
 <p>Empezaremos con un servidor cualquiera; al no tener agentes activos y ser <em>scripts</em>, nos vale cualquiera. En este caso se ha usado una máquina tipo <strong>RedHat</strong>. Realmente no nos importa demasiado la versión de <strong>python</strong> que utilice.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>cat /etc/redhat-release
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ cat /etc/redhat-release
 Red Hat Enterprise Linux Server release 6.7 <span class="o">(</span>Santiago<span class="o">)</span>
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>python -V
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ python -V
 Python 2.6.6
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$
 </pre></div>
 
 
 <h2>Creación del virtualenv con ansible</h2>
 <p>Vamos a construir el <strong>virtualenv</strong> desde cero. Si nos interesara hacerlo en otra máquina en la que tengamos permisos para instalar paquetes, bastaría con copiar la carpeta del <strong>virtualenv</strong> en el mismo sitio, y sin instalar nada mas.</p>
 <p>Las únicas dependencias que se necesitan para construir el <strong>virtualenv</strong> es <strong>python</strong>, <strong>gcc</strong> y <strong>python-devel</strong> (o <strong>python-dev</strong> si se tratara de una máquina tipo <strong>Debian</strong>/<strong>Ubuntu</strong>). Como ya tenemos <strong>gcc</strong> y <strong>python</strong>, instalamos solamente <strong>python-devel</strong>.</p>
-<div class="highlight"><pre>gerard@toolbox:~<span class="nv">$ </span>sudo yum install python-devel
+<div class="highlight"><pre><span></span>gerard@toolbox:~$ sudo yum install python-devel
 Loaded plugins: product-id, subscription-manager
 This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
 Setting up Install Process
@@ -183,12 +183,12 @@ Installed:
   python-devel.x86_64 0:2.6.6-64.el6
 
 Complete!
-gerard@toolbox:~<span class="err">$</span>
+gerard@toolbox:~$
 </pre></div>
 
 
 <p>Para no instalar nada innecesario en la máquina, vamos a descargar el comando <em>virtualenv</em>, que va a cumplir su función y va a ser eliminado. Lo descargamos y lo descomprimimos, en cualquier carpeta.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>wget https://pypi.python.org/packages/source/v/virtualenv/virtualenv-15.0.1.tar.gz
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ wget https://pypi.python.org/packages/source/v/virtualenv/virtualenv-15.0.1.tar.gz
 --2016-04-05 11:54:27--  https://pypi.python.org/packages/source/v/virtualenv/virtualenv-15.0.1.tar.gz
 Resolving pypi.python.org... 23.235.43.223
 Connecting to pypi.python.org<span class="p">|</span>23.235.43.223<span class="p">|</span>:443... connected.
@@ -200,42 +200,42 @@ Saving to: “virtualenv-15.0.1.tar.gz”
 
 2016-04-05 11:54:28 <span class="o">(</span>2.90 MB/s<span class="o">)</span> - “virtualenv-15.0.1.tar.gz” saved <span class="o">[</span>1842776/1842776<span class="o">]</span>
 
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>tar xzf virtualenv-15.0.1.tar.gz
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ tar xzf virtualenv-15.0.1.tar.gz
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>Utilizamos el comando <em>virtualenv</em> para generar la estructura contenedora, de la misma manera que otros <em>virtualenv</em>.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>./virtualenv-15.0.1/virtualenv.py ansible
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ ./virtualenv-15.0.1/virtualenv.py ansible
 New python executable in /home/gerard/ansible/bin/python
 Installing setuptools, pip, wheel...done.
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>Hacemos limpieza de <strong>virtualenv</strong>, que ya no vamos a necesitar mas.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>rm -R virtualenv-15.0.1*
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="err">$</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ rm -R virtualenv-15.0.1*
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>La instalación es la misma que haríamos con cualquier módulo de <strong>python</strong>, con la excepción que va a generar fichero <em>.so</em>, dependientes de la arquitectura del procesador que los genere. Si movéis el <strong>virtualenv</strong>, tened esto en cuenta.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span><span class="nb">source </span>ansible/bin/activate
-<span class="o">(</span>ansible<span class="o">)</span> <span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>pip install ansible
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ <span class="nb">source</span> ansible/bin/activate
+<span class="o">(</span>ansible<span class="o">)</span> <span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ pip install ansible
 DEPRECATION: Python 2.6 is no longer supported by the Python core team, please upgrade your Python. A future version of pip will drop support <span class="k">for</span> Python 2.6
 Collecting ansible
 ...
 Installing collected packages: ecdsa, pycrypto, paramiko, MarkupSafe, jinja2, PyYAML, ansible
 Successfully installed MarkupSafe-0.23 PyYAML-3.11 ansible-2.0.1.0 ecdsa-0.13 jinja2-2.8 paramiko-1.16.0 pycrypto-2.6.1
-<span class="o">(</span>ansible<span class="o">)</span> <span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>deactivate
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="err">$</span>
+<span class="o">(</span>ansible<span class="o">)</span> <span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ deactivate
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$
 </pre></div>
 
 
 <h2>Controlando nuestro primer esclavo</h2>
 <p>Vamos a habilitar una máquina cualquiera como receptora de <strong>ansible</strong>. Los puntos básicos a tener en cuenta es que vamos a habilitar <strong>SSH</strong> por claves (sin contraseña) y debemos asegurar que la máquina destino tiene un <strong>python</strong> instalado.</p>
 <p>Empezaremos generando las claves privada y pública en la máquina controladora. Esto se hace mediante el comando <em>ssh-keygen</em>.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>ssh-keygen
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ ssh-keygen
 Generating public/private rsa key pair.
 Enter file in which to save the key <span class="o">(</span>/home/gerard/.ssh/id_rsa<span class="o">)</span>:
 Created directory <span class="s1">&#39;/home/gerard/.ssh&#39;</span>.
@@ -257,39 +257,39 @@ The key<span class="err">&#39;</span>s randomart image is:
 <span class="p">|</span>        +   .o.  <span class="p">|</span>
 <span class="p">|</span>       .    ..E  <span class="p">|</span>
 +-----------------+
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>Esto va a generar una carpeta <em>.ssh</em> en nuestra carpeta personal, con dos ficheros generados: <em>id_rsa</em> (clave privada) e <em>id_rsa.pub</em> (clave pública). La idea es que la clave privada se va a ofrecer automáticamente cuando se haga <strong>ssh</strong>, y si la parte pública esta en <em>~/.ssh/authorized_keys</em> del usuario remoto, el login se hace automático.</p>
 <p>La clave privada es sagrada, y no debe entregarse a nadie. Sin embargo, la parte pública es la que se va a poner en todas las máquinas controladas. Se trata de una línea que vamos a añadir al <em>authorized_keys</em> de todas las máquinas, así que la apuntamos en algún sitio.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>cat .ssh/id_rsa.pub
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ cat .ssh/id_rsa.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAo/hobjbaSNX4zP/wjke5FY910xk5VwW0WaAO10ILAbvhuswdghLbMBdgt+4tWIwFM4DgOwA62wQ04lPsxpQ7Ya4VVmVVZLN5oN2BGQ2ixV6ofB8PA51vNDO5p0xz4ExYebXu8qshrOi4ulcSsc1rEDhlT+zZkYApjVOcgmO7T7T6149XWWBH0YSFEOto8qF+YiyS2yMlVy5p6QruHNPwcr6kC0z13aYrNUnk5VXFwlOSRtUTYMZ+c0ysh49uTDm50AWoccuDUK0v0juNWnHfQw1PFYLaQZLmJEWIkIsND3pBACHdFTyJDGDOB2Kuw+DCaAxp5vqPt5zFuidVS0h5Mw<span class="o">==</span> gerard@toolbox
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>En la máquina controlada, añadimos la línea de la clave pública en el fichero <em>authorized_keys</em>. Vamos a controlar login automático contra el usuario <em>root</em> en nuestra máquina de ejemplo misma.</p>
-<div class="highlight"><pre><span class="o">[</span>root@toolbox ~<span class="o">]</span><span class="c"># cat .ssh/authorized_keys</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>root@toolbox ~<span class="o">]</span><span class="c1"># cat .ssh/authorized_keys</span>
 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAo/hobjbaSNX4zP/wjke5FY910xk5VwW0WaAO10ILAbvhuswdghLbMBdgt+4tWIwFM4DgOwA62wQ04lPsxpQ7Ya4VVmVVZLN5oN2BGQ2ixV6ofB8PA51vNDO5p0xz4ExYebXu8qshrOi4ulcSsc1rEDhlT+zZkYApjVOcgmO7T7T6149XWWBH0YSFEOto8qF+YiyS2yMlVy5p6QruHNPwcr6kC0z13aYrNUnk5VXFwlOSRtUTYMZ+c0ysh49uTDm50AWoccuDUK0v0juNWnHfQw1PFYLaQZLmJEWIkIsND3pBACHdFTyJDGDOB2Kuw+DCaAxp5vqPt5zFuidVS0h5Mw<span class="o">==</span> gerard@toolbox
-<span class="o">[</span>root@toolbox ~<span class="o">]</span><span class="c">#</span>
+<span class="o">[</span>root@toolbox ~<span class="o">]</span><span class="c1">#</span>
 </pre></div>
 
 
 <p>Una vez que tengamos las claves <strong>SSH</strong> distribuidas, y <strong>python</strong> instalado en las máquinas controladas, podemos probar. Para ello, vamos a añadir esta máquina en el fichero de <em>hosts</em>, sea por nombre o por dirección IP.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>cat hosts
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ cat hosts
 127.0.0.1
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>Y lanzamos el módulo <strong>ping</strong> a todas las máquinas (que solo es la de test, de momento).</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>./ansible/bin/ansible -u root -i hosts -m ping all
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ ./ansible/bin/ansible -u root -i hosts -m ping all
 127.0.0.1 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
-    <span class="s2">&quot;changed&quot;</span>: <span class="nb">false</span>,
+    <span class="s2">&quot;changed&quot;</span>: false,
     <span class="s2">&quot;ping&quot;</span>: <span class="s2">&quot;pong&quot;</span>
 <span class="o">}</span>
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$
 </pre></div>
 
 
@@ -304,43 +304,43 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAo/hobjbaSNX4zP/wjke5FY910xk5VwW0WaAO10ILAbvh
 <p>De hecho, si os parece bien utilizar carpetas de sistema, la última opción es la normal. Sin embargo, me interesa restringirme a mi carpeta local, por falta de permisos habitualmente.</p>
 <p>De la misma manera, el fichero de <em>hosts</em> se busca en un sitio concreto, que con la configuración estándar es <em>/etc/ansible/hosts</em>, a menos que se indique explícitamente el flag <em>-i</em> en los comandos.</p>
 <p>Para evitar usar estos dos ficheros fuera de nuestra carpeta, vamos a crearlos en el <strong>virtualenv</strong> creado, añadiéndolos en una carpeta <em>etc</em>, que vamos a crear. Todos los parámetros se van a poner en el fichero de configuración y vamos a explicitar la localización del fichero de configuración.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>mkdir ansible/etc
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>cat ansible/etc/ansible.cfg
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ mkdir ansible/etc
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ cat ansible/etc/ansible.cfg
 <span class="o">[</span>defaults<span class="o">]</span>
 <span class="nv">inventory</span> <span class="o">=</span> /home/gerard/ansible/etc/hosts
 <span class="nv">host_key_checking</span> <span class="o">=</span> False
 <span class="nv">remote_user</span> <span class="o">=</span> root
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>mv hosts ansible/etc/
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ mv hosts ansible/etc/
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>Tras crear la configuración, la probamos:</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ ANSIBLE_CONFIG</span><span class="o">=</span>/home/gerard/ansible/etc/ansible.cfg ./ansible/bin/ansible -m ping all
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ <span class="nv">ANSIBLE_CONFIG</span><span class="o">=</span>/home/gerard/ansible/etc/ansible.cfg ./ansible/bin/ansible -m ping all
 127.0.0.1 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
-    <span class="s2">&quot;changed&quot;</span>: <span class="nb">false</span>,
+    <span class="s2">&quot;changed&quot;</span>: false,
     <span class="s2">&quot;ping&quot;</span>: <span class="s2">&quot;pong&quot;</span>
 <span class="o">}</span>
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>Para conseguir eliminar el <em>path</em> absoluto del binario de ansible, lo añadimos en la variable de entorno <em>PATH</em>. Para nuestra comodidadd, podemos definir ambas variables de entorno en el fichero <em>.bashrc</em>. Este fichero se va a activar cada vez que se inicie <strong>bash</strong>; para no cerrar y abrir sesión lo incluimos a mano.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>tail -2 .bashrc
-<span class="nb">export </span><span class="nv">ANSIBLE_CONFIG</span><span class="o">=</span>~/ansible/etc/ansible.cfg
-<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span>~/ansible/bin:<span class="nv">$PATH</span>
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span><span class="nb">source</span> .bashrc
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="err">$</span>
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ tail -2 .bashrc
+<span class="nb">export</span> <span class="nv">ANSIBLE_CONFIG</span><span class="o">=</span>~/ansible/etc/ansible.cfg
+<span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span>~/ansible/bin:<span class="nv">$PATH</span>
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ <span class="nb">source</span> .bashrc
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$
 </pre></div>
 
 
 <p>Y finalmente obtenemos la versión mínima del comando a ejecutar.</p>
-<div class="highlight"><pre><span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="nv">$ </span>ansible -m ping all
+<div class="highlight"><pre><span></span><span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$ ansible -m ping all
 127.0.0.1 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">=</span>&gt; <span class="o">{</span>
-    <span class="s2">&quot;changed&quot;</span>: <span class="nb">false</span>,
+    <span class="s2">&quot;changed&quot;</span>: false,
     <span class="s2">&quot;ping&quot;</span>: <span class="s2">&quot;pong&quot;</span>
 <span class="o">}</span>
-<span class="o">[</span>gerard@toolbox ~<span class="o">]</span><span class="err">$</span>
+<span class="o">[</span>gerard@toolbox ~<span class="o">]</span>$
 </pre></div>
 
 
@@ -759,9 +759,19 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAo/hobjbaSNX4zP/wjke5FY910xk5VwW0WaAO10ILAbvh
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -835,6 +845,11 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAo/hobjbaSNX4zP/wjke5FY910xk5VwW0WaAO10ILAbvh
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -884,7 +899,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAo/hobjbaSNX4zP/wjke5FY910xk5VwW0WaAO10ILAbvh
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

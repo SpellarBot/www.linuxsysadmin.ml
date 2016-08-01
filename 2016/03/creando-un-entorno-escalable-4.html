@@ -162,7 +162,7 @@ Linux Sysadmin            </a>
 <p>Si analizamos estos requisitos, podemos comprobar que las opciones son muchas; desde el todopoderoso <strong>apache</strong> al <strong>nginx</strong>, pasando por soluciones de balanceador puro como <strong>haproxy</strong>, u opciones mas esotéricas como <strong>squid</strong>. En este caso, se utiliza <strong>nginx</strong> por su facilidad de uso y su bajo consumo de recursos. Cumple con el subconjunto básico de funcionalidades necesario, pero no dispone de tantos algoritmos de balanceo como otras opciones.</p>
 <h2>Instalación de paquetes</h2>
 <p>Empezamos instalando los requisitos para nuestra fachada; en principio solo se necesitaría el servidor web <strong>nginx</strong> (en la versión mínima) y <strong>openssl</strong> para generar los certificados. Adicionalmente instalaremos <strong>curl</strong> para comprobar que el resultado es correcto.</p>
-<div class="highlight"><pre>root@frontend:~# apt-get install nginx-light curl
+<div class="highlight"><pre><span></span>root@frontend:~# apt-get install nginx-light curl
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias
 Leyendo la información de estado... Hecho
@@ -185,7 +185,7 @@ root@frontend:~#
 
 
 <p>El paquete <strong>nginx</strong> de la distribución <em>Debian</em> viene con una configuración por defecto en <em>/etc/nginx/sites-enabled/</em>, que vamos a eliminar para evitar que se pise con nuestras configuraciones.</p>
-<div class="highlight"><pre>root@frontend:~# ls -lh /etc/nginx/sites-enabled/
+<div class="highlight"><pre><span></span>root@frontend:~# ls -lh /etc/nginx/sites-enabled/
 total 0
 lrwxrwxrwx <span class="m">1</span> root root <span class="m">34</span> feb <span class="m">26</span> 11:28 default -&gt; /etc/nginx/sites-available/default
 root@frontend:~# unlink /etc/nginx/sites-enabled/default
@@ -195,7 +195,7 @@ root@frontend:~#
 
 <h2>Consideraciones de seguridad</h2>
 <p>Cuando nuestro servidor web recibe una petición, va a iniciar una nueva conexión contra el servidor de <em>backend</em> que toque o el de <em>backoffice</em>. Para habilitar esto, se necesitan nuevas reglas en el <em>firewall</em>, que en este caso es <strong>firehol</strong>, instalado en la máquina anfitriona.</p>
-<div class="highlight"><pre>root@lxc:~# cat /etc/firehol/firehol.conf
+<div class="highlight"><pre><span></span>root@lxc:~# cat /etc/firehol/firehol.conf
 ...  
 <span class="nv">app_servers</span><span class="o">=</span><span class="s2">&quot;10.0.0.3 10.0.0.4 10.0.0.5&quot;</span>
 <span class="nv">frontend_server</span><span class="o">=</span><span class="s2">&quot;10.0.0.2&quot;</span>
@@ -208,7 +208,7 @@ root@lxc:~#
 
 
 <p>No os olvidéis de reiniciar <strong>firehol</strong>, para que se apliquen las nuevas reglas.</p>
-<div class="highlight"><pre>root@lxc:~# service firehol restart
+<div class="highlight"><pre><span></span>root@lxc:~# service firehol restart
 ...  
 root@lxc:~#
 </pre></div>
@@ -217,7 +217,7 @@ root@lxc:~#
 <h2>Montando los virtualhosts de ambas aplicaciones</h2>
 <p>La parte privada va a estar escondida tras una terminación <strong>HTTPS</strong>. Esa aplicación se podría esconder tras una <a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">autenticación de certificados cliente</a> o mediante <a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html">autenticación básica</a>. Por simplicidad vamos a usar esta última.</p>
 <p>Empezamos generando un certificado autofirmado para el servidor web, directamente firmado, y su clave. Fijaos que no generamos ningún certificado de CA, ya que no tenemos ninguna intención de generar autenticación cliente en el futuro.</p>
-<div class="highlight"><pre>root@frontend:~# openssl req -new -newkey rsa:2048 -days <span class="m">365</span> -nodes -x509 -keyout server.key -out server.crt -subj <span class="s2">&quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin/CN=shop.linuxsysadmin.tk&quot;</span>
+<div class="highlight"><pre><span></span>root@frontend:~# openssl req -new -newkey rsa:2048 -days <span class="m">365</span> -nodes -x509 -keyout server.key -out server.crt -subj <span class="s2">&quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin/CN=shop.linuxsysadmin.tk&quot;</span>
 Generating a <span class="m">2048</span> bit RSA private key
 .......................................+++
 .................................................................................................................................................................+++
@@ -228,14 +228,14 @@ root@frontend:~#
 
 
 <p>Ponemos la clave y el certificado generado en sus respectivas localizaciones, de acuerdo a los estándares.</p>
-<div class="highlight"><pre>root@frontend:~# cp server.key /etc/ssl/private/
+<div class="highlight"><pre><span></span>root@frontend:~# cp server.key /etc/ssl/private/
 root@frontend:~# cp server.crt /etc/ssl/certs/
 root@frontend:~#
 </pre></div>
 
 
 <p>Como verificación, así quedaría la carpeta <em>/etc/ssl/</em>:</p>
-<div class="highlight"><pre>root@frontend:~# tree /etc/ssl/
+<div class="highlight"><pre><span></span>root@frontend:~# tree /etc/ssl/
 /etc/ssl/
 ├── certs
 │   └── server.crt
@@ -249,7 +249,7 @@ root@frontend:~#
 
 
 <p>Para poder autenticar mediante autenticación básica, generamos un usuario en un fichero tipo <strong>htpasswd</strong>.</p>
-<div class="highlight"><pre>root@frontend:~# <span class="nb">echo</span> <span class="s2">&quot;admin:</span><span class="k">$(</span>openssl passwd -crypt s3cr3t<span class="k">)</span><span class="s2">&quot;</span> &gt; /etc/nginx/shop.basic_auth
+<div class="highlight"><pre><span></span>root@frontend:~# <span class="nb">echo</span> <span class="s2">&quot;admin:</span><span class="k">$(</span>openssl passwd -crypt s3cr3t<span class="k">)</span><span class="s2">&quot;</span> &gt; /etc/nginx/shop.basic_auth
 root@frontend:~# cat /etc/nginx/shop.basic_auth
 admin:rOU9H0ABEB2H6
 root@frontend:~#
@@ -257,7 +257,7 @@ root@frontend:~#
 
 
 <p>Y con todas las piezas listas, montamos los virtualhosts, en un fichero de configuración o en varios, según nos apetezca.</p>
-<div class="highlight"><pre>root@frontend:~# cat /etc/nginx/sites-enabled/shop
+<div class="highlight"><pre><span></span>root@frontend:~# cat /etc/nginx/sites-enabled/shop
 upstream backends <span class="o">{</span>
         server backend1:8080<span class="p">;</span>
         server backend2:8080<span class="p">;</span>
@@ -292,14 +292,14 @@ root@frontend:~#
 
 <p>La configuración es bastante estándar; se trata de un <em>server</em> (equivalente en <strong>nginx</strong> a un <em>virtualhost</em> de <strong>apache</strong>) para cada protocolo. La parte de administración es solamente la mediación <strong>SSL</strong> y un <em>proxy_pass</em> hacia el <em>backoffice</em>. La parte de la API pública también se limita a hacer un <em>proxy_pass</em>, solo que se hace contra <em>backends</em> que es un objeto <strong>upstream</strong>, que es el que define el balanceador.</p>
 <p>Ahora solo queda reiniciar el servidor web para aplicar los cambios. De acuerdo a la documentación, habría bastado un <em>reload</em>.</p>
-<div class="highlight"><pre>root@frontend:~# service nginx restart
+<div class="highlight"><pre><span></span>root@frontend:~# service nginx restart
 root@frontend:~#
 </pre></div>
 
 
 <h2>Comprobando que las aplicaciones funcionan</h2>
 <p>Para comprobar que la parte de la API funciona y balancea adecuadamente, basta con hacer peticiones. Podemos comprobar el <em>backend</em> que la ha servido porque la aplicación pone una cabecera que especifica el nombre del <em>host</em> que la resolvió. Con dos peticiones veremos que va alternativamente a cada <em>backend</em>.</p>
-<div class="highlight"><pre>root@frontend:~# curl -i http://localhost/products/
+<div class="highlight"><pre><span></span>root@frontend:~# curl -i http://localhost/products/
 HTTP/1.1 <span class="m">200</span> OK
 Server: nginx/1.6.2
 Date: Fri, <span class="m">26</span> Feb <span class="m">2016</span> 11:04:38 GMT
@@ -324,7 +324,7 @@ root@frontend:~#
 
 
 <p>Para la parte privada, haremos la petición, de la misma manera; vamos a añadir el flag <em>-k</em> para sobrepasar el certificado autofirmado. Como no hemos indicado el usuario y la contraseña, nos devuelve un error 401, que indica que no estamos autorizados a pasar mas allá.</p>
-<div class="highlight"><pre>root@frontend:~# curl -i -k https://localhost/products
+<div class="highlight"><pre><span></span>root@frontend:~# curl -i -k https://localhost/products
 HTTP/1.1 <span class="m">401</span> Unauthorized
 Server: nginx/1.6.2
 Date: Fri, <span class="m">26</span> Feb <span class="m">2016</span> 11:05:35 GMT
@@ -348,7 +348,7 @@ root@frontend:~#
 <h2>Un pequeño detalle: abrimos los puertos</h2>
 <p>Puesto que este entorno está montado sobre virtualización <strong>LXC</strong>, necesitamos que la dirección IP de la maquina anfitriona exponga los puertos de la máquina <em>frontend</em>. Para ello hay que habilitar un mecanismo que se llama <em>port forwarding</em>, coloquialmente conocido como "abrir el puerto".</p>
 <p>Mediante una directiva de <strong>firehol</strong> indicamos que pasaremos todas las peticiones recibidas a los puertos 80 y 443 directamente a la máquina de <em>frontend</em>. Hay que habilitar ese tráfico de <strong>FORWARD</strong>, mediante otras reglas.</p>
-<div class="highlight"><pre>root@lxc:~# cat /etc/firehol/firehol.conf
+<div class="highlight"><pre><span></span>root@lxc:~# cat /etc/firehol/firehol.conf
 ...
 <span class="nv">frontend_server</span><span class="o">=</span><span class="s2">&quot;10.0.0.2&quot;</span>
 ...
@@ -364,7 +364,7 @@ root@lxc:~#
 
 
 <p>Y nuevamente reiniciamos el servicio para aplicar las nuevas reglas.</p>
-<div class="highlight"><pre>root@lxc:~# service firehol restart
+<div class="highlight"><pre><span></span>root@lxc:~# service firehol restart
 ...
 root@lxc:~#
 </pre></div>
@@ -379,7 +379,7 @@ root@lxc:~#
 <p>Tras añadir tres productos, vemos que ya se genera la lista, en formato web.</p>
 <p><img alt="Admin list" src="http://www.linuxsysadmin.tk/images/entorno-escalable-admin-list.jpg" /></p>
 <p>Con los datos introducidos podemos consumir la API, para comprobar que los datos que hemos introducido en la base de datos (mediante la aplicación de administración) están disponibles.</p>
-<div class="highlight"><pre>gerard@desktop:~<span class="nv">$ </span>wget -qO- http://192.168.1.232/products/
+<div class="highlight"><pre><span></span>gerard@desktop:~$ wget -qO- http://192.168.1.232/products/
 <span class="o">[</span>
     <span class="o">{</span>
         <span class="s2">&quot;price&quot;</span>: 1.5, 
@@ -397,18 +397,18 @@ root@lxc:~#
         <span class="s2">&quot;description&quot;</span>: <span class="s2">&quot;Pears&quot;</span>
     <span class="o">}</span>
 <span class="o">]</span>
-gerard@desktop:~<span class="nv">$ </span>
+gerard@desktop:~$ 
 </pre></div>
 
 
 <p>Y consultando un producto concreto, también funciona como debe.</p>
-<div class="highlight"><pre>gerard@desktop:~<span class="nv">$ </span>wget -qO- http://192.168.1.232/products/456
+<div class="highlight"><pre><span></span>gerard@desktop:~$ wget -qO- http://192.168.1.232/products/456
 <span class="o">{</span>
     <span class="s2">&quot;price&quot;</span>: 1.0, 
     <span class="s2">&quot;_id&quot;</span>: <span class="s2">&quot;456&quot;</span>, 
     <span class="s2">&quot;description&quot;</span>: <span class="s2">&quot;Oranges&quot;</span>
 <span class="o">}</span>
-gerard@desktop:~<span class="nv">$ </span>
+gerard@desktop:~$ 
 </pre></div>
 
 
@@ -419,8 +419,8 @@ gerard@desktop:~<span class="nv">$ </span>
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">Restringiendo accesos mediante certificados de cliente</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html">Restringiendo accesos web mediante autenticación básica</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">Restringiendo accesos mediante certificados de cliente</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Restart automático de servicios con systemd</a></li>
     </ul>
 </section>
@@ -837,9 +837,19 @@ gerard@desktop:~<span class="nv">$ </span>
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -913,6 +923,11 @@ gerard@desktop:~<span class="nv">$ </span>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -962,7 +977,7 @@ gerard@desktop:~<span class="nv">$ </span>
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

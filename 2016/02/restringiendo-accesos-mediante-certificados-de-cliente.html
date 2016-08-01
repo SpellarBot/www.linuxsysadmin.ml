@@ -156,7 +156,7 @@ Linux Sysadmin            </a>
                 </div>
                 <p>De vez en cuando, tenemos algún contenido web o una API que necesita un control de acceso superior. El método mas eficaz del que disponemos hoy en día es la autenticación con certificados SSL cliente, en donde es el cliente el que debe ofrecer un certificado que el servidor validará.</p>
 <p>Como se trata de proteger contenido web, vamos a necesitar un servidor web, por ejemplo, <strong>nginx</strong>. De paso, vamos a instalar el paquete <strong>openssl</strong>, que nos permitirá generar los certificados usados.</p>
-<div class="highlight"><pre>root@server:~# apt-get install nginx-light openssl
+<div class="highlight"><pre><span></span>root@server:~# apt-get install nginx-light openssl
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias
 Leyendo la información de estado... Hecho
@@ -177,7 +177,7 @@ root@server:~#
 
 <h2>Generar el certificado y la clave de la CA</h2>
 <p>Empezaremos por generar la clave de la CA, que va a servir para firmar el certificado que pondremos en el servidor.</p>
-<div class="highlight"><pre>root@server:~# openssl genrsa -des3 -out ca.key 4096
+<div class="highlight"><pre><span></span>root@server:~# openssl genrsa -des3 -out ca.key 4096
 Generating RSA private key, <span class="m">4096</span> bit long modulus
 ...................................................................++
 .++
@@ -189,7 +189,7 @@ root@server:~#
 
 
 <p>Ahora generamos el certificado de la CA. Lo generamos directamente firmado en un solo paso.</p>
-<div class="highlight"><pre>root@server:~# openssl req -new -x509 -days <span class="m">365</span> -key ca.key -out ca.crt -subj <span class="s2">&quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin&quot;</span>
+<div class="highlight"><pre><span></span>root@server:~# openssl req -new -x509 -days <span class="m">365</span> -key ca.key -out ca.crt -subj <span class="s2">&quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin&quot;</span>
 Enter pass phrase <span class="k">for</span> ca.key:
 root@server:~#
 </pre></div>
@@ -197,7 +197,7 @@ root@server:~#
 
 <h2>Generar el certificado para el servidor web</h2>
 <p>Generamos la clave para el certificado del servidor web.</p>
-<div class="highlight"><pre>root@server:~# openssl genrsa -des3 -out server.key 4096
+<div class="highlight"><pre><span></span>root@server:~# openssl genrsa -des3 -out server.key 4096
 Generating RSA private key, <span class="m">4096</span> bit long modulus
 .............................................++
 .....................................++
@@ -209,14 +209,14 @@ root@server:~#
 
 
 <p>Ahora creamos un certificado para el servidor web. Es importante que el campo <strong>CN</strong> sea el mismo que el nombre del <em>virtualhost</em>.</p>
-<div class="highlight"><pre>root@server:~# openssl req -new -key server.key -out server.csr -subj <span class="s2">&quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin/CN=private.linuxsysadmin.tk&quot;</span>
+<div class="highlight"><pre><span></span>root@server:~# openssl req -new -key server.key -out server.csr -subj <span class="s2">&quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin/CN=private.linuxsysadmin.tk&quot;</span>
 Enter pass phrase <span class="k">for</span> server.key:
 root@server:~#
 </pre></div>
 
 
 <p>Y lo firmamos con la clave y el certificado de la CA.</p>
-<div class="highlight"><pre>root@server:~# openssl x509 -req -days <span class="m">365</span> -in server.csr -CA ca.crt -CAkey ca.key -set_serial <span class="m">01</span> -out server.crt
+<div class="highlight"><pre><span></span>root@server:~# openssl x509 -req -days <span class="m">365</span> -in server.csr -CA ca.crt -CAkey ca.key -set_serial <span class="m">01</span> -out server.crt
 Signature ok
 <span class="nv">subject</span><span class="o">=</span>/C<span class="o">=</span>ES/ST<span class="o">=</span>Spain/L<span class="o">=</span>Barcelona/O<span class="o">=</span>LinuxSysadmin/CN<span class="o">=</span>private.linuxsysadmin.tk
 Getting CA Private Key
@@ -226,7 +226,7 @@ root@server:~#
 
 
 <p><strong>TRUCO</strong>: Si la clave está protegida por una passphrase, se va a necesitar introducirla cada vez que se quiera levantar el servidor web. Nos lo podemos ahorrar con unos simples comandos, que dejará la clave como insegura.</p>
-<div class="highlight"><pre>root@server:~# mv server.key server.key.secure
+<div class="highlight"><pre><span></span>root@server:~# mv server.key server.key.secure
 root@server:~# openssl rsa -in server.key.secure -out server.key
 Enter pass phrase <span class="k">for</span> server.key.secure:
 writing RSA key
@@ -236,7 +236,7 @@ root@server:~#
 
 <h2>Generar el certificado cliente</h2>
 <p>Generamos la clave para el certificado del cliente.</p>
-<div class="highlight"><pre>root@server:~# openssl genrsa -des3 -out client.key 1024
+<div class="highlight"><pre><span></span>root@server:~# openssl genrsa -des3 -out client.key 1024
 Generating RSA private key, <span class="m">1024</span> bit long modulus
 ...............................++++++
 .....................++++++
@@ -248,14 +248,14 @@ root@server:~#
 
 
 <p>El siguiente paso consiste en generar una petición de certificado, que posteriormente haremos firmar. El campo <strong>CN</strong> puede ser recogido por el servidor web y trasladado mediante cabeceras a un hipotético <em>backend</em>, en caso de hacer un <em>proxy_pass</em>.</p>
-<div class="highlight"><pre>root@server:~# openssl req -new -key client.key -out client.csr -subj <span class="s2">&quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin/CN=Gerard Monells&quot;</span>
+<div class="highlight"><pre><span></span>root@server:~# openssl req -new -key client.key -out client.csr -subj <span class="s2">&quot;/C=ES/ST=Spain/L=Barcelona/O=LinuxSysadmin/CN=Gerard Monells&quot;</span>
 Enter pass phrase <span class="k">for</span> client.key:
 root@server:~#
 </pre></div>
 
 
 <p>Firmamos nuestra petición de certificado con la clave de la CA, obteniendo el certificado final.</p>
-<div class="highlight"><pre>root@server:~# openssl x509 -req -days <span class="m">365</span> -in client.csr -CA ca.crt -CAkey ca.key -set_serial <span class="m">91</span> -out client.crt
+<div class="highlight"><pre><span></span>root@server:~# openssl x509 -req -days <span class="m">365</span> -in client.csr -CA ca.crt -CAkey ca.key -set_serial <span class="m">91</span> -out client.crt
 Signature ok
 <span class="nv">subject</span><span class="o">=</span>/C<span class="o">=</span>ES/ST<span class="o">=</span>Spain/L<span class="o">=</span>Barcelona/O<span class="o">=</span>LinuxSysadmin/CN<span class="o">=</span>Gerard Monells
 Getting CA Private Key
@@ -265,7 +265,7 @@ root@server:~#
 
 
 <p>Ahora queda empaquetar la clave y el certificado en un fichero <em>client.p12</em> que pueda ser importado en un navegador web.</p>
-<div class="highlight"><pre>root@server:~# openssl pkcs12 -export -in client.crt -inkey client.key -out client.p12 -name <span class="s2">&quot;LinuxSysadmin&quot;</span>
+<div class="highlight"><pre><span></span>root@server:~# openssl pkcs12 -export -in client.crt -inkey client.key -out client.p12 -name <span class="s2">&quot;LinuxSysadmin&quot;</span>
 Enter pass phrase <span class="k">for</span> client.key:
 Enter Export Password:
 Verifying - Enter Export Password:
@@ -275,7 +275,7 @@ root@server:~#
 
 <h2>Montando el dominio web</h2>
 <p>Además de necesitar el certificado y la clave servidor, es necesario que el servidor web conozca el certificado de la CA para que pueda verificar el servidor cliente que nos ofrezca el navegador.</p>
-<div class="highlight"><pre>root@server:~# cp server.key /etc/ssl/private/
+<div class="highlight"><pre><span></span>root@server:~# cp server.key /etc/ssl/private/
 root@server:~# cp server.crt /etc/ssl/certs/
 root@server:~# cp ca.crt /etc/ssl/certs/
 root@server:~#
@@ -283,7 +283,7 @@ root@server:~#
 
 
 <p>Así quedarían los certificados una vez en su sitio.</p>
-<div class="highlight"><pre>root@server:~# tree /etc/ssl/
+<div class="highlight"><pre><span></span>root@server:~# tree /etc/ssl/
 /etc/ssl/
 ├── certs
 │   ├── ca.crt
@@ -298,7 +298,7 @@ root@server:~#
 
 
 <p>Vamos a poner un fichero de configuración en <strong>nginx</strong>, que va a escuchar por el puerto 443 y con <strong>SSL</strong> habilitado. Indicamos también donde están los ficheros que servirá el <strong>nginx</strong>, la localización de los certificados y la necesidad de verificar al cliente mediante certificado contra el certificado de la CA.</p>
-<div class="highlight"><pre>root@server:~# cat /etc/nginx/sites-enabled/private.linuxsysadmin.tk
+<div class="highlight"><pre><span></span>root@server:~# cat /etc/nginx/sites-enabled/private.linuxsysadmin.tk
 server <span class="o">{</span>
     listen                      <span class="m">443</span> ssl<span class="p">;</span>
     server_name                 private.linuxsysadmin.tk<span class="p">;</span>
@@ -314,22 +314,22 @@ root@server:~#
 
 
 <p>Podemos verificar que la sintaxis de la configuración es correcta usando el binario de <strong>nginx</strong> con el parámetro adecuado.</p>
-<div class="highlight"><pre>root@server:~# nginx -t
+<div class="highlight"><pre><span></span>root@server:~# nginx -t
 nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
-nginx: configuration file /etc/nginx/nginx.conf <span class="nb">test </span>is successful
+nginx: configuration file /etc/nginx/nginx.conf <span class="nb">test</span> is successful
 root@server:~#
 </pre></div>
 
 
 <p>Y sabiendo que es correcto, reiniciamos el servidor web.</p>
-<div class="highlight"><pre>root@server:~# service nginx restart
+<div class="highlight"><pre><span></span>root@server:~# service nginx restart
 root@server:~#
 </pre></div>
 
 
 <h2>Comprobación de funcionamiento</h2>
 <p>Como hemos indicado en la configuración en el <em>document root</em>, vamos a servir el contenido que se encuentra en <em>/www</em>. Empezaremos poniendo algún contenido en él.</p>
-<div class="highlight"><pre>root@server:~# mkdir /www
+<div class="highlight"><pre><span></span>root@server:~# mkdir /www
 root@server:~# <span class="nb">echo</span> <span class="s2">&quot;Private area&quot;</span> &gt; /www/index.html
 root@server:~#
 </pre></div>
@@ -759,9 +759,19 @@ root@server:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -835,6 +845,11 @@ root@server:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -884,7 +899,7 @@ root@server:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

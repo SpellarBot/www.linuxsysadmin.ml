@@ -166,7 +166,7 @@ Linux Sysadmin            </a>
 <p>Partimos de una distribución <em>Debian jessie</em> instalada con un CD <em>netinstall</em> y con el único paquete instalado <em>openssh-server</em>, para mi comodidad.</p>
 <h2>Preparar el servidor</h2>
 <p>El primer paso consiste en instalar las tecnologías usadas:</p>
-<div class="highlight"><pre>root@lxc:~# apt-get install bridge-utils firehol lxc
+<div class="highlight"><pre><span></span>root@lxc:~# apt-get install bridge-utils firehol lxc
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias       
 Leyendo la información de estado... Hecho
@@ -181,7 +181,7 @@ root@lxc:~#
 
 <p>Acto seguido debemos modificar la configuración de red, para que la interfaz de red de la máquina represente la salida de todas las IPs que maneja el bridge y para que el host obtenga una dirección de red en el bridge.</p>
 <p><strong>ANTES</strong>:</p>
-<div class="highlight"><pre>root@lxc:~# cat /etc/network/interfaces
+<div class="highlight"><pre><span></span>root@lxc:~# cat /etc/network/interfaces
 <span class="nb">source</span> /etc/network/interfaces.d/*
 
 auto lo
@@ -197,7 +197,7 @@ root@lxc:~#
 
 
 <p><strong>DESPUES</strong>:</p>
-<div class="highlight"><pre>root@lxc:~# cat /etc/network/interfaces
+<div class="highlight"><pre><span></span>root@lxc:~# cat /etc/network/interfaces
 <span class="nb">source</span> /etc/network/interfaces.d/*
 
 auto lo
@@ -214,7 +214,7 @@ root@lxc:~#
 
 
 <p>En este punto es necesario reconfigurar la red, siendo especialmente importante que <em>eth0</em> quede sin dirección IP asignada (en mi caso tuve que reiniciar la máquina).</p>
-<div class="highlight"><pre>root@lxc:~# ip addr
+<div class="highlight"><pre><span></span>root@lxc:~# ip addr
 1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu <span class="m">65536</span> qdisc noqueue state UNKNOWN group default 
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -234,7 +234,7 @@ root@lxc:~#
 
 
 <p>El último paso consiste en activar el firewall con unas reglas básicas, para proteger el equipo anfitrión de posibles ataques o intrusiones, dejando solamente el acceso a SSH. Con firehol es posible combinar el demonio <em>knockd</em> para ocultar el puerto tras una secuencia de port knocking; en principio sería suficiente con forzar la entrada SSH por claves RSA.</p>
-<div class="highlight"><pre>root@lxc:~# cat /etc/firehol/firehol.conf 
+<div class="highlight"><pre><span></span>root@lxc:~# cat /etc/firehol/firehol.conf 
 interface lxc0 world
     policy drop
     protection strong
@@ -246,23 +246,23 @@ root@lxc:~#
 
 <p>Hay que modificar otro fichero para permitir el inicio del firewall:</p>
 <p><strong>ANTES</strong>:</p>
-<div class="highlight"><pre>root@lxc:~# grep START /etc/default/firehol 
-<span class="c">#To enable firehol at startup set START_FIREHOL=YES</span>
+<div class="highlight"><pre><span></span>root@lxc:~# grep START /etc/default/firehol 
+<span class="c1">#To enable firehol at startup set START_FIREHOL=YES</span>
 <span class="nv">START_FIREHOL</span><span class="o">=</span>NO
 root@lxc:~# 
 </pre></div>
 
 
 <p><strong>DESPUES</strong>:</p>
-<div class="highlight"><pre>root@lxc:~# grep START /etc/default/firehol 
-<span class="c">#To enable firehol at startup set START_FIREHOL=YES</span>
+<div class="highlight"><pre><span></span>root@lxc:~# grep START /etc/default/firehol 
+<span class="c1">#To enable firehol at startup set START_FIREHOL=YES</span>
 <span class="nv">START_FIREHOL</span><span class="o">=</span>YES
 root@lxc:~# 
 </pre></div>
 
 
 <p>Y para acabar, (re)iniciamos el servicio firehol.</p>
-<div class="highlight"><pre>root@lxc:~# service firehol restart
+<div class="highlight"><pre><span></span>root@lxc:~# service firehol restart
 
 Broadcast message from systemd-journald@lxc <span class="o">(</span>Wed 2015-10-14 16:59:30 CEST<span class="o">)</span>:
 
@@ -278,7 +278,7 @@ root@lxc:~#
 <h2>Creación de contenedores</h2>
 <p>La creación de contenedores pasa por usar las herramientas estándar de la distribución, a lo solo tendremos que modificar algunas configuraciones propias de nuestra red.</p>
 <p>Creamos un contenedor <em>webserver</em> como demostración. La primera que se crea es un poco lenta porque hace un <em>debootstrap</em> de una distribución debian estable para crear una cache en <em>/var/cache/lxc</em>; las siguientes se benefician de esta caché y solo la actualizan, acelerando el proceso.</p>
-<div class="highlight"><pre>root@lxc:~# lxc-create -n webserver -t debian
+<div class="highlight"><pre><span></span>root@lxc:~# lxc-create -n webserver -t debian
 debootstrap is /usr/sbin/debootstrap
 Checking cache download in /var/cache/lxc/debian/rootfs-jessie-i386 ... 
 Downloading debian minimal ...
@@ -287,8 +287,8 @@ I: Base system installed successfully.
 Download complete.
 Copying rootfs to /var/lib/lxc/webserver/rootfs...
 ...
-Current default <span class="nb">time </span>zone: <span class="s1">&#39;Europe/Madrid&#39;</span>
-Local <span class="nb">time </span>is now:      Wed Oct <span class="m">14</span> 17:26:37 CEST 2015.
+Current default <span class="nb">time</span> zone: <span class="s1">&#39;Europe/Madrid&#39;</span>
+Local <span class="nb">time</span> is now:      Wed Oct <span class="m">14</span> 17:26:37 CEST 2015.
 Universal Time is now:  Wed Oct <span class="m">14</span> 15:26:37 UTC 2015.
 
 Root password is <span class="s1">&#39;sFj7Jm9N&#39;</span>, please change !
@@ -297,7 +297,7 @@ root@lxc:~#
 
 
 <p>Acabada la generación del contenedor, vamos a configurarle algunos parámetros; que tenga una interfaz <em>eth0</em> activa y enchufada al bridge <em>lxc0</em>, y que el contenedor se autoinicie en cada reinicio del anfitrión.</p>
-<div class="highlight"><pre>root@lxc:~# cat /var/lib/lxc/webserver/config 
+<div class="highlight"><pre><span></span>root@lxc:~# cat /var/lib/lxc/webserver/config 
 ...
 lxc.start.auto <span class="o">=</span> 1
 lxc.network.type <span class="o">=</span> veth
@@ -309,7 +309,7 @@ root@lxc:~#
 
 
 <p>Y para que su interfaz de red sea funcional, vamos a configurarle una dirección IP. Todo esto se hace en los ficheros habituales, teniendo en cuenta que un contenedor es una jaula, y que esta se encuentra en <em>/var/lib/lxc/webserver/rootfs/</em></p>
-<div class="highlight"><pre>root@lxc:~# cat /var/lib/lxc/webserver/rootfs/etc/network/interfaces
+<div class="highlight"><pre><span></span>root@lxc:~# cat /var/lib/lxc/webserver/rootfs/etc/network/interfaces
 auto lo
 iface lo inet loopback
 
@@ -323,7 +323,7 @@ root@lxc:~#
 
 
 <p>El contenedor ya está funcional, y se puede levantar:</p>
-<div class="highlight"><pre>root@lxc:~# lxc-start -n webserver -d
+<div class="highlight"><pre><span></span>root@lxc:~# lxc-start -n webserver -d
 root@lxc:~# 
 </pre></div>
 
@@ -331,7 +331,7 @@ root@lxc:~#
 <p>Sin embargo, el firewall impide que se llegue al mismo; tendremos que poner reglas para permitir el flujo de red hacia la nueva dirección IP configurada para el contenedor. Esto se consigue con reglas de <em>forward</em> que entren por el bridge y salgan por el mismo hacia nuestro contenedor.</p>
 <p>Ya de paso habilitamos reglas para que todo lo que pase por el bridge hacia internet se permita. Como particularidad de nuestra red, el servidor anfitrión tiene un servidor DNS <em>dnsmasq</em>; así que añadimos también esa ruta.</p>
 <p>Por ejemplo, suponiendo que queremos habilitar el servicio <em>SSH</em> (tcp 22) y el puerto del servicio <em>HTTP</em> (tcp 80), pondremos lo siguiente en la configuración del firewall (tras lo cual lo reiniciaremos):</p>
-<div class="highlight"><pre>root@lxc:~# cat /etc/firehol/firehol.conf 
+<div class="highlight"><pre><span></span>root@lxc:~# cat /etc/firehol/firehol.conf 
 interface lxc0 world
     policy drop
     protection strong
@@ -365,7 +365,7 @@ root@lxc:~#
 
 
 <p>Y solamente queda entrar al contenedor, por ejemplo por <em>SSH</em> para instalar lo que se necesite; en este caso con un <em>nginx</em> sería suficiente como demostración.</p>
-<div class="highlight"><pre>gerard@workstation:~<span class="nv">$ </span>ssh root@192.168.56.10
+<div class="highlight"><pre><span></span>gerard@workstation:~$ ssh root@192.168.56.10
 root@192.168.56.10<span class="err">&#39;</span>s password: 
 
 The programs included with the Debian GNU/Linux system are free software<span class="p">;</span>
@@ -402,8 +402,8 @@ root@webserver:~#
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></li>
     </ul>
 </section>
     <hr/>
@@ -810,9 +810,19 @@ root@webserver:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -886,6 +896,11 @@ root@webserver:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -935,7 +950,7 @@ root@webserver:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

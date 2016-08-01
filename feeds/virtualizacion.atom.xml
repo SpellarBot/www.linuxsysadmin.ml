@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/virtualizacion.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-23T08:00:00+02:00</updated><entry><title>Evolucionando los contenedores: Docker</title><link href="http://www.linuxsysadmin.tk/2016/05/evolucionando-los-contenedores-docker.html" rel="alternate"></link><updated>2016-05-23T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-23:2016/05/evolucionando-los-contenedores-docker.html</id><summary type="html">&lt;p&gt;Los contenedores tienen su caso de uso y son muy útiles. Sin embargo, ir copiando la imagen es una pérdida de tiempo. Aunque podemos solventar el problema con un sistema de ficheros &lt;em&gt;copy-on-write&lt;/em&gt; o un sistema de ficheros tipo &lt;em&gt;union&lt;/em&gt;, &lt;strong&gt;Docker&lt;/strong&gt; ya nos lo ofrece todo preparado para su uso.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/virtualizacion.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-23T08:00:00+02:00</updated><entry><title>Evolucionando los contenedores: Docker</title><link href="http://www.linuxsysadmin.tk/2016/05/evolucionando-los-contenedores-docker.html" rel="alternate"></link><published>2016-05-23T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-23:2016/05/evolucionando-los-contenedores-docker.html</id><summary type="html">&lt;p&gt;Los contenedores tienen su caso de uso y son muy útiles. Sin embargo, ir copiando la imagen es una pérdida de tiempo. Aunque podemos solventar el problema con un sistema de ficheros &lt;em&gt;copy-on-write&lt;/em&gt; o un sistema de ficheros tipo &lt;em&gt;union&lt;/em&gt;, &lt;strong&gt;Docker&lt;/strong&gt; ya nos lo ofrece todo preparado para su uso.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Docker&lt;/strong&gt; trabaja con imágenes, que no son otra cosa que jaulas en donde tienen todo lo que necesitan para ejecutar su contenido. Estas imágenes se forman a partir de capas que se muestran como una sola mediante &lt;strong&gt;aufs&lt;/strong&gt;. Esto nos permite construir jaulas a partir de otras, ahorrando duplicidad de ficheros en disco y aligerando sus instancias.&lt;/p&gt;
 &lt;p&gt;Nuestro contenedor no es otra cosa que una capa de cambios (inicialmente vacía) montada encima de la imagen mediante &lt;strong&gt;aufs&lt;/strong&gt;. Esta capa se elimina cuando el contenedor se destruye. El coste de crear el contenedor es prácticamente nulo, y no se modifica nunca la imagen base.&lt;/p&gt;
 &lt;p&gt;La gran diferencia con otras tecnologías, por ejemplo &lt;strong&gt;LXC&lt;/strong&gt;, es su filosofía: un contenedor &lt;strong&gt;Docker&lt;/strong&gt; ejecuta un solo comando, acabando la ejecución cuando este acaba.&lt;/p&gt;
 &lt;h2&gt;Instalación y verificación&lt;/h2&gt;
 &lt;p&gt;La instalación es tan simple como seguir &lt;a href="https://docs.docker.com/linux/step_one/"&gt;la documentación&lt;/a&gt;. Así lo instalé en mi &lt;em&gt;netbook&lt;/em&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;curl -fsSL https://get.docker.com/ &lt;span class="p"&gt;|&lt;/span&gt; sh
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ curl -fsSL https://get.docker.com/ &lt;span class="p"&gt;|&lt;/span&gt; sh
 ...
-gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@sirius:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Comprobamos su funcionamiento, por ejemplo, levantando una imagen cualquiera.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -ti --rm debian &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Hello world&amp;#39;&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ docker run -ti --rm debian &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Hello world&amp;#39;&lt;/span&gt;
 Unable to find image &lt;span class="s1"&gt;&amp;#39;debian:latest&amp;#39;&lt;/span&gt; locally
 latest: Pulling from library/debian
-8b87079b7a06: Pull &lt;span class="nb"&gt;complete &lt;/span&gt;
-a3ed95caeb02: Pull &lt;span class="nb"&gt;complete &lt;/span&gt;
+8b87079b7a06: Pull &lt;span class="nb"&gt;complete&lt;/span&gt; 
+a3ed95caeb02: Pull &lt;span class="nb"&gt;complete&lt;/span&gt; 
 Digest: sha256:c8bdce9b6166fcd287c1336f5cd6262971f7f0e98db07c93c23d540a7a19cd96
 Status: Downloaded newer image &lt;span class="k"&gt;for&lt;/span&gt; debian:latest
 Hello world
-gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@sirius:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Podemos ver en la salida del comando que no teníamos una imagen local de la imagen &lt;em&gt;debian&lt;/em&gt;, con lo que la ha descargado. Podemos ver que ya la tenemos en local, y que si volvemos a lanzar el comando, no se descarga de nuevo.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker images
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 debian              latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago          125.1 MB
-gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -ti --rm debian &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Hello world&amp;#39;&lt;/span&gt;
+gerard@sirius:~$ docker run -ti --rm debian &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Hello world&amp;#39;&lt;/span&gt;
 Hello world
-gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@sirius:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;h2&gt;Mejorando las imágenes con capas&lt;/h2&gt;
 &lt;p&gt;Las imágenes que podemos encontrar en &lt;a href="https://hub.docker.com/"&gt;Docker Hub&lt;/a&gt; son básicas; por ejemplo vienen sin un servidor &lt;strong&gt;ssh&lt;/strong&gt; y sin &lt;strong&gt;python&lt;/strong&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -ti --rm debian python -V
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ docker run -ti --rm debian python -V
 docker: Error response from daemon: Container &lt;span class="nb"&gt;command&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;python&amp;#39;&lt;/span&gt; not found or does not exist..
-            gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+            gerard@sirius:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -47,7 +47,7 @@ docker: Error response from daemon: Container &lt;span class="nb"&gt;command&lt;
 &lt;h3&gt;Creando una imagen instalando manualmente las diferencias&lt;/h3&gt;
 &lt;p&gt;Para hacer esta, se necesita levantar un contenedor que vamos a modificar. Luego localizamos el identificador del contenedor y le damos un &lt;em&gt;commit&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Empezamos de la imagen base &lt;em&gt;debian&lt;/em&gt;, a la que instalamos los paquetes necesarios. En este caso, vamos a poner &lt;em&gt;python&lt;/em&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -ti --rm debian
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ docker run -ti --rm debian
 root@23c4caa12410:/# apt-get update
 ...
 root@23c4caa12410:/# apt-get install -y python
@@ -57,50 +57,50 @@ root@23c4caa12410:/#
 
 
 &lt;p&gt;Ahora, y desde otro terminal, buscamos el identificador del contenedor.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker ps
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ docker ps
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
 23c4caa12410        debian              &lt;span class="s2"&gt;&amp;quot;/bin/bash&amp;quot;&lt;/span&gt;         &lt;span class="m"&gt;4&lt;/span&gt; minutes ago       Up &lt;span class="m"&gt;4&lt;/span&gt; minutes                            backstabbing_poincare
-gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@sirius:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Teniendo el identificador del contenedor, podemos hacer un &lt;em&gt;commit&lt;/em&gt; y podemos ponerle un &lt;em&gt;tag&lt;/em&gt; para referencias futuras.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker commit 23c4caa12410
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ docker commit 23c4caa12410
 sha256:f73b2072ab7404b83749fd098411a1c6392631668363c46fc7203d1a0d39782f
-gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker images
+gerard@sirius:~$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 &amp;lt;none&amp;gt;              &amp;lt;none&amp;gt;              f73b2072ab74        &lt;span class="m"&gt;9&lt;/span&gt; seconds ago       167.4 MB
 debian              latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago          125.1 MB
-gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker tag f73b2072ab74 python-debian-manual
-gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker images
+gerard@sirius:~$ docker tag f73b2072ab74 python-debian-manual
+gerard@sirius:~$ docker images
 REPOSITORY             TAG                 IMAGE ID            CREATED              SIZE
 python-debian-manual   latest              f73b2072ab74        About a minute ago   167.4 MB
 debian                 latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago           125.1 MB
-gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@sirius:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Y comprobamos que funciona como debe:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -ti --rm python-debian-manual python -V
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ docker run -ti --rm python-debian-manual python -V
 Python 2.7.9
-gerard@sirius:~&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@sirius:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;h3&gt;Creando una imagen automáticamente mediante Dockerfiles&lt;/h3&gt;
 &lt;p&gt;Para este método vamos a usar el comando &lt;strong&gt;docker build&lt;/strong&gt; que construye una imagen a partir de un &lt;em&gt;Dockerfile&lt;/em&gt;, que le sirve de receta, y construye imágenes a partir de otras.&lt;/p&gt;
 &lt;p&gt;Supongamos que tenemos el siguiente &lt;em&gt;Dockerfile&lt;/em&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;cat Dockerfile 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/build$ cat Dockerfile 
 FROM debian
 RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
     apt-get install -y python
 CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/bin/bash&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
-gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@sirius:~/build$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Bastaría crear la imágen en la carpeta actual con el comando mencionado, especificando opcionalmente el &lt;em&gt;tag&lt;/em&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker build -t python-debian-auto .
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/build$ docker build -t python-debian-auto .
 Sending build context to Docker daemon 2.048 kB
 Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM debian
  ---&amp;gt; bb5d89f9b6cb
@@ -114,19 +114,19 @@ Step &lt;span class="m"&gt;3&lt;/span&gt; : CMD /bin/bash
  ---&amp;gt; e52f43de8b80
 Removing intermediate container 7331c2d109db
 Successfully built e52f43de8b80
-gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@sirius:~/build$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Comprobamos que tenemos una imagen nueva y que funciona.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker images
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/build$ docker images
 REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
 python-debian-auto     latest              e52f43de8b80        &lt;span class="m"&gt;6&lt;/span&gt; minutes ago       &lt;span class="m"&gt;176&lt;/span&gt; MB
 python-debian-manual   latest              f73b2072ab74        &lt;span class="m"&gt;22&lt;/span&gt; minutes ago      167.4 MB
 debian                 latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago          125.1 MB
-gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker run -ti --rm python-debian-auto python -V
+gerard@sirius:~/build$ docker run -ti --rm python-debian-auto python -V
 Python 2.7.9
-gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@sirius:~/build$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
@@ -134,16 +134,16 @@ gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
 &lt;p&gt;Hay veces en las que no queremos usar imágenes de dudoso origen, y queremos hacer una nuestra. En estos casos solo hay que saber que una imagen no es otra cosa que una jaula normal. Podemos hacer esto partiendo de una imagen vacía, pensada para estos casos.&lt;/p&gt;
 &lt;p&gt;Como ejemplo, vamos a crear una jaula con lo necesario para correr un solo comando: el ejemplo que utilizamos en &lt;a href="http://www.linuxsysadmin.tk/2016/05/reduciendo-el-tamano-de-nuestros-binarios-con-musl-libc.html"&gt;otro artículo&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Vamos a utilizar el método del &lt;em&gt;Dockerfile&lt;/em&gt;, añadiendo el binario estático.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;cat Dockerfile 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/build$ cat Dockerfile 
 FROM scratch
 ADD hello /
 CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/hello&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
-gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@sirius:~/build$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Construimos la imagen y vemos que ocupa lo mismo que el binario que le hemos puesto.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker build -t saluda .
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/build$ docker build -t saluda .
 Sending build context to Docker daemon 20.34 MB
 Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM scratch
  ---&amp;gt; 
@@ -155,19 +155,19 @@ Step &lt;span class="m"&gt;3&lt;/span&gt; : CMD /hello
  ---&amp;gt; bf6c560144dd
 Removing intermediate container 54d7512dd61a
 Successfully built bf6c560144dd
-gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker images
+gerard@sirius:~/build$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 saluda              latest              bf6c560144dd        &lt;span class="m"&gt;25&lt;/span&gt; seconds ago      5.416 kB
 debian              latest              47af6ca8a14a        &lt;span class="m"&gt;3&lt;/span&gt; weeks ago         125.1 MB
-gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
+gerard@sirius:~/build$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Probamos que funciona, como ya viene siendo costumbre:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;docker run --rm -ti saluda
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/build$ docker run --rm -ti saluda
 Hello world!
-gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;</summary><category term="linux"></category><category term="docker"></category><category term="contenedor"></category><category term="dockerfile"></category><category term="jaula"></category></entry><entry><title>Virtualizando contenedores LXC tras bridge interno</title><link href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html" rel="alternate"></link><updated>2015-11-23T23:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-23:2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html</id><summary type="html">&lt;p&gt;En un artículo anterior propusimos virtualizar contenedores en la red de la máquina &lt;em&gt;host&lt;/em&gt;. Sin embargo, puede ser mas interesante esconder los contenedores detrás de una máquina que haga las funciones de &lt;em&gt;host&lt;/em&gt; y de &lt;em&gt;firewall&lt;/em&gt;. Expondremos una serie de puertos tras la misma dirección &lt;em&gt;IP&lt;/em&gt; mediante el protocolo &lt;em&gt;NAT&lt;/em&gt;.&lt;/p&gt;
+gerard@sirius:~/build$ 
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="linux"></category><category term="docker"></category><category term="contenedor"></category><category term="dockerfile"></category><category term="jaula"></category></entry><entry><title>Virtualizando contenedores LXC tras bridge interno</title><link href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html" rel="alternate"></link><published>2015-11-23T23:30:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-23:2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html</id><summary type="html">&lt;p&gt;En un artículo anterior propusimos virtualizar contenedores en la red de la máquina &lt;em&gt;host&lt;/em&gt;. Sin embargo, puede ser mas interesante esconder los contenedores detrás de una máquina que haga las funciones de &lt;em&gt;host&lt;/em&gt; y de &lt;em&gt;firewall&lt;/em&gt;. Expondremos una serie de puertos tras la misma dirección &lt;em&gt;IP&lt;/em&gt; mediante el protocolo &lt;em&gt;NAT&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Para conseguir este objetivo, se van a usar las siguientes tecnologías:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Debian jessie&lt;/strong&gt;: Es necesario usar alguna distribución de linux para hacer funcionar LXC&lt;/li&gt;
@@ -185,7 +185,7 @@ gerard@sirius:~/build&lt;span class="nv"&gt;$ &lt;/span&gt;
 &lt;p&gt;Partimos de una distribución &lt;em&gt;Debian jessie&lt;/em&gt; instalada con un CD &lt;em&gt;netinstall&lt;/em&gt; y con el único paquete instalado &lt;em&gt;openssh-server&lt;/em&gt;, para mi comodidad.&lt;/p&gt;
 &lt;h2&gt;Preparar el servidor&lt;/h2&gt;
 &lt;p&gt;El primer paso consiste en instalar las tecnologías usadas:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# apt-get install bridge-utils firehol lxc
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# apt-get install bridge-utils firehol lxc
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias       
 Leyendo la información de estado... Hecho
@@ -200,7 +200,7 @@ root@lxc:~#
 
 &lt;p&gt;Ahora vamos a modificar la configuración de red, para habilitar el &lt;em&gt;bridge&lt;/em&gt; en el que vamos a conectar el resto de contenedores virtualizados. Como dato importante, se define una interfaz falsa en la directiva &lt;em&gt;bridge_ports&lt;/em&gt; para que la &lt;em&gt;unit&lt;/em&gt; de red lo levante automáticamente.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;ANTES&lt;/strong&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/network/interfaces
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /etc/network/interfaces
 &lt;span class="nb"&gt;source&lt;/span&gt; /etc/network/interfaces.d/*
 
 auto lo
@@ -216,7 +216,7 @@ root@lxc:~#
 
 
 &lt;p&gt;&lt;strong&gt;DESPUES&lt;/strong&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/network/interfaces
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /etc/network/interfaces
 &lt;span class="nb"&gt;source&lt;/span&gt; /etc/network/interfaces.d/*
 
 auto lo
@@ -238,13 +238,13 @@ root@lxc:~#
 
 
 &lt;p&gt;Ahora toca reiniciar el servicio de red, para que el nuevo &lt;em&gt;bridge&lt;/em&gt; quede configurado como debe estarlo.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# service networking restart
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# service networking restart
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;El siguiente paso consiste en poner las reglas de &lt;em&gt;firewall&lt;/em&gt; necesarias para proteger al equipo anfitrión y para permitirle actuar como &lt;em&gt;gateway&lt;/em&gt; para los contenedores tras el &lt;em&gt;bridge&lt;/em&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
 interface eth0 world
     policy drop
     protection strong
@@ -264,23 +264,23 @@ root@lxc:~#
 
 &lt;p&gt;Hay que modificar otro fichero para permitir el inicio del &lt;em&gt;firewall&lt;/em&gt;:&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;ANTES&lt;/strong&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# grep START /etc/default/firehol 
-&lt;span class="c"&gt;#To enable firehol at startup set START_FIREHOL=YES&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# grep START /etc/default/firehol 
+&lt;span class="c1"&gt;#To enable firehol at startup set START_FIREHOL=YES&lt;/span&gt;
 &lt;span class="nv"&gt;START_FIREHOL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;NO
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;&lt;strong&gt;DESPUES&lt;/strong&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# grep START /etc/default/firehol 
-&lt;span class="c"&gt;#To enable firehol at startup set START_FIREHOL=YES&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# grep START /etc/default/firehol 
+&lt;span class="c1"&gt;#To enable firehol at startup set START_FIREHOL=YES&lt;/span&gt;
 &lt;span class="nv"&gt;START_FIREHOL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;YES
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Y para acabar, reiniciamos el servicio &lt;em&gt;firehol&lt;/em&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# service firehol restart
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# service firehol restart
 ...
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
@@ -289,7 +289,7 @@ root@lxc:~#
 &lt;h2&gt;Creación de contenedores&lt;/h2&gt;
 &lt;p&gt;La creación de contenedores pasa por usar las herramientas estándar de la distribución, a lo solo tendremos que modificar algunas configuraciones propias de nuestra red.&lt;/p&gt;
 &lt;p&gt;Creamos un contenedor &lt;em&gt;webserver&lt;/em&gt; como demostración. La primera que se crea es un poco lenta porque hace un &lt;em&gt;debootstrap&lt;/em&gt; de una distribución &lt;em&gt;Debian estable&lt;/em&gt; para crear una cache en &lt;em&gt;/var/cache/lxc&lt;/em&gt;; las siguientes se benefician de esta caché y solo la actualizan, acelerando el proceso.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# lxc-create -n webserver -t debian
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# lxc-create -n webserver -t debian
 debootstrap is /usr/sbin/debootstrap
 Checking cache download in /var/cache/lxc/debian/rootfs-jessie-i386 ... 
 Downloading debian minimal ...
@@ -299,8 +299,8 @@ I: Base system installed successfully.
 Download complete.
 Copying rootfs to /var/lib/lxc/webserver/rootfs...
 ...
-Current default &lt;span class="nb"&gt;time &lt;/span&gt;zone: &lt;span class="s1"&gt;&amp;#39;Europe/Madrid&amp;#39;&lt;/span&gt;
-Local &lt;span class="nb"&gt;time &lt;/span&gt;is now:      Mon Nov &lt;span class="m"&gt;23&lt;/span&gt; 16:29:36 CET 2015.
+Current default &lt;span class="nb"&gt;time&lt;/span&gt; zone: &lt;span class="s1"&gt;&amp;#39;Europe/Madrid&amp;#39;&lt;/span&gt;
+Local &lt;span class="nb"&gt;time&lt;/span&gt; is now:      Mon Nov &lt;span class="m"&gt;23&lt;/span&gt; 16:29:36 CET 2015.
 Universal Time is now:  Mon Nov &lt;span class="m"&gt;23&lt;/span&gt; 15:29:36 UTC 2015.
 
 Root password is &lt;span class="s1"&gt;&amp;#39;E3+K9SpU&amp;#39;&lt;/span&gt;, please change !
@@ -309,7 +309,7 @@ root@lxc:~#
 
 
 &lt;p&gt;Acabada la generación del contenedor, vamos a configurarle algunos parámetros; que tenga una interfaz &lt;em&gt;eth0&lt;/em&gt; activa y enchufada al bridge &lt;em&gt;lxc0&lt;/em&gt;, y que el contenedor se inicie automáticamente en cada reinicio del anfitrión.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /var/lib/lxc/webserver/config 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /var/lib/lxc/webserver/config 
 ...
 lxc.start.auto &lt;span class="o"&gt;=&lt;/span&gt; 1
 lxc.network.type &lt;span class="o"&gt;=&lt;/span&gt; veth
@@ -321,7 +321,7 @@ root@lxc:~#
 
 
 &lt;p&gt;Y para que su interfaz de red sea funcional, vamos a configurarle una dirección IP. Todo esto se hace en los ficheros habituales, teniendo en cuenta que un contenedor es una jaula, y que esta se encuentra en &lt;em&gt;/var/lib/lxc/webserver/rootfs/&lt;/em&gt;&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /var/lib/lxc/webserver/rootfs/etc/network/interfaces
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /var/lib/lxc/webserver/rootfs/etc/network/interfaces
 auto lo
 iface lo inet loopback
 
@@ -335,13 +335,13 @@ root@lxc:~#
 
 
 &lt;p&gt;El contenedor ya está funcional, y se puede levantar:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# lxc-start -n webserver -d
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# lxc-start -n webserver -d
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Supongamos que este nuevo contenedor tiene un servidor web y queremos hacerlo disponible en puerto 80 del &lt;em&gt;host&lt;/em&gt;, mediante el protocolo &lt;em&gt;NAT&lt;/em&gt;. También se necesita definir una regla de &lt;em&gt;forward&lt;/em&gt; para permitir ese tráfico. Se reinicia el servicio &lt;em&gt;firehol&lt;/em&gt; para aplicar las nuevas reglas.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
 dnat 10.0.0.2:80 proto tcp dst 192.168.56.4 dport 80
 
 interface eth0 world
@@ -368,7 +368,7 @@ root@lxc:~#
 
 &lt;p&gt;Ahora podemos acceder al servidor web instalado en el contenedor &lt;em&gt;webserver&lt;/em&gt; mediante el puerto 80 del &lt;em&gt;host&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Supongamos que tenemos otro contenedor con un servidor de aplicaciones escuchando en el puerto 8080 con dirección 10.0.0.3 y pretendemos que el contenedor original haga de &lt;em&gt;proxy HTTP&lt;/em&gt;. Esta funcionalidad requiere que el contenedor &lt;em&gt;webserver&lt;/em&gt; pueda conectarse al puerto 8080 del nuevo contenedor &lt;em&gt;appserver&lt;/em&gt;. Esta regla de &lt;em&gt;forward&lt;/em&gt; aplica a todas las conexiones que inician y finalizan en el &lt;em&gt;bridge&lt;/em&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
 dnat 10.0.0.2:80 proto tcp dst 192.168.56.4 dport 80
 
 interface eth0 world
@@ -394,7 +394,7 @@ root@lxc:~#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y con eso tenemos nuestro &lt;em&gt;proxy HTTP&lt;/em&gt; funcionando.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="lxc"></category><category term="bridge"></category><category term="firehol"></category></entry><entry><title>Virtualizando contenedores LXC con acceso a la red local</title><link href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html" rel="alternate"></link><updated>2015-10-15T12:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-10-15:2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html</id><summary type="html">&lt;p&gt;En este tutorial se propone montar un servidor de contenedores LXC, de forma que todos los contenedores queden expuestos a la misma red que el servidor que los aloja. Para protegerlos de posibles ataques de esta red, pondremos un firewall basado en &lt;em&gt;iptables&lt;/em&gt; mediante una capa de abstracción llamada &lt;em&gt;firehol&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Y con eso tenemos nuestro &lt;em&gt;proxy HTTP&lt;/em&gt; funcionando.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="lxc"></category><category term="bridge"></category><category term="firehol"></category></entry><entry><title>Virtualizando contenedores LXC con acceso a la red local</title><link href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html" rel="alternate"></link><published>2015-10-15T12:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-10-15:2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html</id><summary type="html">&lt;p&gt;En este tutorial se propone montar un servidor de contenedores LXC, de forma que todos los contenedores queden expuestos a la misma red que el servidor que los aloja. Para protegerlos de posibles ataques de esta red, pondremos un firewall basado en &lt;em&gt;iptables&lt;/em&gt; mediante una capa de abstracción llamada &lt;em&gt;firehol&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Para conseguir este objetivo, se van a usar las siguientes tecnologías:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Debian jessie&lt;/strong&gt;: Es necesario usar alguna distribución de linux para hacer funcionar LXC&lt;/li&gt;
@@ -412,7 +412,7 @@ root@lxc:~#
 &lt;p&gt;Partimos de una distribución &lt;em&gt;Debian jessie&lt;/em&gt; instalada con un CD &lt;em&gt;netinstall&lt;/em&gt; y con el único paquete instalado &lt;em&gt;openssh-server&lt;/em&gt;, para mi comodidad.&lt;/p&gt;
 &lt;h2&gt;Preparar el servidor&lt;/h2&gt;
 &lt;p&gt;El primer paso consiste en instalar las tecnologías usadas:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# apt-get install bridge-utils firehol lxc
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# apt-get install bridge-utils firehol lxc
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias       
 Leyendo la información de estado... Hecho
@@ -427,7 +427,7 @@ root@lxc:~#
 
 &lt;p&gt;Acto seguido debemos modificar la configuración de red, para que la interfaz de red de la máquina represente la salida de todas las IPs que maneja el bridge y para que el host obtenga una dirección de red en el bridge.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;ANTES&lt;/strong&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/network/interfaces
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /etc/network/interfaces
 &lt;span class="nb"&gt;source&lt;/span&gt; /etc/network/interfaces.d/*
 
 auto lo
@@ -443,7 +443,7 @@ root@lxc:~#
 
 
 &lt;p&gt;&lt;strong&gt;DESPUES&lt;/strong&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/network/interfaces
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /etc/network/interfaces
 &lt;span class="nb"&gt;source&lt;/span&gt; /etc/network/interfaces.d/*
 
 auto lo
@@ -460,7 +460,7 @@ root@lxc:~#
 
 
 &lt;p&gt;En este punto es necesario reconfigurar la red, siendo especialmente importante que &lt;em&gt;eth0&lt;/em&gt; quede sin dirección IP asignada (en mi caso tuve que reiniciar la máquina).&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# ip addr
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# ip addr
 1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;65536&lt;/span&gt; qdisc noqueue state UNKNOWN group default 
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -480,7 +480,7 @@ root@lxc:~#
 
 
 &lt;p&gt;El último paso consiste en activar el firewall con unas reglas básicas, para proteger el equipo anfitrión de posibles ataques o intrusiones, dejando solamente el acceso a SSH. Con firehol es posible combinar el demonio &lt;em&gt;knockd&lt;/em&gt; para ocultar el puerto tras una secuencia de port knocking; en principio sería suficiente con forzar la entrada SSH por claves RSA.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
 interface lxc0 world
     policy drop
     protection strong
@@ -492,23 +492,23 @@ root@lxc:~#
 
 &lt;p&gt;Hay que modificar otro fichero para permitir el inicio del firewall:&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;ANTES&lt;/strong&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# grep START /etc/default/firehol 
-&lt;span class="c"&gt;#To enable firehol at startup set START_FIREHOL=YES&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# grep START /etc/default/firehol 
+&lt;span class="c1"&gt;#To enable firehol at startup set START_FIREHOL=YES&lt;/span&gt;
 &lt;span class="nv"&gt;START_FIREHOL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;NO
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;&lt;strong&gt;DESPUES&lt;/strong&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# grep START /etc/default/firehol 
-&lt;span class="c"&gt;#To enable firehol at startup set START_FIREHOL=YES&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# grep START /etc/default/firehol 
+&lt;span class="c1"&gt;#To enable firehol at startup set START_FIREHOL=YES&lt;/span&gt;
 &lt;span class="nv"&gt;START_FIREHOL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;YES
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Y para acabar, (re)iniciamos el servicio firehol.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# service firehol restart
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# service firehol restart
 
 Broadcast message from systemd-journald@lxc &lt;span class="o"&gt;(&lt;/span&gt;Wed 2015-10-14 16:59:30 CEST&lt;span class="o"&gt;)&lt;/span&gt;:
 
@@ -524,7 +524,7 @@ root@lxc:~#
 &lt;h2&gt;Creación de contenedores&lt;/h2&gt;
 &lt;p&gt;La creación de contenedores pasa por usar las herramientas estándar de la distribución, a lo solo tendremos que modificar algunas configuraciones propias de nuestra red.&lt;/p&gt;
 &lt;p&gt;Creamos un contenedor &lt;em&gt;webserver&lt;/em&gt; como demostración. La primera que se crea es un poco lenta porque hace un &lt;em&gt;debootstrap&lt;/em&gt; de una distribución debian estable para crear una cache en &lt;em&gt;/var/cache/lxc&lt;/em&gt;; las siguientes se benefician de esta caché y solo la actualizan, acelerando el proceso.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# lxc-create -n webserver -t debian
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# lxc-create -n webserver -t debian
 debootstrap is /usr/sbin/debootstrap
 Checking cache download in /var/cache/lxc/debian/rootfs-jessie-i386 ... 
 Downloading debian minimal ...
@@ -533,8 +533,8 @@ I: Base system installed successfully.
 Download complete.
 Copying rootfs to /var/lib/lxc/webserver/rootfs...
 ...
-Current default &lt;span class="nb"&gt;time &lt;/span&gt;zone: &lt;span class="s1"&gt;&amp;#39;Europe/Madrid&amp;#39;&lt;/span&gt;
-Local &lt;span class="nb"&gt;time &lt;/span&gt;is now:      Wed Oct &lt;span class="m"&gt;14&lt;/span&gt; 17:26:37 CEST 2015.
+Current default &lt;span class="nb"&gt;time&lt;/span&gt; zone: &lt;span class="s1"&gt;&amp;#39;Europe/Madrid&amp;#39;&lt;/span&gt;
+Local &lt;span class="nb"&gt;time&lt;/span&gt; is now:      Wed Oct &lt;span class="m"&gt;14&lt;/span&gt; 17:26:37 CEST 2015.
 Universal Time is now:  Wed Oct &lt;span class="m"&gt;14&lt;/span&gt; 15:26:37 UTC 2015.
 
 Root password is &lt;span class="s1"&gt;&amp;#39;sFj7Jm9N&amp;#39;&lt;/span&gt;, please change !
@@ -543,7 +543,7 @@ root@lxc:~#
 
 
 &lt;p&gt;Acabada la generación del contenedor, vamos a configurarle algunos parámetros; que tenga una interfaz &lt;em&gt;eth0&lt;/em&gt; activa y enchufada al bridge &lt;em&gt;lxc0&lt;/em&gt;, y que el contenedor se autoinicie en cada reinicio del anfitrión.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /var/lib/lxc/webserver/config 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /var/lib/lxc/webserver/config 
 ...
 lxc.start.auto &lt;span class="o"&gt;=&lt;/span&gt; 1
 lxc.network.type &lt;span class="o"&gt;=&lt;/span&gt; veth
@@ -555,7 +555,7 @@ root@lxc:~#
 
 
 &lt;p&gt;Y para que su interfaz de red sea funcional, vamos a configurarle una dirección IP. Todo esto se hace en los ficheros habituales, teniendo en cuenta que un contenedor es una jaula, y que esta se encuentra en &lt;em&gt;/var/lib/lxc/webserver/rootfs/&lt;/em&gt;&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /var/lib/lxc/webserver/rootfs/etc/network/interfaces
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /var/lib/lxc/webserver/rootfs/etc/network/interfaces
 auto lo
 iface lo inet loopback
 
@@ -569,7 +569,7 @@ root@lxc:~#
 
 
 &lt;p&gt;El contenedor ya está funcional, y se puede levantar:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# lxc-start -n webserver -d
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# lxc-start -n webserver -d
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -577,7 +577,7 @@ root@lxc:~#
 &lt;p&gt;Sin embargo, el firewall impide que se llegue al mismo; tendremos que poner reglas para permitir el flujo de red hacia la nueva dirección IP configurada para el contenedor. Esto se consigue con reglas de &lt;em&gt;forward&lt;/em&gt; que entren por el bridge y salgan por el mismo hacia nuestro contenedor.&lt;/p&gt;
 &lt;p&gt;Ya de paso habilitamos reglas para que todo lo que pase por el bridge hacia internet se permita. Como particularidad de nuestra red, el servidor anfitrión tiene un servidor DNS &lt;em&gt;dnsmasq&lt;/em&gt;; así que añadimos también esa ruta.&lt;/p&gt;
 &lt;p&gt;Por ejemplo, suponiendo que queremos habilitar el servicio &lt;em&gt;SSH&lt;/em&gt; (tcp 22) y el puerto del servicio &lt;em&gt;HTTP&lt;/em&gt; (tcp 80), pondremos lo siguiente en la configuración del firewall (tras lo cual lo reiniciaremos):&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
 interface lxc0 world
     policy drop
     protection strong
@@ -611,7 +611,7 @@ root@lxc:~#
 
 
 &lt;p&gt;Y solamente queda entrar al contenedor, por ejemplo por &lt;em&gt;SSH&lt;/em&gt; para instalar lo que se necesite; en este caso con un &lt;em&gt;nginx&lt;/em&gt; sería suficiente como demostración.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;gerard@workstation:~&lt;span class="nv"&gt;$ &lt;/span&gt;ssh root@192.168.56.10
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@workstation:~$ ssh root@192.168.56.10
 root@192.168.56.10&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
 
 The programs included with the Debian GNU/Linux system are free software&lt;span class="p"&gt;;&lt;/span&gt;

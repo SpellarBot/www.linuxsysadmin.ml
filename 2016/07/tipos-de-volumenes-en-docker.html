@@ -152,15 +152,15 @@ Linux Sysadmin            </a>
 <p>Se trata de carpetas que se crean en <em>/var/lib/docker/</em> y que pueden compartirse entre diferentes contenedores.</p>
 <h3>Anonymous data volumes</h3>
 <p>Se crean cuando se levanta un contenedor, mediante el comando <em>docker run</em>, por ejemplo:</p>
-<div class="highlight"><pre>gerard@sirius:~<span class="nv">$ </span>docker run -ti --rm -v /data alpine:3.4 sh
-/ <span class="c"># </span>
+<div class="highlight"><pre><span></span>gerard@sirius:~$ docker run -ti --rm -v /data alpine:3.4 sh
+/ <span class="c1"># </span>
 </pre></div>
 
 
 <p>Esto nos crea un volumen asociado al contenedor creado.</p>
-<div class="highlight"><pre>root@sirius:~# docker volume ls
+<div class="highlight"><pre><span></span>root@sirius:~# docker volume ls
 DRIVER              VOLUME NAME
-<span class="nb">local               </span>1b39e6601cd3711c27f3a1a4eb50d82e182151fd14b82048f47b0d50ad22b97a
+<span class="nb">local</span>               1b39e6601cd3711c27f3a1a4eb50d82e182151fd14b82048f47b0d50ad22b97a
 root@sirius:~# tree /var/lib/docker/volumes/
 /var/lib/docker/volumes/
 ├── 1b39e6601cd3711c27f3a1a4eb50d82e182151fd14b82048f47b0d50ad22b97a
@@ -173,8 +173,8 @@ root@sirius:~#
 
 
 <p>A su vez, otro contenedor puede montar los volúmenes de otro contenedor, ya sea porque los creó o porque los ha montado de un tercero.</p>
-<div class="highlight"><pre>root@sirius:~# docker run -ti --rm --volumes-from adoring_lovelace alpine:3.4 sh
-/ <span class="c"># </span>
+<div class="highlight"><pre><span></span>root@sirius:~# docker run -ti --rm --volumes-from adoring_lovelace alpine:3.4 sh
+/ <span class="c1"># </span>
 </pre></div>
 
 
@@ -182,38 +182,38 @@ root@sirius:~#
 <p><strong>Docker</strong> mantiene una cuenta de los contenedores que están usando un volumen, y estos solo se eliminan cuando el último contenedor que lo usa sale con el parámetro <em>--rm</em> o si se hace un <em>docker rm -v</em>. En cualquier otro caso, el volumen se queda parasitando, hasta que lo eliminamos manualmente usado <em>docker volume rm</em>.</p>
 <h3>Named data volumes</h3>
 <p>Estos volúmenes no dependen de ningún contenedor concreto, y se pueden montar en cualquier contenedor. Se crean específicamente usando el comando <em>docker volume create</em>, o al ejecutar un contenedor si le damos un nombre en la línea de comandos.</p>
-<div class="highlight"><pre>gerard@sirius:~<span class="nv">$ </span>docker volume create --name vol1
+<div class="highlight"><pre><span></span>gerard@sirius:~$ docker volume create --name vol1
 vol1
-gerard@sirius:~<span class="nv">$ </span>docker run -ti --rm -v vol2:/data alpine:3.4 <span class="nb">true</span>
-gerard@sirius:~<span class="nv">$ </span>docker volume ls
+gerard@sirius:~$ docker run -ti --rm -v vol2:/data alpine:3.4 <span class="nb">true</span>
+gerard@sirius:~$ docker volume ls
 DRIVER              VOLUME NAME
-<span class="nb">local               </span>vol1
-<span class="nb">local               </span>vol2
-gerard@sirius:~<span class="nv">$ </span>
+<span class="nb">local</span>               vol1
+<span class="nb">local</span>               vol2
+gerard@sirius:~$ 
 </pre></div>
 
 
 <p>Estos volúmenes no se eliminan por si solos nunca y persisten cuando su contenedor desaparece. Para eliminarlos se necesita una intervención manual mediante el comando <em>docker volume rm</em>.</p>
-<div class="highlight"><pre>gerard@sirius:~<span class="nv">$ </span>docker volume ls
+<div class="highlight"><pre><span></span>gerard@sirius:~$ docker volume ls
 DRIVER              VOLUME NAME
-<span class="nb">local               </span>vol1
-<span class="nb">local               </span>vol2
-gerard@sirius:~<span class="nv">$ </span>docker volume rm vol1 vol2
+<span class="nb">local</span>               vol1
+<span class="nb">local</span>               vol2
+gerard@sirius:~$ docker volume rm vol1 vol2
 vol1
 vol2
-gerard@sirius:~<span class="nv">$ </span>docker volume ls
+gerard@sirius:~$ docker volume ls
 DRIVER              VOLUME NAME
-gerard@sirius:~<span class="nv">$ </span>
+gerard@sirius:~$ 
 </pre></div>
 
 
 <h2>Mounted volumes</h2>
 <p>Otras veces nos interesa montar ficheros o carpetas desde la máquina <em>host</em>. En este caso, podemos montar la carpeta o el fichero especificando la ruta completa desde la máquina <em>host</em>, y la ruta completa en el contenedor. Es posible también especificar si el volumen es de lectura y escritura (por defecto) o de solo lectura.</p>
-<div class="highlight"><pre>gerard@sirius:~/docker<span class="nv">$ </span>docker run -ti --rm -v /etc/hostname:/root/parent_name:ro -v /opt/:/data alpine:3.4 sh
-/ <span class="c"># cat /root/parent_name </span>
+<div class="highlight"><pre><span></span>gerard@sirius:~/docker$ docker run -ti --rm -v /etc/hostname:/root/parent_name:ro -v /opt/:/data alpine:3.4 sh
+/ <span class="c1"># cat /root/parent_name </span>
 sirius
-/ <span class="c"># ls /data/</span>
-/ <span class="c"># </span>
+/ <span class="c1"># ls /data/</span>
+/ <span class="c1"># </span>
 </pre></div>
 
 
@@ -224,8 +224,8 @@ sirius
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/05/evolucionando-los-contenedores-docker.html">Evolucionando los contenedores: Docker</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html">Balanceando peticiones con HAProxy</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/05/evolucionando-los-contenedores-docker.html">Evolucionando los contenedores: Docker</a></li>
     </ul>
 </section>
     <hr/>
@@ -632,9 +632,19 @@ sirius
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -708,6 +718,11 @@ sirius
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -757,7 +772,7 @@ sirius
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

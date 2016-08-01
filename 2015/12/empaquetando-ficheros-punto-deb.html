@@ -147,17 +147,17 @@ Linux Sysadmin            </a>
                 </div>
                 <p>Una de las grandes ventajas de <em>linux</em> es su sistema de paquetes. Con ellos es posible instalar de forma fácil un paquete de forma fácil y confiable. Hoy vamos a hacer un paquete <em>.deb</em> como ejemplo que instale un <em>script</em> cualquiera en la carpeta <em>/usr/bin/</em> para su uso cotidiano.</p>
 <p>Por limpieza, vamos a crear una carpeta temporal para hacer el empaquetado, desde donde vamos a ejecutar todo el resto del procedimiento.</p>
-<div class="highlight"><pre>root@packager:~# mkdir workspace
-root@packager:~# <span class="nb">cd </span>workspace/
+<div class="highlight"><pre><span></span>root@packager:~# mkdir workspace
+root@packager:~# <span class="nb">cd</span> workspace/
 root@packager:~/workspace# 
 </pre></div>
 
 
 <h2>Preparación de la estructura del paquete</h2>
 <p>Vamos a poner el <em>script</em> que queramos empaquetar, respetando al estructura que tendrá una vez se instale el paquete. También le damos los permisos que va a tener una vez instalado.</p>
-<div class="highlight"><pre>root@packager:~/workspace# mkdir -p usr/bin
+<div class="highlight"><pre><span></span>root@packager:~/workspace# mkdir -p usr/bin
 root@packager:~/workspace# cat usr/bin/welcome
-<span class="c">#!/bin/bash</span>
+<span class="c1">#!/bin/bash</span>
 
 <span class="nb">echo</span> <span class="s1">&#39;Hello world!&#39;</span>
 root@packager:~/workspace# chmod <span class="m">755</span> usr/bin/welcome
@@ -184,7 +184,7 @@ root@packager:~/workspace#
 </ul>
 <p>Para que el <em>script</em> pueda funcionar, hay que localizar todo aquello que pueda necesitar, y añadirlo al paquete o declarar los paquetes de los que dependa, para que se puedan instalar automáticamente si no estuvieran en el sistema destino.</p>
 <p>Concretamente, este <em>script</em> necesita dos comandos para funcionar: <strong>bash</strong> y <strong>echo</strong>. Vamos a localizarlos a ver de que paquete provienen. La idea es que nuestro paquete va a necesitar todos los paquetes que contengan los comandos necesarios, sin necesidad de incorporarlos.</p>
-<div class="highlight"><pre>root@packager:~/workspace# which bash
+<div class="highlight"><pre><span></span>root@packager:~/workspace# which bash
 /bin/bash
 root@packager:~/workspace# dpkg -S /bin/bash
 bash: /bin/bash
@@ -198,7 +198,7 @@ root@packager:~/workspace#
 
 <p>De ahí deducimos que necesitamos los paquetes <strong>bash</strong> y <strong>coreutils</strong>, que aunque suelen venir de serie, vale la pena declararlos por si no fuera el caso. Esto es lo que va en el campo <strong>Depends</strong>.</p>
 <p>Reuniendo estos datos, podemos crear el fichero <strong>control</strong>, por ejemplo, como este:</p>
-<div class="highlight"><pre>root@packager:~/workspace# mkdir -p DEBIAN
+<div class="highlight"><pre><span></span>root@packager:~/workspace# mkdir -p DEBIAN
 root@packager:~/workspace# cat DEBIAN/control 
 Package: welcome
 Version: 1.0-1
@@ -213,7 +213,7 @@ root@packager:~/workspace#
 
 <p>Adicionalmente, la carpeta <strong>DEBIAN</strong> puede contener otros <em>scripts</em>, como por ejemplo, <strong>preinst</strong>, <strong>postinst</strong>, <strong>prerm</strong> y <strong>postrm</strong>, que podrían, por ejemplo, crear los usuarios necesarios.</p>
 <p>Como último paso, vamos a invocar el comando <strong>dpkg-deb</strong> para empaquetar la carpeta de trabajo.</p>
-<div class="highlight"><pre>root@packager:~/workspace# <span class="nb">cd</span> ..
+<div class="highlight"><pre><span></span>root@packager:~/workspace# <span class="nb">cd</span> ..
 root@packager:~# dpkg-deb --build workspace/ welcome_1.0-1_all.deb
 dpkg-deb: construyendo el paquete <span class="sb">`</span>welcome<span class="s1">&#39; en `welcome_1.0-1_all.deb&#39;</span>.
 root@packager:~# 
@@ -222,7 +222,7 @@ root@packager:~#
 
 <h2>Comprobación de que el paquete funciona</h2>
 <p>Vamos a comprobar que el paquete no está instalado, por ejemplo buscando el <em>script</em> que hemos empaquetado:</p>
-<div class="highlight"><pre>root@packager:~# which welcome
+<div class="highlight"><pre><span></span>root@packager:~# which welcome
 root@packager:~# welcome 
 bash: /usr/bin/welcome: No existe el fichero o el directorio
 root@packager:~# 
@@ -230,7 +230,7 @@ root@packager:~#
 
 
 <p>Efectivamente, no lo está; ahora se trata de invocar <strong>dpkg</strong> para instalar nuestro paquete.</p>
-<div class="highlight"><pre>root@packager:~# dpkg -i welcome_1.0-1_all.deb 
+<div class="highlight"><pre><span></span>root@packager:~# dpkg -i welcome_1.0-1_all.deb 
 Seleccionando el paquete welcome previamente no seleccionado.
 <span class="o">(</span>Leyendo la base de datos ... <span class="m">9984</span> ficheros o directorios instalados actualmente.<span class="o">)</span>
 Preparando para desempaquetar welcome_1.0-1_all.deb ...
@@ -241,7 +241,7 @@ root@packager:~#
 
 
 <p>Y finalmente, verificamos que tenemos nuestro <em>script</em> en <em>/usr/bin/</em> como esperábamos:</p>
-<div class="highlight"><pre>root@packager:~# which welcome
+<div class="highlight"><pre><span></span>root@packager:~# which welcome
 /usr/bin/welcome
 root@packager:~# welcome
 Hello world!
@@ -255,9 +255,9 @@ root@packager:~#
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Construyendo una replica set en mongodb</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
     </ul>
 </section>
     <hr/>
@@ -664,9 +664,19 @@ root@packager:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -740,6 +750,11 @@ root@packager:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -789,7 +804,7 @@ root@packager:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

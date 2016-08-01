@@ -138,13 +138,13 @@ Linux Sysadmin            </a>
                 </div>
                 <p>A veces nos podemos encontrar con un sistema de ficheros lleno que no nos permite completar alguna acción por falta de espacio en disco. En un caso así, existe la posibilidad de sacar un sistema de ficheros completo de memoria, de una forma temporal, usando el sistema de ficheros <em>tmpfs</em>. Otra opción es la de tener un sistema de ficheros temporal, en donde podamos dejar ficheros cuya persistencia no sea necesaria entre reinicios.</p>
 <p>El primer paso es tener un <em>punto de montaje</em>, que sea la carpeta en la que se va a montar el nuevo sistema de fichero. Por ejemplo podemos usar el punto de montaje <em>/mnt/auxiliar</em>; empezaremos creándolo.</p>
-<div class="highlight"><pre>root@server:~# mkdir /mnt/auxiliar
+<div class="highlight"><pre><span></span>root@server:~# mkdir /mnt/auxiliar
 root@server:~# 
 </pre></div>
 
 
 <p>Observemos como la carpeta creada se construye sobre el mismo dispositivo que la partición raíz:</p>
-<div class="highlight"><pre>root@server:~# df -h /mnt/auxiliar/
+<div class="highlight"><pre><span></span>root@server:~# df -h /mnt/auxiliar/
 S.ficheros     Tamaño Usados  Disp Uso% Montado en
 /dev/sda1        2,0G   640M  1,2G  35% /
 root@server:~# 
@@ -153,13 +153,13 @@ root@server:~#
 
 <h2>Creando el sistema de ficheros de forma temporal</h2>
 <p>Como prueba de concepto, podemos crear este sistema de ficheros de forma temporal. En caso de no salir bien, los efectos no serían permanentes.</p>
-<div class="highlight"><pre>root@server:~# mount -o <span class="nv">size</span><span class="o">=</span>100M -t tmpfs auxiliar /mnt/auxiliar/
+<div class="highlight"><pre><span></span>root@server:~# mount -o <span class="nv">size</span><span class="o">=</span>100M -t tmpfs auxiliar /mnt/auxiliar/
 root@server:~# 
 </pre></div>
 
 
 <p>Podemos ver como la carpeta pertenece ahora a un sistema de ficheros nuevo:</p>
-<div class="highlight"><pre>root@server:~# df -h /mnt/auxiliar/
+<div class="highlight"><pre><span></span>root@server:~# df -h /mnt/auxiliar/
 S.ficheros     Tamaño Usados  Disp Uso% Montado en
 auxiliar            100M      <span class="m">0</span>  100M   0% /mnt/auxiliar
 root@server:~# 
@@ -167,21 +167,21 @@ root@server:~#
 
 
 <p>Cuando nos cansemos del nuevo sistema de ficheros, haya cumplido con su utilidad y ya no necesitemos su contenido, la podemos desmontar; vamos a perder todos los ficheros dentro del sistema de ficheros temporal.</p>
-<div class="highlight"><pre>root@server:~# umount /mnt/auxiliar/
+<div class="highlight"><pre><span></span>root@server:~# umount /mnt/auxiliar/
 root@server:~# 
 </pre></div>
 
 
 <h2>Haciendo el cambio permanente</h2>
 <p>Si nos interesa que este sistema de fichero se <em>monte</em> y se <em>desmonte</em> cada vez que la máquina se inicie y se apague, basta con usar el mecanismo estándar de todo sistema de ficheros <em>Linux</em>: el fichero <em>/etc/fstab</em>. Basta con añadir una línea nueva con las especificaciones de este punto de montaje, por ejemplo en el final del mismo.</p>
-<div class="highlight"><pre>root@server:~# tail -1 /etc/fstab 
+<div class="highlight"><pre><span></span>root@server:~# tail -1 /etc/fstab 
 auxiliar /mnt/auxiliar tmpfs <span class="nv">size</span><span class="o">=</span>100M <span class="m">0</span> 0
 root@server:~# 
 </pre></div>
 
 
 <p>Con este cambio es suficiente para las sesiones venideras. En caso de querer disponer inmediatamente del sistema de ficheros podemos solicitar el montaje con un comando <em>mount</em> normal, comando que va a usar las especificaciones del fichero <em>/etc/fstab</em>.</p>
-<div class="highlight"><pre>root@server:~# mount /mnt/auxiliar
+<div class="highlight"><pre><span></span>root@server:~# mount /mnt/auxiliar
 root@server:~# 
 </pre></div>
 
@@ -192,9 +192,9 @@ root@server:~#
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/07/instalando-una-maquina-con-archlinux.html">Instalando una máquina con Archlinux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/04/compilando-python-desde-cero.html">Compilando python desde cero</a></li>
     </ul>
 </section>
     <hr/>
@@ -601,9 +601,19 @@ root@server:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -677,6 +687,11 @@ root@server:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -726,7 +741,7 @@ root@server:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>

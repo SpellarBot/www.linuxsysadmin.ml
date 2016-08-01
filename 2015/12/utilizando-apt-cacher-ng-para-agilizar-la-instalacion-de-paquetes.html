@@ -150,7 +150,7 @@ Linux Sysadmin            </a>
 <h2>Preparación de las máquinas</h2>
 <p>Partimos de la máquina habitual, llamada <strong>aptcacher</strong>, siendo esta un contenedor LXC con una <em>Debian Jessie</em> básica, aunque esto se podría haber puesto en una <em>Ubuntu</em> o cualquier otra distribución que funcione con paquetes <em>.deb</em>.</p>
 <p>Otras máquinas que vamos a usar son unas máquinas cliente en donde vamos a instalar paquetes cualesquiera para demostrar el funcionamiento, llamadas <strong>client1</strong> y <strong>client2</strong>; estos clientes están en la misma red que la máquina <strong>aptcacher</strong> y tienen conectividad con ella por el puerto <em>TCP</em> 3142.</p>
-<div class="highlight"><pre>root@lxc:~# lxc-ls -f
+<div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
 NAME       STATE    IPV4      IPV6  AUTOSTART  
 ---------------------------------------------
 aptcacher  RUNNING  10.0.0.2  -     YES        
@@ -161,7 +161,7 @@ root@lxc:~#
 
 
 <p>Empezamos instalando el servicio <strong>apt-cacher-ng</strong> en la máquina servidor <strong>aptcacher</strong>:</p>
-<div class="highlight"><pre>root@aptcacher:~# apt-get install apt-cacher-ng
+<div class="highlight"><pre><span></span>root@aptcacher:~# apt-get install apt-cacher-ng
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias... Hecho
 ...  
@@ -178,7 +178,7 @@ root@aptcacher:~#
 
 <p>Las configuraciones que vienen por defecto son bastante adecuadas y no tuve que efectuar ningún cambio.</p>
 <p>Por otra parte, hay que configurar las máquinas que se quieran beneficiar de este servidor, añadiendo una línea de configuración en su <strong>apt-get</strong>, por ejemplo, poniendo un fichero adicional en <em>/etc/apt/apt.conf.d/</em></p>
-<div class="highlight"><pre>root@aptcacher:~# cat /etc/apt/apt.conf.d/02proxy 
+<div class="highlight"><pre><span></span>root@aptcacher:~# cat /etc/apt/apt.conf.d/02proxy 
 Acquire::http <span class="o">{</span> Proxy <span class="s2">&quot;http://10.0.0.2:3142&quot;</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
 root@aptcacher:~# 
 
@@ -195,7 +195,7 @@ root@client2:~#
 <p>Y con esto queda montado todo el sistema.</p>
 <h2>Funcionamiento de la caché</h2>
 <p>El funcionamiento es muy simple: basta con instalar en un cliente un paquete, por ejemplo, <em>python</em>.</p>
-<div class="highlight"><pre>root@client1:~# apt-get install python
+<div class="highlight"><pre><span></span>root@client1:~# apt-get install python
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias... Hecho
 ...  
@@ -218,7 +218,7 @@ root@client1:~#
 <p>Si revisamos la página de estadísticas de <strong>apt-cacher-ng</strong>, disponible en <em>http://aptcacher:3142/acng-report.html</em> podemos ver que se han descargado 4,78mb en 13 paquetes; todos son <strong>miss</strong> de la cache, es decir, se han ido a buscar al repositorio oficial.</p>
 <p><img alt="Estadísticas web de apt-cacher" src="http://www.linuxsysadmin.tk/images/apt-cacher-ng-1.jpg" /></p>
 <p>Ahora vamos a instalar <em>python</em> en otro de los clientes:</p>
-<div class="highlight"><pre>root@client2:~# apt-get install python
+<div class="highlight"><pre><span></span>root@client2:~# apt-get install python
 Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias... Hecho
 ...
@@ -246,8 +246,8 @@ root@client2:~#
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/02/un-proxy-dns-con-dnsmasq.html">Un proxy DNS con dnsmasq</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></li>
     </ul>
 </section>
     <hr/>
@@ -654,9 +654,19 @@ root@client2:~#
                             password
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            PHP
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
                             playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -730,6 +740,11 @@ root@client2:~#
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ruby.html">
+                            ruby
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/script.html">
                             script
                         </a>
@@ -779,7 +794,7 @@ root@client2:~#
                             ubuntu
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
                             uWSGI
                         </a>
