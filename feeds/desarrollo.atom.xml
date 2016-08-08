@@ -1,5 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-04-18T08:00:00+02:00</updated><entry><title>Consultando una base de datos Oracle en python</title><link href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html" rel="alternate"></link><published>2016-04-18T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-04-18:2016/04/consultando-una-base-de-datos-oracle-en-python.html</id><summary type="html">&lt;p&gt;El otro día estuve optimizando unos &lt;em&gt;scripts&lt;/em&gt; hechos en &lt;em&gt;bash&lt;/em&gt; que había hecho otro. Como resultado del lenguaje usado era un caos de comandos, muchos de ellos para limpiar la salida y darle la forma adecuada. Los reescribí en &lt;em&gt;python&lt;/em&gt; usando la librería &lt;strong&gt;cx_Oracle&lt;/strong&gt;, que compilé en un fichero &lt;em&gt;wheel&lt;/em&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-08-08T10:00:00+02:00</updated><entry><title>Escribiendo bots para Telegram</title><link href="http://www.linuxsysadmin.tk/2016/08/escribiendo-bots-para-telegram.html" rel="alternate"></link><published>2016-08-08T10:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-08-08:2016/08/escribiendo-bots-para-telegram.html</id><summary type="html">&lt;p&gt;Aunque no está muy extendido, &lt;strong&gt;Telegram&lt;/strong&gt; es un magnífico cliente de mensajería instantánea. Tiene varios puntos a favor, como por ejemplo seguridad, rapidez y su condición de &lt;em&gt;libre&lt;/em&gt;. Lo que no se conoce tanto es que dispone de una &lt;em&gt;API&lt;/em&gt; para crear &lt;em&gt;bots&lt;/em&gt; que pueden responder automáticamente a sus usuarios.&lt;/p&gt;
+&lt;p&gt;La variedad de usos que se dan mediante estos &lt;em&gt;bots&lt;/em&gt; es muy variada. Personalmente he visto juegos, asistentes virtuales e incluso lo he usado para tener a mano las alarmas de un entorno de producción.&lt;/p&gt;
+&lt;h2&gt;El token&lt;/h2&gt;
+&lt;p&gt;Nuestro &lt;em&gt;bot&lt;/em&gt; es un ente propio, que tiene un &lt;em&gt;token&lt;/em&gt; de autenticación, de forma que solamente el que posea el &lt;em&gt;token&lt;/em&gt; pude responder como si fuera el &lt;em&gt;bot&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Para conseguir el &lt;em&gt;token&lt;/em&gt; tenemos que iniciar una conversación con &lt;strong&gt;@BotFather&lt;/strong&gt;, que es el &lt;em&gt;bot&lt;/em&gt; que gobierna al resto. La interfaz es muy simple, y vale la pena de explorar; de momento me limito a resumir los comandos necesarios:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Iniciamos una conversación con &lt;strong&gt;BotFather&lt;/strong&gt; mediante el comando &lt;em&gt;/start&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;Le indicamos que queremos un nuevo &lt;em&gt;bot&lt;/em&gt; mediante el comando &lt;em&gt;/newbot&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;Le damos un nombre y un &lt;em&gt;username&lt;/em&gt;, tal como nos lo pide.&lt;/li&gt;
+&lt;li&gt;El último paso es anotar el &lt;em&gt;token&lt;/em&gt; que nos ofrece &lt;strong&gt;BotFather&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Esto es todo lo que necesitamos para empezar a responder mensajes. Las conversaciones con el &lt;em&gt;bot&lt;/em&gt; se pueden iniciar buscando al &lt;em&gt;bot&lt;/em&gt; por su nombre o su &lt;em&gt;username&lt;/em&gt;. Obviamente, no tenemos nada todavía que responda a los &lt;em&gt;chats&lt;/em&gt; que se hagan a este nuevo &lt;em&gt;bot&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Hay dos formas de responder a este &lt;em&gt;bot&lt;/em&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Lo podemos configurar para que llame directamente a un &lt;em&gt;endpoint&lt;/em&gt; protegido con &lt;em&gt;HTTPS&lt;/em&gt; (requiere un certificado válido no autofirmado).&lt;/li&gt;
+&lt;li&gt;Podemos tener un programa preguntando por nuevos mensajes periódicamente.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Como no tengo un servidor &lt;em&gt;HTTPS&lt;/em&gt; con certificado adecuado, vamos a ir por la segunda opción.&lt;/p&gt;
+&lt;h2&gt;El script de respuesta&lt;/h2&gt;
+&lt;p&gt;Vamos a escribir el &lt;em&gt;script&lt;/em&gt; en &lt;strong&gt;python&lt;/strong&gt; por su simplicidad y facilidad. Realmente se podría hacer con cualquier lenguaje, ya que se trata de hacer peticiones web a la &lt;em&gt;API&lt;/em&gt; e interpretarlas.&lt;/p&gt;
+&lt;p&gt;Empezaremos por instalar una librería que nos va a facilitar bastante entender las peticiones y crear las respuestas. Lo vamos a hacer en un &lt;em&gt;virtualenv&lt;/em&gt; por limpieza.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/projects/telebot$ virtualenv env
+New python executable in /home/gerard/projects/telebot/env/bin/python
+Installing setuptools, pip, wheel...done.
+gerard@sirius:~/projects/telebot$ . env/bin/activate
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/telebot$ pip install python-telegram-bot
+Collecting python-telegram-bot
+  Downloading python_telegram_bot-4.3.3-py2.py3-none-any.whl &lt;span class="o"&gt;(&lt;/span&gt;122kB&lt;span class="o"&gt;)&lt;/span&gt;
+    100% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 122kB 471kB/s 
+Collecting certifi &lt;span class="o"&gt;(&lt;/span&gt;from python-telegram-bot&lt;span class="o"&gt;)&lt;/span&gt;
+  Downloading certifi-2016.2.28-py2.py3-none-any.whl &lt;span class="o"&gt;(&lt;/span&gt;366kB&lt;span class="o"&gt;)&lt;/span&gt;
+    100% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 368kB 514kB/s 
+Collecting urllib3&amp;gt;&lt;span class="o"&gt;=&lt;/span&gt;1.10 &lt;span class="o"&gt;(&lt;/span&gt;from python-telegram-bot&lt;span class="o"&gt;)&lt;/span&gt;
+  Downloading urllib3-1.16-py2.py3-none-any.whl &lt;span class="o"&gt;(&lt;/span&gt;98kB&lt;span class="o"&gt;)&lt;/span&gt;
+    100% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 102kB 901kB/s 
+Collecting future&amp;gt;&lt;span class="o"&gt;=&lt;/span&gt;0.15.2 &lt;span class="o"&gt;(&lt;/span&gt;from python-telegram-bot&lt;span class="o"&gt;)&lt;/span&gt;
+Installing collected packages: certifi, urllib3, future, python-telegram-bot
+Successfully installed certifi-2016.2.28 future-0.15.2 python-telegram-bot-4.3.3 urllib3-1.16
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/telebot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Realmente no hay mucho misterio; siguiendo la documentación se saca rápidamente un &lt;em&gt;script&lt;/em&gt;, al que llamaremos &lt;em&gt;run.py&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;telegram&lt;/span&gt;
+
+&lt;span class="n"&gt;bot&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;telegram&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Bot&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;190363978:AAG0bHpIbidczVYUPhW9UwrwG3n5s54XSlE&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;bot&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getMe&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;process_update&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;message&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;unknown&amp;#39;&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;upper&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;startswith&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;UPPER &amp;#39;&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;:]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;upper&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="n"&gt;params&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;chat_id&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;message&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;chat_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;text&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;*Response*: &amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;response&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;parse_mode&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Markdown&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="n"&gt;bot&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sendMessage&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;last_update&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;
+&lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;last_update&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;updates&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;bot&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getUpdates&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;updates&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;bot&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;getUpdates&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;offset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;last_update&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;update&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;updates&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;process_update&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;last_update&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;update_id&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El &lt;em&gt;script&lt;/em&gt; es relativamente fácil de entender, así que solo os dejo algunas reflexiones:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;El &lt;em&gt;token&lt;/em&gt; usado en &lt;em&gt;telegram.Bot()&lt;/em&gt; es el que nos dio el &lt;strong&gt;BotFather&lt;/strong&gt; (ha sido destruido, así que no penséis en vandalizar).&lt;/li&gt;
+&lt;li&gt;Los &lt;em&gt;update_id&lt;/em&gt; son secuenciales; sin embargo, varias lecturas a la &lt;em&gt;API&lt;/em&gt; nos vuelven a traer todos los mensajes. La forma de que no nos los vuelva a dar es especificando un parámetro &lt;em&gt;offset&lt;/em&gt; (aunque en la primera iteración no lo tenemos).&lt;/li&gt;
+&lt;li&gt;Se ha decidido por procesar cada &lt;em&gt;update&lt;/em&gt; en una función aparte, ya que cada &lt;em&gt;bot&lt;/em&gt; hará algo diferente con ellos.&lt;/li&gt;
+&lt;li&gt;Este &lt;em&gt;bot&lt;/em&gt; de prueba solo va a devolvernos el mensaje que le pasemos en mayúsculas, y solo si este empieza por "UPPER". El resto devuelve "unknown".&lt;/li&gt;
+&lt;li&gt;Las respuestas pueden contener lenguaje &lt;em&gt;wiki&lt;/em&gt;, en este caso, &lt;strong&gt;markdown&lt;/strong&gt;; pueden también definir teclados a medida con las respuestas posibles.&lt;/li&gt;
+&lt;li&gt;Las respuestas conocen a su receptor mediante el campo &lt;em&gt;chat_id&lt;/em&gt;. Este campo se puede ver como un indicador de sesión, si vuestro &lt;em&gt;bot&lt;/em&gt; mantiene el estado de un "jugador" concreto.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;La verdad es que es bastante simple la interfaz de la &lt;em&gt;API&lt;/em&gt;.  Con un poco de imaginación y una base de datos, es muy posible hacer un juego conversacional, sea con campos en la base de datos, o mediante una máquina de estados simple. Me quedo con esa idea para el futuro.&lt;/p&gt;</summary><category term="telegram"></category><category term="bots"></category><category term="python"></category></entry><entry><title>Consultando una base de datos Oracle en python</title><link href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html" rel="alternate"></link><published>2016-04-18T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-04-18:2016/04/consultando-una-base-de-datos-oracle-en-python.html</id><summary type="html">&lt;p&gt;El otro día estuve optimizando unos &lt;em&gt;scripts&lt;/em&gt; hechos en &lt;em&gt;bash&lt;/em&gt; que había hecho otro. Como resultado del lenguaje usado era un caos de comandos, muchos de ellos para limpiar la salida y darle la forma adecuada. Los reescribí en &lt;em&gt;python&lt;/em&gt; usando la librería &lt;strong&gt;cx_Oracle&lt;/strong&gt;, que compilé en un fichero &lt;em&gt;wheel&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;El mayor problema al que te enfrentas si intentas instalar una librería &lt;em&gt;python&lt;/em&gt; que no está en la librería estándar, es que debes usar el gestor de paquetes, previo uso del usuario &lt;strong&gt;root&lt;/strong&gt;. Y eso no siempre es posible.&lt;/p&gt;
 &lt;p&gt;Así que para hacer una instalación en mi carpeta personal, me decanté por crear un &lt;strong&gt;virtualenv&lt;/strong&gt; en donde se iba a instalar una &lt;em&gt;wheel&lt;/em&gt; precompilada en una máquina similar. Lo documento para tenerlo a mano.&lt;/p&gt;
 &lt;p&gt;Voy a explicar dos procedimientos: el primero es como instalar el &lt;em&gt;package&lt;/em&gt; en una máquina que tenga herramientas de compilación y como empaquetarlo en un fichero &lt;em&gt;wheel&lt;/em&gt;; el segundo consiste en instalar la &lt;em&gt;wheel&lt;/em&gt; localmente en la máquina que la va a usar, a modo de &lt;em&gt;runtime&lt;/em&gt;.&lt;/p&gt;

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Artículos de Gerard - Linux Sysadmin</title>
+    <title>Escribiendo bots para Telegram - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,15 +9,23 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/08/escribiendo-bots-para-telegram.html">
 
         <meta name="author" content="Gerard" />
+        <meta name="keywords" content="telegram,bots,python" />
+        <meta name="description" content="Aunque no está muy extendido, Telegram es un magnífico cliente de mensajería instantánea. Tiene varios puntos a favor, como por ejemplo seguridad, rapidez y su condición de libre. Lo que no se conoce tanto es que dispone de una API para crear bots que pueden responder automáticamente a sus usuarios ..." />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Escribiendo bots para Telegram"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/08/escribiendo-bots-para-telegram.html"/>
+        <meta property="og:description" content="Aunque no está muy extendido, Telegram es un magnífico cliente de mensajería instantánea. Tiene varios puntos a favor, como por ejemplo seguridad, rapidez y su condición de libre. Lo que no se conoce tanto es que dispone de una API para crear bots que pueden responder automáticamente a sus usuarios ..."/>
+        <meta property="article:published_time" content="2016-08-08" />
+            <meta property="article:section" content="Desarrollo" />
+            <meta property="article:tag" content="telegram" />
+            <meta property="article:tag" content="bots" />
+            <meta property="article:tag" content="python" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -33,6 +41,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Desarrollo ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -74,11 +84,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-        <ol class="breadcrumb">
-            <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-            <li><a href="http://www.linuxsysadmin.tk/authors.html" title="Autores de Linux Sysadmin">Autores</a></li>
-            <li class="active">Gerard</li>
-        </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/desarrollo.html" title="Desarrollo">Desarrollo</a></li>
+                <li class="active">Escribiendo bots para Telegram</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -91,66 +101,170 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Construyendo una replica set en mongodb</a></h2>
-                <div class="summary"><p>Muchas veces nos interesa obtener alta disponibilidad en los servicios que gestionamos. No hay nada mas desagradable que una llamada a las tantas de la noche porque se ha caído un nodo de una base de datos y no damos servicio. Para eso <em>mongodb</em> nos ofrece el mecanismo de replicación ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html">Creación de un livecd con Debian</a></h2>
-                <div class="summary"><p>Tras ver como las actualizaciones de mis máquinas virtuales <em>VirtualBox</em> expandían mis discos <em>.vdi</em> sin control, quise pasar la herramienta <em>zerofree</em> y un compactado con la herramienta oficial <em>VBoxManage</em>. No quería instalar <em>zerofree</em> de forma permanente y no pude encontrar un <em>livecd</em> que lo tuviera, así que decidí crear uno ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Virtualizando contenedores LXC tras bridge interno</a></h2>
-                <div class="summary"><p>En un artículo anterior propusimos virtualizar contenedores en la red de la máquina <em>host</em>. Sin embargo, puede ser mas interesante esconder los contenedores detrás de una máquina que haga las funciones de <em>host</em> y de <em>firewall</em>. Expondremos una serie de puertos tras la misma dirección <em>IP</em> mediante el protocolo <em>NAT ...</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html">Creando sistemas de ficheros temporales con tmpfs</a></h2>
-                <div class="summary"><p>A veces nos podemos encontrar con un sistema de ficheros lleno que no nos permite completar alguna acción por falta de espacio en disco. En un caso así, existe la posibilidad de sacar un sistema de ficheros completo de memoria, de una forma temporal, usando el sistema de ficheros <em>tmpfs ...</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Escribiendo units en systemd</a></h2>
-                <div class="summary"><p>Cuando se anunció <em>systemd</em> me llamó la atención que además de las funciones estándares de otros sistemas de <em>init</em> (por ejemplo <em>sysvinit</em>), también se ofrecían otras funcionalidades normalmente delegadas a otros procesos, como por ejemplo, la posibilidad de reiniciar procesos automáticamente o de lanzar procesos temporales al estilo de <em>cron ...</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2016/08/escribiendo-bots-para-telegram.html"
+                       rel="bookmark"
+                       title="Permalink to Escribiendo bots para Telegram">
+                        Escribiendo bots para Telegram
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-08-08T10:00:00+02:00"> 2016-08-08</time>
+    </span>
 
-        <ul class="pagination">
-                <li class="prev"><a href="http://www.linuxsysadmin.tk/author/gerard7.html">&laquo;</a>
-                </li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard2.html">2</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard3.html">3</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard4.html">4</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard5.html">5</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard6.html">6</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard7.html">7</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.tk/author/gerard8.html">8</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard9.html">9</a></li>
-                <li class="next"><a
-                        href="http://www.linuxsysadmin.tk/author/gerard9.html">&raquo;</a></li>
-        </ul>
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 5 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/desarrollo.html">Desarrollo</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/telegram.html">telegram</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/bots.html">bots</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/python.html">python</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>Aunque no está muy extendido, <strong>Telegram</strong> es un magnífico cliente de mensajería instantánea. Tiene varios puntos a favor, como por ejemplo seguridad, rapidez y su condición de <em>libre</em>. Lo que no se conoce tanto es que dispone de una <em>API</em> para crear <em>bots</em> que pueden responder automáticamente a sus usuarios.</p>
+<p>La variedad de usos que se dan mediante estos <em>bots</em> es muy variada. Personalmente he visto juegos, asistentes virtuales e incluso lo he usado para tener a mano las alarmas de un entorno de producción.</p>
+<h2>El token</h2>
+<p>Nuestro <em>bot</em> es un ente propio, que tiene un <em>token</em> de autenticación, de forma que solamente el que posea el <em>token</em> pude responder como si fuera el <em>bot</em>.</p>
+<p>Para conseguir el <em>token</em> tenemos que iniciar una conversación con <strong>@BotFather</strong>, que es el <em>bot</em> que gobierna al resto. La interfaz es muy simple, y vale la pena de explorar; de momento me limito a resumir los comandos necesarios:</p>
+<ol>
+<li>Iniciamos una conversación con <strong>BotFather</strong> mediante el comando <em>/start</em>.</li>
+<li>Le indicamos que queremos un nuevo <em>bot</em> mediante el comando <em>/newbot</em>.</li>
+<li>Le damos un nombre y un <em>username</em>, tal como nos lo pide.</li>
+<li>El último paso es anotar el <em>token</em> que nos ofrece <strong>BotFather</strong>.</li>
+</ol>
+<p>Esto es todo lo que necesitamos para empezar a responder mensajes. Las conversaciones con el <em>bot</em> se pueden iniciar buscando al <em>bot</em> por su nombre o su <em>username</em>. Obviamente, no tenemos nada todavía que responda a los <em>chats</em> que se hagan a este nuevo <em>bot</em>.</p>
+<p>Hay dos formas de responder a este <em>bot</em>:</p>
+<ul>
+<li>Lo podemos configurar para que llame directamente a un <em>endpoint</em> protegido con <em>HTTPS</em> (requiere un certificado válido no autofirmado).</li>
+<li>Podemos tener un programa preguntando por nuevos mensajes periódicamente.</li>
+</ul>
+<p>Como no tengo un servidor <em>HTTPS</em> con certificado adecuado, vamos a ir por la segunda opción.</p>
+<h2>El script de respuesta</h2>
+<p>Vamos a escribir el <em>script</em> en <strong>python</strong> por su simplicidad y facilidad. Realmente se podría hacer con cualquier lenguaje, ya que se trata de hacer peticiones web a la <em>API</em> e interpretarlas.</p>
+<p>Empezaremos por instalar una librería que nos va a facilitar bastante entender las peticiones y crear las respuestas. Lo vamos a hacer en un <em>virtualenv</em> por limpieza.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/projects/telebot$ virtualenv env
+New python executable in /home/gerard/projects/telebot/env/bin/python
+Installing setuptools, pip, wheel...done.
+gerard@sirius:~/projects/telebot$ . env/bin/activate
+<span class="o">(</span>env<span class="o">)</span> gerard@sirius:~/projects/telebot$ pip install python-telegram-bot
+Collecting python-telegram-bot
+  Downloading python_telegram_bot-4.3.3-py2.py3-none-any.whl <span class="o">(</span>122kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 122kB 471kB/s 
+Collecting certifi <span class="o">(</span>from python-telegram-bot<span class="o">)</span>
+  Downloading certifi-2016.2.28-py2.py3-none-any.whl <span class="o">(</span>366kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 368kB 514kB/s 
+Collecting urllib3&gt;<span class="o">=</span>1.10 <span class="o">(</span>from python-telegram-bot<span class="o">)</span>
+  Downloading urllib3-1.16-py2.py3-none-any.whl <span class="o">(</span>98kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 102kB 901kB/s 
+Collecting future&gt;<span class="o">=</span>0.15.2 <span class="o">(</span>from python-telegram-bot<span class="o">)</span>
+Installing collected packages: certifi, urllib3, future, python-telegram-bot
+Successfully installed certifi-2016.2.28 future-0.15.2 python-telegram-bot-4.3.3 urllib3-1.16
+<span class="o">(</span>env<span class="o">)</span> gerard@sirius:~/projects/telebot$ 
+</pre></div>
+
+
+<p>Realmente no hay mucho misterio; siguiendo la documentación se saca rápidamente un <em>script</em>, al que llamaremos <em>run.py</em>.</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">telegram</span>
+
+<span class="n">bot</span> <span class="o">=</span> <span class="n">telegram</span><span class="o">.</span><span class="n">Bot</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="s1">&#39;190363978:AAG0bHpIbidczVYUPhW9UwrwG3n5s54XSlE&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">bot</span><span class="o">.</span><span class="n">getMe</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">process_update</span><span class="p">(</span><span class="n">update</span><span class="p">):</span>
+    <span class="n">request</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;UPPER &#39;</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">request</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;chat_id&#39;</span><span class="p">:</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat_id</span><span class="p">,</span>
+        <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;*Response*: &#39;</span> <span class="o">+</span> <span class="n">response</span><span class="p">,</span>
+        <span class="s1">&#39;parse_mode&#39;</span><span class="p">:</span> <span class="s1">&#39;Markdown&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">bot</span><span class="o">.</span><span class="n">sendMessage</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+<span class="n">last_update</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">last_update</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="n">bot</span><span class="o">.</span><span class="n">getUpdates</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="n">bot</span><span class="o">.</span><span class="n">getUpdates</span><span class="p">(</span><span class="n">offset</span><span class="o">=</span><span class="n">last_update</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">update</span> <span class="ow">in</span> <span class="n">updates</span><span class="p">:</span>
+        <span class="n">process_update</span><span class="p">(</span><span class="n">update</span><span class="p">)</span>
+        <span class="n">last_update</span> <span class="o">=</span> <span class="n">update</span><span class="o">.</span><span class="n">update_id</span>
+</pre></div>
+
+
+<p>El <em>script</em> es relativamente fácil de entender, así que solo os dejo algunas reflexiones:</p>
+<ul>
+<li>El <em>token</em> usado en <em>telegram.Bot()</em> es el que nos dio el <strong>BotFather</strong> (ha sido destruido, así que no penséis en vandalizar).</li>
+<li>Los <em>update_id</em> son secuenciales; sin embargo, varias lecturas a la <em>API</em> nos vuelven a traer todos los mensajes. La forma de que no nos los vuelva a dar es especificando un parámetro <em>offset</em> (aunque en la primera iteración no lo tenemos).</li>
+<li>Se ha decidido por procesar cada <em>update</em> en una función aparte, ya que cada <em>bot</em> hará algo diferente con ellos.</li>
+<li>Este <em>bot</em> de prueba solo va a devolvernos el mensaje que le pasemos en mayúsculas, y solo si este empieza por "UPPER". El resto devuelve "unknown".</li>
+<li>Las respuestas pueden contener lenguaje <em>wiki</em>, en este caso, <strong>markdown</strong>; pueden también definir teclados a medida con las respuestas posibles.</li>
+<li>Las respuestas conocen a su receptor mediante el campo <em>chat_id</em>. Este campo se puede ver como un indicador de sesión, si vuestro <em>bot</em> mantiene el estado de un "jugador" concreto.</li>
+</ul>
+<p>La verdad es que es bastante simple la interfaz de la <em>API</em>.  Con un poco de imaginación y una base de datos, es muy posible hacer un juego conversacional, sea con campos en la base de datos, o mediante una máquina de estados simple. Me quedo con esa idea para el futuro.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/08/el-servidor-de-aplicaciones-uwsgi.html">El servidor de aplicaciones uWSGI</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'escribiendo-bots-para-telegram';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/08/escribiendo-bots-para-telegram.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
