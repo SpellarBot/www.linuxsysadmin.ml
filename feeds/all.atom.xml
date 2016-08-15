@@ -1,5 +1,227 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-08-08T10:00:00+02:00</updated><entry><title>Escribiendo bots para Telegram</title><link href="http://www.linuxsysadmin.tk/2016/08/escribiendo-bots-para-telegram.html" rel="alternate"></link><published>2016-08-08T10:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-08-08:2016/08/escribiendo-bots-para-telegram.html</id><summary type="html">&lt;p&gt;Aunque no está muy extendido, &lt;strong&gt;Telegram&lt;/strong&gt; es un magnífico cliente de mensajería instantánea. Tiene varios puntos a favor, como por ejemplo seguridad, rapidez y su condición de &lt;em&gt;libre&lt;/em&gt;. Lo que no se conoce tanto es que dispone de una &lt;em&gt;API&lt;/em&gt; para crear &lt;em&gt;bots&lt;/em&gt; que pueden responder automáticamente a sus usuarios.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-08-15T10:00:00+02:00</updated><entry><title>Encriptando datos sensibles con Ansible</title><link href="http://www.linuxsysadmin.tk/2016/08/encriptando-datos-sensibles-con-ansible.html" rel="alternate"></link><published>2016-08-15T10:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-08-15:2016/08/encriptando-datos-sensibles-con-ansible.html</id><summary type="html">&lt;p&gt;Si usamos &lt;strong&gt;ansible&lt;/strong&gt; para configurar otras máquinas tenemos pleno poder para acceder a otras, sea mediante claves SSH o por accesos remotos normales. En este último caso, conviene aplicar un poco de seguridad para evitar que un posible intruso acceda libremente. Para esto podemos encriptar la información sensible con &lt;strong&gt;ansible-vault&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Para hacer una demostración simple, vamos a partir de &lt;a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html"&gt;un artículo anterior&lt;/a&gt;, por comodidad. En este artículo pusimos todos los datos de conexión a las máquinas controladas en el fichero de inventario &lt;em&gt;hosts&lt;/em&gt;, que hoy vamos a trocear y a encriptar las partes sensibles.&lt;/p&gt;
+&lt;p&gt;Partimos de un modelo en el que un &lt;strong&gt;master&lt;/strong&gt; con las herramientas de &lt;strong&gt;ansible&lt;/strong&gt; controla s un grupo de &lt;strong&gt;slaves&lt;/strong&gt;, que solo ofrecen acceso SSH. El uso de &lt;strong&gt;docker&lt;/strong&gt; es opcional, pero muy conveniente por la rapidez en montar el entorno.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ docker ps
+CONTAINER ID        IMAGE               COMMAND               CREATED             STATUS              PORTS               NAMES
+c2de340b9dac        master              &lt;span class="s2"&gt;&amp;quot;/bin/sh&amp;quot;&lt;/span&gt;             &lt;span class="m"&gt;17&lt;/span&gt; seconds ago      Up &lt;span class="m"&gt;16&lt;/span&gt; seconds                           ansible
+e6f0d2569207        slave               &lt;span class="s2"&gt;&amp;quot;/usr/sbin/sshd -D&amp;quot;&lt;/span&gt;   &lt;span class="m"&gt;17&lt;/span&gt; minutes ago      Up &lt;span class="m"&gt;16&lt;/span&gt; minutes                           slave2
+497357df848c        slave               &lt;span class="s2"&gt;&amp;quot;/usr/sbin/sshd -D&amp;quot;&lt;/span&gt;   &lt;span class="m"&gt;17&lt;/span&gt; minutes ago      Up &lt;span class="m"&gt;17&lt;/span&gt; minutes                           slave1
+gerard@sirius:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Todo el tutorial se va a hacer desde la máquina &lt;strong&gt;master&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;Estado inicial&lt;/h2&gt;
+&lt;p&gt;Siguiendo el artículo mencionado, disponemos de un fichero de inventario &lt;em&gt;hosts&lt;/em&gt; que declara todos los servidores y grupos que tenemos, conjuntamente con sus datos de conexión.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;~ &lt;span class="c1"&gt;# cat hosts &lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;slaves:vars&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;ansible_user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; ansible
+&lt;span class="nv"&gt;ansible_ssh_pass&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; s3cr3t
+&lt;span class="nv"&gt;ansible_become&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="nv"&gt;ansible_become_method&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; sudo
+&lt;span class="nv"&gt;ansible_become_user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; root
+&lt;span class="nv"&gt;ansible_become_pass&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; s3cr3t
+
+&lt;span class="o"&gt;[&lt;/span&gt;slaves&lt;span class="o"&gt;]&lt;/span&gt;
+slave1
+slave2
+~ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver que funciona como debe.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;~ &lt;span class="c1"&gt;# ansible -i hosts -m ping slaves&lt;/span&gt;
+slave1 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: false, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+slave2 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: false, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+~ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Separando el inventario en dos partes&lt;/h2&gt;
+&lt;p&gt;Como solo queremos encriptar los datos de conexión, vamos a partir el inventario en dos ficheros, dentro de su carpeta. &lt;strong&gt;ansible&lt;/strong&gt; va a recibir esa carpeta como inventario y va a juntar ambas partes para sacar la visión global.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;~ &lt;span class="c1"&gt;# tree inventory/&lt;/span&gt;
+inventory/
+├── hosts
+└── vault
+
+&lt;span class="m"&gt;0&lt;/span&gt; directories, &lt;span class="m"&gt;2&lt;/span&gt; files
+~ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La idea es tener una parte visible con los grupos y los servidores que los componen, y otra parte secreta con los datos a ocultar. Así quedaría la partición:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;~ &lt;span class="c1"&gt;# cat inventory/hosts &lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;slaves&lt;span class="o"&gt;]&lt;/span&gt;
+slave1
+slave2
+~ &lt;span class="c1"&gt;# cat inventory/vault &lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;slaves:vars&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;ansible_user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; ansible
+&lt;span class="nv"&gt;ansible_ssh_pass&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; s3cr3t
+&lt;span class="nv"&gt;ansible_become&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="nv"&gt;ansible_become_method&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; sudo
+&lt;span class="nv"&gt;ansible_become_user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; root
+&lt;span class="nv"&gt;ansible_become_pass&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; s3cr3t
+~ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Tras indicar a &lt;strong&gt;ansible&lt;/strong&gt; que queremos utilizar esta nueva carpeta como inventario, vemos que sigue funcionando de manera adecuada.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;~ &lt;span class="c1"&gt;# ansible -i inventory/ -m ping slaves&lt;/span&gt;
+slave2 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: false, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+slave1 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: false, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+~ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Encriptando el fichero secreto&lt;/h2&gt;
+&lt;p&gt;Para conseguir esto, se va a utilizar el comando &lt;strong&gt;ansible-vault&lt;/strong&gt;, al que se le pide que encripte el fichero secreto. Es una encriptación simétrica que encripta y desencripta con la misma contraseña.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;~ &lt;span class="c1"&gt;# ansible-vault encrypt inventory/vault &lt;/span&gt;
+New Vault password: 
+Confirm New Vault password: 
+Encryption successful
+~ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver que el fichero ha quedado modificado, de forma que ya ni se puede curiosear:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;~ &lt;span class="c1"&gt;# cat inventory/hosts &lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;slaves&lt;span class="o"&gt;]&lt;/span&gt;
+slave1
+slave2
+~ &lt;span class="c1"&gt;# cat inventory/vault &lt;/span&gt;
+&lt;span class="nv"&gt;$ANSIBLE_VAULT&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;1.1&lt;span class="p"&gt;;&lt;/span&gt;AES256
+37306639633165383030626335356261333436646539373962623937653137666430366330313663
+3666396533313031633236383964323235376262386337360a303037366336666135363266616363
+63656431623363343639663331613262643032393034623337383134306635313235623463316466
+3161613332306136310a663261346565386634663938656136363939653061373035346332616164
+62353865313265306132366166653263623964306536633163393764306166366236666362323165
+39353835346263646134383037386465656131356130376165646331623438336336363462383066
+34353062396364393239333563336466653637343030326262323338313065623864393131343165
+35313134666566663636636237376563316436666437316632613630396565643539623661323436
+30383261333230613130666465626137656463326238626163656465316632303638373334623137
+61653537396535346266623462396165333731326462646534343833346165333034613037663033
+64613763363635333030393464646139373339333436343861313462666537636461303238326433
+30346333303336643663623563613465393661626565636630383931643863343430613335373234
+3336
+~ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Cuando usemos fichero encriptados, &lt;strong&gt;ansible&lt;/strong&gt; es capaz de desencriptarlos según se necesite. Solo hace falta indicarle la forma en la que queremos darle la contraseña, por ejemplo, por el terminal.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;~ &lt;span class="c1"&gt;# ansible -i inventory/ -m ping slaves --ask-vault-pass&lt;/span&gt;
+Vault password: 
+slave1 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: false, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+slave2 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: false, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+~ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Otra forma, menos segura pero mas conveniente, es tener la contraseña en un fichero, y dejar que &lt;strong&gt;ansible&lt;/strong&gt; la lea de ese fichero. Esto es útil especialmente en &lt;em&gt;scripts&lt;/em&gt;, en donde suministrar una contraseña por el terminal no es factible.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;~ &lt;span class="c1"&gt;# cat .vault-passfile &lt;/span&gt;
+supersecret
+~ &lt;span class="c1"&gt;# ansible -i inventory/ -m ping slaves --vault-password-file=.vault-passfile&lt;/span&gt;
+slave1 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: false, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+slave2 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: false, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+~ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es importante recalcar que solo se puede indicar una contraseña para nuestros &lt;em&gt;vaults&lt;/em&gt;, sea por el terminal o por un fichero. Eso significa que todas las contraseñas usadas en un mismo comando deben ser las mismas.&lt;/p&gt;
+&lt;h2&gt;Limpiando nuestras líneas de comandos&lt;/h2&gt;
+&lt;p&gt;si el fichero de la &lt;em&gt;password&lt;/em&gt; es siempre el mismo, nuestros comandos van a ser largos y repetitivos. La gracia es que podemos ocultar los parámetros permanentes en el fichero de configuración de &lt;strong&gt;ansible&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;~ &lt;span class="c1"&gt;# cat .ansible.cfg &lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;defaults&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;host_key_checking&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; False
+&lt;span class="nv"&gt;vault_password_file&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; .vault-passfile
+~ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De esta forma, podemos omitirlo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;~ &lt;span class="c1"&gt;# ansible -i inventory/ -m ping slaves&lt;/span&gt;
+slave1 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: false, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+slave2 &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: false, 
+    &lt;span class="s2"&gt;&amp;quot;ping&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;pong&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+~ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De hecho, este parámetro también afecta a otras herramientas, como por ejemplo el mismo comando &lt;strong&gt;ansible-vault&lt;/strong&gt;, por ejemplo, para inspeccionar el fichero encriptado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;~ &lt;span class="c1"&gt;# cat inventory/vault &lt;/span&gt;
+&lt;span class="nv"&gt;$ANSIBLE_VAULT&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;1.1&lt;span class="p"&gt;;&lt;/span&gt;AES256
+30313636313462346536346262333462633131633666653238313239333330343036346263653962
+3862623363393436656334636361303263336333363431610a346666653539643065383765613466
+64626437633565323866316466636166623432313630323362393961383663356233626263386530
+3539353266343237310a396536326337313232663466333361316666376364323634623638353865
+66323636336137303863643736636666353631613230633231386434373266343764343730653238
+38643462636330663864626237366631346439303739323030306336396266366666303262363735
+30303034333532336532306432643265653963646132393939386561326539646566613961393963
+62363633626135376532336137373631383839393231356265653932333639343762353937356439
+64346465323263623830306436636134613561646232663664306262383136646265383834306336
+62646537666135393032306338313166316631303134363363633833663862663933366436613461
+35343039646430393235383238653733343465653863363835303537383437613933306137636161
+37643432373531613565633431636461666661343561393764376239313637663362333136363237
+3131
+~ &lt;span class="c1"&gt;# ansible-vault view inventory/vault&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;slaves:vars&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;ansible_user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; ansible
+&lt;span class="nv"&gt;ansible_ssh_pass&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; s3cr3t
+&lt;span class="nv"&gt;ansible_become&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;span class="nv"&gt;ansible_become_method&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; sudo
+&lt;span class="nv"&gt;ansible_become_user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; root
+&lt;span class="nv"&gt;ansible_become_pass&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; s3cr3t
+~ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De hecho, también sirve para encriptar, de forma que si lo hubiésemos puesto al principio, ni siquiera tendríamos que usarla para esa función. Para ir mas lejos, podríamos haber generado la &lt;em&gt;password&lt;/em&gt; de forma aleatorio y/o automatizada.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;~ &lt;span class="c1"&gt;# cat aaaa &lt;/span&gt;
+lorem ipsum
+~ &lt;span class="c1"&gt;# ansible-vault encrypt aaaa &lt;/span&gt;
+Encryption successful
+~ &lt;span class="c1"&gt;# cat aaaa &lt;/span&gt;
+&lt;span class="nv"&gt;$ANSIBLE_VAULT&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;1.1&lt;span class="p"&gt;;&lt;/span&gt;AES256
+38666531306261623531363836623436333061326536323066386139643630323336336565626663
+6238383334333666376338363366353066333763393330340a353365343234646430393236356464
+62346166356430346564343539313436346661656335343733623836663563633630346138636661
+3838633536383934360a343232306237373864616237386164376136323737373739623062306562
+3964
+~ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto nos quedan los ficheros sensibles un poco mas protegidos, aunque no tenemos porque encriptarlos todos.&lt;/p&gt;</summary><category term="ansible"></category><category term="vault"></category><category term="encriptación"></category><category term="inventario"></category></entry><entry><title>Escribiendo bots para Telegram</title><link href="http://www.linuxsysadmin.tk/2016/08/escribiendo-bots-para-telegram.html" rel="alternate"></link><published>2016-08-08T10:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-08-08:2016/08/escribiendo-bots-para-telegram.html</id><summary type="html">&lt;p&gt;Aunque no está muy extendido, &lt;strong&gt;Telegram&lt;/strong&gt; es un magnífico cliente de mensajería instantánea. Tiene varios puntos a favor, como por ejemplo seguridad, rapidez y su condición de &lt;em&gt;libre&lt;/em&gt;. Lo que no se conoce tanto es que dispone de una &lt;em&gt;API&lt;/em&gt; para crear &lt;em&gt;bots&lt;/em&gt; que pueden responder automáticamente a sus usuarios.&lt;/p&gt;
 &lt;p&gt;La variedad de usos que se dan mediante estos &lt;em&gt;bots&lt;/em&gt; es muy variada. Personalmente he visto juegos, asistentes virtuales e incluso lo he usado para tener a mano las alarmas de un entorno de producción.&lt;/p&gt;
 &lt;h2&gt;El token&lt;/h2&gt;
 &lt;p&gt;Nuestro &lt;em&gt;bot&lt;/em&gt; es un ente propio, que tiene un &lt;em&gt;token&lt;/em&gt; de autenticación, de forma que solamente el que posea el &lt;em&gt;token&lt;/em&gt; pude responder como si fuera el &lt;em&gt;bot&lt;/em&gt;.&lt;/p&gt;
