@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2016-08-15T08:56:53-00:00</lastmod>
+<lastmod>2016-08-22T06:48:33-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2016-08-15T08:56:53-00:00</lastmod>
+<lastmod>2016-08-22T06:48:33-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2016-08-15T08:56:53-00:00</lastmod>
+<lastmod>2016-08-22T06:48:33-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2016-08-15T08:56:53-00:00</lastmod>
+<lastmod>2016-08-22T06:48:33-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2016-08-15T08:56:53-00:00</lastmod>
+<lastmod>2016-08-22T06:48:33-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2016/08/generando-passwords-complejas-con-python.html</loc>
+<lastmod>2016-08-22T10:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -369,7 +376,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/operaciones.html</loc>
-<lastmod>2016-08-15T10:00:00-00:15</lastmod>
+<lastmod>2016-08-22T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -438,8 +445,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/virtual-hosts.html</loc>
-<lastmod>2016-03-21T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/systemd.html</loc>
+<lastmod>2016-05-02T00:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -487,6 +494,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/seguridad.html</loc>
+<lastmod>2016-08-22T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/libc.html</loc>
 <lastmod>2016-05-16T13:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -523,7 +537,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/password.html</loc>
-<lastmod>2016-05-30T08:00:00-00:15</lastmod>
+<lastmod>2016-08-22T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -662,8 +676,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/systemd.html</loc>
-<lastmod>2016-05-02T00:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/virtual-hosts.html</loc>
+<lastmod>2016-03-21T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1006,7 +1020,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/python.html</loc>
-<lastmod>2016-08-08T10:00:00-00:15</lastmod>
+<lastmod>2016-08-22T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1118,7 +1132,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2016-08-15T10:00:00-00:15</lastmod>
+<lastmod>2016-08-22T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

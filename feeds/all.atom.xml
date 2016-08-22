@@ -1,5 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-08-15T10:00:00+02:00</updated><entry><title>Encriptando datos sensibles con Ansible</title><link href="http://www.linuxsysadmin.tk/2016/08/encriptando-datos-sensibles-con-ansible.html" rel="alternate"></link><published>2016-08-15T10:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-08-15:2016/08/encriptando-datos-sensibles-con-ansible.html</id><summary type="html">&lt;p&gt;Si usamos &lt;strong&gt;ansible&lt;/strong&gt; para configurar otras máquinas tenemos pleno poder para acceder a otras, sea mediante claves SSH o por accesos remotos normales. En este último caso, conviene aplicar un poco de seguridad para evitar que un posible intruso acceda libremente. Para esto podemos encriptar la información sensible con &lt;strong&gt;ansible-vault&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-08-22T10:00:00+02:00</updated><entry><title>Generando passwords complejas con python</title><link href="http://www.linuxsysadmin.tk/2016/08/generando-passwords-complejas-con-python.html" rel="alternate"></link><published>2016-08-22T10:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-08-22:2016/08/generando-passwords-complejas-con-python.html</id><summary type="html">&lt;p&gt;Todos hemos trabajado en empresas que tienen curiosas políticas de seguridad. La cosa es mas cierta en la generación de &lt;em&gt;passwords&lt;/em&gt;, cuando te piden mayúsculas, minúsculas, dígitos y otros símbolos arcanos. Cuando los administradores tenemos que asignarlas a miles, ya no es divertido y tenemos que generarlas de forma automática.&lt;/p&gt;
+&lt;p&gt;Así pues, y harto de hacerlo, hice un &lt;em&gt;script&lt;/em&gt; con &lt;strong&gt;python&lt;/strong&gt; que me asegure que se cumple con todas las restricciones reinantes.&lt;/p&gt;
+&lt;p&gt;Supongamos que tenemos que generar &lt;em&gt;passwords&lt;/em&gt; de 12 caracteres, con al menos una mayúscula, una minúscula, un dígito y un otro símbolo.&lt;/p&gt;
+&lt;p&gt;El truco es simple: vamos a poner un carácter de cada tipo de los requeridos, y el resto los vamos a poner del alfabeto completo. Luego solo hay que desordenar el conjunto. Para ello, hay algunas cosas que hay que saber en &lt;strong&gt;python&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Tenemos métodos para desordenar &lt;em&gt;arrays&lt;/em&gt;, pero no &lt;em&gt;strings&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;Disponemos de un método para elegir un elemento de un &lt;em&gt;array&lt;/em&gt; o un carácter de un &lt;em&gt;string&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;Podemos juntar un &lt;em&gt;array&lt;/em&gt; en un &lt;em&gt;string&lt;/em&gt;, mediante un separador, posiblemente vacío.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Así pues, vamos a declarar el alfabeto como &lt;em&gt;strings&lt;/em&gt;, la &lt;em&gt;password&lt;/em&gt; como un &lt;em&gt;array&lt;/em&gt; de caracteres y finalmente vamos a sacar la &lt;em&gt;password&lt;/em&gt; como un &lt;em&gt;string&lt;/em&gt;, juntando los caracteres sin un separador.&lt;/p&gt;
+&lt;p&gt;Crearemos un &lt;em&gt;script&lt;/em&gt; llamado &lt;em&gt;password.py&lt;/em&gt;, con el siguiente contenido:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;random&lt;/span&gt;
+
+&lt;span class="n"&gt;length&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;12&lt;/span&gt;
+
+&lt;span class="n"&gt;lowercase&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;abcdefghijklmnopqrstuvwxyz&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;uppercase&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ABCDEFGHIJKLMNOPQRSTUVWXYZ&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;digits&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;0123456789&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;other&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;-+_.,:;()&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;all_chars&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;lowercase&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;uppercase&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;digits&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;other&lt;/span&gt;
+
+&lt;span class="n"&gt;password&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;choice&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;lowercase&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;choice&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;uppercase&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;choice&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;digits&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;choice&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;other&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;xrange&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;length&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;choice&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;all_chars&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="n"&gt;random&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shuffle&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Tras darle permisos de ejecución, solo nos queda generar &lt;em&gt;passwords&lt;/em&gt; hasta que quedemos satisfechos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ ./password.py 
+pyLq:4CmfU2+
+gerard@sirius:~$ ./password.py 
+&lt;span class="o"&gt;(&lt;/span&gt;_vM7ag5mobU
+gerard@sirius:~$ ./password.py 
+4OKDa+afcEm4
+gerard@sirius:~$ ./password.py 
+w_.T8QjnB4UD
+gerard@sirius:~$ ./password.py 
+8VxHFb+.9z5e
+gerard@sirius:~$ ./password.py 
+vl6bSctxHd+c
+gerard@sirius:~$ 
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="password"></category><category term="python"></category><category term="seguridad"></category></entry><entry><title>Encriptando datos sensibles con Ansible</title><link href="http://www.linuxsysadmin.tk/2016/08/encriptando-datos-sensibles-con-ansible.html" rel="alternate"></link><published>2016-08-15T10:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-08-15:2016/08/encriptando-datos-sensibles-con-ansible.html</id><summary type="html">&lt;p&gt;Si usamos &lt;strong&gt;ansible&lt;/strong&gt; para configurar otras máquinas tenemos pleno poder para acceder a otras, sea mediante claves SSH o por accesos remotos normales. En este último caso, conviene aplicar un poco de seguridad para evitar que un posible intruso acceda libremente. Para esto podemos encriptar la información sensible con &lt;strong&gt;ansible-vault&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Para hacer una demostración simple, vamos a partir de &lt;a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html"&gt;un artículo anterior&lt;/a&gt;, por comodidad. En este artículo pusimos todos los datos de conexión a las máquinas controladas en el fichero de inventario &lt;em&gt;hosts&lt;/em&gt;, que hoy vamos a trocear y a encriptar las partes sensibles.&lt;/p&gt;
 &lt;p&gt;Partimos de un modelo en el que un &lt;strong&gt;master&lt;/strong&gt; con las herramientas de &lt;strong&gt;ansible&lt;/strong&gt; controla s un grupo de &lt;strong&gt;slaves&lt;/strong&gt;, que solo ofrecen acceso SSH. El uso de &lt;strong&gt;docker&lt;/strong&gt; es opcional, pero muy conveniente por la rapidez en montar el entorno.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ docker ps
