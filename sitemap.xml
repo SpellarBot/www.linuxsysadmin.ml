@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2016-08-22T06:48:33-00:00</lastmod>
+<lastmod>2016-08-29T06:41:52-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2016-08-22T06:48:33-00:00</lastmod>
+<lastmod>2016-08-29T06:41:52-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2016-08-22T06:48:33-00:00</lastmod>
+<lastmod>2016-08-29T06:41:52-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2016-08-22T06:48:33-00:00</lastmod>
+<lastmod>2016-08-29T06:41:52-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2016-08-22T06:48:33-00:00</lastmod>
+<lastmod>2016-08-29T06:41:52-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2016/08/creando-roles-con-ansible.html</loc>
+<lastmod>2016-08-29T08:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -376,7 +383,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/operaciones.html</loc>
-<lastmod>2016-08-22T10:00:00-00:15</lastmod>
+<lastmod>2016-08-29T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -417,6 +424,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/rol.html</loc>
+<lastmod>2016-08-29T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/ldd.html</loc>
 <lastmod>2016-01-04T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -432,7 +446,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/playbook.html</loc>
-<lastmod>2016-06-06T08:00:00-00:15</lastmod>
+<lastmod>2016-08-29T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -606,6 +620,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/xfce.html</loc>
+<lastmod>2016-07-25T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/replica-set.html</loc>
 <lastmod>2016-05-02T00:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -739,15 +760,15 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/bots.html</loc>
-<lastmod>2016-08-08T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/vault.html</loc>
+<lastmod>2016-08-15T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/xfce.html</loc>
-<lastmod>2016-07-25T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/bots.html</loc>
+<lastmod>2016-08-08T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -992,7 +1013,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/ansible.html</loc>
-<lastmod>2016-08-15T10:00:00-00:15</lastmod>
+<lastmod>2016-08-29T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1056,13 +1077,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/lxc.html</loc>
 <lastmod>2015-11-23T23:30:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>http://www.linuxsysadmin.tk/tag/vault.html</loc>
-<lastmod>2016-08-15T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1132,7 +1146,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2016-08-22T10:00:00-00:15</lastmod>
+<lastmod>2016-08-29T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
