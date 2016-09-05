@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Dirección IP compartida manualmente entre servidores - Linux Sysadmin</title>
+    <title>Un servidor pypi local - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,22 +9,24 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html">
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="keywords" content="linux,failover,arping" />
-        <meta name="description" content="Cuando hablamos de alta disponibilidad, uno de los métodos mas utilizados es el failover. La idea es que una de las máquinas es la que asume la totalidad del servicio, y el resto están preparadas para ejercer la misma función en el caso de que la primera deje de funcionar ..." />
+        <meta name="keywords" content="python,PyPI,wheel,virtualenv,uWSGI" />
+        <meta name="description" content="Cuando trabajamos con python, muchas veces necesitamos instalar librerías con pip o easy_install. Dependiendo de la naturaleza de nuestros proyectos, las librerías suelen variar, pero siempre solemos utilizar los mismos. En estos casos puede ser útil tenerlos cerca, cacheados en un servidor en nuestra red local, para su rápido acceso ..." />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Dirección IP compartida manualmente entre servidores"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html"/>
-        <meta property="og:description" content="Cuando hablamos de alta disponibilidad, uno de los métodos mas utilizados es el failover. La idea es que una de las máquinas es la que asume la totalidad del servicio, y el resto están preparadas para ejercer la misma función en el caso de que la primera deje de funcionar ..."/>
-        <meta property="article:published_time" content="2016-07-11" />
-            <meta property="article:section" content="Operaciones" />
-            <meta property="article:tag" content="linux" />
-            <meta property="article:tag" content="failover" />
-            <meta property="article:tag" content="arping" />
+        <meta property="og:title" content="Un servidor pypi local"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html"/>
+        <meta property="og:description" content="Cuando trabajamos con python, muchas veces necesitamos instalar librerías con pip o easy_install. Dependiendo de la naturaleza de nuestros proyectos, las librerías suelen variar, pero siempre solemos utilizar los mismos. En estos casos puede ser útil tenerlos cerca, cacheados en un servidor en nuestra red local, para su rápido acceso ..."/>
+        <meta property="article:published_time" content="2016-09-05" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="python" />
+            <meta property="article:tag" content="PyPI" />
+            <meta property="article:tag" content="wheel" />
+            <meta property="article:tag" content="virtualenv" />
+            <meta property="article:tag" content="uWSGI" />
             <meta property="article:author" content="Gerard" />
 
 
@@ -41,8 +43,8 @@
 
 
 
-        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Operaciones ATOM Feed"/>
+        <link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -86,8 +88,8 @@ Linux Sysadmin            </a>
         <div class="col-sm-9">
             <ol class="breadcrumb">
                 <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
-                <li class="active">Dirección IP compartida manualmente entre servidores</li>
+                <li><a href="http://www.linuxsysadmin.tk/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Un servidor pypi local</li>
             </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -105,10 +107,10 @@ Linux Sysadmin            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://www.linuxsysadmin.tk/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html"
+                    <a href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html"
                        rel="bookmark"
-                       title="Permalink to Dirección IP compartida manualmente entre servidores">
-                        Dirección IP compartida manualmente entre servidores
+                       title="Permalink to Un servidor pypi local">
+                        Un servidor pypi local
                     </a>
                 </h1>
             </header>
@@ -118,160 +120,344 @@ Linux Sysadmin            </a>
 <footer class="post-info">
     <span class="label label-default">Fecha</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2016-07-11T08:00:00+02:00"> 2016-07-11</time>
+        <i class="fa fa-calendar"></i><time datetime="2016-09-05T08:00:00+02:00"> 2016-09-05</time>
     </span>
 
 
             <span class="label label-default">Autor</span>
             <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
 
-        <span class="label label-default">Tiempo de lectura</span> 5 minutos
+        <span class="label label-default">Tiempo de lectura</span> 12 minutos
         <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
+        <a href="http://www.linuxsysadmin.tk/category/sistemas.html">Sistemas</a>
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+	<a href="http://www.linuxsysadmin.tk/tag/python.html">python</a>
         /
-	<a href="http://www.linuxsysadmin.tk/tag/failover.html">failover</a>
+	<a href="http://www.linuxsysadmin.tk/tag/pypi.html">PyPI</a>
         /
-	<a href="http://www.linuxsysadmin.tk/tag/arping.html">arping</a>
+	<a href="http://www.linuxsysadmin.tk/tag/wheel.html">wheel</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/virtualenv.html">virtualenv</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">uWSGI</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>Cuando hablamos de alta disponibilidad, uno de los métodos mas utilizados es el <strong>failover</strong>. La idea es que una de las máquinas es la que asume la totalidad del servicio, y el resto están preparadas para ejercer la misma función en el caso de que la primera deje de funcionar.</p>
-<p>En este campo hay varias soluciones como <strong>keepalived</strong> y <strong>pacemaker</strong>, pero en este artículo se pretende mostrar los conceptos mas básicos; haciendo manualmente los pasos y entendiendo como funciona todo, desde un punto de vista didáctico.</p>
-<p>Realmente esto es un intento mío para hacer una solución de alta disponibilidad, pero se quedó a medias. Lo escribo porque creo que puede ser útil en otro momento.</p>
-<h2>Punto de partida</h2>
-<p>Tenemos dos servidores normales, que vamos a convertir en un <strong>cluster</strong> con configuración manual de <strong>failover</strong>.</p>
+                <p>Cuando trabajamos con <strong>python</strong>, muchas veces necesitamos instalar librerías con <em>pip</em> o <em>easy_install</em>. Dependiendo de la naturaleza de nuestros proyectos, las librerías suelen variar, pero siempre solemos utilizar los mismos. En estos casos puede ser útil tenerlos cerca, cacheados en un servidor en nuestra red local, para su rápido acceso.</p>
+<p>Para estos casos podemos montar un servidor exactamente igual que el de <a href="https://pypi.python.org/pypi">PyPI</a>, que se distribuye como una librería <strong>python</strong> adicional, que nos ofrece una aplicación <strong>WSGI</strong>.</p>
+<p>Nuestro despliegue es bastante básico; con un solo servidor nos basta, y puede estar compartido con otros usos. El único servicio que vamos a poner es un servidor <strong>WSGI</strong> capaz de servir la aplicación. En nuestro caso vamos a usar <strong>uwsgi</strong>.</p>
+<p>Así pues, creamos dos máquinas, una va a ser el servidor y la otra, un cliente de ejemplo que necesite los paquetes locales.</p>
 <div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
-NAME     STATE    IPV4      IPV6  AUTOSTART
--------------------------------------------
-server1  RUNNING  10.0.0.3  -     NO
-server2  RUNNING  10.0.0.4  -     NO
+NAME        STATE    IPV4      IPV6  AUTOSTART
+----------------------------------------------
+pyclient    RUNNING  10.0.0.3  -     NO
+pypiserver  RUNNING  10.0.0.2  -     NO
 root@lxc:~#
 </pre></div>
 
 
-<p>Digamos que queremos dar un servicio web, aunque podríamos hacer de balanceadores, servidores de aplicación o lo que se necesite, en general.</p>
-<p>Vamos a poner un servidor web <strong>nginx</strong>, que sirva una página HTML que nos indique la máquina que recibe las peticiones, a modo de comprobación.</p>
-<p>Vamos a instalar el servicio <strong>nginx</strong> en ambas máquinas:</p>
-<div class="highlight"><pre><span></span>root@server1:~# apt-get install -y nginx-light
-...  
-root@server1:~#
-
-root@server2:~# apt-get install -y nginx-light
-...  
-root@server2:~#
+<h2>Montando el servidor</h2>
+<p>Como decisión de diseño, he optado por instalar el paquete <em>pypiserver</em> en un <em>virtualenv</em>, para no interferir con otros paquetes que pudiera haber en el servidor.</p>
+<p>Empezaremos creando una carpeta contenedora, en donde va a ir el <em>virtualenv</em>, la aplicación y el índice de paquetes disponibles en el servidor.</p>
+<div class="highlight"><pre><span></span>root@pypiserver:~# mkdir /opt/pypi <span class="o">&amp;&amp;</span> <span class="nb">cd</span> /opt/pypi
+root@pypiserver:/opt/pypi#
 </pre></div>
 
 
-<p>Creamos una página HTML con el nombre de cada máquina para ver quien recibe la petición HTTP:</p>
-<div class="highlight"><pre><span></span>root@server1:~# hostname &gt; /var/www/html/index.html
-root@server1:~#
-
-root@server2:~# hostname &gt; /var/www/html/index.html
-root@server2:~#
+<p>Vamos a descargar <em>virtualenv</em>, sin instalarlo, para "usar y tirar". Para ello vamos a necesitar alguna herramienta para descargarlo de la red, por ejemplo, <strong>wget</strong>.</p>
+<div class="highlight"><pre><span></span>root@pypiserver:/opt/pypi# apt-get install -y wget
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+...
+<span class="m">0</span> actualizados, <span class="m">13</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar 9.875 kB de archivos.
+Se utilizarán 35,7 MB de espacio de disco adicional después de esta operación.
+...
+root@pypiserver:/opt/pypi#
 </pre></div>
 
 
-<p>Y comprobamos que podemos diferenciar el servidor destino que recibe cada una de las peticiones:</p>
-<div class="highlight"><pre><span></span>root@lxc:~# wget -qO- http://10.0.0.3/
-server1
-root@lxc:~# wget -qO- http://10.0.0.4/
-server2
-root@lxc:~#
+<p>Tanto la herramienta <em>virtualenv</em> como la herramienta <em>pip</em> que vamos a necesitar mas adelante, usan <strong>python</strong>. Es un buen momento para asegurar que esté instalado, y si no lo está, lo instalamos.</p>
+<div class="highlight"><pre><span></span>root@pypiserver:/opt/pypi# apt-get install -y python
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+...
+<span class="m">0</span> actualizados, <span class="m">12</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar 4.991 kB de archivos.
+Se utilizarán 21,2 MB de espacio de disco adicional después de esta operación.
+...
+root@pypiserver:/opt/pypi#
 </pre></div>
 
 
-<h2>Moviendo la dirección IP compartida</h2>
-<p>Además de la dirección IP de cada máquina, vamos a tener una que represente al miembro activo del <strong>cluster</strong>, que por ejemplo, será la 10.0.0.2</p>
-<p>Si solo una de las máquinas tiene esa dirección IP asignada, el truco ya está hecho. Sin embargo, ¿que pasará si los dos nodos tienen la dirección IP compartida asignada? Puede pasará cualquier cosa.</p>
-<p>Para evitar este caso, un nodo que asuma el rol de primario también va a forzar a sus vecinos a actualizar sus tablas ARP, consiguiendo así <strong>robar</strong> la dirección IP. Esto se puede conseguir con el comando <strong>arping</strong> y por lo tanto, hay que instalarlo.</p>
-<div class="highlight"><pre><span></span>root@server1:~# apt-get install -y iputils-arping
-...  
-root@server1:~#
-
-root@server2:~# apt-get install -y iputils-arping
-...  
-root@server2:~#
+<p>Descargamos el paquete <em>virtualenv</em> y lo descomprimimos.</p>
+<div class="highlight"><pre><span></span>root@pypiserver:/opt/pypi# wget -q https://pypi.python.org/packages/5c/79/5dae7494b9f5ed061cff9a8ab8d6e1f02db352f3facf907d9eb614fb80e9/virtualenv-15.0.2.tar.gz
+root@pypiserver:/opt/pypi# tar xzf virtualenv-15.0.2.tar.gz
+root@pypiserver:/opt/pypi#
 </pre></div>
 
 
-<h3>Promocionando server1 a primario</h3>
-<p>El proceso de <strong>failover</strong> consiste en agenciarse la dirección compartida. Para ello, tenemos que añadir una nueva dirección IP en nuestra interfaz de red. Como es posible que esta IP pertenezca a otro servidor, hay que lanzar el comando <strong>arping</strong>.</p>
-<div class="highlight"><pre><span></span>root@server1:~# ip addr add 10.0.0.2/24 dev eth0
-root@server1:~# arping -U -c1 10.0.0.2
-ARPING 10.0.0.2 from 10.0.0.2 eth0
-Sent <span class="m">1</span> probes <span class="o">(</span><span class="m">1</span> broadcast<span class="o">(</span>s<span class="o">))</span>
-Received <span class="m">0</span> response<span class="o">(</span>s<span class="o">)</span>
-root@server1:~#
+<p>Vamos a crear el <em>virtualenv</em> dentro de nuestra carpeta contenedora. Luego instalamos el paquete <em>pypiserver</em>, previo activado del <em>virtualenv</em>.</p>
+<div class="highlight"><pre><span></span>root@pypiserver:/opt/pypi# ./virtualenv-15.0.2/virtualenv.py env
+New python executable in /opt/pypi/env/bin/python
+Installing setuptools, pip, wheel...done.
+root@pypiserver:/opt/pypi# . env/bin/activate
+<span class="o">(</span>env<span class="o">)</span> root@pypiserver:/opt/pypi# pip install pypiserver
+Collecting pypiserver
+  Downloading pypiserver-1.1.10-py2.py3-none-any.whl <span class="o">(</span>75kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 81kB 632kB/s
+Installing collected packages: pypiserver
+Successfully installed pypiserver-1.1.10
+<span class="o">(</span>env<span class="o">)</span> root@pypiserver:/opt/pypi# deactivate
+root@pypiserver:/opt/pypi#
 </pre></div>
 
 
-<p>El siguiente paso, aunque opcional, es educado; el servidor desplazado de primario a reserva, no necesita tener esa dirección asignada, en caso de que la tuviera (que no es el caso, pero no importa y lo ignoramos).</p>
-<div class="highlight"><pre><span></span>root@server2:~# ip addr del 10.0.0.2/24 dev eth0
-RTNETLINK answers: Cannot assign requested address
-root@server2:~#
+<p>Y con esto tenemos el <em>virtualenv</em>. Si no ha habido problemas, y no lo pensamos reconstruir, es un buen momento para eliminar los <em>scripts</em> de creación del mismo.</p>
+<div class="highlight"><pre><span></span>root@pypiserver:/opt/pypi# rm -R virtualenv-15.0.2*
+root@pypiserver:/opt/pypi#
 </pre></div>
 
 
-<p>El resultado es que <em>server1</em> tiene dos direcciones asignadas: la suya propia y la compartida, mientras que <em>server2</em> solo tiene la suya.</p>
-<div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
-NAME     STATE    IPV4                IPV6  AUTOSTART
------------------------------------------------------
-server1  RUNNING  10.0.0.2, 10.0.0.3  -     NO
-server2  RUNNING  10.0.0.4            -     NO
-root@lxc:~#
+<p>Vamos a hacer que nuestro servidor sirva los paquetes de una carpeta <em>packages</em>, dentro de la carpeta contenedora. Como no existe esta carpeta <em>packages</em>, la creamos.</p>
+<div class="highlight"><pre><span></span>root@pypiserver:/opt/pypi# mkdir packages
+root@pypiserver:/opt/pypi#
 </pre></div>
 
 
-<p>Y nuestras peticiones web, caen efectivamente en <em>server1</em>.</p>
-<div class="highlight"><pre><span></span>root@lxc:~# wget -qO- http://10.0.0.2/
-server1
-root@lxc:~#
+<p>Y finalmente creamos una aplicación <strong>WSGI</strong> para poder servir nuestros paquetes. Realmente es una instancia de la aplicación que ofrece el paquete <em>pypiserver</em>, con la única diferencia que consiste en especificar la raíz de los paquetes servidos.</p>
+<div class="highlight"><pre><span></span>root@pypiserver:/opt/pypi# cat app.py
+import pypiserver
+<span class="nv">app</span> <span class="o">=</span> pypiserver.app<span class="o">(</span><span class="nv">root</span><span class="o">=</span><span class="s1">&#39;/opt/pypi/packages&#39;</span><span class="o">)</span>
+root@pypiserver:/opt/pypi#
 </pre></div>
 
 
-<h3>Cambiando el primario de server1 a server2</h3>
-<p>El proceso es el mismo, pero al revés: <em>server2</em> reclama la dirección compartida y <em>server1</em> se deshace de ella por cortesía.</p>
-<div class="highlight"><pre><span></span>root@server2:~# ip addr add 10.0.0.2/24 dev eth0
-root@server2:~# arping -U -c1 10.0.0.2
-ARPING 10.0.0.2 from 10.0.0.2 eth0
-Sent <span class="m">1</span> probes <span class="o">(</span><span class="m">1</span> broadcast<span class="o">(</span>s<span class="o">))</span>
-Received <span class="m">0</span> response<span class="o">(</span>s<span class="o">)</span>
-root@server2:~#
-
-root@server1:~# ip addr del 10.0.0.2/24 dev eth0
-root@server1:~#
+<p>Lo único que queda es servir la aplicación en un servidor de nuestra preferencia. En mi caso he optado por <strong>uwsgi</strong>, por lo que lo instalo. Se va a usar el modo <em>emperor</em> por comodidad.</p>
+<div class="highlight"><pre><span></span>root@pypiserver:/opt/pypi# apt-get install -y uwsgi-emperor uwsgi-plugin-python
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+...
+<span class="m">0</span> actualizados, <span class="m">13</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar 3.452 kB de archivos.
+Se utilizarán 9.799 kB de espacio de disco adicional después de esta operación.
+...
+root@pypiserver:/opt/pypi#
 </pre></div>
 
 
-<p>Y nuevamente, podemos ver donde está la dirección compartida y en que servidor caen nuestras peticiones.</p>
-<div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
-NAME     STATE    IPV4                IPV6  AUTOSTART
------------------------------------------------------
-server1  RUNNING  10.0.0.3            -     NO
-server2  RUNNING  10.0.0.2, 10.0.0.4  -     NO
-root@lxc:~#
-
-root@lxc:~# wget -qO- http://10.0.0.2/
-server2
-root@lxc:~#
+<p>De acuerdo con el modo <em>emperor</em>, necesitamos declarar la aplicación mediante un fichero de configuración. Con esto el <em>emperor</em> la tiene fichada y se encarga de mantenerla levantada.</p>
+<div class="highlight"><pre><span></span>root@pypiserver:/opt/pypi# cat /etc/uwsgi-emperor/vassals/pypiserver.ini
+<span class="o">[</span>uwsgi<span class="o">]</span>
+<span class="nv">plugins</span> <span class="o">=</span> python
+http-socket <span class="o">=</span> :8080
+<span class="nv">master</span> <span class="o">=</span> <span class="nb">true</span>
+<span class="nv">workers</span> <span class="o">=</span> 2
+<span class="nv">chdir</span> <span class="o">=</span> /opt/pypi
+<span class="nv">virtualenv</span> <span class="o">=</span> /opt/pypi/env/
+<span class="nv">module</span> <span class="o">=</span> app:app
+root@pypiserver:/opt/pypi#
 </pre></div>
 
 
-<h2>Usos poco éticos de esta técnica</h2>
-<p>Estamos en nuestra oficina y no queremos trabajar, con la excusa de que no hay internet. ¿Que nos impide asignarnos la dirección del <em>router</em> a nuestra máquina? Esto haría que toda la oficina usara nuestra máquina de <em>gateway</em>, que por supuesto, no sabe salir a internet, cortando efectivamente el tráfico exterior.</p>
-<p>Parece que esta idea ya se les ocurrió a los fabricantes de <em>routers</em>, así que sus productos ya se preocupan de ir reclamando su dirección IP. Así que os puede funcionar puntualmente, y si queréis hacer la broma por un periodo largo, tendréis que librar una batalla de <em>arpings</em> contra el <em>router</em>.</p>
+<h2>Añadiendo paquetes a nuestro servidor</h2>
+<p>Esta es la parte mas fácil de todas; basta con dejar nuestros paquetes <strong>python</strong> en la carpeta <em>/opt/pypi/packages/</em>. Así de fácil.</p>
+<p>El formato es cualquiera aceptado por <em>pip</em> o <em>easy_install</em>, pudiendo ser ficheros <em>.zip</em>, <em>.egg</em> o <em>.whl</em> entre otros; pueden ser descargados, compilados, o creados por nosotros mismos.</p>
+<p>Para ver un ejemplo, voy a generar unos ficheros <em>.whl</em>, mediante el uso de <em>pip</em>. Esto nos garantiza que los tendremos cerca, pero que también van a estar ya compilados para la arquitectura concreta del servidor (presumiblemente la misma que van a usar los clientes).</p>
+<div class="highlight"><pre><span></span>root@pypiserver:~# /opt/pypi/env/bin/pip wheel -w /opt/pypi/packages/ flask mongoengine
+Collecting flask
+  Downloading Flask-0.11.1-py2.py3-none-any.whl <span class="o">(</span>80kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 81kB 599kB/s
+  Saved /opt/pypi/packages/Flask-0.11.1-py2.py3-none-any.whl
+Collecting mongoengine
+  Downloading mongoengine-0.10.6.tar.gz <span class="o">(</span>346kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 348kB 560kB/s
+Collecting click&gt;<span class="o">=</span>2.0 <span class="o">(</span>from flask<span class="o">)</span>
+  Downloading click-6.6.tar.gz <span class="o">(</span>283kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 286kB 2.0MB/s
+Collecting Werkzeug&gt;<span class="o">=</span>0.7 <span class="o">(</span>from flask<span class="o">)</span>
+  Downloading Werkzeug-0.11.10-py2.py3-none-any.whl <span class="o">(</span>306kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 307kB 1.0MB/s
+  Saved /opt/pypi/packages/Werkzeug-0.11.10-py2.py3-none-any.whl
+Collecting Jinja2&gt;<span class="o">=</span>2.4 <span class="o">(</span>from flask<span class="o">)</span>
+  Downloading Jinja2-2.8-py2.py3-none-any.whl <span class="o">(</span>263kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 266kB 2.1MB/s
+  Saved /opt/pypi/packages/Jinja2-2.8-py2.py3-none-any.whl
+Collecting itsdangerous&gt;<span class="o">=</span>0.21 <span class="o">(</span>from flask<span class="o">)</span>
+  Downloading itsdangerous-0.24.tar.gz <span class="o">(</span>46kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 51kB 2.3MB/s
+Collecting pymongo&gt;<span class="o">=</span>2.7.1 <span class="o">(</span>from mongoengine<span class="o">)</span>
+  Downloading pymongo-3.2.2.tar.gz <span class="o">(</span>504kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 512kB 657kB/s
+Collecting MarkupSafe <span class="o">(</span>from Jinja2&gt;<span class="o">=</span>2.4-&gt;flask<span class="o">)</span>
+  Downloading MarkupSafe-0.23.tar.gz
+Skipping flask, due to already being wheel.
+Skipping Werkzeug, due to already being wheel.
+Skipping Jinja2, due to already being wheel.
+Building wheels <span class="k">for</span> collected packages: mongoengine, click, itsdangerous, pymongo, MarkupSafe
+  Running setup.py bdist_wheel <span class="k">for</span> mongoengine ... <span class="k">done</span>
+  Stored in directory: /opt/pypi/packages
+  Running setup.py bdist_wheel <span class="k">for</span> click ... <span class="k">done</span>
+  Stored in directory: /opt/pypi/packages
+  Running setup.py bdist_wheel <span class="k">for</span> itsdangerous ... <span class="k">done</span>
+  Stored in directory: /opt/pypi/packages
+  Running setup.py bdist_wheel <span class="k">for</span> pymongo ... <span class="k">done</span>
+  Stored in directory: /opt/pypi/packages
+  Running setup.py bdist_wheel <span class="k">for</span> MarkupSafe ... <span class="k">done</span>
+  Stored in directory: /opt/pypi/packages
+Successfully built mongoengine click itsdangerous pymongo MarkupSafe
+root@pypiserver:~#
+</pre></div>
+
+
+<p>Y podemos ver que tenemos varios paquetes en la carpeta, algunos de ellos descargados ya en formato <em>wheel</em> (por ejemplo <em>flask</em>), y otros que se descargaron en formato <em>source</em> y se compilaron (por ejemplo <em>pymongo</em>).</p>
+<div class="highlight"><pre><span></span>root@pypiserver:~# ls -1 /opt/pypi/packages/
+click-6.6-py2.py3-none-any.whl
+Flask-0.11.1-py2.py3-none-any.whl
+itsdangerous-0.24-py2-none-any.whl
+Jinja2-2.8-py2.py3-none-any.whl
+MarkupSafe-0.23-py2-none-any.whl
+mongoengine-0.10.6-py2-none-any.whl
+pymongo-3.2.2-cp27-cp27mu-linux_i686.whl
+Werkzeug-0.11.10-py2.py3-none-any.whl
+root@pypiserver:~#
+</pre></div>
+
+
+<h2>Usando el servidor desde un cliente</h2>
+<p>Ya que vamos a trabajar con <strong>python</strong>, aseguramos que lo tenemos instalado, o lo instalamos. Vamos a poner también la herramienta <strong>wget</strong> porque la vamos a necesitar.</p>
+<div class="highlight"><pre><span></span>root@pyclient:~# apt-get install -y wget python
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+...
+<span class="m">0</span> actualizados, <span class="m">25</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar 14,9 MB de archivos.
+Se utilizarán 56,9 MB de espacio de disco adicional después de esta operación.
+...
+root@pyclient:~#
+</pre></div>
+
+
+<p>Una prueba rápida: hay que ver que llegamos al servidor creado, y que este ofrece los paquetes en un formato adecuado.</p>
+<div class="highlight"><pre><span></span>root@pyclient:~# wget -qO- http://10.0.0.2:8080/simple/<span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
+    &lt;html&gt;
+        &lt;head&gt;
+            &lt;title&gt;Simple Index&lt;/title&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+            &lt;h1&gt;Simple Index&lt;/h1&gt;
+                 &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;Flask/&quot;</span>&gt;Flask&lt;/a&gt;&lt;br&gt;
+                 &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;Jinja2/&quot;</span>&gt;Jinja2&lt;/a&gt;&lt;br&gt;
+                 &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;MarkupSafe/&quot;</span>&gt;MarkupSafe&lt;/a&gt;&lt;br&gt;
+                 &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;Werkzeug/&quot;</span>&gt;Werkzeug&lt;/a&gt;&lt;br&gt;
+                 &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;click/&quot;</span>&gt;click&lt;/a&gt;&lt;br&gt;
+                 &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;itsdangerous/&quot;</span>&gt;itsdangerous&lt;/a&gt;&lt;br&gt;
+                 &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;mongoengine/&quot;</span>&gt;mongoengine&lt;/a&gt;&lt;br&gt;
+                 &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;pymongo/&quot;</span>&gt;pymongo&lt;/a&gt;&lt;br&gt;
+        &lt;/body&gt;
+    &lt;/html&gt;
+
+root@pyclient:~#
+</pre></div>
+
+
+<p>Descargamos los <em>scripts</em> de creación del <em>virtualenv</em>, tal como lo hacemos mas arriba.</p>
+<div class="highlight"><pre><span></span>root@pyclient:~# wget -q https://pypi.python.org/packages/5c/79/5dae7494b9f5ed061cff9a8ab8d6e1f02db352f3facf907d9eb614fb80e9/virtualenv-15.0.2.tar.gz
+root@pyclient:~# tar xzf virtualenv-15.0.2.tar.gz
+root@pyclient:~#
+</pre></div>
+
+
+<p>Creamos un <em>virtualenv</em> en donde instalar los paquetes y lo activamos.</p>
+<div class="highlight"><pre><span></span>root@pyclient:~# ./virtualenv-15.0.2/virtualenv.py env
+New python executable in /root/env/bin/python
+Installing setuptools, pip, wheel...done.
+root@pyclient:~# . env/bin/activate
+<span class="o">(</span>env<span class="o">)</span> root@pyclient:~#
+</pre></div>
+
+
+<p>Y lo usamos para instalar alguno de los paquetes. Es importante ver que modificamos el <em>index url</em>, para usar nuestro servidor, y que debemos indicarle que confíe en nuestro servidor.</p>
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@pyclient:~# pip install --trusted-host 10.0.0.2 -i http://10.0.0.2:8080/simple/ mongoengine
+Collecting mongoengine
+  Downloading http://10.0.0.2:8080/packages/mongoengine-0.10.6-py2-none-any.whl <span class="o">(</span>90kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 92kB 10.9MB/s
+Collecting pymongo&gt;<span class="o">=</span>2.7.1 <span class="o">(</span>from mongoengine<span class="o">)</span>
+  Downloading http://10.0.0.2:8080/packages/pymongo-3.2.2-cp27-cp27mu-linux_i686.whl <span class="o">(</span>209kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 215kB 9.9MB/s
+Installing collected packages: pymongo, mongoengine
+Successfully installed mongoengine-0.10.6 pymongo-3.2.2
+<span class="o">(</span>env<span class="o">)</span> root@pyclient:~#
+</pre></div>
+
+
+<p><strong>TRUCO</strong>: Podemos crear un fichero de configuración de <em>pip</em> para que esos parámetros queden ocultos.</p>
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@pyclient:~# mkdir -p /root/.config/pip/
+<span class="o">(</span>env<span class="o">)</span> root@pyclient:~# cat /root/.config/pip/pip.conf
+<span class="o">[</span>global<span class="o">]</span>
+index-url <span class="o">=</span> http://10.0.0.2:8080/simple/
+trusted-host <span class="o">=</span> 10.0.0.2
+<span class="o">(</span>env<span class="o">)</span> root@pyclient:~#
+</pre></div>
+
+
+<p>Tras aplicar el truco, nos queda una orden <em>pip</em> bastante mas bonita, sin tantos parámetros que recordar y nos permite trabajar como la haríamos sin el servidor intermedio.</p>
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@pyclient:~# pip install flask
+Collecting flask
+  Downloading http://10.0.0.2:8080/packages/Flask-0.11.1-py2.py3-none-any.whl <span class="o">(</span>80kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 81kB 10.5MB/s
+Collecting click&gt;<span class="o">=</span>2.0 <span class="o">(</span>from flask<span class="o">)</span>
+  Downloading http://10.0.0.2:8080/packages/click-6.6-py2.py3-none-any.whl <span class="o">(</span>71kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 71kB 11.3MB/s
+Collecting Werkzeug&gt;<span class="o">=</span>0.7 <span class="o">(</span>from flask<span class="o">)</span>
+  Retrying <span class="o">(</span>Retry<span class="o">(</span><span class="nv">total</span><span class="o">=</span>4, <span class="nv">connect</span><span class="o">=</span>None, <span class="nv">read</span><span class="o">=</span>None, <span class="nv">redirect</span><span class="o">=</span>None<span class="o">))</span> after connection broken by <span class="s1">&#39;ProtocolError(&#39;</span>Connection aborted.<span class="s1">&#39;, error(104, &#39;</span>Conexi<span class="se">\x</span>c3<span class="se">\x</span>b3n reinicializada por la m<span class="se">\x</span>c3<span class="se">\x</span>a1quina remota<span class="s1">&#39;))&#39;</span>: /packages/Werkzeug-0.11.10-py2.py3-none-any.whl
+  Downloading http://10.0.0.2:8080/packages/Werkzeug-0.11.10-py2.py3-none-any.whl <span class="o">(</span>306kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 307kB 8.3MB/s
+Collecting Jinja2&gt;<span class="o">=</span>2.4 <span class="o">(</span>from flask<span class="o">)</span>
+  Downloading http://10.0.0.2:8080/packages/Jinja2-2.8-py2.py3-none-any.whl <span class="o">(</span>263kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 266kB 9.0MB/s
+Collecting itsdangerous&gt;<span class="o">=</span>0.21 <span class="o">(</span>from flask<span class="o">)</span>
+  Downloading http://10.0.0.2:8080/packages/itsdangerous-0.24-py2-none-any.whl
+Collecting MarkupSafe <span class="o">(</span>from Jinja2&gt;<span class="o">=</span>2.4-&gt;flask<span class="o">)</span>
+  Downloading http://10.0.0.2:8080/packages/MarkupSafe-0.23-py2-none-any.whl
+Installing collected packages: click, Werkzeug, MarkupSafe, Jinja2, itsdangerous, flask
+Successfully installed Jinja2-2.8 MarkupSafe-0.23 Werkzeug-0.11.10 click-6.6 flask-0.11.1 itsdangerous-0.24
+<span class="o">(</span>env<span class="o">)</span> root@pyclient:~#
+</pre></div>
+
+
+<p>Finalmente salimos del <em>virtualenv</em>.</p>
+<div class="highlight"><pre><span></span><span class="o">(</span>env<span class="o">)</span> root@pyclient:~# deactivate
+root@pyclient:~#
+</pre></div>
+
+
+<p>Como punto final, queda indicar que si el paquete no está en nuestro servidor, no pasa nada; nuestro servidor va a pasar la petición al índica <em>pypi</em> titular, de forma transparente.</p>
+<div class="highlight"><pre><span></span>root@pyclient:~# ./env/bin/pip install requests
+Collecting requests
+  Downloading requests-2.10.0-py2.py3-none-any.whl <span class="o">(</span>506kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 512kB 1.0MB/s
+Installing collected packages: requests
+Successfully installed requests-2.10.0
+root@pyclient:~#
+</pre></div>
+
+
+<p><strong>TRUCO</strong>: Activar un <em>virtualenv</em> solo pone su carpeta <em>bin</em> en el <em>PATH</em>. Podemos ahorrarnos comandos invocando directamente esos binarios, por ejemplo <em>pip</em>. Esto es lo que se ha hecho en el comando anterior.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html">Virtualizando contenedores LXC con acceso a la red local</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/08/el-servidor-de-aplicaciones-uwsgi.html">El servidor de aplicaciones uWSGI</a></li>
     </ul>
 </section>
     <hr/>
@@ -283,8 +469,8 @@ root@lxc:~#
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'direccion-ip-compartida-manualmente-entre-servidores';
-                var disqus_url = 'http://www.linuxsysadmin.tk/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html';
+                    var disqus_identifier = 'un-servidor-pypi-local';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html';
 
             var disqus_config = function () {
                 this.language = "es";

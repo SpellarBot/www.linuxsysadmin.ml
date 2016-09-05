@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Dirección IP compartida manualmente entre servidores - Linux Sysadmin</title>
+    <title>PyPI - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,23 +9,16 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html">
 
-        <meta name="author" content="Gerard" />
-        <meta name="keywords" content="linux,failover,arping" />
-        <meta name="description" content="Cuando hablamos de alta disponibilidad, uno de los métodos mas utilizados es el failover. La idea es que una de las máquinas es la que asume la totalidad del servicio, y el resto están preparadas para ejercer la misma función en el caso de que la primera deje de funcionar ..." />
+    <meta name="author" content="Gerard" />
+    <meta name="keywords" content="PyPI" />
 
+    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Dirección IP compartida manualmente entre servidores"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html"/>
-        <meta property="og:description" content="Cuando hablamos de alta disponibilidad, uno de los métodos mas utilizados es el failover. La idea es que una de las máquinas es la que asume la totalidad del servicio, y el resto están preparadas para ejercer la misma función en el caso de que la primera deje de funcionar ..."/>
-        <meta property="article:published_time" content="2016-07-11" />
-            <meta property="article:section" content="Operaciones" />
-            <meta property="article:tag" content="linux" />
-            <meta property="article:tag" content="failover" />
-            <meta property="article:tag" content="arping" />
-            <meta property="article:author" content="Gerard" />
+        <meta property="og:type" content="website"/>
+        <meta property="og:title" content="Linux Sysadmin"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
+        <meta property="og:description" content="Linux Sysadmin"/>
 
 
     <!-- Bootstrap -->
@@ -41,8 +34,6 @@
 
 
 
-        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -84,11 +75,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-            <ol class="breadcrumb">
-                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
-                <li class="active">Dirección IP compartida manualmente entre servidores</li>
-            </ol>
+    <ol class="breadcrumb">
+        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+        <li><a href="http://www.linuxsysadmin.tk/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
+        <li class="active">PyPI</li>
+    </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -101,211 +92,13 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-    <section id="content">
-        <article>
-            <header class="page-header">
-                <h1>
-                    <a href="http://www.linuxsysadmin.tk/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html"
-                       rel="bookmark"
-                       title="Permalink to Dirección IP compartida manualmente entre servidores">
-                        Dirección IP compartida manualmente entre servidores
-                    </a>
-                </h1>
-            </header>
-            <div class="entry-content">
-                <div class="panel">
-                    <div class="panel-body">
-<footer class="post-info">
-    <span class="label label-default">Fecha</span>
-    <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2016-07-11T08:00:00+02:00"> 2016-07-11</time>
-    </span>
-
-
-            <span class="label label-default">Autor</span>
-            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
-
-        <span class="label label-default">Tiempo de lectura</span> 5 minutos
-        <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
-
-
-<span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
-        /
-	<a href="http://www.linuxsysadmin.tk/tag/failover.html">failover</a>
-        /
-	<a href="http://www.linuxsysadmin.tk/tag/arping.html">arping</a>
-    
-</footer><!-- /.post-info -->                    </div>
+            <article>
+                <h2><a href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html">Un servidor pypi local</a></h2>
+                <div class="summary"><p>Cuando trabajamos con <strong>python</strong>, muchas veces necesitamos instalar librerías con <em>pip</em> o <em>easy_install</em>. Dependiendo de la naturaleza de nuestros proyectos, las librerías suelen variar, pero siempre solemos utilizar los mismos. En estos casos puede ser útil tenerlos cerca, cacheados en un servidor en nuestra red local, para su rápido acceso ...</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html">Seguir leyendo</a>
                 </div>
-                <p>Cuando hablamos de alta disponibilidad, uno de los métodos mas utilizados es el <strong>failover</strong>. La idea es que una de las máquinas es la que asume la totalidad del servicio, y el resto están preparadas para ejercer la misma función en el caso de que la primera deje de funcionar.</p>
-<p>En este campo hay varias soluciones como <strong>keepalived</strong> y <strong>pacemaker</strong>, pero en este artículo se pretende mostrar los conceptos mas básicos; haciendo manualmente los pasos y entendiendo como funciona todo, desde un punto de vista didáctico.</p>
-<p>Realmente esto es un intento mío para hacer una solución de alta disponibilidad, pero se quedó a medias. Lo escribo porque creo que puede ser útil en otro momento.</p>
-<h2>Punto de partida</h2>
-<p>Tenemos dos servidores normales, que vamos a convertir en un <strong>cluster</strong> con configuración manual de <strong>failover</strong>.</p>
-<div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
-NAME     STATE    IPV4      IPV6  AUTOSTART
--------------------------------------------
-server1  RUNNING  10.0.0.3  -     NO
-server2  RUNNING  10.0.0.4  -     NO
-root@lxc:~#
-</pre></div>
-
-
-<p>Digamos que queremos dar un servicio web, aunque podríamos hacer de balanceadores, servidores de aplicación o lo que se necesite, en general.</p>
-<p>Vamos a poner un servidor web <strong>nginx</strong>, que sirva una página HTML que nos indique la máquina que recibe las peticiones, a modo de comprobación.</p>
-<p>Vamos a instalar el servicio <strong>nginx</strong> en ambas máquinas:</p>
-<div class="highlight"><pre><span></span>root@server1:~# apt-get install -y nginx-light
-...  
-root@server1:~#
-
-root@server2:~# apt-get install -y nginx-light
-...  
-root@server2:~#
-</pre></div>
-
-
-<p>Creamos una página HTML con el nombre de cada máquina para ver quien recibe la petición HTTP:</p>
-<div class="highlight"><pre><span></span>root@server1:~# hostname &gt; /var/www/html/index.html
-root@server1:~#
-
-root@server2:~# hostname &gt; /var/www/html/index.html
-root@server2:~#
-</pre></div>
-
-
-<p>Y comprobamos que podemos diferenciar el servidor destino que recibe cada una de las peticiones:</p>
-<div class="highlight"><pre><span></span>root@lxc:~# wget -qO- http://10.0.0.3/
-server1
-root@lxc:~# wget -qO- http://10.0.0.4/
-server2
-root@lxc:~#
-</pre></div>
-
-
-<h2>Moviendo la dirección IP compartida</h2>
-<p>Además de la dirección IP de cada máquina, vamos a tener una que represente al miembro activo del <strong>cluster</strong>, que por ejemplo, será la 10.0.0.2</p>
-<p>Si solo una de las máquinas tiene esa dirección IP asignada, el truco ya está hecho. Sin embargo, ¿que pasará si los dos nodos tienen la dirección IP compartida asignada? Puede pasará cualquier cosa.</p>
-<p>Para evitar este caso, un nodo que asuma el rol de primario también va a forzar a sus vecinos a actualizar sus tablas ARP, consiguiendo así <strong>robar</strong> la dirección IP. Esto se puede conseguir con el comando <strong>arping</strong> y por lo tanto, hay que instalarlo.</p>
-<div class="highlight"><pre><span></span>root@server1:~# apt-get install -y iputils-arping
-...  
-root@server1:~#
-
-root@server2:~# apt-get install -y iputils-arping
-...  
-root@server2:~#
-</pre></div>
-
-
-<h3>Promocionando server1 a primario</h3>
-<p>El proceso de <strong>failover</strong> consiste en agenciarse la dirección compartida. Para ello, tenemos que añadir una nueva dirección IP en nuestra interfaz de red. Como es posible que esta IP pertenezca a otro servidor, hay que lanzar el comando <strong>arping</strong>.</p>
-<div class="highlight"><pre><span></span>root@server1:~# ip addr add 10.0.0.2/24 dev eth0
-root@server1:~# arping -U -c1 10.0.0.2
-ARPING 10.0.0.2 from 10.0.0.2 eth0
-Sent <span class="m">1</span> probes <span class="o">(</span><span class="m">1</span> broadcast<span class="o">(</span>s<span class="o">))</span>
-Received <span class="m">0</span> response<span class="o">(</span>s<span class="o">)</span>
-root@server1:~#
-</pre></div>
-
-
-<p>El siguiente paso, aunque opcional, es educado; el servidor desplazado de primario a reserva, no necesita tener esa dirección asignada, en caso de que la tuviera (que no es el caso, pero no importa y lo ignoramos).</p>
-<div class="highlight"><pre><span></span>root@server2:~# ip addr del 10.0.0.2/24 dev eth0
-RTNETLINK answers: Cannot assign requested address
-root@server2:~#
-</pre></div>
-
-
-<p>El resultado es que <em>server1</em> tiene dos direcciones asignadas: la suya propia y la compartida, mientras que <em>server2</em> solo tiene la suya.</p>
-<div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
-NAME     STATE    IPV4                IPV6  AUTOSTART
------------------------------------------------------
-server1  RUNNING  10.0.0.2, 10.0.0.3  -     NO
-server2  RUNNING  10.0.0.4            -     NO
-root@lxc:~#
-</pre></div>
-
-
-<p>Y nuestras peticiones web, caen efectivamente en <em>server1</em>.</p>
-<div class="highlight"><pre><span></span>root@lxc:~# wget -qO- http://10.0.0.2/
-server1
-root@lxc:~#
-</pre></div>
-
-
-<h3>Cambiando el primario de server1 a server2</h3>
-<p>El proceso es el mismo, pero al revés: <em>server2</em> reclama la dirección compartida y <em>server1</em> se deshace de ella por cortesía.</p>
-<div class="highlight"><pre><span></span>root@server2:~# ip addr add 10.0.0.2/24 dev eth0
-root@server2:~# arping -U -c1 10.0.0.2
-ARPING 10.0.0.2 from 10.0.0.2 eth0
-Sent <span class="m">1</span> probes <span class="o">(</span><span class="m">1</span> broadcast<span class="o">(</span>s<span class="o">))</span>
-Received <span class="m">0</span> response<span class="o">(</span>s<span class="o">)</span>
-root@server2:~#
-
-root@server1:~# ip addr del 10.0.0.2/24 dev eth0
-root@server1:~#
-</pre></div>
-
-
-<p>Y nuevamente, podemos ver donde está la dirección compartida y en que servidor caen nuestras peticiones.</p>
-<div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
-NAME     STATE    IPV4                IPV6  AUTOSTART
------------------------------------------------------
-server1  RUNNING  10.0.0.3            -     NO
-server2  RUNNING  10.0.0.2, 10.0.0.4  -     NO
-root@lxc:~#
-
-root@lxc:~# wget -qO- http://10.0.0.2/
-server2
-root@lxc:~#
-</pre></div>
-
-
-<h2>Usos poco éticos de esta técnica</h2>
-<p>Estamos en nuestra oficina y no queremos trabajar, con la excusa de que no hay internet. ¿Que nos impide asignarnos la dirección del <em>router</em> a nuestra máquina? Esto haría que toda la oficina usara nuestra máquina de <em>gateway</em>, que por supuesto, no sabe salir a internet, cortando efectivamente el tráfico exterior.</p>
-<p>Parece que esta idea ya se les ocurrió a los fabricantes de <em>routers</em>, así que sus productos ya se preocupan de ir reclamando su dirección IP. Así que os puede funcionar puntualmente, y si queréis hacer la broma por un periodo largo, tendréis que librar una batalla de <em>arpings</em> contra el <em>router</em>.</p>
-            </div>
-            <!-- /.entry-content -->
-<section class="well" id="related-posts">
-    <h4>Posts relacionados:</h4>
-    <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html">Virtualizando contenedores LXC con acceso a la red local</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></li>
-    </ul>
-</section>
-    <hr/>
-    <section class="comments" id="comments">
-        <h2>Comments</h2>
-
-        <div id="disqus_thread"></div>
-        <script type="text/javascript">
-            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
-
-                    var disqus_identifier = 'direccion-ip-compartida-manualmente-entre-servidores';
-                var disqus_url = 'http://www.linuxsysadmin.tk/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html';
-
-            var disqus_config = function () {
-                this.language = "es";
-            };
-
-            /* * * DON'T EDIT BELOW THIS LINE * * */
-            (function () {
-                var dsq = document.createElement('script');
-                dsq.type = 'text/javascript';
-                dsq.async = true;
-                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            })();
-        </script>
-        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
-            Disqus.</a></noscript>
-        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-    </section>
-        </article>
-    </section>
+            </article>
+            <hr/>
 
         </div>
         <div class="col-sm-3" id="sidebar">
