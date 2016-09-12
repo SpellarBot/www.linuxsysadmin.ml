@@ -1,5 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-09-05T08:00:00+02:00</updated><entry><title>Un servidor pypi local</title><link href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html" rel="alternate"></link><published>2016-09-05T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-09-05:2016/09/un-servidor-pypi-local.html</id><summary type="html">&lt;p&gt;Cuando trabajamos con &lt;strong&gt;python&lt;/strong&gt;, muchas veces necesitamos instalar librerías con &lt;em&gt;pip&lt;/em&gt; o &lt;em&gt;easy_install&lt;/em&gt;. Dependiendo de la naturaleza de nuestros proyectos, las librerías suelen variar, pero siempre solemos utilizar los mismos. En estos casos puede ser útil tenerlos cerca, cacheados en un servidor en nuestra red local, para su rápido acceso.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-09-12T08:00:00+02:00</updated><entry><title>Imágenes docker reusables mediante configuraciones dinámicas</title><link href="http://www.linuxsysadmin.tk/2016/09/imagenes-docker-reusables-mediante-configuraciones-dinamicas.html" rel="alternate"></link><published>2016-09-12T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-09-12:2016/09/imagenes-docker-reusables-mediante-configuraciones-dinamicas.html</id><summary type="html">&lt;p&gt;Muchos de los servicios que necesitamos son siempre los mismos, cambiando solamente algunos parámetros. Incluso los mismos servicios pueden sufrir variaciones en su configuración, por ejemplo, un balanceador al que se añaden o quitan &lt;em&gt;hosts&lt;/em&gt;. Siguiendo las prácticas de &lt;a href="http://12factor.net/es/"&gt;12factor&lt;/a&gt; podemos ahorrar trabajo, mediante el uso de variables de entorno.&lt;/p&gt;
+&lt;p&gt;El problema es que las variables de entorno no siempre son bienvenidas en las configuraciones de una aplicación, siendo mucho mas comunes los ficheros con un formato concreto. Eso significa que necesitamos varias imágenes &lt;strong&gt;docker&lt;/strong&gt; para los diferentes proyectos y entornos.&lt;/p&gt;
+&lt;p&gt;Harto de escribir configuraciones &lt;strong&gt;nginx&lt;/strong&gt; y reconstruir la imagen cada vez que añadíamos &lt;em&gt;hosts&lt;/em&gt;, me hice la pregunta: ¿Hay alguna forma mas inteligente de hacer esto?&lt;/p&gt;
+&lt;p&gt;La única forma de cambiar el contenido de una imagen &lt;strong&gt;docker&lt;/strong&gt; es mapeando las configuraciones en volúmenes o mediante el uso de variables de entorno. Pero &lt;strong&gt;nginx&lt;/strong&gt; no admite variables de entorno, y lo de los volúmenes me parece una chapuza.&lt;/p&gt;
+&lt;p&gt;La solución es tan simple como efectiva: generar las configuraciones estáticas de forma dinámica. La idea es pasar las variables de entorno al contenedor, y que antes de ejecutar su servicio, genere la configuración a partir de las variables recibidas. Un ejercicio de &lt;em&gt;templating&lt;/em&gt; básico.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo: un balanceador con nginx con backends variables.&lt;/h2&gt;
+&lt;p&gt;El esquema de un balanceador en &lt;strong&gt;nginx&lt;/strong&gt; sigue siempre el mismo patrón:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;upstream&lt;/span&gt; &lt;span class="s"&gt;backend&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kn"&gt;...&lt;/span&gt;
+&lt;span class="err"&gt;}&lt;/span&gt;
+
+&lt;span class="s"&gt;server&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="kn"&gt;listen&lt;/span&gt; &lt;span class="mi"&gt;80&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="kn"&gt;server_name&lt;/span&gt; &lt;span class="s"&gt;_&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="kn"&gt;location&lt;/span&gt; &lt;span class="s"&gt;/&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="kn"&gt;proxy_pass&lt;/span&gt; &lt;span class="s"&gt;http://backend&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El truco consiste en que el contenedor va a ejecutar un &lt;em&gt;script&lt;/em&gt; que va a generar la configuración y va a lanzar nuestro binario. Para hacerlo limpiamente, vamos a separar la ejecución, del &lt;em&gt;script&lt;/em&gt; de generación.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/dynamic_configs$ cat entrypoint.sh 
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+./config.sh &amp;gt; /etc/nginx/conf.d/balancer
+&lt;span class="nb"&gt;exec&lt;/span&gt; /usr/sbin/nginx -g &lt;span class="s2"&gt;&amp;quot;daemon off;&amp;quot;&lt;/span&gt;
+gerard@sirius:~/docker/dynamic_configs$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y el &lt;em&gt;script&lt;/em&gt; de generación solo tiene la responsabilidad de leer las variables de entorno y sacar la configuración por pantalla. Por simplicidad, estoy usando un &lt;em&gt;script&lt;/em&gt; en &lt;strong&gt;bash&lt;/strong&gt;, pero se podría hacer con otro lenguaje e incluso con un motor de plantillas. Me gusta especialmente la combinación &lt;strong&gt;python&lt;/strong&gt; + &lt;strong&gt;jinja2&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/dynamic_configs$ cat config.sh 
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;upstream backend {&amp;quot;&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; BACKEND in &lt;span class="k"&gt;$(&lt;/span&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BACKENDS&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sed &lt;span class="s1"&gt;&amp;#39;s/,/ /g&amp;#39;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;  server &lt;/span&gt;&lt;span class="nv"&gt;$BACKEND&lt;/span&gt;&lt;span class="s2"&gt;;&amp;quot;&lt;/span&gt;
+&lt;span class="k"&gt;done&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&amp;quot;&amp;quot;\&lt;/span&gt;
+&lt;span class="s2"&gt;}&lt;/span&gt;
+
+&lt;span class="s2"&gt;server {&lt;/span&gt;
+&lt;span class="s2"&gt;    listen 80;&lt;/span&gt;
+&lt;span class="s2"&gt;    server_name _;&lt;/span&gt;
+
+&lt;span class="s2"&gt;    location / {&lt;/span&gt;
+&lt;span class="s2"&gt;        proxy_pass http://backend;&lt;/span&gt;
+&lt;span class="s2"&gt;    }&lt;/span&gt;
+&lt;span class="s2"&gt;}&lt;/span&gt;
+&lt;span class="s2"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+gerard@sirius:~/docker/dynamic_configs$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos comprobar que la configuración generada depende de la variable de entorno &lt;em&gt;BACKENDS&lt;/em&gt;, por ejemplo, con dos nodos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/dynamic_configs$ &lt;span class="nv"&gt;BACKENDS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;server1:8080,server2:8080 ./config.sh 
+upstream backend &lt;span class="o"&gt;{&lt;/span&gt;
+    server server1:8080&lt;span class="p"&gt;;&lt;/span&gt;
+    server server2:8080&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen 80&lt;span class="p"&gt;;&lt;/span&gt;
+    server_name _&lt;span class="p"&gt;;&lt;/span&gt;
+
+    location / &lt;span class="o"&gt;{&lt;/span&gt;
+        proxy_pass http://backend&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+gerard@sirius:~/docker/dynamic_configs$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El &lt;em&gt;script&lt;/em&gt; &lt;em&gt;entrypoint.sh&lt;/em&gt; llamará este otro &lt;em&gt;script&lt;/em&gt; y va a salvar esta configuración en algún sitio que &lt;strong&gt;nginx&lt;/strong&gt; pueda cargar, por ejemplo, en una carpeta incluida en la configuración principal.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/dynamic_configs$ cat nginx.conf 
+worker_processes  1&lt;span class="p"&gt;;&lt;/span&gt;
+events &lt;span class="o"&gt;{&lt;/span&gt;
+    worker_connections  1024&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+http &lt;span class="o"&gt;{&lt;/span&gt;
+    include mime.types&lt;span class="p"&gt;;&lt;/span&gt;
+    default_type application/octet-stream&lt;span class="p"&gt;;&lt;/span&gt;
+    sendfile on&lt;span class="p"&gt;;&lt;/span&gt;
+    keepalive_timeout 65&lt;span class="p"&gt;;&lt;/span&gt;
+    include conf.d/*&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/docker/dynamic_configs$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finalmente, solo nos queda poner todas las piezas en su sitio, mediante el &lt;em&gt;Dockerfile&lt;/em&gt; correspondiente:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/dynamic_configs$ cat Dockerfile 
+FROM alpine:3.4
+RUN apk add --no-cache nginx &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    ln -s /dev/stdout /var/log/nginx/access.log &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    ln -s /dev/stderr /var/log/nginx/error.log &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    mkdir /run/nginx
+COPY nginx.conf /etc/nginx/
+COPY config.sh entrypoint.sh /
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/entrypoint.sh&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/docker/dynamic_configs$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y finalmente podemos crear un balanceador indicando simplemente los parámetros en el &lt;em&gt;docker run&lt;/em&gt;, previo &lt;em&gt;docker build&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/dynamic_configs$ docker run -ti --rm -e &lt;span class="s2"&gt;&amp;quot;BACKENDS=server1:8080,server2:8080,server3:8080&amp;quot;&lt;/span&gt; balancer
+...  
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="docker"></category><category term="12factor"></category><category term="configuración"></category><category term="templating"></category></entry><entry><title>Un servidor pypi local</title><link href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html" rel="alternate"></link><published>2016-09-05T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-09-05:2016/09/un-servidor-pypi-local.html</id><summary type="html">&lt;p&gt;Cuando trabajamos con &lt;strong&gt;python&lt;/strong&gt;, muchas veces necesitamos instalar librerías con &lt;em&gt;pip&lt;/em&gt; o &lt;em&gt;easy_install&lt;/em&gt;. Dependiendo de la naturaleza de nuestros proyectos, las librerías suelen variar, pero siempre solemos utilizar los mismos. En estos casos puede ser útil tenerlos cerca, cacheados en un servidor en nuestra red local, para su rápido acceso.&lt;/p&gt;
 &lt;p&gt;Para estos casos podemos montar un servidor exactamente igual que el de &lt;a href="https://pypi.python.org/pypi"&gt;PyPI&lt;/a&gt;, que se distribuye como una librería &lt;strong&gt;python&lt;/strong&gt; adicional, que nos ofrece una aplicación &lt;strong&gt;WSGI&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Nuestro despliegue es bastante básico; con un solo servidor nos basta, y puede estar compartido con otros usos. El único servicio que vamos a poner es un servidor &lt;strong&gt;WSGI&lt;/strong&gt; capaz de servir la aplicación. En nuestro caso vamos a usar &lt;strong&gt;uwsgi&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Así pues, creamos dos máquinas, una va a ser el servidor y la otra, un cliente de ejemplo que necesite los paquetes locales.&lt;/p&gt;
