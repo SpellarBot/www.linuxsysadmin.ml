@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>ssh - Linux Sysadmin</title>
+    <title>Crear jaulas de forma fácil basadas en Debian y Ubuntu con debootstrap - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,25 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="ssh" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="linux,debian,ubuntu,debootstrap,jaula" />
+        <meta name="description" content="Cuando creamos jaulas nos enfrentamos siempre al mismo dilema: usar una imagen de dudoso origen o perder nuestro tiempo investigando y buscando librerías que falten. Sin embargo, hay una forma mejor, que es descargar un sistema básico con herramientas oficiales que nos van a dar hasta un gestor de paquetes ..." />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Crear jaulas de forma fácil basadas en Debian y Ubuntu con debootstrap"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html"/>
+        <meta property="og:description" content="Cuando creamos jaulas nos enfrentamos siempre al mismo dilema: usar una imagen de dudoso origen o perder nuestro tiempo investigando y buscando librerías que falten. Sin embargo, hay una forma mejor, que es descargar un sistema básico con herramientas oficiales que nos van a dar hasta un gestor de paquetes ..."/>
+        <meta property="article:published_time" content="2016-09-19" />
+            <meta property="article:section" content="Seguridad" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="debian" />
+            <meta property="article:tag" content="ubuntu" />
+            <meta property="article:tag" content="debootstrap" />
+            <meta property="article:tag" content="jaula" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,6 +43,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/seguridad.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Seguridad ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -75,11 +86,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.tk/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
-        <li class="active">ssh</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/seguridad.html" title="Seguridad">Seguridad</a></li>
+                <li class="active">Crear jaulas de forma fácil basadas en Debian y Ubuntu con debootstrap</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -92,41 +103,351 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/06/preparando-un-servidor-de-repositorios-git.html">Preparando un servidor de repositorios GIT</a></h2>
-                <div class="summary"><p>Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando <strong>git</strong> y <strong>ssh ...</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/06/preparando-un-servidor-de-repositorios-git.html">Seguir leyendo</a>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html"
+                       rel="bookmark"
+                       title="Permalink to Crear jaulas de forma fácil basadas en Debian y Ubuntu con debootstrap">
+                        Crear jaulas de forma fácil basadas en Debian y Ubuntu con debootstrap
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-09-19T08:00:00+02:00"> 2016-09-19</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 11 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/seguridad.html">Seguridad</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/debian.html">debian</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/ubuntu.html">ubuntu</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/debootstrap.html">debootstrap</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/jaula.html">jaula</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">Autenticación SSH por claves</a></h2>
-                <div class="summary"><p>A pesar de que el protocolo <strong>SSH</strong> es lo que mas seguridad ofrece hoy en día, un servidor rápido puede probar gran cantidad de contraseñas generadas mediante un generador por fuerza bruta. Para añadir mas seguridad podemos autenticar mediante claves en vez de usar contraseña, opcionalmente protegidos con una <em>passphrase ...</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></h2>
-                <div class="summary"><p>Cuando nos encontramos delante de servidores únicos, es bastante fácil su gestión. Sin embargo, cuando tenemos 8 instancias de cada tipo de servidor, las tareas se vuelven lentas y repetitivas. Podemos incluso automatizar la gestión de una sola máquina para hacer su entorno fácilmente reproducible, en vistas a su reconstrucción ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Enjaulado de usuarios para uso de rsync</a></h2>
-                <div class="summary"><p>Todos nos hemos encontrado alguna vez con una web, sea en <em>HTML</em> o en <em>PHP</em>, que se compone de centenares o miles de ficheros, y que hay que ir actualizando cada vez que cambian unos pocos ficheros. En estos casos la capacidad incremental de la herramienta <strong>rsync</strong> puede ayudarnos mucho ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></h2>
-                <div class="summary"><p>En este artículo vamos a enseñar como ocultar un puerto tras el firewall, de forma que solamente se abra tras utilizar el protocolo <em>port knocking</em>. Las tecnologías usadas van a ser <em>firehol</em> como firewall y el demonio <em>knockd</em> ocultando el <em>SSH</em>, aunque vamos a permitir acceder al puerto de HTTP ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+                <p>Cuando creamos jaulas nos enfrentamos siempre al mismo dilema: usar una imagen de dudoso origen o perder nuestro tiempo investigando y buscando librerías que falten. Sin embargo, hay una forma mejor, que es descargar un sistema básico con herramientas oficiales que nos van a dar hasta un gestor de paquetes.</p>
+<p>Hay algunas distribuciones que nos ofrecen herramientas para descargar un sistema base a partir de sus repositorios, y que a menudo son la base de sus propias instalaciones. En el caso de las distribuciones <strong>Debian</strong> y derivadas (<strong>Ubuntu</strong>, <strong>Knoppix</strong>, ...) esta herramienta se llama <strong>debootstrap</strong> y de uso bastante sencillo.</p>
+<p>De hecho, otras herramientas parten de estas herramientas para usar como base para las suyas. Un ejemplo serían las imágenes de <strong>docker</strong>, que no son mas que el resultado de la ejecución de <strong>debootstrap</strong>.</p>
+<p>Este tutorial se ha ejecutado en un contenedor <strong>docker</strong> de usar y tirar, para no polucionar mi máquina con herramientas innecesarias. También se asume que se dispone de la herramienta instalada que, por si no la tuvierais, se instala así:</p>
+<div class="highlight"><pre><span></span>root@8e7b4f301aa0:~# apt-get install debootstrap
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following extra packages will be installed:
+  ca-certificates libffi6 libgmp10 libgnutls-deb0-28 libhogweed2 libicu52 libidn11 libnettle4 libp11-kit0 libpsl0 libssl1.0.0 libtasn1-6 openssl wget
+Suggested packages:
+  gnutls-bin
+The following NEW packages will be installed:
+  ca-certificates debootstrap libffi6 libgmp10 libgnutls-deb0-28 libhogweed2 libicu52 libidn11 libnettle4 libp11-kit0 libpsl0 libssl1.0.0 libtasn1-6 openssl wget
+<span class="m">0</span> upgraded, <span class="m">15</span> newly installed, <span class="m">0</span> to remove and <span class="m">0</span> not upgraded.
+Need to get 10.8 MB of archives.
+After this operation, 39.1 MB of additional disk space will be used.
+Do you want to <span class="k">continue</span>? <span class="o">[</span>Y/n<span class="o">]</span> y
+...
+root@8e7b4f301aa0:~# 
+</pre></div>
+
+
+<p>Esta herramienta viene acompañada de los diferentes <em>scripts</em> que conocen la forma de llegar al resultado deseado. Cabe remarcar que cuando mas reciente es la versión, mas <em>scripts</em> lleva incorporados. En mi caso, usé <strong>Debian Jessie</strong>, que como podéis ver, sabe construir <strong>Ubuntu 9.10 (Karmic Koala)</strong>, pero no <strong>Ubuntu 16.04 (Xenial Xerus)</strong>.</p>
+<div class="highlight"><pre><span></span>root@8e7b4f301aa0:~# dpkg -L debootstrap <span class="p">|</span> grep scripts
+/usr/share/debootstrap/scripts
+/usr/share/debootstrap/scripts/hoary
+/usr/share/debootstrap/scripts/woody.buildd
+/usr/share/debootstrap/scripts/feisty
+/usr/share/debootstrap/scripts/warty.buildd
+/usr/share/debootstrap/scripts/potato
+/usr/share/debootstrap/scripts/sarge.fakechroot
+/usr/share/debootstrap/scripts/hoary.buildd
+/usr/share/debootstrap/scripts/gutsy
+/usr/share/debootstrap/scripts/warty
+/usr/share/debootstrap/scripts/sarge
+/usr/share/debootstrap/scripts/sid
+/usr/share/debootstrap/scripts/sarge.buildd
+/usr/share/debootstrap/scripts/edgy
+/usr/share/debootstrap/scripts/dapper
+/usr/share/debootstrap/scripts/breezy
+/usr/share/debootstrap/scripts/woody
+/usr/share/debootstrap/scripts/saucy
+/usr/share/debootstrap/scripts/testing
+/usr/share/debootstrap/scripts/unstable
+/usr/share/debootstrap/scripts/oneiric
+/usr/share/debootstrap/scripts/stretch
+/usr/share/debootstrap/scripts/stable
+/usr/share/debootstrap/scripts/etch-m68k
+/usr/share/debootstrap/scripts/maverick
+/usr/share/debootstrap/scripts/raring
+/usr/share/debootstrap/scripts/lenny
+/usr/share/debootstrap/scripts/hardy
+/usr/share/debootstrap/scripts/wheezy
+/usr/share/debootstrap/scripts/squeeze
+/usr/share/debootstrap/scripts/etch
+/usr/share/debootstrap/scripts/oldstable
+/usr/share/debootstrap/scripts/precise
+/usr/share/debootstrap/scripts/trusty
+/usr/share/debootstrap/scripts/utopic
+/usr/share/debootstrap/scripts/natty
+/usr/share/debootstrap/scripts/jaunty
+/usr/share/debootstrap/scripts/jessie
+/usr/share/debootstrap/scripts/lucid
+/usr/share/debootstrap/scripts/intrepid
+/usr/share/debootstrap/scripts/quantal
+/usr/share/debootstrap/scripts/karmic
+/usr/share/debootstrap/scripts/vivid
+root@8e7b4f301aa0:~# 
+</pre></div>
+
+
+<p><strong>TRUCO</strong>: Para ejecutar <strong>debootstrap</strong> en un contenedor <strong>docker</strong> (de usar y tirar, por ejemplo), hace falta correr el contenedor con un <em>flag</em> especial: <em>--privileged</em>. Esto es debido a que <strong>debootstrap</strong> intenta montar el sistema de ficheros <em>/proc</em> y no dispone de permisos para hacerlo en circunstancias normales.</p>
+<h2>Un ejemplo de uso básico</h2>
+<p>A priori, este comando solo necesita saber la distribución que queremos descargar y la carpeta donde lo queremos hacer.</p>
+<div class="highlight"><pre><span></span>root@8e7b4f301aa0:~# debootstrap jessie jail
+...
+root@8e7b4f301aa0:~# 
+</pre></div>
+
+
+<p>Podemos contar con varios <em>flags</em> que van a modificar ligeramente su comportamiento. A lo largo del tutorial vamos a utilizar el <em>flag --variant=minbase</em> que va a descargar menos paquetes todavía, acelerando su ejecución. Yo suelo usar siempre este <em>flag</em>, porque al instalar con <em>apt-get</em> otros paquetes, ya se incorporarían las dependencias.</p>
+<div class="highlight"><pre><span></span>root@8e7b4f301aa0:~# debootstrap --variant<span class="o">=</span>minbase jessie jail 
+I: Retrieving Release 
+I: Retrieving Release.gpg 
+I: Checking Release signature
+I: Valid Release signature <span class="o">(</span>key id 75DDC3C4A499F1A18CB5F3C8CBF8D6FD518E17E1<span class="o">)</span>
+I: Retrieving Packages 
+I: Validating Packages 
+I: Resolving dependencies of required packages...
+I: Resolving dependencies of base packages...
+I: Found additional required dependencies: acl adduser dmsetup insserv libaudit-common libaudit1 libbz2-1.0 libcap2 libcap2-bin libcryptsetup4 libdb5.3 libdebconfclient0 libdevmapper1.02.1 libgcrypt20 libgpg-error0 libkmod2 libncursesw5 libprocps3 libsemanage-common libsemanage1 libslang2 libsystemd0 libudev1 libustr-1.0-1 procps systemd systemd-sysv udev 
+I: Found additional base dependencies: debian-archive-keyring gnupg gpgv libapt-pkg4.12 libreadline6 libstdc++6 libusb-0.1-4 readline-common 
+I: Checking component main on http://ftp.us.debian.org/debian...
+...
+I: Base system installed successfully.
+root@8e7b4f301aa0:~# 
+</pre></div>
+
+
+<p>Tras ejecutar el comando, podemos ver que tenemos una carpeta <em>jail/</em> en donde podemos encontrar un sistema <strong>Linux</strong> bastante estándar, que corresponde con la distribución <strong>Debian Jessie</strong> pedida.</p>
+<div class="highlight"><pre><span></span>root@8e7b4f301aa0:~# ls -1 jail/
+bin
+boot
+dev
+etc
+home
+lib
+lib64
+media
+mnt
+opt
+proc
+root
+run
+sbin
+srv
+sys
+tmp
+usr
+var
+root@8e7b4f301aa0:~# 
+</pre></div>
+
+
+<p>Vemos que la instalación es bastante básica y tiene un tamaño reducido, ya que solo lleva lo mas básico, sin <em>kernel</em> y sin <em>bootloader</em>. Por no llevar, no lleva ni <strong>nano</strong> ni <strong>vi</strong>, por ejemplo. Usad <em>apt-get</em> para instalar los paquetes que veáis necesarios, una vez dentro de la jaula.</p>
+<div class="highlight"><pre><span></span>root@8e7b4f301aa0:~# du -sh jail/
+202M    jail/
+root@8e7b4f301aa0:~# 
+</pre></div>
+
+
+<p>De hecho, mucho de lo que hay en la jaula son ficheros de <em>apt-get</em>, que sirven para acelerar la operación normal de estas herramientas, pero que resultan inútiles si queremos una imagen mínima. Son ficheros que vuelven a aparecer con el uso normal de <em>apt-get</em> y que van cambiando con el tiempo. Como se trata de la caché de paquetes descargados y de los índices de los repositorios, nos los cargamos.</p>
+<div class="highlight"><pre><span></span>root@8e7b4f301aa0:~# chroot jail/ apt-get clean
+root@8e7b4f301aa0:~# rm -rf jail/var/lib/apt/lists/*
+root@8e7b4f301aa0:~# 
+</pre></div>
+
+
+<p>Esto libera un 33% del espacio ocupado. Ahora sería un buen momento para sacar un fichero comprimido para guardar la imagen.</p>
+<div class="highlight"><pre><span></span>root@8e7b4f301aa0:~# du -sh jail/
+136M    jail/
+root@8e7b4f301aa0:~# 
+</pre></div>
+
+
+<p><strong>TRUCO</strong>: Si la carpeta <em>jail/</em> estuviera mapeada a un dispositivo tendríamos un disco de sistema operativo casi completo. Bastaría con instalarle un <em>kernel</em> y un <em>bootloader</em> para tener un sistema operativo funcional.</p>
+<h2>Haciendo un fichero comprimido de paquetes descargados</h2>
+<p>Si la idea de ir copiando la jaula anterior no nos convence, podemos tener los paquetes <em>.deb</em> descargados y comprimidos en un fichero <em>.tar.gz</em>, para no tener que descargar todos los paquetes cada vez. Basta con poner el <em>flag --make-tarball</em>. En este caso, la carpeta de descarga es una carpeta temporal, que va a ser eliminada al terminar.</p>
+<div class="highlight"><pre><span></span>root@8e7b4f301aa0:~# debootstrap --variant<span class="o">=</span>minbase --make-tarball<span class="o">=</span>debian-jessie.tgz jessie temporal
+I: Retrieving Release 
+I: Retrieving Release.gpg 
+I: Checking Release signature
+I: Valid Release signature <span class="o">(</span>key id 75DDC3C4A499F1A18CB5F3C8CBF8D6FD518E17E1<span class="o">)</span>
+I: Retrieving Packages 
+I: Validating Packages 
+I: Resolving dependencies of required packages...
+I: Resolving dependencies of base packages...
+I: Found additional required dependencies: acl adduser dmsetup insserv libaudit-common libaudit1 libbz2-1.0 libcap2 libcap2-bin libcryptsetup4 libdb5.3 libdebconfclient0 libdevmapper1.02.1 libgcrypt20 libgpg-error0 libkmod2 libncursesw5 libprocps3 libsemanage-common libsemanage1 libslang2 libsystemd0 libudev1 libustr-1.0-1 procps systemd systemd-sysv udev 
+I: Found additional base dependencies: debian-archive-keyring gnupg gpgv libapt-pkg4.12 libreadline6 libstdc++6 libusb-0.1-4 readline-common 
+I: Checking component main on http://ftp.us.debian.org/debian...
+...
+I: Deleting target directory
+root@8e7b4f301aa0:~# 
+</pre></div>
+
+
+<p>Finalmente obtenemos nuestro fichero comprimido, que es mas fácil de copiar a diferentes máquinas, por tamaño y por velocidad de transmisión.</p>
+<div class="highlight"><pre><span></span>root@8e7b4f301aa0:~# du -sh debian-jessie.tgz 
+43M debian-jessie.tgz
+root@8e7b4f301aa0:~# 
+</pre></div>
+
+
+<p>Este fichero contiene solamente los ficheros que descartamos al final del proceso, que son los <em>.deb</em> ya instalados y los índices del repositorio.</p>
+<div class="highlight"><pre><span></span>root@8e7b4f301aa0:~# tar tf debian-jessie.tgz <span class="p">|</span> grep <span class="se">\/</span>$
+var/lib/apt/
+var/lib/apt/lists/
+var/lib/apt/lists/partial/
+var/cache/apt/
+var/cache/apt/archives/
+var/cache/apt/archives/partial/
+root@8e7b4f301aa0:~# tar tf debian-jessie.tgz <span class="p">|</span> head
+var/lib/apt/
+var/lib/apt/lists/
+var/lib/apt/lists/debootstrap.invalid_dists_jessie_main_binary-amd64_Packages
+var/lib/apt/lists/debootstrap.invalid_dists_jessie_Release.gpg
+var/lib/apt/lists/partial/
+var/lib/apt/lists/debootstrap.invalid_dists_jessie_Release
+var/cache/apt/
+var/cache/apt/archives/
+var/cache/apt/archives/libbz2-1.0_1.0.6-7+b3_amd64.deb
+var/cache/apt/archives/bash_4.3-11+b1_amd64.deb
+root@8e7b4f301aa0:~# 
+</pre></div>
+
+
+<p>Cuando queramos utilizar este fichero comprimido para crear una jaula, basta con indicar que use los paquetes en el fichero, mediante el <em>flag --unpack-tarball</em>.</p>
+<div class="highlight"><pre><span></span>root@8e7b4f301aa0:~# debootstrap --variant<span class="o">=</span>minbase --unpack-tarball<span class="o">=</span>/root/debian-jessie.tgz jessie rootfs
+I: Retrieving Release 
+I: Retrieving Release.gpg 
+I: Checking Release signature
+I: Valid Release signature <span class="o">(</span>key id 75DDC3C4A499F1A18CB5F3C8CBF8D6FD518E17E1<span class="o">)</span>
+I: Validating Packages 
+I: Resolving dependencies of required packages...
+I: Resolving dependencies of base packages...
+I: Found additional required dependencies: acl adduser dmsetup insserv libaudit-common libaudit1 libbz2-1.0 libcap2 libcap2-bin libcryptsetup4 libdb5.3 libdebconfclient0 libdevmapper1.02.1 libgcrypt20 libgpg-error0 libkmod2 libncursesw5 libprocps3 libsemanage-common libsemanage1 libslang2 libsystemd0 libudev1 libustr-1.0-1 procps systemd systemd-sysv udev 
+I: Found additional base dependencies: debian-archive-keyring gnupg gpgv libapt-pkg4.12 libreadline6 libstdc++6 libusb-0.1-4 readline-common 
+I: Checking component main on http://ftp.us.debian.org/debian...
+...
+I: Base system installed successfully.
+root@8e7b4f301aa0:~# 
+</pre></div>
+
+
+<p>Este proceso sigue necesitando de conexión a internet, porque consulta al índice del repositorio para saber que paquetes necesita. Sin embargo, estos paquetes ya los tenemos, con lo que es un proceso bastante mas rápido y menos estresante para nuestra red.</p>
+<h2>Construyendo una jaula para otra máquina</h2>
+<p>Supongamos ahora que tenemos una máquina que es de otra arquitectura y le descargamos el sistema de ficheros en nuestro local. Normalmente no sería posible ya que podemos descargar los ficheros <em>.deb</em> de la otra arquitectura, pero no podemos configurar los paquetes porque para esto se necesita ejecutar binarios que, por supuesto, no funcionan en nuestro local.</p>
+<p>El comando <strong>debootstrap</strong> también nos permite esto. La idea está en "dejar listo" una estructura, de forma que solo haga falta copiar en destino y configurar los paquetes. Esto es tan fácil como indicar el <em>flag --foreign</em>, y adicionalmente, indicar la arquitectura deseada con <em>--arch</em>.</p>
+<div class="highlight"><pre><span></span>root@8e7b4f301aa0:~# debootstrap --variant<span class="o">=</span>minbase --arch<span class="o">=</span>armhf --foreign jessie rootfs
+I: Retrieving Release 
+I: Retrieving Release.gpg 
+I: Checking Release signature
+I: Valid Release signature <span class="o">(</span>key id 75DDC3C4A499F1A18CB5F3C8CBF8D6FD518E17E1<span class="o">)</span>
+I: Retrieving Packages 
+I: Validating Packages 
+I: Resolving dependencies of required packages...
+I: Resolving dependencies of base packages...
+I: Found additional required dependencies: acl adduser dmsetup insserv libaudit-common libaudit1 libbz2-1.0 libcap2 libcap2-bin libcryptsetup4 libdb5.3 libdebconfclient0 libdevmapper1.02.1 libgcrypt20 libgpg-error0 libkmod2 libncursesw5 libprocps3 libsemanage-common libsemanage1 libslang2 libsystemd0 libudev1 libustr-1.0-1 procps systemd systemd-sysv udev 
+I: Found additional base dependencies: debian-archive-keyring gnupg gpgv libapt-pkg4.12 libreadline6 libstdc++6 libusb-0.1-4 readline-common 
+I: Checking component main on http://ftp.us.debian.org/debian...
+...
+root@8e7b4f301aa0:~# 
+</pre></div>
+
+
+<p>Esto nos deja un sistema "a medias", con un <em>script</em> que nos permita continuar a partir de este punto, una vez hayamos copiado la estructura generada en destino.</p>
+<p>Si miramos el sistema de ficheros, veremos que se trata de la jaula casi acabada, con una carpeta <em>debootstrap/</em> que contiene lo necesario para continuar, incluido el <em>script</em> llamado <em>debootstrap</em>.</p>
+<div class="highlight"><pre><span></span>root@8e7b4f301aa0:~# ls rootfs/debootstrap/
+arch  base  debootstrap  debootstrap.log  debpaths  devices.tar.gz  functions  required  suite  suite-script  variant
+root@8e7b4f301aa0:~# 
+</pre></div>
+
+
+<p>Para continuar el proceso en la nueva máquina, tenemos que copiar en ella toda la carpeta <em>rootfs/</em>. Solo nos quedará usar <em>chroot</em> para entrar en la jaula y ejecutar el <em>script</em> para configurar lo que falte y eliminar las herramientas intermedias. Este proceso no requiere conexión a internet.</p>
+<div class="highlight"><pre><span></span>root@odroid:~# chroot rootfs/
+<span class="c1"># /debootstrap/debootstrap --second-stage</span>
+I: Keyring file not available at /usr/share/keyrings/debian-archive-keyring.gpg<span class="p">;</span> switching to https mirror https://mirrors.kernel.org/debian
+I: Installing core packages...
+I: Unpacking required packages...
+...
+I: Base system installed successfully.
+<span class="c1"># </span>
+</pre></div>
+
+
+<p>Y finalmente podemos disfrutar de nuestra jaula en la nueva máquina.</p>
+<div class="highlight"><pre><span></span><span class="c1"># ls</span>
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+<span class="c1"># </span>
+</pre></div>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">Sistemas de ficheros multicapa con aufs</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/empaquetando-ficheros-punto-deb.html">Empaquetando ficheros .deb</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html">Creación de un livecd con Debian</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
 
         </div>
         <div class="col-sm-3" id="sidebar">
