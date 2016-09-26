@@ -1,5 +1,197 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-09-19T08:00:00+02:00</updated><entry><title>Crear jaulas de forma fácil basadas en Debian y Ubuntu con debootstrap</title><link href="http://www.linuxsysadmin.tk/2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html" rel="alternate"></link><published>2016-09-19T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-09-19:2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html</id><summary type="html">&lt;p&gt;Cuando creamos jaulas nos enfrentamos siempre al mismo dilema: usar una imagen de dudoso origen o perder nuestro tiempo investigando y buscando librerías que falten. Sin embargo, hay una forma mejor, que es descargar un sistema básico con herramientas oficiales que nos van a dar hasta un gestor de paquetes.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-09-26T08:00:00+02:00</updated><entry><title>Lanzando playbooks de Ansible desde Jenkins</title><link href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html" rel="alternate"></link><published>2016-09-26T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-09-26:2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html</id><summary type="html">&lt;p&gt;Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con &lt;strong&gt;Ansible&lt;/strong&gt; o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto &lt;strong&gt;Ansible Tower&lt;/strong&gt;, su precio es prohibitivo para muchos.&lt;/p&gt;
+&lt;p&gt;Desarrollar una solución propia no suele ser una opción viable, pero afortunadamente, hay muchas soluciones que pueden satisfacer nuestras necesidades. Una de ellas es &lt;strong&gt;Jenkins&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;En este tutorial y, por comodidad, nos vamos a ahorrar la instalación de &lt;strong&gt;Jenkins&lt;/strong&gt; usando la imagen oficial para &lt;strong&gt;Docker&lt;/strong&gt;. Sobre esta imagen vamos a añadir aquello que podamos necesitar para lanzar nuestros &lt;em&gt;playbooks&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Vamos a adoptar un modelo de trabajo en el que nuestro inventario y nuestros &lt;em&gt;playbooks&lt;/em&gt; están alojados en un servidor &lt;strong&gt;git&lt;/strong&gt;. Nuestro &lt;strong&gt;Jenkins&lt;/strong&gt; va a descargarse este repositorio como "fuente" de código y va a "construir" ejecutando los &lt;em&gt;playbooks&lt;/em&gt; del repositorio.&lt;/p&gt;
+&lt;h2&gt;Preparando nuestro contenedor&lt;/h2&gt;
+&lt;p&gt;Vamos a empezar por un &lt;em&gt;Dockerfile&lt;/em&gt; que parte de la imagen oficial de &lt;strong&gt;Jenkins&lt;/strong&gt;. A esa imagen habría que añadir &lt;strong&gt;Ansible&lt;/strong&gt;, el cliente de &lt;strong&gt;SSH&lt;/strong&gt; necesario por &lt;strong&gt;Ansible&lt;/strong&gt; y el paquete &lt;strong&gt;sshpass&lt;/strong&gt; para que pueda entrar en las máquinas usando autenticación tradicional de usuario y contraseña. El cliente de &lt;strong&gt;git&lt;/strong&gt; ya viene en la imagen base.&lt;/p&gt;
+&lt;p&gt;Vamos a poner también en esta imagen una configuración de &lt;strong&gt;Ansible&lt;/strong&gt; para el usuario &lt;em&gt;jenkins&lt;/em&gt; que levanta la web, y el fichero con la contraseña de los &lt;em&gt;vaults&lt;/em&gt;; de esta forma podemos versionar los fichero &lt;em&gt;vault&lt;/em&gt; sin miedo a que se puedan descifrar si alguien obtiene una copia de nuestro repositorio.&lt;/p&gt;
+&lt;p&gt;Así nos quedaría el &lt;em&gt;Dockerfile&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@seginus:~/docker/jenkins_ansible$ cat Dockerfile 
+FROM jenkins
+USER root
+RUN &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;deb http://ftp.debian.org/debian jessie-backports main&amp;quot;&lt;/span&gt; &amp;gt; /etc/apt/sources.list.d/backports.list &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    apt-get install -y openssh-client sshpass &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    apt-get install -y -t jessie-backports ansible &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    apt-get clean &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm -rf /var/lib/apt/lists/*
+ADD ansible.cfg /var/jenkins_home/.ansible.cfg
+ADD vault-passfile /var/jenkins_home/.vault-passfile
+USER jenkins
+gerard@seginus:~/docker/jenkins_ansible$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y los ficheros auxiliares:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@seginus:~/docker/jenkins_ansible$ cat ansible.cfg 
+&lt;span class="o"&gt;[&lt;/span&gt;defaults&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;host_key_checking&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; False
+&lt;span class="nv"&gt;vault_password_file&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; /var/jenkins_home/.vault-passfile
+gerard@seginus:~/docker/jenkins_ansible$ cat vault-passfile 
+5up3r53cr37
+gerard@seginus:~/docker/jenkins_ansible$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Construimos nuestra nueva imagen con las herramientas necesarias, con el comando habitual.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@seginus:~/docker/jenkins_ansible$ docker build -t jenkins_ansible .
+Sending build context to Docker daemon 4.096 kB
+Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM jenkins
+ ---&amp;gt; 2da1d8d90b7e
+Step &lt;span class="m"&gt;2&lt;/span&gt; : USER root
+ ---&amp;gt; Running in f994443d27bd
+ ---&amp;gt; 18e3df2ad21f
+Removing intermediate container f994443d27bd
+Step &lt;span class="m"&gt;3&lt;/span&gt; : RUN &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;deb http://ftp.debian.org/debian jessie-backports main&amp;quot;&lt;/span&gt; &amp;gt; /etc/apt/sources.list.d/backports.list &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     apt-get install -y openssh-client sshpass &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     apt-get install -y -t jessie-backports ansible &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     apt-get clean &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     rm -rf /var/lib/apt/lists/*
+ ---&amp;gt; Running in 2c3371ad61b0
+Get:1 http://security.debian.org jessie/updates InRelease &lt;span class="o"&gt;[&lt;/span&gt;63.1 kB&lt;span class="o"&gt;]&lt;/span&gt;
+Get:2 http://ftp.debian.org jessie-backports InRelease &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;166&lt;/span&gt; kB&lt;span class="o"&gt;]&lt;/span&gt;
+Get:3 http://security.debian.org jessie/updates/main amd64 Packages &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;389&lt;/span&gt; kB&lt;span class="o"&gt;]&lt;/span&gt;
+Get:4 http://ftp.debian.org jessie-backports/main amd64 Packages &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;879&lt;/span&gt; kB&lt;span class="o"&gt;]&lt;/span&gt;
+Ign http://httpredir.debian.org jessie InRelease
+Get:5 http://httpredir.debian.org jessie-updates InRelease &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;142&lt;/span&gt; kB&lt;span class="o"&gt;]&lt;/span&gt;
+Get:6 http://httpredir.debian.org jessie-backports InRelease &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;166&lt;/span&gt; kB&lt;span class="o"&gt;]&lt;/span&gt;
+Get:7 http://httpredir.debian.org jessie Release.gpg &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2373&lt;/span&gt; B&lt;span class="o"&gt;]&lt;/span&gt;
+Get:8 http://httpredir.debian.org jessie Release &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;148&lt;/span&gt; kB&lt;span class="o"&gt;]&lt;/span&gt;
+Get:9 http://httpredir.debian.org jessie-updates/main amd64 Packages &lt;span class="o"&gt;[&lt;/span&gt;17.6 kB&lt;span class="o"&gt;]&lt;/span&gt;
+Get:10 http://httpredir.debian.org jessie/main amd64 Packages &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;9032&lt;/span&gt; kB&lt;span class="o"&gt;]&lt;/span&gt;
+Get:11 http://httpredir.debian.org jessie-backports/main amd64 Packages &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;879&lt;/span&gt; kB&lt;span class="o"&gt;]&lt;/span&gt;
+Fetched 11.9 MB in 19s &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;606&lt;/span&gt; kB/s&lt;span class="o"&gt;)&lt;/span&gt;
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+openssh-client is already the newest version.
+The following NEW packages will be installed:
+  sshpass
+&lt;span class="m"&gt;0&lt;/span&gt; upgraded, &lt;span class="m"&gt;1&lt;/span&gt; newly installed, &lt;span class="m"&gt;0&lt;/span&gt; to remove and &lt;span class="m"&gt;1&lt;/span&gt; not upgraded.
+Need to get 11.2 kB of archives.
+After this operation, 65.5 kB of additional disk space will be used.
+Get:1 http://httpredir.debian.org/debian/ jessie/main sshpass amd64 1.05-1 &lt;span class="o"&gt;[&lt;/span&gt;11.2 kB&lt;span class="o"&gt;]&lt;/span&gt;
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 11.2 kB in 0s &lt;span class="o"&gt;(&lt;/span&gt;35.3 kB/s&lt;span class="o"&gt;)&lt;/span&gt;
+Selecting previously unselected package sshpass.
+&lt;span class="o"&gt;(&lt;/span&gt;Reading database ... &lt;span class="m"&gt;17572&lt;/span&gt; files and directories currently installed.&lt;span class="o"&gt;)&lt;/span&gt;
+Preparing to unpack .../sshpass_1.05-1_amd64.deb ...
+Unpacking sshpass &lt;span class="o"&gt;(&lt;/span&gt;1.05-1&lt;span class="o"&gt;)&lt;/span&gt; ...
+Setting up sshpass &lt;span class="o"&gt;(&lt;/span&gt;1.05-1&lt;span class="o"&gt;)&lt;/span&gt; ...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following extra packages will be installed:
+  ieee-data libyaml-0-2 python-crypto python-ecdsa python-httplib2
+  python-jinja2 python-markupsafe python-netaddr python-paramiko
+  python-pkg-resources python-selinux python-yaml
+Suggested packages:
+  python-crypto-dbg python-crypto-doc python-jinja2-doc ipython
+  python-netaddr-docs python-setuptools
+The following NEW packages will be installed:
+  ansible ieee-data libyaml-0-2 python-crypto python-ecdsa python-httplib2
+  python-jinja2 python-markupsafe python-netaddr python-paramiko
+  python-pkg-resources python-selinux python-yaml
+&lt;span class="m"&gt;0&lt;/span&gt; upgraded, &lt;span class="m"&gt;13&lt;/span&gt; newly installed, &lt;span class="m"&gt;0&lt;/span&gt; to remove and &lt;span class="m"&gt;27&lt;/span&gt; not upgraded.
+Need to get &lt;span class="m"&gt;3359&lt;/span&gt; kB of archives.
+After this operation, 19.5 MB of additional disk space will be used.
+...  
+ ---&amp;gt; d8ed3d7ffdb3
+Removing intermediate container 2c3371ad61b0
+Step &lt;span class="m"&gt;4&lt;/span&gt; : ADD ansible.cfg /var/jenkins_home/.ansible.cfg
+ ---&amp;gt; cd63da025c0a
+Removing intermediate container fe8b889557ae
+Step &lt;span class="m"&gt;5&lt;/span&gt; : ADD vault-passfile /var/jenkins_home/.vault-passfile
+ ---&amp;gt; 6cb532911067
+Removing intermediate container bc522e9f464a
+Step &lt;span class="m"&gt;6&lt;/span&gt; : USER jenkins
+ ---&amp;gt; Running in 6c0f9cde92e5
+ ---&amp;gt; 89e5cae2d376
+Removing intermediate container 6c0f9cde92e5
+Successfully built 89e5cae2d376
+gerard@seginus:~/docker/jenkins_ansible$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Levantamos un contenedor para la nueva imagen creada, de la misma forma que levantaríamos la imagen de &lt;strong&gt;Jenkins&lt;/strong&gt; oficial. Mas información en &lt;a href="https://hub.docker.com/_/jenkins/"&gt;Docker Hub&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@seginus:~/docker/jenkins_ansible$ docker run -p 8080:8080 -d jenkins
+f9b6a9d23fde25411cd2086d13b7a171633eb2cf0b18295fde89c4466c08ef54
+gerard@seginus:~/docker/jenkins_ansible$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ya de paso, levantamos otras 4 máquinas como las que se indican en &lt;a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html"&gt;otro artículo&lt;/a&gt; para que ejecuten nuestros &lt;em&gt;playbooks&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@seginus:~/docker/jenkins_ansible$ docker run -d slave
+ae3f8fe7d4448566c3481069d6c85d74ea3c6df7b9506c3f86e271247f5cbc52
+gerard@seginus:~/docker/jenkins_ansible$ docker run -d slave
+c27f99a68d0e4a5d5d9897d3971f6a230c10ee44239bce2deb85a2e6e31e6536
+gerard@seginus:~/docker/jenkins_ansible$ docker run -d slave
+0d33995bacf4d266f4f1bb2afc86a92b586be569ca10b1584bf48c5aed6b1277
+gerard@seginus:~/docker/jenkins_ansible$ docker run -d slave
+221ae5b4c1cfe171530d5d9e9663222292da72144fdf2f62589acc50b72f3f2e
+gerard@seginus:~/docker/jenkins_ansible$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Configurando nuestro Jenkins&lt;/h2&gt;
+&lt;p&gt;Ya podemos abrir la página de nuestro contenedor, de forma que se puedan efectuar las configuraciones iniciales. Nos vamos a dirigir a &lt;a href="http://localhost:8080/"&gt;http://localhost:8080/&lt;/a&gt;, que es desde donde se va a controlar nuestro servidor de ahora en adelante.&lt;/p&gt;
+&lt;p&gt;La parte mas importante de nuestro despliegue de &lt;strong&gt;Jenkins&lt;/strong&gt; son los &lt;em&gt;plugins&lt;/em&gt;. En nuestro caso, solo queremos clonar nuestros &lt;em&gt;playbooks&lt;/em&gt; desde &lt;strong&gt;git&lt;/strong&gt; y lanzarlos mediante &lt;strong&gt;Ansible&lt;/strong&gt;. Para ello necesitamos estos dos &lt;em&gt;plugins&lt;/em&gt;: &lt;em&gt;git plugin&lt;/em&gt; y &lt;em&gt;ansible plugin&lt;/em&gt;. Se pueden instalar en la primera visita a nuestro contenedor o a &lt;em&gt;posteriori&lt;/em&gt;. Los instalamos.&lt;/p&gt;
+&lt;p&gt;Y finalmente tenemos un &lt;strong&gt;Jenkins&lt;/strong&gt; funcional aunque si ninguna tarea configurada.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Ansible desde Jenkins 01" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_01.jpg" /&gt;&lt;/p&gt;
+&lt;h2&gt;El repositorio de playbooks&lt;/h2&gt;
+&lt;p&gt;Necesitamos algún lugar desde donde obtener nuestros &lt;em&gt;playbooks&lt;/em&gt;. De acuerdo con la decisión del flujo de trabajo van a estar alojados en un servidor &lt;strong&gt;git&lt;/strong&gt;, y en este caso, voy a usar un repositorio de usar y tirar en &lt;a href="https://github.com/"&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Por poner a nuestro repositorio alguna estructura, he usado dos carpetas: una para contener los &lt;em&gt;playbooks&lt;/em&gt; y otra para el inventario. La carpeta del inventario es similar a la de &lt;a href="http://www.linuxsysadmin.tk/2016/08/encriptando-datos-sensibles-con-ansible.html"&gt;este otro artículo&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@seginus:~/docker/ansible$ tree
+.
+├── inventory
+│   ├── hosts
+│   └── vault
+└── playbooks
+    ├── ping_all.yml
+    └── ping_some.yml
+
+&lt;span class="m"&gt;2&lt;/span&gt; directories, &lt;span class="m"&gt;4&lt;/span&gt; files
+gerard@seginus:~/docker/ansible$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En &lt;em&gt;inventory/vault&lt;/em&gt; tenemos los datos de conexión a las máquinas, como indica el artículo antes citado. El resto de ficheros son los &lt;em&gt;playbooks&lt;/em&gt; que vamos a usar, y los &lt;em&gt;hosts&lt;/em&gt; que tenemos en sus grupos correspondientes. Hay que tirar de imaginación para imaginar un &lt;em&gt;playbook&lt;/em&gt; un poco mas útil.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@seginus:~/docker/ansible$ cat inventory/hosts 
+&lt;span class="o"&gt;[&lt;/span&gt;group1&lt;span class="o"&gt;]&lt;/span&gt;
+172.17.0.3
+172.17.0.4
+
+&lt;span class="o"&gt;[&lt;/span&gt;group2&lt;span class="o"&gt;]&lt;/span&gt;
+172.17.0.5
+172.17.0.6
+gerard@seginus:~/docker/ansible$ cat playbooks/ping_all.yml 
+- hosts: all
+  tasks:
+    - ping:
+gerard@seginus:~/docker/ansible$ cat playbooks/ping_some.yml 
+- hosts: &lt;span class="s2"&gt;&amp;quot;{{ target }}&amp;quot;&lt;/span&gt;
+  tasks:
+    - ping:
+gerard@seginus:~/docker/ansible$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Creando una tarea básica&lt;/h2&gt;
+&lt;p&gt;Vamos a crear una tarea que consista en lanzar el fichero &lt;em&gt;playbooks/ping_all.yml&lt;/em&gt;. Para ello pinchamos en el enlace "create new job", le damos un nombre (por ejemplo "Ping All") y lo creamos de tipo "Freestyle project".&lt;/p&gt;
+&lt;p&gt;El primer paso consiste en obtener los &lt;em&gt;playbooks&lt;/em&gt; del repositorio. Para ello rellenaremos el apartado "Source code management", eligiendo "Git" e indicando la &lt;em&gt;URL&lt;/em&gt; del repositorio.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Ansible desde Jenkins 02" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_02.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;Lo siguiente es indicar un "Build step" que se "Invoke Ansible Playbook". Hay que indicar el &lt;em&gt;playbook&lt;/em&gt; desde la carpeta pertinente, de forma relativa. Eso significa que en nuestro caso es &lt;em&gt;playbooks/ping_all.yml&lt;/em&gt;. Adicionalmente vamos a indicar que el fichero de inventario es la carpeta &lt;em&gt;inventory&lt;/em&gt;, que es lo que se le va a pasar a &lt;strong&gt;Ansible&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Ansible desde Jenkins 03" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_03.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;Le damos a guardar y ya tenemos nuestra tarea. Bastará con lanzar la tarea con "Build now" y esperar resultados, en "Console Output" de la ejecución en curso.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Ansible desde Jenkins 04" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_04.jpg" /&gt;&lt;/p&gt;
+&lt;h2&gt;Creando una tarea con parámetros&lt;/h2&gt;
+&lt;p&gt;Muchas de las tareas que hacemos son repetitivas. Cambian las versiones de código a desplegar, los entornos, los proyectos y poco mas. ¿No sería maravilloso tener un solo &lt;em&gt;playbook&lt;/em&gt; que admita parámetros? &lt;strong&gt;Jenkins&lt;/strong&gt; nos ofrece la posibilidad de añadir parámetros, que luego pueden ser usados en los "Build steps", por ejemplo, para pasárselas a los &lt;em&gt;playbooks&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Vamos a crear otra tarea, esta vez llamada "Ping Some". Va a ser idéntica a la otra, pero con el &lt;em&gt;playbook&lt;/em&gt; llamado &lt;em&gt;ping_some.yml&lt;/em&gt;. Vamos a marcar la casilla "This project is parameterized" en la casilla general y le añadiremos un parámetro, al que llamaremos "target" y va a ser un "Choice Parameter" con los valores "all", "group1" y "group2".&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Ansible desde Jenkins 05" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_05.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;Vamos a los "Build steps" a poner ese parámetro al comando &lt;em&gt;ansible&lt;/em&gt;. Tras dar al botón "Advanced..." podemos poner mas parámetros para &lt;strong&gt;Ansible&lt;/strong&gt;. Esto nos permite poner "-e target=$target" para que el &lt;em&gt;playbook&lt;/em&gt; reciba un parámetro &lt;em&gt;target&lt;/em&gt; que contenga el valor del mismo parámetro en &lt;strong&gt;Jenkins&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Ansible desde Jenkins 06" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_06.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;Tras salvar la tarea, vemos que la opción de "Build" se ha convertido en "Build with Parameters", y podemos elegir entre los valores específicos.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Ansible desde Jenkins 07" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_07.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;Y con esto conseguimos pasar parámetros al &lt;em&gt;playbook&lt;/em&gt;, que pueden ser texto libre, elecciones simples o valores fijos. Con un poco de imaginación, estos parámetros nos pueden ayudar mucho, en el sentido de no repetirnos.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Ansible desde Jenkins 08" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_08.jpg" /&gt;&lt;/p&gt;</summary><category term="ansible"></category><category term="playbook"></category><category term="jenkins"></category><category term="docker"></category><category term="git"></category></entry><entry><title>Crear jaulas de forma fácil basadas en Debian y Ubuntu con debootstrap</title><link href="http://www.linuxsysadmin.tk/2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html" rel="alternate"></link><published>2016-09-19T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-09-19:2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html</id><summary type="html">&lt;p&gt;Cuando creamos jaulas nos enfrentamos siempre al mismo dilema: usar una imagen de dudoso origen o perder nuestro tiempo investigando y buscando librerías que falten. Sin embargo, hay una forma mejor, que es descargar un sistema básico con herramientas oficiales que nos van a dar hasta un gestor de paquetes.&lt;/p&gt;
 &lt;p&gt;Hay algunas distribuciones que nos ofrecen herramientas para descargar un sistema base a partir de sus repositorios, y que a menudo son la base de sus propias instalaciones. En el caso de las distribuciones &lt;strong&gt;Debian&lt;/strong&gt; y derivadas (&lt;strong&gt;Ubuntu&lt;/strong&gt;, &lt;strong&gt;Knoppix&lt;/strong&gt;, ...) esta herramienta se llama &lt;strong&gt;debootstrap&lt;/strong&gt; y de uso bastante sencillo.&lt;/p&gt;
 &lt;p&gt;De hecho, otras herramientas parten de estas herramientas para usar como base para las suyas. Un ejemplo serían las imágenes de &lt;strong&gt;docker&lt;/strong&gt;, que no son mas que el resultado de la ejecución de &lt;strong&gt;debootstrap&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Este tutorial se ha ejecutado en un contenedor &lt;strong&gt;docker&lt;/strong&gt; de usar y tirar, para no polucionar mi máquina con herramientas innecesarias. También se asume que se dispone de la herramienta instalada que, por si no la tuvierais, se instala así:&lt;/p&gt;
