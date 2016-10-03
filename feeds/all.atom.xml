@@ -1,5 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-09-26T08:00:00+02:00</updated><entry><title>Lanzando playbooks de Ansible desde Jenkins</title><link href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html" rel="alternate"></link><published>2016-09-26T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-09-26:2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html</id><summary type="html">&lt;p&gt;Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con &lt;strong&gt;Ansible&lt;/strong&gt; o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto &lt;strong&gt;Ansible Tower&lt;/strong&gt;, su precio es prohibitivo para muchos.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-10-03T08:00:00+02:00</updated><entry><title>Disparando acciones en respuesta a modificaciones en el sistema de fichero con incron</title><link href="http://www.linuxsysadmin.tk/2016/10/disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron.html" rel="alternate"></link><published>2016-10-03T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-10-03:2016/10/disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron.html</id><summary type="html">&lt;p&gt;El otro día recibí una petición diferente en mi trabajo. Se necesitaba monitorizar una carpeta, de forma que cuando alguien dejara ficheros, se lanzara una tarea para procesarlos. Tras buscar un poco por internet, topé con una herramienta tipo &lt;em&gt;cron&lt;/em&gt;, que ejecutaba comandos ante eventos en el sistema de ficheros.&lt;/p&gt;
+&lt;p&gt;Como me pareció interesante, me puse a investigar como funcionaba y, aunque no sirvió para cubrir nuestras necesidades, decidí apuntarla por sus usos potenciales en el futuro.&lt;/p&gt;
+&lt;p&gt;Como no podía ser de otra forma, vamos a empezar instalando el paquete que lo contiene:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@65b056d5d699:~# apt-get install -y incron
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following NEW packages will be installed:
+  incron
+&lt;span class="m"&gt;0&lt;/span&gt; upgraded, &lt;span class="m"&gt;1&lt;/span&gt; newly installed, &lt;span class="m"&gt;0&lt;/span&gt; to remove and &lt;span class="m"&gt;0&lt;/span&gt; not upgraded.
+Need to get 68.8 kB of archives.
+After this operation, &lt;span class="m"&gt;321&lt;/span&gt; kB of additional disk space will be used.
+...  
+Processing triggers &lt;span class="k"&gt;for&lt;/span&gt; systemd &lt;span class="o"&gt;(&lt;/span&gt;215-17+deb8u4&lt;span class="o"&gt;)&lt;/span&gt; ...
+root@65b056d5d699:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Normalmente, los servicios se levantan solos en &lt;strong&gt;Debian&lt;/strong&gt;, pero como estamos trabajando con un contenedor &lt;strong&gt;docker&lt;/strong&gt; mediante &lt;strong&gt;SSH&lt;/strong&gt;, vamos a tener que hacerlo manualmente.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@65b056d5d699:~# service incron start
+&lt;span class="o"&gt;[&lt;/span&gt; ok &lt;span class="o"&gt;]&lt;/span&gt; Starting File system events scheduler: incron.
+root@65b056d5d699:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esta herramienta se puede configurar de forma similar al &lt;strong&gt;cron&lt;/strong&gt;; tenemos la opción de poner ficheros de configuración en &lt;em&gt;/etc/incron.d/&lt;/em&gt; o podemos usar comandos de &lt;strong&gt;incron&lt;/strong&gt; por usuario, mediante el comando &lt;em&gt;incron&lt;/em&gt;, con los flags correspondientes.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;incron -l&lt;/strong&gt; &amp;rarr; lista la tabla de incron del usuario actual&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;incron -e&lt;/strong&gt; &amp;rarr; edita la tabla de incron del usuario actual&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;incron -r&lt;/strong&gt; &amp;rarr; elimina la tabla de incron del usuario actual&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Para usar &lt;strong&gt;incron&lt;/strong&gt; a nivel de usuario, este debe aparecer en &lt;em&gt;/etc/incron.allow&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Un caso práctico&lt;/h2&gt;
+&lt;p&gt;Supongamos que tenemos un servidor web &lt;strong&gt;nginx&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@65b056d5d699:/etc/nginx/sites-enabled# netstat -lntp
+Active Internet connections &lt;span class="o"&gt;(&lt;/span&gt;only servers&lt;span class="o"&gt;)&lt;/span&gt;
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        &lt;span class="m"&gt;0&lt;/span&gt;      &lt;span class="m"&gt;0&lt;/span&gt; 0.0.0.0:80              0.0.0.0:*               LISTEN      249/nginx       
+tcp        &lt;span class="m"&gt;0&lt;/span&gt;      &lt;span class="m"&gt;0&lt;/span&gt; 0.0.0.0:22              0.0.0.0:*               LISTEN      1/sshd          
+tcp6       &lt;span class="m"&gt;0&lt;/span&gt;      &lt;span class="m"&gt;0&lt;/span&gt; :::22                   :::*                    LISTEN      1/sshd          
+root@65b056d5d699:/etc/nginx/sites-enabled# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Estamos cansados de recargar la configuración cada vez que modificamos alguno de los ficheros de configuración, así que vamos a delegar esta tarea a &lt;strong&gt;incron&lt;/strong&gt;. Concretamente queremos que cada vez que se modifique el fichero &lt;em&gt;/etc/nginx/nginx.conf&lt;/em&gt; o algunos de los &lt;em&gt;virtualhosts&lt;/em&gt; en &lt;em&gt;/etc/nginx/sites-enabled/&lt;/em&gt;, se haga un &lt;em&gt;reload&lt;/em&gt; del servicio.&lt;/p&gt;
+&lt;p&gt;Miramos la tabla de eventos posibles a monitorizar y vemos que nos interesa el evento &lt;strong&gt;IN_MODIFY&lt;/strong&gt;. Se pueden monitorizar varios eventos uniéndolos con un &lt;strong&gt;OR&lt;/strong&gt; lógico, pero no se pueden poner mas de una línea por carpeta monitorizada.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;IN_ACCESS&lt;/strong&gt; &amp;rarr; Se ha accedido al fichero o directorio.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IN_ATTRIB&lt;/strong&gt; &amp;rarr; Se han cambiado los &lt;em&gt;metadatos&lt;/em&gt; (o los &lt;em&gt;timestamps&lt;/em&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IN_CLOSE_WRITE&lt;/strong&gt; &amp;rarr; Se ha cerrado un fichero abierto en modo distinto al de escritura.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IN_CLOSE_NOWRITE&lt;/strong&gt; &amp;rarr; Se ha cerrado un fichero abierto en modo de escritura.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IN_CREATE&lt;/strong&gt; &amp;rarr; Se ha creado un fichero en el directorio monitorizado.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IN_DELETE&lt;/strong&gt; &amp;rarr; Se ha borrado un fichero en la carpeta.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IN_DELETE_SELF&lt;/strong&gt; &amp;rarr; El fichero o directorio monitorizado ha sido borrado.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IN_MODIFY&lt;/strong&gt; &amp;rarr; El fichero ha sido modificado.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IN_MOVE_SELF&lt;/strong&gt; &amp;rarr; El fichero o carpeta monitorizado se ha movido.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IN_MOVED_FROM&lt;/strong&gt; &amp;rarr; Un fichero se ha movido desde la carpeta monitorizada.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IN_MOVED_TO&lt;/strong&gt; &amp;rarr; Un fichero se ha movido hacia la carpeta monitorizada.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IN_OPEN&lt;/strong&gt; &amp;rarr; Se ha abierto un fichero en la carpeta monitorizada.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IN_MOVE&lt;/strong&gt; &amp;rarr; Combinación de IN_MOVED_FROM y de IN_MOVED_TO.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IN_CLOSE&lt;/strong&gt; &amp;rarr; Combinación de IN_CLOSE_WRITE y IN_CLOSE_NOWRITE.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IN_ALL_EVENTS&lt;/strong&gt; &amp;rarr; Todos los eventos anteriores.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Así pues, ponemos la tripleta &lt;em&gt;carpeta, evento, acción&lt;/em&gt;, ya sea con el comando &lt;em&gt;incron -e&lt;/em&gt; o mediante un fichero en &lt;em&gt;/etc/incron.d/&lt;/em&gt;. Es importante indicar que la salida del comando no se puede recoger en este fichero; si es necesario, habría que llamar a un &lt;em&gt;script&lt;/em&gt; que tuviera la redirección.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@65b056d5d699:~# cat /etc/incron.d/nginx 
+/etc/nginx/nginx.conf IN_MODIFY /usr/sbin/service nginx reload
+/etc/nginx/sites-enabled/ IN_MODIFY /usr/sbin/service nginx reload
+root@65b056d5d699:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este punto no hay que recargar nada; &lt;strong&gt;incron&lt;/strong&gt; ha detectado el cambio y se ha recargado solo.&lt;/p&gt;
+&lt;p&gt;Vamos a cambiar, por ejemplo, el puerto en el que escucha nuestra web.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;ANTES:&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@65b056d5d699:~# cat /etc/nginx/sites-enabled/mysite 
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen &lt;span class="m"&gt;80&lt;/span&gt; default_server&lt;span class="p"&gt;;&lt;/span&gt;
+    root /var/www/html&lt;span class="p"&gt;;&lt;/span&gt;
+    server_name _&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;DESPUES:&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@65b056d5d699:~# cat /etc/nginx/sites-enabled/mysite 
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen &lt;span class="m"&gt;8080&lt;/span&gt; default_server&lt;span class="p"&gt;;&lt;/span&gt;
+    root /var/www/html&lt;span class="p"&gt;;&lt;/span&gt;
+    server_name _&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@65b056d5d699:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y sin recargar la configuración de &lt;strong&gt;nginx&lt;/strong&gt; -puesto que ya lo ha hecho &lt;strong&gt;incron&lt;/strong&gt;-, vemos que se ha puesto a escuchar en el nuevo puerto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@65b056d5d699:~# netstat -lntp
+Active Internet connections &lt;span class="o"&gt;(&lt;/span&gt;only servers&lt;span class="o"&gt;)&lt;/span&gt;
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        &lt;span class="m"&gt;0&lt;/span&gt;      &lt;span class="m"&gt;0&lt;/span&gt; 0.0.0.0:8080            0.0.0.0:*               LISTEN      249/nginx       
+tcp        &lt;span class="m"&gt;0&lt;/span&gt;      &lt;span class="m"&gt;0&lt;/span&gt; 0.0.0.0:22              0.0.0.0:*               LISTEN      1/sshd          
+tcp6       &lt;span class="m"&gt;0&lt;/span&gt;      &lt;span class="m"&gt;0&lt;/span&gt; :::22                   :::*                    LISTEN      1/sshd          
+root@65b056d5d699:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Ejecución parametrizada de nuestras tareas&lt;/h2&gt;
+&lt;p&gt;El proceso de &lt;strong&gt;incron&lt;/strong&gt; nos ofrece unos parámetros para discernir cual de los eventos disparó el &lt;em&gt;trigger&lt;/em&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;$$&lt;/strong&gt; &amp;rarr; Símbolo de dólar.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$@&lt;/strong&gt; &amp;rarr; Ruta de la carpeta monitorizada.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$#&lt;/strong&gt; &amp;rarr; Fichero modificado.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$%&lt;/strong&gt; &amp;rarr; Evento que disparó la acción, en texto.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;$&amp;amp;&lt;/strong&gt; &amp;rarr; Evento que disparó la acción, en número.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Si quisiéramos procesar un fichero tal como nos lo dejen en una carpeta, podemos usar un &lt;em&gt;script&lt;/em&gt; con parámetros que haga lo que deba con el mismo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@65b056d5d699:~# cat /etc/incron.d/batch_process 
+/opt/batch_process/inbox/ IN_WRITE_CLOSE /opt/batch_process/process_file.py &lt;span class="nv"&gt;$@&lt;/span&gt; &lt;span class="nv"&gt;$#&lt;/span&gt;
+root@65b056d5d699:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Este &lt;em&gt;script&lt;/em&gt; recibe la ruta de la carpeta monitorizada y el fichero. Lo que hace el &lt;em&gt;script&lt;/em&gt; se deja a la imaginación del lector. Como punto adicional, recalcar que se ha usado el evento &lt;strong&gt;IN_WRITE_CLOSE&lt;/strong&gt; en vez de &lt;strong&gt;IN_CREATE&lt;/strong&gt; porque este último salta inmediatamente, y podríamos encontrarnos con un fichero a medio subir, en caso de ser puesto por un protocolo remoto.&lt;/p&gt;
+&lt;p&gt;Estoy seguro que en un futuro no muy lejano, esta herramienta me va a ser de gran utilidad.&lt;/p&gt;</summary></entry><entry><title>Lanzando playbooks de Ansible desde Jenkins</title><link href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html" rel="alternate"></link><published>2016-09-26T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-09-26:2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html</id><summary type="html">&lt;p&gt;Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con &lt;strong&gt;Ansible&lt;/strong&gt; o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto &lt;strong&gt;Ansible Tower&lt;/strong&gt;, su precio es prohibitivo para muchos.&lt;/p&gt;
 &lt;p&gt;Desarrollar una solución propia no suele ser una opción viable, pero afortunadamente, hay muchas soluciones que pueden satisfacer nuestras necesidades. Una de ellas es &lt;strong&gt;Jenkins&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;En este tutorial y, por comodidad, nos vamos a ahorrar la instalación de &lt;strong&gt;Jenkins&lt;/strong&gt; usando la imagen oficial para &lt;strong&gt;Docker&lt;/strong&gt;. Sobre esta imagen vamos a añadir aquello que podamos necesitar para lanzar nuestros &lt;em&gt;playbooks&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Vamos a adoptar un modelo de trabajo en el que nuestro inventario y nuestros &lt;em&gt;playbooks&lt;/em&gt; están alojados en un servidor &lt;strong&gt;git&lt;/strong&gt;. Nuestro &lt;strong&gt;Jenkins&lt;/strong&gt; va a descargarse este repositorio como "fuente" de código y va a "construir" ejecutando los &lt;em&gt;playbooks&lt;/em&gt; del repositorio.&lt;/p&gt;
