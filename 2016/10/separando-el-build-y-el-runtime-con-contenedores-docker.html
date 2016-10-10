@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>repositorio - Linux Sysadmin</title>
+    <title>Separando el build y el runtime con contenedores Docker - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,25 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="repositorio" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="docker,python,build,runtime,release" />
+        <meta name="description" content="Cuando montamos un contenedor Docker para servir una aplicación cualquiera, solemos poner un montón de dependencias necesarias solamente para compilar el paquete o para empaquetar sus librerías. Esto supone un gasto innecesario en espacio y en tiempo de ejecución; usando contenedores desechables podemos agilizar este proceso de forma altamente considerable ..." />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Separando el build y el runtime con contenedores Docker"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html"/>
+        <meta property="og:description" content="Cuando montamos un contenedor Docker para servir una aplicación cualquiera, solemos poner un montón de dependencias necesarias solamente para compilar el paquete o para empaquetar sus librerías. Esto supone un gasto innecesario en espacio y en tiempo de ejecución; usando contenedores desechables podemos agilizar este proceso de forma altamente considerable ..."/>
+        <meta property="article:published_time" content="2016-10-10" />
+            <meta property="article:section" content="Operaciones" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:tag" content="python" />
+            <meta property="article:tag" content="build" />
+            <meta property="article:tag" content="runtime" />
+            <meta property="article:tag" content="release" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,6 +43,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -75,11 +86,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.tk/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
-        <li class="active">repositorio</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
+                <li class="active">Separando el build y el runtime con contenedores Docker</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -92,13 +103,371 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/01/un-repositorio-de-debian-con-reprepro.html">Un repositorio de Debian con reprepro</a></h2>
-                <div class="summary"><p>Una de las grandes facilidades que nos ofrece una distribución de Linux es su sistema de gestor de paquetes. Los paquetes oficiales nos simplifican la instalación y mantenimiento de paquetes; sin embargo, podemos sacar provecho del sistema de paquetes para uso personal, para automatizar instalaciones y actualizaciones que queramos hacer ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/01/un-repositorio-de-debian-con-reprepro.html">Seguir leyendo</a>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html"
+                       rel="bookmark"
+                       title="Permalink to Separando el build y el runtime con contenedores Docker">
+                        Separando el build y el runtime con contenedores Docker
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-10-10T08:00:00+02:00"> 2016-10-10</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 12 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/docker.html">docker</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/python.html">python</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/build.html">build</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/runtime.html">runtime</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/release.html">release</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 </div>
-            </article>
-            <hr/>
+                <p>Cuando montamos un contenedor <strong>Docker</strong> para servir una aplicación cualquiera, solemos poner un montón de dependencias necesarias solamente para compilar el paquete o para empaquetar sus librerías. Esto supone un gasto innecesario en espacio y en tiempo de ejecución; usando contenedores desechables podemos agilizar este proceso de forma altamente considerable.</p>
+<p>Para ello vamos a partir de una aplicación simplista hecha con <strong>python</strong> que podemos encontrar en <a href="https://github.com/Sirtea/autobuilder">https://github.com/Sirtea/autobuilder</a>. La idea es que vamos a preparar las dependencias en un contenedor, para luego sacar lo justo y necesario para poner en un contenedor que disponga solamente de lo justo para el <em>runtime</em>.</p>
+<p>Para simplificar mas todavía, vamos a separar el código base del contenedor, de forma que este pueda ir cambiando modificando solamente un parámetro dado. Vamos a delegar la descarga y compilación del código base a un <em>script</em>, que no cambie y que permita trabajar con las diferentes versiones de nuestra aplicación.</p>
+<p>Para que todo esto funcione, necesitamos seguir una cantidad mínima de reglas, que van a poderse cumplir independientemente del proyecto o del <em>framework</em> usado.</p>
+<ul>
+<li>En la base del repositorio hay un <em>requirements.txt</em> que nos va a indicar las librerías necesarias.</li>
+<li>La aplicación quedará alojada en una carpeta <em>app</em>, el módulo con la aplicación se va a llamar <em>app</em> (módulo o <em>package</em>) y el <em>callable</em> también se va a llamar <em>app</em>.</li>
+<li>El <em>virtualenv</em> se va aconstruir en <em>/app/env</em>, para su uso futuro, en tiempo de <em>runtime</em>.</li>
+</ul>
+<p>Vamos a empezar construyendo una carpeta contenedora de las dos imágenes que vamos a usar, separadas a su vez por otro nivel de carpetas.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder$ tree
+.
+├── builder
+│   ├── build.sh
+│   └── Dockerfile
+└── runner
+    ├── app.ini
+    └── Dockerfile
+
+<span class="m">2</span> directories, <span class="m">4</span> files
+gerard@sirius:~/docker/autobuilder$ 
+</pre></div>
+
+
+<h2>La imagen de build</h2>
+<p>La filosofía es muy simple: crearemos una imagen que tenga todas las dependencias necesarias para la construcción de la aplicación (en nuestro caso el <em>virtualenv</em>), y vamos a poner un <em>script</em> llamado <em>build.sh</em> que se va a encargar de clonar un repositorio en <a href="https://github.com/">GitHub</a> y va a construir una refererencia tambien indicada mediante variables de entorno.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder$ cat builder/Dockerfile 
+FROM alpine:3.4
+RUN apk add --no-cache py-virtualenv git gcc musl-dev python-dev
+COPY build.sh /
+ENTRYPOINT <span class="o">[</span><span class="s2">&quot;sh&quot;</span>, <span class="s2">&quot;build.sh&quot;</span><span class="o">]</span>
+gerard@sirius:~/docker/autobuilder$ 
+</pre></div>
+
+
+<p>El <em>script</em> de <em>build</em> va a depender bastante de como se prepara nuestra aplicación. En este caso va a clonar el repositorio en una carpeta <em>/build</em>, y va a copiar la referencia solicitada en una carpeta <em>/app</em>, que luego va a ser acompañada con un <em>virtualenv</em>. Puesto que el <em>virtualenv</em> es dependiente de la localización en el servidor, vamos a usar también <em>/app</em> en la máquina de <em>runtime</em>. En este paso es cuando hace falta usar la convención del fichero <em>requirements.txt</em>.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder$ cat builder/build.sh 
+<span class="c1">#/bin/sh</span>
+
+mkdir /app
+git clone <span class="si">${</span><span class="nv">REPO</span><span class="si">}</span> /build
+<span class="nb">cd</span> /build
+git archive <span class="si">${</span><span class="nv">REF</span><span class="si">}</span> <span class="p">|</span> tar xf - -C /app
+virtualenv /app/env
+/app/env/bin/pip install -r /app/requirements.txt
+tar czf /shared/app.tar.gz -C / app
+gerard@sirius:~/docker/autobuilder$ 
+</pre></div>
+
+
+<p>La idea es que el producto acabado quede comprimido en la carpeta <em>/shared</em>. Personalmente he utilizado un fichero <em>.tar.gz</em>, pero se podría haber utilizado ficheros <em>.deb</em>, <em>.rpm</em> o lo que hiciera falta.</p>
+<p>Falta construir la imagen a partir de los ficheros dados:</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder/builder$ docker build -t builder .
+Sending build context to Docker daemon 3.072 kB
+Step <span class="m">1</span> : FROM alpine:3.4
+3.4: Pulling from library/alpine
+Digest: sha256:3dcdb92d7432d56604d4545cbd324b14e647b313626d99b889d0626de158f73a
+Status: Downloaded newer image <span class="k">for</span> alpine:3.4
+ ---&gt; 4e38e38c8ce0
+Step <span class="m">2</span> : RUN apk add --no-cache py-virtualenv git gcc musl-dev python-dev
+ ---&gt; Running in 36ab40f2fbc6
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/community/x86_64/APKINDEX.tar.gz
+<span class="o">(</span>1/35<span class="o">)</span> Upgrading musl <span class="o">(</span>1.1.14-r10 -&gt; 1.1.14-r11<span class="o">)</span>
+<span class="o">(</span>2/35<span class="o">)</span> Installing binutils-libs <span class="o">(</span>2.26-r0<span class="o">)</span>
+<span class="o">(</span>3/35<span class="o">)</span> Installing binutils <span class="o">(</span>2.26-r0<span class="o">)</span>
+<span class="o">(</span>4/35<span class="o">)</span> Installing gmp <span class="o">(</span>6.1.0-r0<span class="o">)</span>
+<span class="o">(</span>5/35<span class="o">)</span> Installing isl <span class="o">(</span>0.14.1-r0<span class="o">)</span>
+<span class="o">(</span>6/35<span class="o">)</span> Installing libgomp <span class="o">(</span>5.3.0-r0<span class="o">)</span>
+<span class="o">(</span>7/35<span class="o">)</span> Installing libatomic <span class="o">(</span>5.3.0-r0<span class="o">)</span>
+<span class="o">(</span>8/35<span class="o">)</span> Installing libgcc <span class="o">(</span>5.3.0-r0<span class="o">)</span>
+<span class="o">(</span>9/35<span class="o">)</span> Installing pkgconf <span class="o">(</span>0.9.12-r0<span class="o">)</span>
+<span class="o">(</span>10/35<span class="o">)</span> Installing pkgconfig <span class="o">(</span>0.25-r1<span class="o">)</span>
+<span class="o">(</span>11/35<span class="o">)</span> Installing mpfr3 <span class="o">(</span>3.1.2-r0<span class="o">)</span>
+<span class="o">(</span>12/35<span class="o">)</span> Installing mpc1 <span class="o">(</span>1.0.3-r0<span class="o">)</span>
+<span class="o">(</span>13/35<span class="o">)</span> Installing libstdc++ <span class="o">(</span>5.3.0-r0<span class="o">)</span>
+<span class="o">(</span>14/35<span class="o">)</span> Installing gcc <span class="o">(</span>5.3.0-r0<span class="o">)</span>
+<span class="o">(</span>15/35<span class="o">)</span> Installing ca-certificates <span class="o">(</span>20160104-r4<span class="o">)</span>
+<span class="o">(</span>16/35<span class="o">)</span> Installing libssh2 <span class="o">(</span>1.7.0-r0<span class="o">)</span>
+<span class="o">(</span>17/35<span class="o">)</span> Installing libcurl <span class="o">(</span>7.50.1-r0<span class="o">)</span>
+<span class="o">(</span>18/35<span class="o">)</span> Installing expat <span class="o">(</span>2.1.1-r1<span class="o">)</span>
+<span class="o">(</span>19/35<span class="o">)</span> Installing pcre <span class="o">(</span>8.38-r1<span class="o">)</span>
+<span class="o">(</span>20/35<span class="o">)</span> Installing git <span class="o">(</span>2.8.3-r0<span class="o">)</span>
+<span class="o">(</span>21/35<span class="o">)</span> Upgrading musl-utils <span class="o">(</span>1.1.14-r10 -&gt; 1.1.14-r11<span class="o">)</span>
+<span class="o">(</span>22/35<span class="o">)</span> Installing musl-dev <span class="o">(</span>1.1.14-r11<span class="o">)</span>
+<span class="o">(</span>23/35<span class="o">)</span> Installing libbz2 <span class="o">(</span>1.0.6-r4<span class="o">)</span>
+<span class="o">(</span>24/35<span class="o">)</span> Installing libffi <span class="o">(</span>3.2.1-r2<span class="o">)</span>
+<span class="o">(</span>25/35<span class="o">)</span> Installing gdbm <span class="o">(</span>1.11-r1<span class="o">)</span>
+<span class="o">(</span>26/35<span class="o">)</span> Installing ncurses-terminfo-base <span class="o">(</span>6.0-r7<span class="o">)</span>
+<span class="o">(</span>27/35<span class="o">)</span> Installing ncurses-terminfo <span class="o">(</span>6.0-r7<span class="o">)</span>
+<span class="o">(</span>28/35<span class="o">)</span> Installing ncurses-libs <span class="o">(</span>6.0-r7<span class="o">)</span>
+<span class="o">(</span>29/35<span class="o">)</span> Installing readline <span class="o">(</span>6.3.008-r4<span class="o">)</span>
+<span class="o">(</span>30/35<span class="o">)</span> Installing sqlite-libs <span class="o">(</span>3.13.0-r0<span class="o">)</span>
+<span class="o">(</span>31/35<span class="o">)</span> Installing python <span class="o">(</span>2.7.12-r0<span class="o">)</span>
+<span class="o">(</span>32/35<span class="o">)</span> Installing py-setuptools <span class="o">(</span>20.8.0-r0<span class="o">)</span>
+<span class="o">(</span>33/35<span class="o">)</span> Installing py-pip <span class="o">(</span>8.1.2-r0<span class="o">)</span>
+<span class="o">(</span>34/35<span class="o">)</span> Installing py-virtualenv <span class="o">(</span>15.0.1-r0<span class="o">)</span>
+<span class="o">(</span>35/35<span class="o">)</span> Installing python-dev <span class="o">(</span>2.7.12-r0<span class="o">)</span>
+Executing busybox-1.24.2-r9.trigger
+Executing ca-certificates-20160104-r4.trigger
+OK: <span class="m">169</span> MiB in <span class="m">44</span> packages
+ ---&gt; 86bd30dae926
+Removing intermediate container 36ab40f2fbc6
+Step <span class="m">3</span> : COPY build.sh /
+ ---&gt; bb87e7021b1f
+Removing intermediate container d1c160839571
+Step <span class="m">4</span> : ENTRYPOINT sh build.sh
+ ---&gt; Running in ec43f4786949
+ ---&gt; 9887ce973fe2
+Removing intermediate container ec43f4786949
+Successfully built 9887ce973fe2
+gerard@sirius:~/docker/autobuilder/builder$ 
+</pre></div>
+
+
+<p>Esta imagen no se va a reconstruir -en principio- nunca. Las diferentes ejecuciones van a producir diferentes productos.</p>
+<h2>La imagen de runtime</h2>
+<p>Esta imagen es todavía mas fácil; se trata de un servidor de aplicaciones estándar que va a servir la aplicación siguiendo las reglas descritas mas arriba.</p>
+<p>Vamos a asumir que tenemos el <em>bundle</em> construido y llamado <em>app.tar.gz</em>, así que solo faltaría descomprimirlo para que quede todo en <em>/app</em>.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder/runner$ cat Dockerfile 
+FROM alpine:3.4
+RUN apk add --no-cache uwsgi-python
+ADD app.tar.gz /
+COPY app.ini /app/
+ENTRYPOINT <span class="o">[</span><span class="s2">&quot;uwsgi&quot;</span>, <span class="s2">&quot;--ini&quot;</span>, <span class="s2">&quot;/app/app.ini&quot;</span><span class="o">]</span>
+gerard@sirius:~/docker/autobuilder/runner$ 
+</pre></div>
+
+
+<p>El fichero que va a servir la aplicación depende de cada servidor de aplicaciones, y de momento, nos vale un sencillo. En este punto se vuelve especialmente importante respetar las convenciones del <em>virtualenv</em> y de la localización de la aplicación.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder/runner$ cat app.ini 
+<span class="o">[</span>uwsgi<span class="o">]</span>
+http-socket <span class="o">=</span> :8080
+<span class="nv">plugin</span> <span class="o">=</span> python
+<span class="nv">chdir</span> <span class="o">=</span> /app/app/
+<span class="nv">virtualenv</span> <span class="o">=</span> /app/env/
+<span class="nv">module</span> <span class="o">=</span> app:app
+gerard@sirius:~/docker/autobuilder/runner$ 
+</pre></div>
+
+
+<h2>La hora de la release</h2>
+<p>Ha llegado el momento de hacer una <em>release</em>; así que vamos a hacer el <em>bundle</em> y la imagen de servicio, para luego poder servirlo. Este paso se va a repetir muy a menudo, dependiendo de la política de <em>releases</em> de vuestra compañía. Para obtener el <em>bundle</em>, necesitamos compilar la referencia del repositorio.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder/runner$ docker run -ti --rm -e <span class="s2">&quot;REPO=https://github.com/Sirtea/autobuilder.git&quot;</span> -e <span class="s2">&quot;REF=v1.0.0&quot;</span> -v /home/gerard/docker/autobuilder/runner/:/shared/ builder
+Cloning into <span class="s1">&#39;/build&#39;</span>...
+remote: Counting objects: 10, <span class="k">done</span>.
+remote: Compressing objects: 100% <span class="o">(</span>9/9<span class="o">)</span>, <span class="k">done</span>.
+remote: Total <span class="m">10</span> <span class="o">(</span>delta 0<span class="o">)</span>, reused <span class="m">10</span> <span class="o">(</span>delta 0<span class="o">)</span>, pack-reused 0
+Unpacking objects: 100% <span class="o">(</span>10/10<span class="o">)</span>, <span class="k">done</span>.
+Checking connectivity... <span class="k">done</span>.
+New python executable in /app/env/bin/python
+Installing setuptools, pip, wheel...done.
+Collecting <span class="nv">click</span><span class="o">==</span>6.6 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 1<span class="o">))</span>
+  Downloading click-6.6.tar.gz <span class="o">(</span>283kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 286kB 536kB/s 
+Collecting <span class="nv">Flask</span><span class="o">==</span>0.11.1 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 2<span class="o">))</span>
+  Downloading Flask-0.11.1-py2.py3-none-any.whl <span class="o">(</span>80kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 81kB 809kB/s 
+Collecting <span class="nv">itsdangerous</span><span class="o">==</span>0.24 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 3<span class="o">))</span>
+  Downloading itsdangerous-0.24.tar.gz <span class="o">(</span>46kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 51kB 724kB/s 
+Collecting <span class="nv">Jinja2</span><span class="o">==</span>2.8 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 4<span class="o">))</span>
+  Downloading Jinja2-2.8-py2.py3-none-any.whl <span class="o">(</span>263kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 266kB 861kB/s 
+Collecting <span class="nv">MarkupSafe</span><span class="o">==</span>0.23 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 5<span class="o">))</span>
+  Downloading MarkupSafe-0.23.tar.gz
+Collecting <span class="nv">mongoengine</span><span class="o">==</span>0.10.6 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 6<span class="o">))</span>
+  Downloading mongoengine-0.10.6.tar.gz <span class="o">(</span>346kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 348kB 803kB/s 
+Collecting <span class="nv">pymongo</span><span class="o">==</span>3.3.0 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 7<span class="o">))</span>
+  Downloading pymongo-3.3.0.tar.gz <span class="o">(</span>494kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 501kB 753kB/s 
+Collecting <span class="nv">Werkzeug</span><span class="o">==</span>0.11.10 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 8<span class="o">))</span>
+  Downloading Werkzeug-0.11.10-py2.py3-none-any.whl <span class="o">(</span>306kB<span class="o">)</span>
+    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 307kB 1.1MB/s 
+Building wheels <span class="k">for</span> collected packages: click, itsdangerous, MarkupSafe, mongoengine, pymongo
+  Running setup.py bdist_wheel <span class="k">for</span> click ... <span class="k">done</span>
+  Stored in directory: /root/.cache/pip/wheels/b0/6d/8c/cf5ca1146e48bc7914748bfb1dbf3a40a440b8b4f4f0d952dd
+  Running setup.py bdist_wheel <span class="k">for</span> itsdangerous ... <span class="k">done</span>
+  Stored in directory: /root/.cache/pip/wheels/fc/a8/66/24d655233c757e178d45dea2de22a04c6d92766abfb741129a
+  Running setup.py bdist_wheel <span class="k">for</span> MarkupSafe ... <span class="k">done</span>
+  Stored in directory: /root/.cache/pip/wheels/a3/fa/dc/0198eed9ad95489b8a4f45d14dd5d2aee3f8984e46862c5748
+  Running setup.py bdist_wheel <span class="k">for</span> mongoengine ... <span class="k">done</span>
+  Stored in directory: /root/.cache/pip/wheels/ae/6d/cb/4573bb9aceaed483557761df59571c6a3f108e87a80d2ba03a
+  Running setup.py bdist_wheel <span class="k">for</span> pymongo ... <span class="k">done</span>
+  Stored in directory: /root/.cache/pip/wheels/bf/f7/14/6ed22fbc276fc2d9fa7cdb2235dea8d5f154d711dfdf4bdebe
+Successfully built click itsdangerous MarkupSafe mongoengine pymongo
+Installing collected packages: click, MarkupSafe, Jinja2, Werkzeug, itsdangerous, Flask, pymongo, mongoengine
+Successfully installed Flask-0.11.1 Jinja2-2.8 MarkupSafe-0.23 Werkzeug-0.11.10 click-6.6 itsdangerous-0.24 mongoengine-0.10.6 pymongo-3.3.0
+gerard@sirius:~/docker/autobuilder/runner$ 
+</pre></div>
+
+
+<p>Puesto que el <em>script</em> llamado <em>build.sh</em> deja el fichero <em>.tar.gz</em> en <em>/shared</em>, y este es un volumen montado en la carpeta actual, vemos que nos aparece nuestro producto compilado.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder$ tree
+.
+├── builder
+│   ├── build.sh
+│   └── Dockerfile
+└── runner
+    ├── app.ini
+    ├── app.tar.gz
+    └── Dockerfile
+
+<span class="m">2</span> directories, <span class="m">5</span> files
+gerard@sirius:~/docker/autobuilder$ 
+</pre></div>
+
+
+<p>Efectivamente, este <em>bundle</em> contiene la aplicación y el <em>virtualenv</em> en la forma requerida, así que el siguiente paso es construir la imagen de <em>runtime</em> con este <em>bundle</em> incorporado.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder/runner$ docker build -t runner .
+Sending build context to Docker daemon 5.027 MB
+Step <span class="m">1</span> : FROM alpine:3.4
+ ---&gt; 4e38e38c8ce0
+Step <span class="m">2</span> : RUN apk add --no-cache uwsgi-python
+ ---&gt; Running in 9233d11f6646
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/community/x86_64/APKINDEX.tar.gz
+<span class="o">(</span>1/14<span class="o">)</span> Installing mailcap <span class="o">(</span>2.1.44-r0<span class="o">)</span>
+<span class="o">(</span>2/14<span class="o">)</span> Installing pcre <span class="o">(</span>8.38-r1<span class="o">)</span>
+<span class="o">(</span>3/14<span class="o">)</span> Installing uwsgi <span class="o">(</span>2.0.13-r0<span class="o">)</span>
+<span class="o">(</span>4/14<span class="o">)</span> Installing libbz2 <span class="o">(</span>1.0.6-r4<span class="o">)</span>
+<span class="o">(</span>5/14<span class="o">)</span> Installing expat <span class="o">(</span>2.1.1-r1<span class="o">)</span>
+<span class="o">(</span>6/14<span class="o">)</span> Installing libffi <span class="o">(</span>3.2.1-r2<span class="o">)</span>
+<span class="o">(</span>7/14<span class="o">)</span> Installing gdbm <span class="o">(</span>1.11-r1<span class="o">)</span>
+<span class="o">(</span>8/14<span class="o">)</span> Installing ncurses-terminfo-base <span class="o">(</span>6.0-r7<span class="o">)</span>
+<span class="o">(</span>9/14<span class="o">)</span> Installing ncurses-terminfo <span class="o">(</span>6.0-r7<span class="o">)</span>
+<span class="o">(</span>10/14<span class="o">)</span> Installing ncurses-libs <span class="o">(</span>6.0-r7<span class="o">)</span>
+<span class="o">(</span>11/14<span class="o">)</span> Installing readline <span class="o">(</span>6.3.008-r4<span class="o">)</span>
+<span class="o">(</span>12/14<span class="o">)</span> Installing sqlite-libs <span class="o">(</span>3.13.0-r0<span class="o">)</span>
+<span class="o">(</span>13/14<span class="o">)</span> Installing python <span class="o">(</span>2.7.12-r0<span class="o">)</span>
+<span class="o">(</span>14/14<span class="o">)</span> Installing uwsgi-python <span class="o">(</span>2.0.13-r0<span class="o">)</span>
+Executing busybox-1.24.2-r9.trigger
+OK: <span class="m">53</span> MiB in <span class="m">25</span> packages
+ ---&gt; b7c2de7c84d1
+Removing intermediate container 9233d11f6646
+Step <span class="m">3</span> : ADD app.tar.gz /
+ ---&gt; 9b8046268ece
+Removing intermediate container 0a5f930580a2
+Step <span class="m">4</span> : COPY app.ini /app/
+ ---&gt; 345641630c11
+Removing intermediate container 8b0fe594e89d
+Step <span class="m">5</span> : ENTRYPOINT uwsgi --ini /app/app.ini
+ ---&gt; Running in 586c9d5f49ae
+ ---&gt; a83cfc054bdc
+Removing intermediate container 586c9d5f49ae
+Successfully built a83cfc054bdc
+gerard@sirius:~/docker/autobuilder/runner$ 
+</pre></div>
+
+
+<p>Y con esto tenemos nuestra imagen.</p>
+<h2>Ejecutando la imagen</h2>
+<p>Esta parte no tiene mucho misterio; basta con ejecutar la imagen como lo haríamos normalmente. Esta aplicación en concreto lee las configuraciones desde las variables de entorno, así que se las ponemos. En este caso particular, tenemos la imagen de <strong>Docker Hub</strong> <a href="https://hub.docker.com/_/mongo/">mongo</a> en la dirección <em>IP</em> indicada.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder/runner$ docker run -ti --rm -p 8888:8080 -e <span class="s2">&quot;MONGODB_URI=mongodb://172.17.0.2:27017/shop&quot;</span> runner
+...
+</pre></div>
+
+
+<p>Podemos comprobar que todo funciona lanzando una petición <em>HTTP</em> estándar:</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~$ curl http://localhost:8888/
+&lt;h1&gt;Fruits&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Apple&lt;/li&gt;
+&lt;li&gt;Orange&lt;/li&gt;
+&lt;li&gt;Pear&lt;/li&gt;
+&lt;/ul&gt;
+gerard@sirius:~$ 
+</pre></div>
+
+
+<p>Y ahora podemos ver que la imagen de <em>runtime</em> queda mucho mas reducida, mas rápida de construir y sin tanto <em>bloat</em>. Supongo que podemos reducir mas lo que ocupa la imagen seleccionando versiones de <strong>python</strong> alternativas; el sistema operativo base son solo 4.8mb...</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder/runner$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+runner              latest              e190cce7685a        <span class="m">31</span> seconds ago      60.75 MB
+builder             latest              edf62460d187        <span class="m">7</span> minutes ago       <span class="m">164</span> MB
+gerard@sirius:~/docker/autobuilder/runner$ 
+</pre></div>
+
+
+<p>De hecho, la <em>cache</em> de <strong>Docker</strong> funciona a las mil maravillas en este caso; si hubiera que reconstruir la imagen de <em>runtime</em>, se ejecutarían solo los pasos 3, 4 y 5. Esto convierte el hecho de "hacer una <em>release</em>" en casi inmediato.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html">Balanceando peticiones con HAProxy</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'separando-el-build-y-el-runtime-con-contenedores-docker';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
 
         </div>
         <div class="col-sm-3" id="sidebar">

@@ -1,5 +1,285 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-09-26T08:00:00+02:00</updated><entry><title>Lanzando playbooks de Ansible desde Jenkins</title><link href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html" rel="alternate"></link><published>2016-09-26T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-09-26:2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html</id><summary type="html">&lt;p&gt;Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con &lt;strong&gt;Ansible&lt;/strong&gt; o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto &lt;strong&gt;Ansible Tower&lt;/strong&gt;, su precio es prohibitivo para muchos.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-10-10T08:00:00+02:00</updated><entry><title>Separando el build y el runtime con contenedores Docker</title><link href="http://www.linuxsysadmin.tk/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html" rel="alternate"></link><published>2016-10-10T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-10-10:2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html</id><summary type="html">&lt;p&gt;Cuando montamos un contenedor &lt;strong&gt;Docker&lt;/strong&gt; para servir una aplicación cualquiera, solemos poner un montón de dependencias necesarias solamente para compilar el paquete o para empaquetar sus librerías. Esto supone un gasto innecesario en espacio y en tiempo de ejecución; usando contenedores desechables podemos agilizar este proceso de forma altamente considerable.&lt;/p&gt;
+&lt;p&gt;Para ello vamos a partir de una aplicación simplista hecha con &lt;strong&gt;python&lt;/strong&gt; que podemos encontrar en &lt;a href="https://github.com/Sirtea/autobuilder"&gt;https://github.com/Sirtea/autobuilder&lt;/a&gt;. La idea es que vamos a preparar las dependencias en un contenedor, para luego sacar lo justo y necesario para poner en un contenedor que disponga solamente de lo justo para el &lt;em&gt;runtime&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Para simplificar mas todavía, vamos a separar el código base del contenedor, de forma que este pueda ir cambiando modificando solamente un parámetro dado. Vamos a delegar la descarga y compilación del código base a un &lt;em&gt;script&lt;/em&gt;, que no cambie y que permita trabajar con las diferentes versiones de nuestra aplicación.&lt;/p&gt;
+&lt;p&gt;Para que todo esto funcione, necesitamos seguir una cantidad mínima de reglas, que van a poderse cumplir independientemente del proyecto o del &lt;em&gt;framework&lt;/em&gt; usado.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;En la base del repositorio hay un &lt;em&gt;requirements.txt&lt;/em&gt; que nos va a indicar las librerías necesarias.&lt;/li&gt;
+&lt;li&gt;La aplicación quedará alojada en una carpeta &lt;em&gt;app&lt;/em&gt;, el módulo con la aplicación se va a llamar &lt;em&gt;app&lt;/em&gt; (módulo o &lt;em&gt;package&lt;/em&gt;) y el &lt;em&gt;callable&lt;/em&gt; también se va a llamar &lt;em&gt;app&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;El &lt;em&gt;virtualenv&lt;/em&gt; se va aconstruir en &lt;em&gt;/app/env&lt;/em&gt;, para su uso futuro, en tiempo de &lt;em&gt;runtime&lt;/em&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Vamos a empezar construyendo una carpeta contenedora de las dos imágenes que vamos a usar, separadas a su vez por otro nivel de carpetas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/autobuilder$ tree
+.
+├── builder
+│   ├── build.sh
+│   └── Dockerfile
+└── runner
+    ├── app.ini
+    └── Dockerfile
+
+&lt;span class="m"&gt;2&lt;/span&gt; directories, &lt;span class="m"&gt;4&lt;/span&gt; files
+gerard@sirius:~/docker/autobuilder$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;La imagen de build&lt;/h2&gt;
+&lt;p&gt;La filosofía es muy simple: crearemos una imagen que tenga todas las dependencias necesarias para la construcción de la aplicación (en nuestro caso el &lt;em&gt;virtualenv&lt;/em&gt;), y vamos a poner un &lt;em&gt;script&lt;/em&gt; llamado &lt;em&gt;build.sh&lt;/em&gt; que se va a encargar de clonar un repositorio en &lt;a href="https://github.com/"&gt;GitHub&lt;/a&gt; y va a construir una refererencia tambien indicada mediante variables de entorno.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/autobuilder$ cat builder/Dockerfile 
+FROM alpine:3.4
+RUN apk add --no-cache py-virtualenv git gcc musl-dev python-dev
+COPY build.sh /
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;sh&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;build.sh&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/docker/autobuilder$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El &lt;em&gt;script&lt;/em&gt; de &lt;em&gt;build&lt;/em&gt; va a depender bastante de como se prepara nuestra aplicación. En este caso va a clonar el repositorio en una carpeta &lt;em&gt;/build&lt;/em&gt;, y va a copiar la referencia solicitada en una carpeta &lt;em&gt;/app&lt;/em&gt;, que luego va a ser acompañada con un &lt;em&gt;virtualenv&lt;/em&gt;. Puesto que el &lt;em&gt;virtualenv&lt;/em&gt; es dependiente de la localización en el servidor, vamos a usar también &lt;em&gt;/app&lt;/em&gt; en la máquina de &lt;em&gt;runtime&lt;/em&gt;. En este paso es cuando hace falta usar la convención del fichero &lt;em&gt;requirements.txt&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/autobuilder$ cat builder/build.sh 
+&lt;span class="c1"&gt;#/bin/sh&lt;/span&gt;
+
+mkdir /app
+git clone &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;REPO&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; /build
+&lt;span class="nb"&gt;cd&lt;/span&gt; /build
+git archive &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;REF&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; tar xf - -C /app
+virtualenv /app/env
+/app/env/bin/pip install -r /app/requirements.txt
+tar czf /shared/app.tar.gz -C / app
+gerard@sirius:~/docker/autobuilder$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La idea es que el producto acabado quede comprimido en la carpeta &lt;em&gt;/shared&lt;/em&gt;. Personalmente he utilizado un fichero &lt;em&gt;.tar.gz&lt;/em&gt;, pero se podría haber utilizado ficheros &lt;em&gt;.deb&lt;/em&gt;, &lt;em&gt;.rpm&lt;/em&gt; o lo que hiciera falta.&lt;/p&gt;
+&lt;p&gt;Falta construir la imagen a partir de los ficheros dados:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/autobuilder/builder$ docker build -t builder .
+Sending build context to Docker daemon 3.072 kB
+Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM alpine:3.4
+3.4: Pulling from library/alpine
+Digest: sha256:3dcdb92d7432d56604d4545cbd324b14e647b313626d99b889d0626de158f73a
+Status: Downloaded newer image &lt;span class="k"&gt;for&lt;/span&gt; alpine:3.4
+ ---&amp;gt; 4e38e38c8ce0
+Step &lt;span class="m"&gt;2&lt;/span&gt; : RUN apk add --no-cache py-virtualenv git gcc musl-dev python-dev
+ ---&amp;gt; Running in 36ab40f2fbc6
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/community/x86_64/APKINDEX.tar.gz
+&lt;span class="o"&gt;(&lt;/span&gt;1/35&lt;span class="o"&gt;)&lt;/span&gt; Upgrading musl &lt;span class="o"&gt;(&lt;/span&gt;1.1.14-r10 -&amp;gt; 1.1.14-r11&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;2/35&lt;span class="o"&gt;)&lt;/span&gt; Installing binutils-libs &lt;span class="o"&gt;(&lt;/span&gt;2.26-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;3/35&lt;span class="o"&gt;)&lt;/span&gt; Installing binutils &lt;span class="o"&gt;(&lt;/span&gt;2.26-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;4/35&lt;span class="o"&gt;)&lt;/span&gt; Installing gmp &lt;span class="o"&gt;(&lt;/span&gt;6.1.0-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;5/35&lt;span class="o"&gt;)&lt;/span&gt; Installing isl &lt;span class="o"&gt;(&lt;/span&gt;0.14.1-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;6/35&lt;span class="o"&gt;)&lt;/span&gt; Installing libgomp &lt;span class="o"&gt;(&lt;/span&gt;5.3.0-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;7/35&lt;span class="o"&gt;)&lt;/span&gt; Installing libatomic &lt;span class="o"&gt;(&lt;/span&gt;5.3.0-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;8/35&lt;span class="o"&gt;)&lt;/span&gt; Installing libgcc &lt;span class="o"&gt;(&lt;/span&gt;5.3.0-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;9/35&lt;span class="o"&gt;)&lt;/span&gt; Installing pkgconf &lt;span class="o"&gt;(&lt;/span&gt;0.9.12-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;10/35&lt;span class="o"&gt;)&lt;/span&gt; Installing pkgconfig &lt;span class="o"&gt;(&lt;/span&gt;0.25-r1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;11/35&lt;span class="o"&gt;)&lt;/span&gt; Installing mpfr3 &lt;span class="o"&gt;(&lt;/span&gt;3.1.2-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;12/35&lt;span class="o"&gt;)&lt;/span&gt; Installing mpc1 &lt;span class="o"&gt;(&lt;/span&gt;1.0.3-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;13/35&lt;span class="o"&gt;)&lt;/span&gt; Installing libstdc++ &lt;span class="o"&gt;(&lt;/span&gt;5.3.0-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;14/35&lt;span class="o"&gt;)&lt;/span&gt; Installing gcc &lt;span class="o"&gt;(&lt;/span&gt;5.3.0-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;15/35&lt;span class="o"&gt;)&lt;/span&gt; Installing ca-certificates &lt;span class="o"&gt;(&lt;/span&gt;20160104-r4&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;16/35&lt;span class="o"&gt;)&lt;/span&gt; Installing libssh2 &lt;span class="o"&gt;(&lt;/span&gt;1.7.0-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;17/35&lt;span class="o"&gt;)&lt;/span&gt; Installing libcurl &lt;span class="o"&gt;(&lt;/span&gt;7.50.1-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;18/35&lt;span class="o"&gt;)&lt;/span&gt; Installing expat &lt;span class="o"&gt;(&lt;/span&gt;2.1.1-r1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;19/35&lt;span class="o"&gt;)&lt;/span&gt; Installing pcre &lt;span class="o"&gt;(&lt;/span&gt;8.38-r1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;20/35&lt;span class="o"&gt;)&lt;/span&gt; Installing git &lt;span class="o"&gt;(&lt;/span&gt;2.8.3-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;21/35&lt;span class="o"&gt;)&lt;/span&gt; Upgrading musl-utils &lt;span class="o"&gt;(&lt;/span&gt;1.1.14-r10 -&amp;gt; 1.1.14-r11&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;22/35&lt;span class="o"&gt;)&lt;/span&gt; Installing musl-dev &lt;span class="o"&gt;(&lt;/span&gt;1.1.14-r11&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;23/35&lt;span class="o"&gt;)&lt;/span&gt; Installing libbz2 &lt;span class="o"&gt;(&lt;/span&gt;1.0.6-r4&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;24/35&lt;span class="o"&gt;)&lt;/span&gt; Installing libffi &lt;span class="o"&gt;(&lt;/span&gt;3.2.1-r2&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;25/35&lt;span class="o"&gt;)&lt;/span&gt; Installing gdbm &lt;span class="o"&gt;(&lt;/span&gt;1.11-r1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;26/35&lt;span class="o"&gt;)&lt;/span&gt; Installing ncurses-terminfo-base &lt;span class="o"&gt;(&lt;/span&gt;6.0-r7&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;27/35&lt;span class="o"&gt;)&lt;/span&gt; Installing ncurses-terminfo &lt;span class="o"&gt;(&lt;/span&gt;6.0-r7&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;28/35&lt;span class="o"&gt;)&lt;/span&gt; Installing ncurses-libs &lt;span class="o"&gt;(&lt;/span&gt;6.0-r7&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;29/35&lt;span class="o"&gt;)&lt;/span&gt; Installing readline &lt;span class="o"&gt;(&lt;/span&gt;6.3.008-r4&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;30/35&lt;span class="o"&gt;)&lt;/span&gt; Installing sqlite-libs &lt;span class="o"&gt;(&lt;/span&gt;3.13.0-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;31/35&lt;span class="o"&gt;)&lt;/span&gt; Installing python &lt;span class="o"&gt;(&lt;/span&gt;2.7.12-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;32/35&lt;span class="o"&gt;)&lt;/span&gt; Installing py-setuptools &lt;span class="o"&gt;(&lt;/span&gt;20.8.0-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;33/35&lt;span class="o"&gt;)&lt;/span&gt; Installing py-pip &lt;span class="o"&gt;(&lt;/span&gt;8.1.2-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;34/35&lt;span class="o"&gt;)&lt;/span&gt; Installing py-virtualenv &lt;span class="o"&gt;(&lt;/span&gt;15.0.1-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;35/35&lt;span class="o"&gt;)&lt;/span&gt; Installing python-dev &lt;span class="o"&gt;(&lt;/span&gt;2.7.12-r0&lt;span class="o"&gt;)&lt;/span&gt;
+Executing busybox-1.24.2-r9.trigger
+Executing ca-certificates-20160104-r4.trigger
+OK: &lt;span class="m"&gt;169&lt;/span&gt; MiB in &lt;span class="m"&gt;44&lt;/span&gt; packages
+ ---&amp;gt; 86bd30dae926
+Removing intermediate container 36ab40f2fbc6
+Step &lt;span class="m"&gt;3&lt;/span&gt; : COPY build.sh /
+ ---&amp;gt; bb87e7021b1f
+Removing intermediate container d1c160839571
+Step &lt;span class="m"&gt;4&lt;/span&gt; : ENTRYPOINT sh build.sh
+ ---&amp;gt; Running in ec43f4786949
+ ---&amp;gt; 9887ce973fe2
+Removing intermediate container ec43f4786949
+Successfully built 9887ce973fe2
+gerard@sirius:~/docker/autobuilder/builder$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esta imagen no se va a reconstruir -en principio- nunca. Las diferentes ejecuciones van a producir diferentes productos.&lt;/p&gt;
+&lt;h2&gt;La imagen de runtime&lt;/h2&gt;
+&lt;p&gt;Esta imagen es todavía mas fácil; se trata de un servidor de aplicaciones estándar que va a servir la aplicación siguiendo las reglas descritas mas arriba.&lt;/p&gt;
+&lt;p&gt;Vamos a asumir que tenemos el &lt;em&gt;bundle&lt;/em&gt; construido y llamado &lt;em&gt;app.tar.gz&lt;/em&gt;, así que solo faltaría descomprimirlo para que quede todo en &lt;em&gt;/app&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/autobuilder/runner$ cat Dockerfile 
+FROM alpine:3.4
+RUN apk add --no-cache uwsgi-python
+ADD app.tar.gz /
+COPY app.ini /app/
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;uwsgi&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--ini&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;/app/app.ini&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/docker/autobuilder/runner$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El fichero que va a servir la aplicación depende de cada servidor de aplicaciones, y de momento, nos vale un sencillo. En este punto se vuelve especialmente importante respetar las convenciones del &lt;em&gt;virtualenv&lt;/em&gt; y de la localización de la aplicación.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/autobuilder/runner$ cat app.ini 
+&lt;span class="o"&gt;[&lt;/span&gt;uwsgi&lt;span class="o"&gt;]&lt;/span&gt;
+http-socket &lt;span class="o"&gt;=&lt;/span&gt; :8080
+&lt;span class="nv"&gt;plugin&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; python
+&lt;span class="nv"&gt;chdir&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; /app/app/
+&lt;span class="nv"&gt;virtualenv&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; /app/env/
+&lt;span class="nv"&gt;module&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; app:app
+gerard@sirius:~/docker/autobuilder/runner$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;La hora de la release&lt;/h2&gt;
+&lt;p&gt;Ha llegado el momento de hacer una &lt;em&gt;release&lt;/em&gt;; así que vamos a hacer el &lt;em&gt;bundle&lt;/em&gt; y la imagen de servicio, para luego poder servirlo. Este paso se va a repetir muy a menudo, dependiendo de la política de &lt;em&gt;releases&lt;/em&gt; de vuestra compañía. Para obtener el &lt;em&gt;bundle&lt;/em&gt;, necesitamos compilar la referencia del repositorio.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/autobuilder/runner$ docker run -ti --rm -e &lt;span class="s2"&gt;&amp;quot;REPO=https://github.com/Sirtea/autobuilder.git&amp;quot;&lt;/span&gt; -e &lt;span class="s2"&gt;&amp;quot;REF=v1.0.0&amp;quot;&lt;/span&gt; -v /home/gerard/docker/autobuilder/runner/:/shared/ builder
+Cloning into &lt;span class="s1"&gt;&amp;#39;/build&amp;#39;&lt;/span&gt;...
+remote: Counting objects: 10, &lt;span class="k"&gt;done&lt;/span&gt;.
+remote: Compressing objects: 100% &lt;span class="o"&gt;(&lt;/span&gt;9/9&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="k"&gt;done&lt;/span&gt;.
+remote: Total &lt;span class="m"&gt;10&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;, reused &lt;span class="m"&gt;10&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;, pack-reused 0
+Unpacking objects: 100% &lt;span class="o"&gt;(&lt;/span&gt;10/10&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="k"&gt;done&lt;/span&gt;.
+Checking connectivity... &lt;span class="k"&gt;done&lt;/span&gt;.
+New python executable in /app/env/bin/python
+Installing setuptools, pip, wheel...done.
+Collecting &lt;span class="nv"&gt;click&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;6.6 &lt;span class="o"&gt;(&lt;/span&gt;from -r /app/requirements.txt &lt;span class="o"&gt;(&lt;/span&gt;line 1&lt;span class="o"&gt;))&lt;/span&gt;
+  Downloading click-6.6.tar.gz &lt;span class="o"&gt;(&lt;/span&gt;283kB&lt;span class="o"&gt;)&lt;/span&gt;
+    100% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 286kB 536kB/s 
+Collecting &lt;span class="nv"&gt;Flask&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;0.11.1 &lt;span class="o"&gt;(&lt;/span&gt;from -r /app/requirements.txt &lt;span class="o"&gt;(&lt;/span&gt;line 2&lt;span class="o"&gt;))&lt;/span&gt;
+  Downloading Flask-0.11.1-py2.py3-none-any.whl &lt;span class="o"&gt;(&lt;/span&gt;80kB&lt;span class="o"&gt;)&lt;/span&gt;
+    100% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 81kB 809kB/s 
+Collecting &lt;span class="nv"&gt;itsdangerous&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;0.24 &lt;span class="o"&gt;(&lt;/span&gt;from -r /app/requirements.txt &lt;span class="o"&gt;(&lt;/span&gt;line 3&lt;span class="o"&gt;))&lt;/span&gt;
+  Downloading itsdangerous-0.24.tar.gz &lt;span class="o"&gt;(&lt;/span&gt;46kB&lt;span class="o"&gt;)&lt;/span&gt;
+    100% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 51kB 724kB/s 
+Collecting &lt;span class="nv"&gt;Jinja2&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;2.8 &lt;span class="o"&gt;(&lt;/span&gt;from -r /app/requirements.txt &lt;span class="o"&gt;(&lt;/span&gt;line 4&lt;span class="o"&gt;))&lt;/span&gt;
+  Downloading Jinja2-2.8-py2.py3-none-any.whl &lt;span class="o"&gt;(&lt;/span&gt;263kB&lt;span class="o"&gt;)&lt;/span&gt;
+    100% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 266kB 861kB/s 
+Collecting &lt;span class="nv"&gt;MarkupSafe&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;0.23 &lt;span class="o"&gt;(&lt;/span&gt;from -r /app/requirements.txt &lt;span class="o"&gt;(&lt;/span&gt;line 5&lt;span class="o"&gt;))&lt;/span&gt;
+  Downloading MarkupSafe-0.23.tar.gz
+Collecting &lt;span class="nv"&gt;mongoengine&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;0.10.6 &lt;span class="o"&gt;(&lt;/span&gt;from -r /app/requirements.txt &lt;span class="o"&gt;(&lt;/span&gt;line 6&lt;span class="o"&gt;))&lt;/span&gt;
+  Downloading mongoengine-0.10.6.tar.gz &lt;span class="o"&gt;(&lt;/span&gt;346kB&lt;span class="o"&gt;)&lt;/span&gt;
+    100% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 348kB 803kB/s 
+Collecting &lt;span class="nv"&gt;pymongo&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;3.3.0 &lt;span class="o"&gt;(&lt;/span&gt;from -r /app/requirements.txt &lt;span class="o"&gt;(&lt;/span&gt;line 7&lt;span class="o"&gt;))&lt;/span&gt;
+  Downloading pymongo-3.3.0.tar.gz &lt;span class="o"&gt;(&lt;/span&gt;494kB&lt;span class="o"&gt;)&lt;/span&gt;
+    100% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 501kB 753kB/s 
+Collecting &lt;span class="nv"&gt;Werkzeug&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;0.11.10 &lt;span class="o"&gt;(&lt;/span&gt;from -r /app/requirements.txt &lt;span class="o"&gt;(&lt;/span&gt;line 8&lt;span class="o"&gt;))&lt;/span&gt;
+  Downloading Werkzeug-0.11.10-py2.py3-none-any.whl &lt;span class="o"&gt;(&lt;/span&gt;306kB&lt;span class="o"&gt;)&lt;/span&gt;
+    100% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 307kB 1.1MB/s 
+Building wheels &lt;span class="k"&gt;for&lt;/span&gt; collected packages: click, itsdangerous, MarkupSafe, mongoengine, pymongo
+  Running setup.py bdist_wheel &lt;span class="k"&gt;for&lt;/span&gt; click ... &lt;span class="k"&gt;done&lt;/span&gt;
+  Stored in directory: /root/.cache/pip/wheels/b0/6d/8c/cf5ca1146e48bc7914748bfb1dbf3a40a440b8b4f4f0d952dd
+  Running setup.py bdist_wheel &lt;span class="k"&gt;for&lt;/span&gt; itsdangerous ... &lt;span class="k"&gt;done&lt;/span&gt;
+  Stored in directory: /root/.cache/pip/wheels/fc/a8/66/24d655233c757e178d45dea2de22a04c6d92766abfb741129a
+  Running setup.py bdist_wheel &lt;span class="k"&gt;for&lt;/span&gt; MarkupSafe ... &lt;span class="k"&gt;done&lt;/span&gt;
+  Stored in directory: /root/.cache/pip/wheels/a3/fa/dc/0198eed9ad95489b8a4f45d14dd5d2aee3f8984e46862c5748
+  Running setup.py bdist_wheel &lt;span class="k"&gt;for&lt;/span&gt; mongoengine ... &lt;span class="k"&gt;done&lt;/span&gt;
+  Stored in directory: /root/.cache/pip/wheels/ae/6d/cb/4573bb9aceaed483557761df59571c6a3f108e87a80d2ba03a
+  Running setup.py bdist_wheel &lt;span class="k"&gt;for&lt;/span&gt; pymongo ... &lt;span class="k"&gt;done&lt;/span&gt;
+  Stored in directory: /root/.cache/pip/wheels/bf/f7/14/6ed22fbc276fc2d9fa7cdb2235dea8d5f154d711dfdf4bdebe
+Successfully built click itsdangerous MarkupSafe mongoengine pymongo
+Installing collected packages: click, MarkupSafe, Jinja2, Werkzeug, itsdangerous, Flask, pymongo, mongoengine
+Successfully installed Flask-0.11.1 Jinja2-2.8 MarkupSafe-0.23 Werkzeug-0.11.10 click-6.6 itsdangerous-0.24 mongoengine-0.10.6 pymongo-3.3.0
+gerard@sirius:~/docker/autobuilder/runner$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Puesto que el &lt;em&gt;script&lt;/em&gt; llamado &lt;em&gt;build.sh&lt;/em&gt; deja el fichero &lt;em&gt;.tar.gz&lt;/em&gt; en &lt;em&gt;/shared&lt;/em&gt;, y este es un volumen montado en la carpeta actual, vemos que nos aparece nuestro producto compilado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/autobuilder$ tree
+.
+├── builder
+│   ├── build.sh
+│   └── Dockerfile
+└── runner
+    ├── app.ini
+    ├── app.tar.gz
+    └── Dockerfile
+
+&lt;span class="m"&gt;2&lt;/span&gt; directories, &lt;span class="m"&gt;5&lt;/span&gt; files
+gerard@sirius:~/docker/autobuilder$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Efectivamente, este &lt;em&gt;bundle&lt;/em&gt; contiene la aplicación y el &lt;em&gt;virtualenv&lt;/em&gt; en la forma requerida, así que el siguiente paso es construir la imagen de &lt;em&gt;runtime&lt;/em&gt; con este &lt;em&gt;bundle&lt;/em&gt; incorporado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/autobuilder/runner$ docker build -t runner .
+Sending build context to Docker daemon 5.027 MB
+Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM alpine:3.4
+ ---&amp;gt; 4e38e38c8ce0
+Step &lt;span class="m"&gt;2&lt;/span&gt; : RUN apk add --no-cache uwsgi-python
+ ---&amp;gt; Running in 9233d11f6646
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/community/x86_64/APKINDEX.tar.gz
+&lt;span class="o"&gt;(&lt;/span&gt;1/14&lt;span class="o"&gt;)&lt;/span&gt; Installing mailcap &lt;span class="o"&gt;(&lt;/span&gt;2.1.44-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;2/14&lt;span class="o"&gt;)&lt;/span&gt; Installing pcre &lt;span class="o"&gt;(&lt;/span&gt;8.38-r1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;3/14&lt;span class="o"&gt;)&lt;/span&gt; Installing uwsgi &lt;span class="o"&gt;(&lt;/span&gt;2.0.13-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;4/14&lt;span class="o"&gt;)&lt;/span&gt; Installing libbz2 &lt;span class="o"&gt;(&lt;/span&gt;1.0.6-r4&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;5/14&lt;span class="o"&gt;)&lt;/span&gt; Installing expat &lt;span class="o"&gt;(&lt;/span&gt;2.1.1-r1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;6/14&lt;span class="o"&gt;)&lt;/span&gt; Installing libffi &lt;span class="o"&gt;(&lt;/span&gt;3.2.1-r2&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;7/14&lt;span class="o"&gt;)&lt;/span&gt; Installing gdbm &lt;span class="o"&gt;(&lt;/span&gt;1.11-r1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;8/14&lt;span class="o"&gt;)&lt;/span&gt; Installing ncurses-terminfo-base &lt;span class="o"&gt;(&lt;/span&gt;6.0-r7&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;9/14&lt;span class="o"&gt;)&lt;/span&gt; Installing ncurses-terminfo &lt;span class="o"&gt;(&lt;/span&gt;6.0-r7&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;10/14&lt;span class="o"&gt;)&lt;/span&gt; Installing ncurses-libs &lt;span class="o"&gt;(&lt;/span&gt;6.0-r7&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;11/14&lt;span class="o"&gt;)&lt;/span&gt; Installing readline &lt;span class="o"&gt;(&lt;/span&gt;6.3.008-r4&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;12/14&lt;span class="o"&gt;)&lt;/span&gt; Installing sqlite-libs &lt;span class="o"&gt;(&lt;/span&gt;3.13.0-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;13/14&lt;span class="o"&gt;)&lt;/span&gt; Installing python &lt;span class="o"&gt;(&lt;/span&gt;2.7.12-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;14/14&lt;span class="o"&gt;)&lt;/span&gt; Installing uwsgi-python &lt;span class="o"&gt;(&lt;/span&gt;2.0.13-r0&lt;span class="o"&gt;)&lt;/span&gt;
+Executing busybox-1.24.2-r9.trigger
+OK: &lt;span class="m"&gt;53&lt;/span&gt; MiB in &lt;span class="m"&gt;25&lt;/span&gt; packages
+ ---&amp;gt; b7c2de7c84d1
+Removing intermediate container 9233d11f6646
+Step &lt;span class="m"&gt;3&lt;/span&gt; : ADD app.tar.gz /
+ ---&amp;gt; 9b8046268ece
+Removing intermediate container 0a5f930580a2
+Step &lt;span class="m"&gt;4&lt;/span&gt; : COPY app.ini /app/
+ ---&amp;gt; 345641630c11
+Removing intermediate container 8b0fe594e89d
+Step &lt;span class="m"&gt;5&lt;/span&gt; : ENTRYPOINT uwsgi --ini /app/app.ini
+ ---&amp;gt; Running in 586c9d5f49ae
+ ---&amp;gt; a83cfc054bdc
+Removing intermediate container 586c9d5f49ae
+Successfully built a83cfc054bdc
+gerard@sirius:~/docker/autobuilder/runner$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos nuestra imagen.&lt;/p&gt;
+&lt;h2&gt;Ejecutando la imagen&lt;/h2&gt;
+&lt;p&gt;Esta parte no tiene mucho misterio; basta con ejecutar la imagen como lo haríamos normalmente. Esta aplicación en concreto lee las configuraciones desde las variables de entorno, así que se las ponemos. En este caso particular, tenemos la imagen de &lt;strong&gt;Docker Hub&lt;/strong&gt; &lt;a href="https://hub.docker.com/_/mongo/"&gt;mongo&lt;/a&gt; en la dirección &lt;em&gt;IP&lt;/em&gt; indicada.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/autobuilder/runner$ docker run -ti --rm -p 8888:8080 -e &lt;span class="s2"&gt;&amp;quot;MONGODB_URI=mongodb://172.17.0.2:27017/shop&amp;quot;&lt;/span&gt; runner
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos comprobar que todo funciona lanzando una petición &lt;em&gt;HTTP&lt;/em&gt; estándar:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ curl http://localhost:8888/
+&amp;lt;h1&amp;gt;Fruits&amp;lt;/h1&amp;gt;
+&amp;lt;ul&amp;gt;
+&amp;lt;li&amp;gt;Apple&amp;lt;/li&amp;gt;
+&amp;lt;li&amp;gt;Orange&amp;lt;/li&amp;gt;
+&amp;lt;li&amp;gt;Pear&amp;lt;/li&amp;gt;
+&amp;lt;/ul&amp;gt;
+gerard@sirius:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y ahora podemos ver que la imagen de &lt;em&gt;runtime&lt;/em&gt; queda mucho mas reducida, mas rápida de construir y sin tanto &lt;em&gt;bloat&lt;/em&gt;. Supongo que podemos reducir mas lo que ocupa la imagen seleccionando versiones de &lt;strong&gt;python&lt;/strong&gt; alternativas; el sistema operativo base son solo 4.8mb...&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/autobuilder/runner$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+runner              latest              e190cce7685a        &lt;span class="m"&gt;31&lt;/span&gt; seconds ago      60.75 MB
+builder             latest              edf62460d187        &lt;span class="m"&gt;7&lt;/span&gt; minutes ago       &lt;span class="m"&gt;164&lt;/span&gt; MB
+gerard@sirius:~/docker/autobuilder/runner$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De hecho, la &lt;em&gt;cache&lt;/em&gt; de &lt;strong&gt;Docker&lt;/strong&gt; funciona a las mil maravillas en este caso; si hubiera que reconstruir la imagen de &lt;em&gt;runtime&lt;/em&gt;, se ejecutarían solo los pasos 3, 4 y 5. Esto convierte el hecho de "hacer una &lt;em&gt;release&lt;/em&gt;" en casi inmediato.&lt;/p&gt;</summary><category term="docker"></category><category term="python"></category><category term="build"></category><category term="runtime"></category><category term="release"></category></entry><entry><title>Lanzando playbooks de Ansible desde Jenkins</title><link href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html" rel="alternate"></link><published>2016-09-26T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-09-26:2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html</id><summary type="html">&lt;p&gt;Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con &lt;strong&gt;Ansible&lt;/strong&gt; o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto &lt;strong&gt;Ansible Tower&lt;/strong&gt;, su precio es prohibitivo para muchos.&lt;/p&gt;
 &lt;p&gt;Desarrollar una solución propia no suele ser una opción viable, pero afortunadamente, hay muchas soluciones que pueden satisfacer nuestras necesidades. Una de ellas es &lt;strong&gt;Jenkins&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;En este tutorial y, por comodidad, nos vamos a ahorrar la instalación de &lt;strong&gt;Jenkins&lt;/strong&gt; usando la imagen oficial para &lt;strong&gt;Docker&lt;/strong&gt;. Sobre esta imagen vamos a añadir aquello que podamos necesitar para lanzar nuestros &lt;em&gt;playbooks&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Vamos a adoptar un modelo de trabajo en el que nuestro inventario y nuestros &lt;em&gt;playbooks&lt;/em&gt; están alojados en un servidor &lt;strong&gt;git&lt;/strong&gt;. Nuestro &lt;strong&gt;Jenkins&lt;/strong&gt; va a descargarse este repositorio como "fuente" de código y va a "construir" ejecutando los &lt;em&gt;playbooks&lt;/em&gt; del repositorio.&lt;/p&gt;
