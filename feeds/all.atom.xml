@@ -1,5 +1,272 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-10-17T08:00:00+02:00</updated><entry><title>Python como una calculadora estadística</title><link href="http://www.linuxsysadmin.tk/2016/10/python-como-una-calculadora-estadistica.html" rel="alternate"></link><published>2016-10-17T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-10-17:2016/10/python-como-una-calculadora-estadistica.html</id><summary type="html">&lt;p&gt;El otro día me encontraba en mi trabajo con otra petición muy especial: se necesitaba un &lt;em&gt;check&lt;/em&gt; para &lt;strong&gt;Nagios&lt;/strong&gt; que contara las apariciones de cierto tipo de errores en un fichero de &lt;em&gt;log&lt;/em&gt;. Ese &lt;em&gt;check&lt;/em&gt; debía saltar en función de cuán alejado estaba el valor de las últimas 100 muestras.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-10-24T08:00:00+02:00</updated><entry><title>Microservicios con docker-compose</title><link href="http://www.linuxsysadmin.tk/2016/10/microservicios-con-docker-compose.html" rel="alternate"></link><published>2016-10-24T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-10-24:2016/10/microservicios-con-docker-compose.html</id><summary type="html">&lt;p&gt;&lt;strong&gt;Docker&lt;/strong&gt; es una gran herramienta para levantar contenedores aislados, pero en el mundo real nos encontramos con despliegues mas complejos, que requieren varias imágenes trabajando en conjunto. En este caso, levantar los contenedores puede ser una auténtica pesadilla. Para automatizar estos casos podemos utilizar un &lt;em&gt;orquestador&lt;/em&gt;, como por ejemplo, &lt;strong&gt;docker-compose&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Para entender como funciona nos vamos a servir de un microservicio básico, que consiste en un &lt;em&gt;balanceador&lt;/em&gt; público y varios &lt;em&gt;frontends&lt;/em&gt;, que en este caso van a ser mínimos para no complicar innecesariamente este artículo.&lt;/p&gt;
+&lt;p&gt;Estos &lt;em&gt;frontends&lt;/em&gt; van a responder a las peticiones con su &lt;em&gt;hostname&lt;/em&gt;, solo para ver que el balanceador hace lo que debe. En un caso mas cercano a la realidad, las aplicaciones harían algo mas útil, posiblemente utilizando una base de datos.&lt;/p&gt;
+&lt;h2&gt;El balanceador&lt;/h2&gt;
+&lt;p&gt;Esta imagen se declara con un &lt;em&gt;Dockerfile&lt;/em&gt; y sus ficheros auxiliares. Aunque en este caso se ha copiado un &lt;a href="http://www.linuxsysadmin.tk/2016/09/imagenes-docker-reusables-mediante-configuraciones-dinamicas.html"&gt;artículo anterior&lt;/a&gt;, se vuelven a exponer los ficheros por comodidad.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/composetest$ cat balancer/Dockerfile 
+FROM alpine:3.4
+RUN apk add --no-cache nginx &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    ln -s /dev/stdout /var/log/nginx/access.log &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    ln -s /dev/stderr /var/log/nginx/error.log &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    mkdir /run/nginx
+COPY nginx.conf /etc/nginx/
+COPY config.sh entrypoint.sh /
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/entrypoint.sh&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/docker/composetest$ cat balancer/nginx.conf 
+worker_processes  1&lt;span class="p"&gt;;&lt;/span&gt;
+events &lt;span class="o"&gt;{&lt;/span&gt;
+    worker_connections  1024&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+http &lt;span class="o"&gt;{&lt;/span&gt;
+    include mime.types&lt;span class="p"&gt;;&lt;/span&gt;
+    default_type application/octet-stream&lt;span class="p"&gt;;&lt;/span&gt;
+    sendfile on&lt;span class="p"&gt;;&lt;/span&gt;
+    keepalive_timeout 65&lt;span class="p"&gt;;&lt;/span&gt;
+    include conf.d/*&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/docker/composetest$ cat balancer/config.sh 
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;upstream backend {&amp;quot;&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; BACKEND in &lt;span class="k"&gt;$(&lt;/span&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;BACKENDS&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sed &lt;span class="s1"&gt;&amp;#39;s/,/ /g&amp;#39;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;  server &lt;/span&gt;&lt;span class="nv"&gt;$BACKEND&lt;/span&gt;&lt;span class="s2"&gt;;&amp;quot;&lt;/span&gt;
+&lt;span class="k"&gt;done&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&amp;quot;&amp;quot;\&lt;/span&gt;
+&lt;span class="s2"&gt;}&lt;/span&gt;
+
+&lt;span class="s2"&gt;server {&lt;/span&gt;
+&lt;span class="s2"&gt;    listen 80;&lt;/span&gt;
+&lt;span class="s2"&gt;    server_name _;&lt;/span&gt;
+
+&lt;span class="s2"&gt;    location / {&lt;/span&gt;
+&lt;span class="s2"&gt;        proxy_pass http://backend;&lt;/span&gt;
+&lt;span class="s2"&gt;    }&lt;/span&gt;
+&lt;span class="s2"&gt;}&lt;/span&gt;
+&lt;span class="s2"&gt;&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;
+gerard@sirius:~/docker/composetest$ cat balancer/entrypoint.sh 
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+./config.sh &amp;gt; /etc/nginx/conf.d/balancer
+&lt;span class="nb"&gt;exec&lt;/span&gt; /usr/sbin/nginx -g &lt;span class="s2"&gt;&amp;quot;daemon off;&amp;quot;&lt;/span&gt;
+gerard@sirius:~/docker/composetest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;El frontend&lt;/h2&gt;
+&lt;p&gt;Vamos a poner una aplicación básica en &lt;strong&gt;python&lt;/strong&gt;, que se va a servir con el servidor de aplicaciones &lt;strong&gt;uWSGI&lt;/strong&gt; y solo va a informar de su &lt;em&gt;hostname&lt;/em&gt;. Ahí pego su &lt;em&gt;Dockerfile&lt;/em&gt; y los otros ficheros auxiliares.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/composetest$ cat frontend/Dockerfile 
+FROM alpine:3.4
+RUN apk add --no-cache uwsgi-python
+COPY app.py app.ini /opt/app/
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;uwsgi&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--plugin=python&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;/opt/app/app.ini&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/docker/composetest$ cat frontend/app.py 
+import os
+
+def app&lt;span class="o"&gt;(&lt;/span&gt;environ, start_response&lt;span class="o"&gt;)&lt;/span&gt;:
+    start_response&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;200 OK&amp;#39;&lt;/span&gt;, &lt;span class="o"&gt;[(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Content-Type&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;text/plain&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)])&lt;/span&gt;
+    yield os.uname&lt;span class="o"&gt;()[&lt;/span&gt;1&lt;span class="o"&gt;]&lt;/span&gt; + &lt;span class="s1"&gt;&amp;#39;\n&amp;#39;&lt;/span&gt;
+gerard@sirius:~/docker/composetest$ cat frontend/app.ini 
+&lt;span class="o"&gt;[&lt;/span&gt;uwsgi&lt;span class="o"&gt;]&lt;/span&gt;
+http-socket &lt;span class="o"&gt;=&lt;/span&gt; :8080
+&lt;span class="nv"&gt;chdir&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; /opt/app/
+&lt;span class="nv"&gt;module&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; app:app
+gerard@sirius:~/docker/composetest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Declarando y levantando el servicio con docker-compose&lt;/h2&gt;
+&lt;p&gt;Vamos a crear un fichero para gobernar las acciones de &lt;strong&gt;docker-compose&lt;/strong&gt;, siguiendo la &lt;a href="https://docs.docker.com/compose/compose-file/"&gt;documentación&lt;/a&gt;. La filosofía es muy simple; vamos a declarar como se construyen las imágenes, los puertos que publican y exponen, las variables de entorno necesarias y las dependencias entre las imágenes.&lt;/p&gt;
+&lt;p&gt;Empezamos con la imagen que no tiene dependencias, que es el &lt;em&gt;frontend&lt;/em&gt;. Simplemente indicamos la carpeta que contiene el &lt;em&gt;Dockerfile&lt;/em&gt; (desde la carpeta actual, por ejemplo), y vamos a indicar el puerto que expone, tal como indica la configuración de &lt;strong&gt;uWSGI&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;El balanceador es un poco mas complejo; hay que indicar que no se puede levantar hasta que lo hagan los &lt;em&gt;frontends&lt;/em&gt;, porque sino, el &lt;strong&gt;nginx&lt;/strong&gt; no puede resolver sus nombres y acabaría inmediatamente. Hay que indicar que necesita acceso a los &lt;em&gt;frontends&lt;/em&gt; para comunicar con su puerto 8080, y que vamos a publicar el puerto 80 en el contenedor como el 8888 en nuestra máquina física. El último paso es declarar las variables de entorno que se van a pasar al contenedor cuando este se ejecute; en este caso declaramos los servidores contra los que hay que hacer balanceo.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;IMPORTANTE&lt;/strong&gt;: Cuando ejecutemos &lt;strong&gt;docker-compose&lt;/strong&gt;, va a levantar una instancia de cada imagen, pudiendo escalar a &lt;em&gt;posteriori&lt;/em&gt;. Como &lt;strong&gt;nginx&lt;/strong&gt; no va  levantar si no conoce alguno de los &lt;em&gt;hostnames&lt;/em&gt; contra los que balancea, vamos indicar solamente el primero.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/composetest$ cat docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;
+services:
+  frontend:
+    build: frontend
+    expose:
+      - 8080
+  balancer:
+    build: balancer
+    depends_on:
+      - frontend
+    links:
+      - frontend
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;8888:80&amp;quot;&lt;/span&gt;
+    environment:
+      - &lt;span class="nv"&gt;BACKENDS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;composetest_frontend_1:8080
+gerard@sirius:~/docker/composetest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Con todo delcarado, solo nos falta levantar el servicio. Esto va a reconstruir todas las imágenes que crea necesarias, ya levantar los contenedores que no lo estén.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/composetest$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;composetest_default&amp;quot;&lt;/span&gt; with the default driver
+Building frontend
+Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM alpine:3.4
+ ---&amp;gt; 4e38e38c8ce0
+Step &lt;span class="m"&gt;2&lt;/span&gt; : RUN apk add --no-cache uwsgi-python
+ ---&amp;gt; Running in a57c36878d96
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/community/x86_64/APKINDEX.tar.gz
+&lt;span class="o"&gt;(&lt;/span&gt;1/14&lt;span class="o"&gt;)&lt;/span&gt; Installing mailcap &lt;span class="o"&gt;(&lt;/span&gt;2.1.44-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;2/14&lt;span class="o"&gt;)&lt;/span&gt; Installing pcre &lt;span class="o"&gt;(&lt;/span&gt;8.38-r1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;3/14&lt;span class="o"&gt;)&lt;/span&gt; Installing uwsgi &lt;span class="o"&gt;(&lt;/span&gt;2.0.13-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;4/14&lt;span class="o"&gt;)&lt;/span&gt; Installing libbz2 &lt;span class="o"&gt;(&lt;/span&gt;1.0.6-r4&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;5/14&lt;span class="o"&gt;)&lt;/span&gt; Installing expat &lt;span class="o"&gt;(&lt;/span&gt;2.1.1-r1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;6/14&lt;span class="o"&gt;)&lt;/span&gt; Installing libffi &lt;span class="o"&gt;(&lt;/span&gt;3.2.1-r2&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;7/14&lt;span class="o"&gt;)&lt;/span&gt; Installing gdbm &lt;span class="o"&gt;(&lt;/span&gt;1.11-r1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;8/14&lt;span class="o"&gt;)&lt;/span&gt; Installing ncurses-terminfo-base &lt;span class="o"&gt;(&lt;/span&gt;6.0-r7&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;9/14&lt;span class="o"&gt;)&lt;/span&gt; Installing ncurses-terminfo &lt;span class="o"&gt;(&lt;/span&gt;6.0-r7&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;10/14&lt;span class="o"&gt;)&lt;/span&gt; Installing ncurses-libs &lt;span class="o"&gt;(&lt;/span&gt;6.0-r7&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;11/14&lt;span class="o"&gt;)&lt;/span&gt; Installing readline &lt;span class="o"&gt;(&lt;/span&gt;6.3.008-r4&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;12/14&lt;span class="o"&gt;)&lt;/span&gt; Installing sqlite-libs &lt;span class="o"&gt;(&lt;/span&gt;3.13.0-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;13/14&lt;span class="o"&gt;)&lt;/span&gt; Installing python &lt;span class="o"&gt;(&lt;/span&gt;2.7.12-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;14/14&lt;span class="o"&gt;)&lt;/span&gt; Installing uwsgi-python &lt;span class="o"&gt;(&lt;/span&gt;2.0.13-r0&lt;span class="o"&gt;)&lt;/span&gt;
+Executing busybox-1.24.2-r9.trigger
+OK: &lt;span class="m"&gt;53&lt;/span&gt; MiB in &lt;span class="m"&gt;25&lt;/span&gt; packages
+ ---&amp;gt; 9749e8e317a7
+Removing intermediate container a57c36878d96
+Step &lt;span class="m"&gt;3&lt;/span&gt; : COPY app.py app.ini /opt/app/
+ ---&amp;gt; 98c310db1c73
+Removing intermediate container 141de70e5976
+Step &lt;span class="m"&gt;4&lt;/span&gt; : ENTRYPOINT uwsgi --plugin&lt;span class="o"&gt;=&lt;/span&gt;python /opt/app/app.ini
+ ---&amp;gt; Running in 7e5243bddee1
+ ---&amp;gt; 27da8b15e8b4
+Removing intermediate container 7e5243bddee1
+Successfully built 27da8b15e8b4
+Creating composetest_frontend_1
+Building balancer
+Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM alpine:3.4
+ ---&amp;gt; 4e38e38c8ce0
+Step &lt;span class="m"&gt;2&lt;/span&gt; : RUN apk add --no-cache nginx &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     ln -s /dev/stdout /var/log/nginx/access.log &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     ln -s /dev/stderr /var/log/nginx/error.log &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     mkdir /run/nginx
+ ---&amp;gt; Running in 5e7a6e24b1ea
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/community/x86_64/APKINDEX.tar.gz
+&lt;span class="o"&gt;(&lt;/span&gt;1/3&lt;span class="o"&gt;)&lt;/span&gt; Installing nginx-common &lt;span class="o"&gt;(&lt;/span&gt;1.10.1-r1&lt;span class="o"&gt;)&lt;/span&gt;
+Executing nginx-common-1.10.1-r1.pre-install
+&lt;span class="o"&gt;(&lt;/span&gt;2/3&lt;span class="o"&gt;)&lt;/span&gt; Installing pcre &lt;span class="o"&gt;(&lt;/span&gt;8.38-r1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;3/3&lt;span class="o"&gt;)&lt;/span&gt; Installing nginx &lt;span class="o"&gt;(&lt;/span&gt;1.10.1-r1&lt;span class="o"&gt;)&lt;/span&gt;
+Executing busybox-1.24.2-r9.trigger
+OK: &lt;span class="m"&gt;6&lt;/span&gt; MiB in &lt;span class="m"&gt;14&lt;/span&gt; packages
+ ---&amp;gt; b413d5ba8f3b
+Removing intermediate container 5e7a6e24b1ea
+Step &lt;span class="m"&gt;3&lt;/span&gt; : COPY nginx.conf /etc/nginx/
+ ---&amp;gt; e7db8e5794db
+Removing intermediate container e33eef86f883
+Step &lt;span class="m"&gt;4&lt;/span&gt; : COPY config.sh entrypoint.sh /
+ ---&amp;gt; e6fda1c75d22
+Removing intermediate container 6cd5103894a9
+Step &lt;span class="m"&gt;5&lt;/span&gt; : ENTRYPOINT /entrypoint.sh
+ ---&amp;gt; Running in cd26bbeaa306
+ ---&amp;gt; ff47baa82723
+Removing intermediate container cd26bbeaa306
+Successfully built ff47baa82723
+Creating composetest_balancer_1
+gerard@sirius:~/docker/composetest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver que ahora tenemos un solo contenedor por imagen declarada:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/composetest$ docker-compose ps
+         Name                       Command               State          Ports         
+--------------------------------------------------------------------------------------
+composetest_balancer_1   /entrypoint.sh                   Up      0.0.0.0:8888-&amp;gt;80/tcp 
+composetest_frontend_1   uwsgi --plugin&lt;span class="o"&gt;=&lt;/span&gt;python /opt ...   Up      8080/tcp             
+gerard@sirius:~/docker/composetest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y si probamos nuestro servicio, vemos que funciona, aunque solo balancea contra un &lt;em&gt;frontend&lt;/em&gt;, que es lo que indicamos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/composetest$ curl http://localhost:8888/
+9ae8f4367e2b
+gerard@sirius:~/docker/composetest$ curl http://localhost:8888/
+9ae8f4367e2b
+gerard@sirius:~/docker/composetest$ curl http://localhost:8888/
+9ae8f4367e2b
+gerard@sirius:~/docker/composetest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Escalando nuestro servicio&lt;/h2&gt;
+&lt;p&gt;Escalar no es fácil; &lt;strong&gt;docker-compose&lt;/strong&gt; solo nos permite modificar el número de contenedores de cada tipo que están corriendo en un momento dado. Para que estos nuevos contenedores reciban peticiones, hay que modificar la configuración del balanceador.&lt;/p&gt;
+&lt;p&gt;Empezaremos levantando otras 3 instancias de nuestro &lt;em&gt;frontend&lt;/em&gt;; indicando que queremos 4, &lt;strong&gt;docker-compose&lt;/strong&gt; va a levantar las 3 que faltan.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/composetest$ docker-compose scale &lt;span class="nv"&gt;frontend&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;4
+Creating and starting &lt;span class="m"&gt;2&lt;/span&gt; ... &lt;span class="k"&gt;done&lt;/span&gt;
+Creating and starting &lt;span class="m"&gt;3&lt;/span&gt; ... &lt;span class="k"&gt;done&lt;/span&gt;
+Creating and starting &lt;span class="m"&gt;4&lt;/span&gt; ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@sirius:~/docker/composetest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para la parte del balanceador, no nos queda mas remedio que reconstruirlo. Por suerte, nuestra imagen se configura con variables de entorno, de forma que &lt;strong&gt;docker-compose&lt;/strong&gt; solo va a levantar un contenedor nuevo, sin el proceso de reconstruir la imagen, que es innecesario.&lt;/p&gt;
+&lt;p&gt;Vamos a modificar el &lt;em&gt;docker-compose.yml&lt;/em&gt;, para cambiar la variable de entorno &lt;em&gt;BACKENDS&lt;/em&gt;. Como ya tenemos 4 instancias funcionando, no hay problema por parte del &lt;strong&gt;nginx&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/composetest$ cat docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;
+services:
+  frontend:
+    build: frontend
+    expose:
+      - 8080
+  balancer:
+    build: balancer
+    depends_on:
+      - frontend
+    links:
+      - frontend
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;8888:80&amp;quot;&lt;/span&gt;
+    environment:
+      - &lt;span class="nv"&gt;BACKENDS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;composetest_frontend_1:8080,composetest_frontend_2:8080,composetest_frontend_3:8080,composetest_frontend_4:8080
+gerard@sirius:~/docker/composetest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Levantamos el servicio de nuevo, y dejamos que &lt;strong&gt;docker-compose&lt;/strong&gt; aplique su buen criterio. Vemos que no va a hacer nada con los &lt;em&gt;frontends&lt;/em&gt; porque no han cambiado, y va a recrear el balanceador, con un tiempo mínimo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/composetest$ docker-compose up -d
+composetest_frontend_4 is up-to-date
+composetest_frontend_2 is up-to-date
+composetest_frontend_3 is up-to-date
+composetest_frontend_1 is up-to-date
+Recreating composetest_balancer_1
+gerard@sirius:~/docker/composetest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vemos que efectivamente hay nuestros 5 contenedores en marcha:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/composetest$ docker-compose ps
+         Name                       Command               State          Ports         
+--------------------------------------------------------------------------------------
+composetest_balancer_1   /entrypoint.sh                   Up      0.0.0.0:8888-&amp;gt;80/tcp 
+composetest_frontend_1   uwsgi --plugin&lt;span class="o"&gt;=&lt;/span&gt;python /opt ...   Up      8080/tcp             
+composetest_frontend_2   uwsgi --plugin&lt;span class="o"&gt;=&lt;/span&gt;python /opt ...   Up      8080/tcp             
+composetest_frontend_3   uwsgi --plugin&lt;span class="o"&gt;=&lt;/span&gt;python /opt ...   Up      8080/tcp             
+composetest_frontend_4   uwsgi --plugin&lt;span class="o"&gt;=&lt;/span&gt;python /opt ...   Up      8080/tcp             
+gerard@sirius:~/docker/composetest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y solo nos queda admirar como funcionan las peticiones balanceadas, siguiendo el algoritmo &lt;em&gt;round robin&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/composetest$ curl http://localhost:8888/
+9ae8f4367e2b
+gerard@sirius:~/docker/composetest$ curl http://localhost:8888/
+7490edd50676
+gerard@sirius:~/docker/composetest$ curl http://localhost:8888/
+63e9d7476267
+gerard@sirius:~/docker/composetest$ curl http://localhost:8888/
+4b6b11513400
+gerard@sirius:~/docker/composetest$ curl http://localhost:8888/
+9ae8f4367e2b
+gerard@sirius:~/docker/composetest$ curl http://localhost:8888/
+7490edd50676
+gerard@sirius:~/docker/composetest$ curl http://localhost:8888/
+63e9d7476267
+gerard@sirius:~/docker/composetest$ curl http://localhost:8888/
+4b6b11513400
+gerard@sirius:~/docker/composetest$ 
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="docker"></category><category term="docker-compose"></category><category term="microservicios"></category></entry><entry><title>Python como una calculadora estadística</title><link href="http://www.linuxsysadmin.tk/2016/10/python-como-una-calculadora-estadistica.html" rel="alternate"></link><published>2016-10-17T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-10-17:2016/10/python-como-una-calculadora-estadistica.html</id><summary type="html">&lt;p&gt;El otro día me encontraba en mi trabajo con otra petición muy especial: se necesitaba un &lt;em&gt;check&lt;/em&gt; para &lt;strong&gt;Nagios&lt;/strong&gt; que contara las apariciones de cierto tipo de errores en un fichero de &lt;em&gt;log&lt;/em&gt;. Ese &lt;em&gt;check&lt;/em&gt; debía saltar en función de cuán alejado estaba el valor de las últimas 100 muestras.&lt;/p&gt;
 &lt;p&gt;Guardar una muestra de valores en un fichero no supone ningún problema en &lt;strong&gt;Linux&lt;/strong&gt;. Sin embargo, hacer cálculos estadísticos en &lt;strong&gt;bash&lt;/strong&gt; es un suicidio. Eso nos obligaba a utilizar un lenguaje mas elaborado, pero existente en todas las máquinas: &lt;strong&gt;python&lt;/strong&gt;. Sin embargo, el módulo &lt;strong&gt;numpy&lt;/strong&gt; no estaba en todas las máquinas interesadas; instalarlo no era una opción. Así que me tocó programarlo a mí.&lt;/p&gt;
 &lt;p&gt;Desempolvando mis apuntes de estadística en forma de &lt;a href="https://en.wikipedia.org/wiki/Standard_deviation"&gt;Wikipedia&lt;/a&gt;, tenemos lo siguiente:&lt;/p&gt;
 &lt;blockquote&gt;
