@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2016-10-31T09:20:13-00:00</lastmod>
+<lastmod>2016-11-07T08:43:42-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2016-10-31T09:20:13-00:00</lastmod>
+<lastmod>2016-11-07T08:43:42-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2016-10-31T09:20:13-00:00</lastmod>
+<lastmod>2016-11-07T08:43:42-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2016-10-31T09:20:13-00:00</lastmod>
+<lastmod>2016-11-07T08:43:42-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2016-10-31T09:20:13-00:00</lastmod>
+<lastmod>2016-11-07T08:43:42-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2016/11/visualizando-graficamente-el-estado-de-nuestro-servidor-con-telegraf-influxdb-y-chronograf.html</loc>
+<lastmod>2016-11-07T08:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -446,7 +453,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/operaciones.html</loc>
-<lastmod>2016-10-31T08:00:00-00:15</lastmod>
+<lastmod>2016-11-07T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -480,8 +487,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/wsgi.html</loc>
-<lastmod>2016-03-14T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/telegraf.html</loc>
+<lastmod>2016-11-07T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -510,6 +517,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/telegram.html</loc>
 <lastmod>2016-08-08T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/wsgi.html</loc>
+<lastmod>2016-03-14T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -573,6 +587,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/dockerfile.html</loc>
 <lastmod>2016-06-06T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/point-in-time.html</loc>
+<lastmod>2016-02-15T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -683,8 +704,15 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/docker-compose.html</loc>
-<lastmod>2016-10-24T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/chronograf.html</loc>
+<lastmod>2016-11-07T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/kernel.html</loc>
+<lastmod>2015-11-02T14:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -802,6 +830,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/influxdb.html</loc>
+<lastmod>2016-11-07T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/rssh.html</loc>
 <lastmod>2016-01-04T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -895,13 +930,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/redhat.html</loc>
 <lastmod>2016-04-11T08:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>http://www.linuxsysadmin.tk/tag/kernel.html</loc>
-<lastmod>2015-11-02T14:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1278,8 +1306,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/point-in-time.html</loc>
-<lastmod>2016-02-15T08:30:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/docker-compose.html</loc>
+<lastmod>2016-10-24T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1293,14 +1321,14 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/docker.html</loc>
-<lastmod>2016-10-24T08:00:00-00:15</lastmod>
+<lastmod>2016-11-07T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2016-10-31T08:00:00-00:15</lastmod>
+<lastmod>2016-11-07T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
