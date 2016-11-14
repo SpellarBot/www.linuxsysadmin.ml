@@ -1,5 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-11-07T08:00:00+01:00</updated><entry><title>Visualizando gráficamente el estado de nuestro servidor con Telegraf, InfluxDB y Chronograf</title><link href="http://www.linuxsysadmin.tk/2016/11/visualizando-graficamente-el-estado-de-nuestro-servidor-con-telegraf-influxdb-y-chronograf.html" rel="alternate"></link><published>2016-11-07T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-11-07:2016/11/visualizando-graficamente-el-estado-de-nuestro-servidor-con-telegraf-influxdb-y-chronograf.html</id><summary type="html">&lt;p&gt;No hay nada mas visualmente atractivo que ver nuestros servidores en tiempo real mediante gráficos temporales, y existen algunas buenas herramientas ya hechas. Necesitaremos un agente que recolecte los datos del servidor y los envíe a una base de datos temporales, para que se pueden dibujar en una página web.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-11-14T08:00:00+01:00</updated><entry><title>Levantando túneles SSH con systemd</title><link href="http://www.linuxsysadmin.tk/2016/11/levantando-tuneles-ssh-con-systemd.html" rel="alternate"></link><published>2016-11-14T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-11-14:2016/11/levantando-tuneles-ssh-con-systemd.html</id><summary type="html">&lt;p&gt;Ya vimos en un &lt;a href="http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html"&gt;artículo anterior&lt;/a&gt; como levantar túneles &lt;strong&gt;SSH&lt;/strong&gt; para llegar a través del protocolo &lt;strong&gt;SSH&lt;/strong&gt;, a destinos que no están alcanzables normalmente. Esto está muy bien para aplicaciones puntuales, pero si tenemos que usar esos túneles una temporada, y deseamos que se mantengan levantados, ya es mas difícil.&lt;/p&gt;
+&lt;p&gt;Hay miles de gestores de procesos que pueden hacer este trabajo por nosotros, como &lt;strong&gt;runit&lt;/strong&gt;, &lt;strong&gt;monit&lt;/strong&gt;, &lt;strong&gt;supervisor&lt;/strong&gt; entre otros. Personalmente no soy fan de instalar nada que proporcione una funcionalidad duplicada, así que... ¿por que no &lt;strong&gt;systemd&lt;/strong&gt;?&lt;/p&gt;
+&lt;p&gt;Para este tutorial vamos a suponer que tenemos acceso a un servidor intermedio con &lt;strong&gt;SSH&lt;/strong&gt;, que ve a un servidor de bases de datos, y a través del que vamos a hacer el salto. Respectivamente, los vamos a llamar &lt;em&gt;jump&lt;/em&gt; y &lt;em&gt;database&lt;/em&gt;, en una explosión de creatividad.&lt;/p&gt;
+&lt;h2&gt;El túnel básico&lt;/h2&gt;
+&lt;p&gt;Lo primero es darnos cuenta que no llegamos a la base de datos; no importa que intentemos conectar a &lt;em&gt;localhost&lt;/em&gt; o a &lt;em&gt;database&lt;/em&gt; directamente. No llegamos y punto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ mongo
+MongoDB shell version: 3.2.10
+connecting to: &lt;span class="nb"&gt;test&lt;/span&gt;
+2016-10-17T15:39:25.766+0200 W NETWORK  &lt;span class="o"&gt;[&lt;/span&gt;thread1&lt;span class="o"&gt;]&lt;/span&gt; Failed to connect to 127.0.0.1:27017, reason: errno:111 Connection refused
+2016-10-17T15:39:25.766+0200 E QUERY    &lt;span class="o"&gt;[&lt;/span&gt;thread1&lt;span class="o"&gt;]&lt;/span&gt; Error: couldn&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;t connect to server 127.0.0.1:27017, connection attempt failed :
+connect@src/mongo/shell/mongo.js:229:14
+@&lt;span class="o"&gt;(&lt;/span&gt;connect&lt;span class="o"&gt;)&lt;/span&gt;:1:6
+
+exception: connect failed
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a levantar un túnel &lt;strong&gt;SSH&lt;/strong&gt; que muestre en el puerto local 27017 el destino &lt;em&gt;database&lt;/em&gt;, al puerto 27017, tal como lo ve el servidor de salto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ ssh -L 27017:database:27017 jump@jump -N
+Warning: Permanently added &lt;span class="s1"&gt;&amp;#39;jump&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;ECDSA&lt;span class="o"&gt;)&lt;/span&gt; to the list of known hosts.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es especialmente importante que pongamos autenticación por claves, de forma que no nos pida la contraseña para levantar el túnel. Ahora no es un gran problema, pero si pretendemos que lo haga &lt;strong&gt;systemd&lt;/strong&gt;, no podemos instruirle a poner una contraseña dada.&lt;/p&gt;
+&lt;p&gt;Ahora podemos comprobar que si llegamos a la base de datos, en nuestro puerto local:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ mongo
+MongoDB shell version: 3.2.10
+connecting to: &lt;span class="nb"&gt;test&lt;/span&gt;
+Server has startup warnings: 
+2016-10-17T13:29:27.640+0000 I CONTROL  &lt;span class="o"&gt;[&lt;/span&gt;initandlisten&lt;span class="o"&gt;]&lt;/span&gt; 
+2016-10-17T13:29:27.640+0000 I CONTROL  &lt;span class="o"&gt;[&lt;/span&gt;initandlisten&lt;span class="o"&gt;]&lt;/span&gt; ** WARNING: /sys/kernel/mm/transparent_hugepage/defrag is &lt;span class="s1"&gt;&amp;#39;always&amp;#39;&lt;/span&gt;.
+2016-10-17T13:29:27.640+0000 I CONTROL  &lt;span class="o"&gt;[&lt;/span&gt;initandlisten&lt;span class="o"&gt;]&lt;/span&gt; **        We suggest setting it to &lt;span class="s1"&gt;&amp;#39;never&amp;#39;&lt;/span&gt;
+2016-10-17T13:29:27.640+0000 I CONTROL  &lt;span class="o"&gt;[&lt;/span&gt;initandlisten&lt;span class="o"&gt;]&lt;/span&gt; 
+&amp;gt; db.serverBuildInfo&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;3.2.10&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;gitVersion&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;79d9b3ab5ce20f51c272b4411202710a082d0317&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;modules&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;allocator&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;tcmalloc&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;javascriptEngine&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;mozjs&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;sysInfo&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;deprecated&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;versionArray&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;[&lt;/span&gt;
+        3,
+        2,
+        10,
+        0
+    &lt;span class="o"&gt;]&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;openssl&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;running&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;OpenSSL 1.0.1t  3 May 2016&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;compiled&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;OpenSSL 1.0.1t  3 May 2016&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;buildEnvironment&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;distmod&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;debian81&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;distarch&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;x86_64&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;cc&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;/opt/mongodbtoolchain/bin/gcc: gcc (GCC) 4.8.2&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;ccflags&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;-fno-omit-frame-pointer -fPIC -fno-strict-aliasing -ggdb -pthread -Wall -Wsign-compare -Wno-unknown-pragmas -Winvalid-pch -Werror -O2 -Wno-unused-local-typedefs -Wno-unused-function -Wno-deprecated-declarations -Wno-unused-but-set-variable -Wno-missing-braces -fno-builtin-memcmp&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;cxx&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;/opt/mongodbtoolchain/bin/g++: g++ (GCC) 4.8.2&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;cxxflags&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;-Wnon-virtual-dtor -Woverloaded-virtual -Wno-maybe-uninitialized -std=c++11&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;linkflags&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;-fPIC -pthread -Wl,-z,now -rdynamic -fuse-ld=gold -Wl,-z,noexecstack -Wl,--warn-execstack&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;target_arch&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;x86_64&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;target_os&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;linux&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;bits&amp;quot;&lt;/span&gt; : 64,
+    &lt;span class="s2"&gt;&amp;quot;debug&amp;quot;&lt;/span&gt; : false,
+    &lt;span class="s2"&gt;&amp;quot;maxBsonObjectSize&amp;quot;&lt;/span&gt; : 16777216,
+    &lt;span class="s2"&gt;&amp;quot;storageEngines&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;[&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;devnull&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;ephemeralForTest&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;mmapv1&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;wiredTiger&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;]&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : 1
+&lt;span class="o"&gt;}&lt;/span&gt;
+&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Añadiendo systemd a la ecuación&lt;/h2&gt;
+&lt;p&gt;Vamos a escribir nuestro propio &lt;em&gt;service&lt;/em&gt; de &lt;strong&gt;systemd&lt;/strong&gt;. Para ello, vamos a seguir &lt;a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html"&gt;otro artículo&lt;/a&gt;. Solo por la posibilidad de tener que levantar varios túneles, vale la pena usar las plantillas. Como solo podemos pasar un parámetro al &lt;em&gt;service&lt;/em&gt;, vamos a crear un &lt;em&gt;script&lt;/em&gt; que nos permita elegir los parámetros del túnel en función de una palabra clave.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ cat /home/gerard/bin/tunnel_to.sh 
+&lt;span class="c1"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$1&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; in
+  database&lt;span class="o"&gt;)&lt;/span&gt; ssh -L 27017:database:27017 jump@localhost -N &lt;span class="p"&gt;;;&lt;/span&gt;
+&lt;span class="k"&gt;esac&lt;/span&gt;
+gerard@aldebaran:~/docker/systemd-tunnel$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y le damos permisos de ejecución.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/systemd-tunnel$ chmod +x /home/gerard/bin/tunnel_to.sh 
+gerard@aldebaran:~/docker/systemd-tunnel$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De momento tenemos el mismo túnel, pero simplificado a un &lt;em&gt;script&lt;/em&gt; con un solo parámetro:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ tunnel_to.sh database
+Warning: Permanently added &lt;span class="s1"&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;ECDSA&lt;span class="o"&gt;)&lt;/span&gt; to the list of known hosts.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a trabajar en las carpetas de sistema de &lt;strong&gt;systemd&lt;/strong&gt;, en donde se supone que, por convención, debemos dejar nuestras &lt;em&gt;units&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@aldebaran:~# &lt;span class="nb"&gt;cd&lt;/span&gt; /etc/systemd/system/
+root@aldebaran:/etc/systemd/system# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Siguiendo el citado artículo, creamos la plantilla base que va a invocar el &lt;em&gt;script&lt;/em&gt; de los túneles, con el parámetro que le demos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@aldebaran:/etc/systemd/system# cat tunnel&lt;span class="se"&gt;\@&lt;/span&gt;.service 
+&lt;span class="o"&gt;[&lt;/span&gt;Unit&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;SSH Tunnel
+
+&lt;span class="o"&gt;[&lt;/span&gt;Service&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;User&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;gerard
+&lt;span class="nv"&gt;ExecStart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/home/gerard/bin/tunnel_to.sh %i
+&lt;span class="nv"&gt;Restart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;always
+
+&lt;span class="o"&gt;[&lt;/span&gt;Install&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;WantedBy&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;multi-user.target
+root@aldebaran:/etc/systemd/system# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Creamos un &lt;em&gt;soft link&lt;/em&gt; para cada uno de los túneles que queramos levantar:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@aldebaran:/etc/systemd/system# ls -lh tunnel*
+lrwxrwxrwx &lt;span class="m"&gt;1&lt;/span&gt; root root  &lt;span class="m"&gt;15&lt;/span&gt; oct &lt;span class="m"&gt;17&lt;/span&gt; 15:43 tunnel@database.service -&amp;gt; tunnel@.service
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; root root &lt;span class="m"&gt;134&lt;/span&gt; oct &lt;span class="m"&gt;17&lt;/span&gt; 15:43 tunnel@.service
+root@aldebaran:/etc/systemd/system# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De esta forma, el servicio &lt;em&gt;tunnel@database&lt;/em&gt; va a levantar el &lt;em&gt;script&lt;/em&gt; con el parámetro &lt;em&gt;database&lt;/em&gt;, que a su vez, va a levantar el túnel como le hayamos indicado. Activamos el servicio para futuros reinicios de la máquina, y lo levantamos para esta sesión.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@aldebaran:/etc/systemd/system# systemctl &lt;span class="nb"&gt;enable&lt;/span&gt; tunnel@database
+Created symlink from /etc/systemd/system/multi-user.target.wants/tunnel@database.service to /etc/systemd/system/tunnel@.service.
+root@aldebaran:/etc/systemd/system# systemctl start tunnel@database
+root@aldebaran:/etc/systemd/system# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y ya podemos comprobar como el túnel está levantado, sea mediante la inspección de los procesos en &lt;em&gt;runtime&lt;/em&gt; o directamente accediendo a la base de datos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ mongo
+MongoDB shell version: 3.2.10
+connecting to: &lt;span class="nb"&gt;test&lt;/span&gt;
+Server has startup warnings: 
+2016-10-17T13:29:27.640+0000 I CONTROL  &lt;span class="o"&gt;[&lt;/span&gt;initandlisten&lt;span class="o"&gt;]&lt;/span&gt; 
+2016-10-17T13:29:27.640+0000 I CONTROL  &lt;span class="o"&gt;[&lt;/span&gt;initandlisten&lt;span class="o"&gt;]&lt;/span&gt; ** WARNING: /sys/kernel/mm/transparent_hugepage/defrag is &lt;span class="s1"&gt;&amp;#39;always&amp;#39;&lt;/span&gt;.
+2016-10-17T13:29:27.640+0000 I CONTROL  &lt;span class="o"&gt;[&lt;/span&gt;initandlisten&lt;span class="o"&gt;]&lt;/span&gt; **        We suggest setting it to &lt;span class="s1"&gt;&amp;#39;never&amp;#39;&lt;/span&gt;
+2016-10-17T13:29:27.640+0000 I CONTROL  &lt;span class="o"&gt;[&lt;/span&gt;initandlisten&lt;span class="o"&gt;]&lt;/span&gt; 
+&amp;gt; &lt;span class="nb"&gt;exit&lt;/span&gt;
+bye
+gerard@aldebaran:~$ ps faux &lt;span class="p"&gt;|&lt;/span&gt; grep database &lt;span class="p"&gt;|&lt;/span&gt; grep -v grep
+gerard   &lt;span class="m"&gt;22679&lt;/span&gt;  0.0  0.0  &lt;span class="m"&gt;13228&lt;/span&gt;  &lt;span class="m"&gt;2632&lt;/span&gt; ?        Ss   15:46   0:00 /bin/bash /home/gerard/bin/tunnel_to.sh database
+gerard   &lt;span class="m"&gt;22680&lt;/span&gt;  0.0  0.0  &lt;span class="m"&gt;44428&lt;/span&gt;  &lt;span class="m"&gt;5320&lt;/span&gt; ?        S    15:46   0:00  &lt;span class="se"&gt;\_&lt;/span&gt; ssh -L 27017:database:27017 jump@localhost -N
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos queda comprobar que si matamos el proceso, simulando que se cae solo, &lt;strong&gt;systemd&lt;/strong&gt; se encarga de levantarlo de nuevo, en honor a la directiva &lt;em&gt;reload=always&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ &lt;span class="nb"&gt;kill&lt;/span&gt; 22679
+gerard@aldebaran:~$ ps faux &lt;span class="p"&gt;|&lt;/span&gt; grep database &lt;span class="p"&gt;|&lt;/span&gt; grep -v grep
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y antes de que podamos siquiera repetir el comando &lt;em&gt;ps&lt;/em&gt;, ya lo tenemos de nuevo en marcha:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ ps faux &lt;span class="p"&gt;|&lt;/span&gt; grep database &lt;span class="p"&gt;|&lt;/span&gt; grep -v grep
+gerard   &lt;span class="m"&gt;22854&lt;/span&gt;  0.0  0.0  &lt;span class="m"&gt;13228&lt;/span&gt;  &lt;span class="m"&gt;2632&lt;/span&gt; ?        Ss   15:49   0:00 /bin/bash /home/gerard/bin/tunnel_to.sh database
+gerard   &lt;span class="m"&gt;22855&lt;/span&gt;  0.0  0.0  &lt;span class="m"&gt;44428&lt;/span&gt;  &lt;span class="m"&gt;5200&lt;/span&gt; ?        S    15:49   0:00  &lt;span class="se"&gt;\_&lt;/span&gt; ssh -L 27017:database:27017 jump@localhost -N
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: A pesar de que nuestro túnel pueda estar vivo, algunos servidores están configurados para cerrar conexiones que llevan mucho tiempo de inactividad. Podemos generar tráfico de &lt;em&gt;keepalive&lt;/em&gt; para que esto no suceda, con una simple directiva &lt;strong&gt;SSH&lt;/strong&gt; cliente. Por ejemplo, la podemos poner en la configuración local del usuario que levante los túneles.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ cat .ssh/config 
+...
+Host *
+    ServerAliveInterval 60
+...
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="ssh"></category><category term="túnel"></category><category term="systemd"></category></entry><entry><title>Visualizando gráficamente el estado de nuestro servidor con Telegraf, InfluxDB y Chronograf</title><link href="http://www.linuxsysadmin.tk/2016/11/visualizando-graficamente-el-estado-de-nuestro-servidor-con-telegraf-influxdb-y-chronograf.html" rel="alternate"></link><published>2016-11-07T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-11-07:2016/11/visualizando-graficamente-el-estado-de-nuestro-servidor-con-telegraf-influxdb-y-chronograf.html</id><summary type="html">&lt;p&gt;No hay nada mas visualmente atractivo que ver nuestros servidores en tiempo real mediante gráficos temporales, y existen algunas buenas herramientas ya hechas. Necesitaremos un agente que recolecte los datos del servidor y los envíe a una base de datos temporales, para que se pueden dibujar en una página web.&lt;/p&gt;
 &lt;p&gt;Estamos hablando del combo &lt;strong&gt;Telegraf&lt;/strong&gt;, &lt;strong&gt;InfluxDB&lt;/strong&gt; y &lt;strong&gt;Chronograf&lt;/strong&gt;, que para ponernos la vida mas fácil, se pueden levantar como contenedores &lt;strong&gt;Docker&lt;/strong&gt;.&lt;/p&gt;
 &lt;h2&gt;Servicios necesarios&lt;/h2&gt;
 &lt;h3&gt;La base de datos temporal&lt;/h3&gt;
