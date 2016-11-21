@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2016-11-14T14:17:23-00:00</lastmod>
+<lastmod>2016-11-21T08:11:02-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2016-11-14T14:17:23-00:00</lastmod>
+<lastmod>2016-11-21T08:11:02-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2016-11-14T14:17:23-00:00</lastmod>
+<lastmod>2016-11-21T08:11:02-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2016-11-14T14:17:23-00:00</lastmod>
+<lastmod>2016-11-21T08:11:02-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2016-11-14T14:17:23-00:00</lastmod>
+<lastmod>2016-11-21T08:11:02-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2016/11/ghost-un-motor-para-hacer-blogs.html</loc>
+<lastmod>2016-11-21T08:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -453,7 +460,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/miscelanea.html</loc>
-<lastmod>2016-07-25T08:00:00-00:15</lastmod>
+<lastmod>2016-11-21T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -578,6 +585,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/blog.html</loc>
+<lastmod>2016-11-21T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/archlinux.html</loc>
 <lastmod>2016-07-25T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -587,6 +601,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/proxy-http.html</loc>
 <lastmod>2016-03-21T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/certificado.html</loc>
+<lastmod>2016-02-22T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -643,13 +664,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/ssh.html</loc>
 <lastmod>2016-11-14T08:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>http://www.linuxsysadmin.tk/tag/dhcp.html</loc>
-<lastmod>2016-02-01T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -802,8 +816,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/12factor.html</loc>
-<lastmod>2016-09-12T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/dhcp.html</loc>
+<lastmod>2016-02-01T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -879,8 +893,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/root.html</loc>
-<lastmod>2016-06-13T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/12factor.html</loc>
+<lastmod>2016-09-12T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1138,8 +1152,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/certificado.html</loc>
-<lastmod>2016-02-22T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/root.html</loc>
+<lastmod>2016-06-13T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1285,6 +1299,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/ghost.html</loc>
+<lastmod>2016-11-21T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/ssl.html</loc>
 <lastmod>2016-03-21T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1335,7 +1356,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2016-11-14T08:00:00-00:15</lastmod>
+<lastmod>2016-11-21T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

@@ -1,5 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-11-14T08:00:00+01:00</updated><entry><title>Levantando túneles SSH con systemd</title><link href="http://www.linuxsysadmin.tk/2016/11/levantando-tuneles-ssh-con-systemd.html" rel="alternate"></link><published>2016-11-14T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-11-14:2016/11/levantando-tuneles-ssh-con-systemd.html</id><summary type="html">&lt;p&gt;Ya vimos en un &lt;a href="http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html"&gt;artículo anterior&lt;/a&gt; como levantar túneles &lt;strong&gt;SSH&lt;/strong&gt; para llegar a través del protocolo &lt;strong&gt;SSH&lt;/strong&gt;, a destinos que no están alcanzables normalmente. Esto está muy bien para aplicaciones puntuales, pero si tenemos que usar esos túneles una temporada, y deseamos que se mantengan levantados, ya es mas difícil.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-11-21T08:00:00+01:00</updated><entry><title>Ghost: Un motor para hacer blogs</title><link href="http://www.linuxsysadmin.tk/2016/11/ghost-un-motor-para-hacer-blogs.html" rel="alternate"></link><published>2016-11-21T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-11-21:2016/11/ghost-un-motor-para-hacer-blogs.html</id><summary type="html">&lt;p&gt;Hace tiempo que me recorre la idea de crear un motor genérico de &lt;em&gt;blogs&lt;/em&gt;. Son varias las veces que he empezado alguno aprovechando los &lt;em&gt;frameworks&lt;/em&gt;, especialmente de &lt;strong&gt;python&lt;/strong&gt;. Todas ellas han acabado en la papelera por falta de ganas. Finalmente me di por vencido y decidí utilizar algo ya hecho.&lt;/p&gt;
+&lt;p&gt;Prueba de mi pereza es este &lt;em&gt;blog&lt;/em&gt;, que está hecho con &lt;strong&gt;Pelican&lt;/strong&gt;, que es un generador de contenido estático, juntando un tema y un contenido. Como control de versiones usa &lt;strong&gt;git&lt;/strong&gt; y está alojado en &lt;strong&gt;Github Pages&lt;/strong&gt;. Para publicar hace falta crear el contenido, invocar algunos comandos para generar el contenido &lt;strong&gt;HTML&lt;/strong&gt; y levantar un servidor local para ver los cambios. Todo muy &lt;em&gt;techie&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;He seguido buscando para encontrar una solución con base de datos, que se rellene fácilmente mediante un formulario y que pueda utilizar cualquiera. Basta con mirar un poco por internet para ver que las soluciones con miles: desde los omnipresentes &lt;strong&gt;Wordpress&lt;/strong&gt; hasta los todopoderosos &lt;strong&gt;Drupal&lt;/strong&gt; y &lt;strong&gt;Joomla&lt;/strong&gt;, pasando por cosas mas esotéricas.&lt;/p&gt;
+&lt;p&gt;La solución la encontré hace un par de meses; era bonita, simple y tenía material de soporte suficiente, sin ser agobiante. Se trata de &lt;a href="https://ghost.org/"&gt;Ghost&lt;/a&gt;, encontrando su repositorio en &lt;a href="https://github.com/TryGhost/Ghost"&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;La instalación es también muy simple:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Descargar la última versión de &lt;strong&gt;Ghost&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Descomprimir el fichero comprimido en la carpeta en donde lo queramos.&lt;/li&gt;
+&lt;li&gt;Instalar las dependencias con &lt;em&gt;npm install --production&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Levantar el servicio con &lt;em&gt;npm start&lt;/em&gt; (desarrollo) o &lt;em&gt;npm start --production&lt;/em&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Y ya tenemos nuestro &lt;em&gt;blog&lt;/em&gt; visible en &lt;a href="http://localhost:2368/"&gt;http://localhost:2368/&lt;/a&gt; con su interfaz de administración en &lt;a href="http://localhost:2368/ghost/"&gt;http://localhost:2368/ghost/&lt;/a&gt;. Estos valores pueden cambiarse en el fichero &lt;em&gt;config.js&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;El problema de esta aproximación es que la versión de &lt;strong&gt;Ghost&lt;/strong&gt;, de &lt;strong&gt;NPM&lt;/strong&gt; y de &lt;strong&gt;NodeJS&lt;/strong&gt; son demasiado importantes, exigiendo versiones elevadas que no están en los repositorios oficiales de la mayoría de distribuciones. Lo pude instalar en una &lt;em&gt;Ubuntu 16.04&lt;/em&gt; y, aun así, el binario exigido &lt;em&gt;/usr/bin/node&lt;/em&gt; no se llamaba así, sino que estaba en &lt;em&gt;/usr/bin/nodejs&lt;/em&gt;. Esto se puede solucionar con un simple enlace simbólico, pero busca el error...&lt;/p&gt;
+&lt;p&gt;Lo que realmente me llamó a probarlo es la facilidad adicional de tenerlo funcionando sin problemas, mediante una imágen de &lt;strong&gt;Docker&lt;/strong&gt; prefabricada en &lt;strong&gt;DockerHub&lt;/strong&gt;. De hecho la imagen es oficial, y la podéis encontrar en &lt;a href="https://hub.docker.com/_/ghost/"&gt;https://hub.docker.com/_/ghost/&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Levantamos la imagen con el habitual y recomendado &lt;em&gt;docker run&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@janus:~$ docker run -d -p 2368:2368 ghost
+6a0d4ed51f2b7c04b7b0c54cac44256d12fe7fa999f548314858ea5838faae73
+gerard@janus:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esto nos da un &lt;strong&gt;Ghost&lt;/strong&gt; levantado en modo de &lt;em&gt;development&lt;/em&gt;. Si queremos levantarlo en modo &lt;em&gt;production&lt;/em&gt;, basta con añadir una variable de entorno &lt;em&gt;NODE_ENV=production&lt;/em&gt;. Tal como escribo este artículo, la configuración por defecto para producción está incompleta: falta la directiva &lt;em&gt;paths&lt;/em&gt; en la sección &lt;em&gt;production&lt;/em&gt;, aunque la podéis copiar tal cual de la sección &lt;em&gt;development&lt;/em&gt;. Las otras directivas las podéis editar según vuestras necesidades.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: si usáis &lt;strong&gt;docker&lt;/strong&gt;, no vale con poner una configuración adecuada en &lt;em&gt;/var/lib/ghost/config.js&lt;/em&gt;, porque entonces el instalador detecta que ya hay cosas y no copia el resto de ficheros en &lt;em&gt;/usr/src/ghost/&lt;/em&gt;. Vuestras configuraciones deberían reescribir el fichero &lt;em&gt;/usr/src/ghost/config.example.js&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@telesto:~/docker/custom_ghost$ cat Dockerfile 
+FROM ghost
+COPY config.js /usr/src/ghost/config.example.js
+gerard@telesto:~/docker/custom_ghost$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: la configuración de &lt;strong&gt;Ghost&lt;/strong&gt; es un &lt;em&gt;script&lt;/em&gt; en &lt;strong&gt;NodeJS&lt;/strong&gt; y es capaz de leer las variables de entorno, por si queréis pasar algunas variables en &lt;em&gt;runtime&lt;/em&gt;, sin construir varias imágenes.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@telesto:~/docker/custom_ghost$ cat config.js 
+var &lt;span class="nv"&gt;path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; require&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;path&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;,
+    config&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="nv"&gt;config&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    production: &lt;span class="o"&gt;{&lt;/span&gt;
+        url: process.env&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;GHOST_URL&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;,
+        mail: &lt;span class="o"&gt;{}&lt;/span&gt;,
+        database: &lt;span class="o"&gt;{&lt;/span&gt;
+            client: &lt;span class="s1"&gt;&amp;#39;sqlite3&amp;#39;&lt;/span&gt;,
+            connection: &lt;span class="o"&gt;{&lt;/span&gt;
+                filename: path.join&lt;span class="o"&gt;(&lt;/span&gt;__dirname, &lt;span class="s1"&gt;&amp;#39;/content/data/ghost.db&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+            &lt;span class="o"&gt;}&lt;/span&gt;,
+            debug: &lt;span class="nb"&gt;false&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;,
+        server: &lt;span class="o"&gt;{&lt;/span&gt;
+            host: &lt;span class="s1"&gt;&amp;#39;127.0.0.1&amp;#39;&lt;/span&gt;,
+            port: &lt;span class="s1"&gt;&amp;#39;2368&amp;#39;&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;,
+        paths: &lt;span class="o"&gt;{&lt;/span&gt;
+            contentPath: path.join&lt;span class="o"&gt;(&lt;/span&gt;__dirname, &lt;span class="s1"&gt;&amp;#39;/content/&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+module.exports &lt;span class="o"&gt;=&lt;/span&gt; config&lt;span class="p"&gt;;&lt;/span&gt;
+gerard@telesto:~/docker/custom_ghost$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Apuntamos nuestro navegador a la URL configurada, y ya tenemos un &lt;em&gt;blog&lt;/em&gt; funcional. Queda para el propietario ir a la sección de administración para añadir contenido, cambiar los temas y lo que haga falta, cómodamente desde la web.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Ghost Blog" src="http://www.linuxsysadmin.tk/images/ghost_blog.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;La parte "mala" es que cada instancia de &lt;strong&gt;Ghost&lt;/strong&gt; es un proceso propio, que usa su propia dirección y su propio puerto. Si se quiere desplegar varios &lt;em&gt;blogs&lt;/em&gt; en el mismo servidor, podemos usar un &lt;strong&gt;nginx&lt;/strong&gt;, que los diferencie por el dominio solicitado mediante &lt;em&gt;virtualhosts&lt;/em&gt;; luego hacemos un &lt;em&gt;proxy_pass&lt;/em&gt; al puerto de verdad, y ya tenemos el servidor montado. Esto queda como material para otro artículo.&lt;/p&gt;</summary><category term="ghost"></category><category term="blog"></category></entry><entry><title>Levantando túneles SSH con systemd</title><link href="http://www.linuxsysadmin.tk/2016/11/levantando-tuneles-ssh-con-systemd.html" rel="alternate"></link><published>2016-11-14T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-11-14:2016/11/levantando-tuneles-ssh-con-systemd.html</id><summary type="html">&lt;p&gt;Ya vimos en un &lt;a href="http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html"&gt;artículo anterior&lt;/a&gt; como levantar túneles &lt;strong&gt;SSH&lt;/strong&gt; para llegar a través del protocolo &lt;strong&gt;SSH&lt;/strong&gt;, a destinos que no están alcanzables normalmente. Esto está muy bien para aplicaciones puntuales, pero si tenemos que usar esos túneles una temporada, y deseamos que se mantengan levantados, ya es mas difícil.&lt;/p&gt;
 &lt;p&gt;Hay miles de gestores de procesos que pueden hacer este trabajo por nosotros, como &lt;strong&gt;runit&lt;/strong&gt;, &lt;strong&gt;monit&lt;/strong&gt;, &lt;strong&gt;supervisor&lt;/strong&gt; entre otros. Personalmente no soy fan de instalar nada que proporcione una funcionalidad duplicada, así que... ¿por que no &lt;strong&gt;systemd&lt;/strong&gt;?&lt;/p&gt;
 &lt;p&gt;Para este tutorial vamos a suponer que tenemos acceso a un servidor intermedio con &lt;strong&gt;SSH&lt;/strong&gt;, que ve a un servidor de bases de datos, y a través del que vamos a hacer el salto. Respectivamente, los vamos a llamar &lt;em&gt;jump&lt;/em&gt; y &lt;em&gt;database&lt;/em&gt;, en una explosión de creatividad.&lt;/p&gt;
 &lt;h2&gt;El túnel básico&lt;/h2&gt;
