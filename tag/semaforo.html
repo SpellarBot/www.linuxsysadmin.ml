@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Artículos de Gerard - Linux Sysadmin</title>
+    <title>semáforo - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -10,7 +10,8 @@
 
 
 
-        <meta name="author" content="Gerard" />
+    <meta name="author" content="Gerard" />
+    <meta name="keywords" content="semáforo" />
 
     <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
@@ -74,11 +75,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-        <ol class="breadcrumb">
-            <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-            <li><a href="http://www.linuxsysadmin.tk/authors.html" title="Autores de Linux Sysadmin">Autores</a></li>
-            <li class="active">Gerard</li>
-        </ol>
+    <ol class="breadcrumb">
+        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+        <li><a href="http://www.linuxsysadmin.tk/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
+        <li class="active">semáforo</li>
+    </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -92,71 +93,13 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">Sistemas de ficheros multicapa con aufs</a></h2>
-                <div class="summary"><p>Trabajando con contenedores tenemos una parte que se repite: el sistema de ficheros base, que copiamos siempre. Otras veces nos puede interesar hacer un sistema capaz de descartar los cambios desde un punto inicial. Podemos crear una capa base de solo lectura y añadir otra capa de cambios con <strong>aufs ...</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html">Creando un entorno escalable (IV)</a></h2>
-                <div class="summary"><p>Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un <em>proxy HTTP</em> que haga las funciones de terminación <em>SSL</em> y de <em>balanceador</em>, exponiendo todo el sistema en una sola dirección IP ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></h2>
-                <div class="summary"><p>En el artículo anterior de esta serie montamos el cluster de la base de datos que íbamos a necesitar para las aplicaciones que conformaban este entorno de ejemplo. Ahora que tenemos la base de datos, falta poner los servidores de aplicaciones que sirven nuestras aplicaciones y que usan el cluster ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></h2>
-                <div class="summary"><p>Seguimos con la serie de montar un entorno escalable. Tras explicar en el primer artículo lo que vamos a montar, seguimos con ello. En este artículo vamos a montar un <em>cluster</em> de bases de datos; será <strong>mongodb</strong> porque la aplicación lo requiere y usará la topología de un <strong>replica set ...</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html">Creando un entorno escalable (I)</a></h2>
-                <div class="summary"><p>Mucha gente tiene un servidor único para alojar páginas web dinámicas, por ejemplo con <strong>PHP</strong> y con <strong>MySQL</strong>. Sin embargo, a veces esto puede resultar insuficiente; nos puede interesar tener un entorno de bajas especificaciones y de bajo coste, pero preparado crecer al mismo ritmo que lo hacen los usuarios ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html">Seguir leyendo</a>
+                <h2><a href="http://www.linuxsysadmin.tk/2016/11/semaforos-en-linux.html">Semáforos en linux</a></h2>
+                <div class="summary"><p>Tras revisar un <em>bug</em> de cierto proceso en <em>background</em> de una aplicación en mi trabajo, vimos que saltaban dos ejecuciones simultáneas y los dos procesos interferían entre ellos. Implementar una exclusión mutua en el proceso era costoso, así que opté por hacerlo con un comando <strong>linux</strong>, que descubrí por internet ...</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/11/semaforos-en-linux.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
 
-        <ul class="pagination">
-                <li class="prev"><a href="http://www.linuxsysadmin.tk/author/gerard7.html">&laquo;</a>
-                </li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard2.html">2</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard3.html">3</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard4.html">4</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard5.html">5</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard6.html">6</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard7.html">7</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.tk/author/gerard8.html">8</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard9.html">9</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard10.html">10</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard11.html">11</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard12.html">12</a></li>
-                <li class="next"><a
-                        href="http://www.linuxsysadmin.tk/author/gerard9.html">&raquo;</a></li>
-        </ul>
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Artículos de Gerard - Linux Sysadmin</title>
+    <title>Semáforos en linux - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,15 +9,23 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/11/semaforos-en-linux.html">
 
         <meta name="author" content="Gerard" />
+        <meta name="keywords" content="linux,semáforo,concurrencia" />
+        <meta name="description" content="Tras revisar un bug de cierto proceso en background de una aplicación en mi trabajo, vimos que saltaban dos ejecuciones simultáneas y los dos procesos interferían entre ellos. Implementar una exclusión mutua en el proceso era costoso, así que opté por hacerlo con un comando linux, que descubrí por internet ..." />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Semáforos en linux"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/11/semaforos-en-linux.html"/>
+        <meta property="og:description" content="Tras revisar un bug de cierto proceso en background de una aplicación en mi trabajo, vimos que saltaban dos ejecuciones simultáneas y los dos procesos interferían entre ellos. Implementar una exclusión mutua en el proceso era costoso, así que opté por hacerlo con un comando linux, que descubrí por internet ..."/>
+        <meta property="article:published_time" content="2016-11-28" />
+            <meta property="article:section" content="Operaciones" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="semáforo" />
+            <meta property="article:tag" content="concurrencia" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -33,6 +41,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -74,11 +84,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-        <ol class="breadcrumb">
-            <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-            <li><a href="http://www.linuxsysadmin.tk/authors.html" title="Autores de Linux Sysadmin">Autores</a></li>
-            <li class="active">Gerard</li>
-        </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
+                <li class="active">Semáforos en linux</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -91,72 +101,186 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">Sistemas de ficheros multicapa con aufs</a></h2>
-                <div class="summary"><p>Trabajando con contenedores tenemos una parte que se repite: el sistema de ficheros base, que copiamos siempre. Otras veces nos puede interesar hacer un sistema capaz de descartar los cambios desde un punto inicial. Podemos crear una capa base de solo lectura y añadir otra capa de cambios con <strong>aufs ...</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html">Creando un entorno escalable (IV)</a></h2>
-                <div class="summary"><p>Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un <em>proxy HTTP</em> que haga las funciones de terminación <em>SSL</em> y de <em>balanceador</em>, exponiendo todo el sistema en una sola dirección IP ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></h2>
-                <div class="summary"><p>En el artículo anterior de esta serie montamos el cluster de la base de datos que íbamos a necesitar para las aplicaciones que conformaban este entorno de ejemplo. Ahora que tenemos la base de datos, falta poner los servidores de aplicaciones que sirven nuestras aplicaciones y que usan el cluster ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></h2>
-                <div class="summary"><p>Seguimos con la serie de montar un entorno escalable. Tras explicar en el primer artículo lo que vamos a montar, seguimos con ello. En este artículo vamos a montar un <em>cluster</em> de bases de datos; será <strong>mongodb</strong> porque la aplicación lo requiere y usará la topología de un <strong>replica set ...</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html">Creando un entorno escalable (I)</a></h2>
-                <div class="summary"><p>Mucha gente tiene un servidor único para alojar páginas web dinámicas, por ejemplo con <strong>PHP</strong> y con <strong>MySQL</strong>. Sin embargo, a veces esto puede resultar insuficiente; nos puede interesar tener un entorno de bajas especificaciones y de bajo coste, pero preparado crecer al mismo ritmo que lo hacen los usuarios ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2016/11/semaforos-en-linux.html"
+                       rel="bookmark"
+                       title="Permalink to Semáforos en linux">
+                        Semáforos en linux
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-11-28T08:00:00+01:00"> 2016-11-28</time>
+    </span>
 
-        <ul class="pagination">
-                <li class="prev"><a href="http://www.linuxsysadmin.tk/author/gerard7.html">&laquo;</a>
-                </li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard2.html">2</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard3.html">3</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard4.html">4</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard5.html">5</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard6.html">6</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard7.html">7</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.tk/author/gerard8.html">8</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard9.html">9</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard10.html">10</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard11.html">11</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard12.html">12</a></li>
-                <li class="next"><a
-                        href="http://www.linuxsysadmin.tk/author/gerard9.html">&raquo;</a></li>
-        </ul>
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 6 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/semaforo.html">semáforo</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/concurrencia.html">concurrencia</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>Tras revisar un <em>bug</em> de cierto proceso en <em>background</em> de una aplicación en mi trabajo, vimos que saltaban dos ejecuciones simultáneas y los dos procesos interferían entre ellos. Implementar una exclusión mutua en el proceso era costoso, así que opté por hacerlo con un comando <strong>linux</strong>, que descubrí por internet.</p>
+<p>La idea es que podemos asegurar que un comando o <em>script</em> pase por un semáforo tal como lo entienden en procesos concurrentes; se marca una zona de exclusión en donde solo un número determinado de procesos pueden estar a la vez. En el caso concreto de un solo proceso, se conoce como un <em>mutex</em>.</p>
+<p>Así pues, si tenemos un disparador de eventos, como por ejemplo <strong>incron</strong>, podemos evitar una avalancha de procesos disparados en un plazo de tiempo minúsculo, limitando el <em>stress</em> causado a la carga del sistema, y evitando también, problemas derivados de que nuestro proceso no acepte concurrencia.</p>
+<p>Como ya va siendo habitual, vamos a empezar instalando el paquete que ofrece la utilidad <em>sem</em>:</p>
+<div class="highlight"><pre><span></span>root@helium:~# apt-get install -y parallel
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following extra packages will be installed:
+  libalgorithm-c3-perl libarchive-extract-perl libcgi-fast-perl libcgi-pm-perl libclass-c3-perl libclass-c3-xs-perl libcpan-meta-perl libdata-optlist-perl libdata-section-perl libfcgi-perl
+  libgdbm3 liblog-message-perl liblog-message-simple-perl libmodule-build-perl libmodule-pluggable-perl libmodule-signature-perl libmro-compat-perl libpackage-constants-perl
+  libparams-util-perl libpod-latex-perl libpod-readme-perl libregexp-common-perl libsoftware-license-perl libsub-exporter-perl libsub-install-perl libterm-ui-perl libtext-soundex-perl
+  libtext-template-perl perl perl-modules rename
+Suggested packages:
+  perl-doc libterm-readline-gnu-perl libterm-readline-perl-perl make libb-lint-perl libcpanplus-dist-build-perl libcpanplus-perl libfile-checktree-perl libobject-accessor-perl
+Recommended packages:
+  libarchive-tar-perl
+The following NEW packages will be installed:
+  libalgorithm-c3-perl libarchive-extract-perl libcgi-fast-perl libcgi-pm-perl libclass-c3-perl libclass-c3-xs-perl libcpan-meta-perl libdata-optlist-perl libdata-section-perl libfcgi-perl
+  libgdbm3 liblog-message-perl liblog-message-simple-perl libmodule-build-perl libmodule-pluggable-perl libmodule-signature-perl libmro-compat-perl libpackage-constants-perl
+  libparams-util-perl libpod-latex-perl libpod-readme-perl libregexp-common-perl libsoftware-license-perl libsub-exporter-perl libsub-install-perl libterm-ui-perl libtext-soundex-perl
+  libtext-template-perl parallel perl perl-modules rename
+<span class="m">0</span> upgraded, <span class="m">32</span> newly installed, <span class="m">0</span> to remove and <span class="m">1</span> not upgraded.
+Need to get <span class="m">6794</span> kB of archives.
+After this operation, 38.4 MB of additional disk space will be used.
+...
+root@helium:~# 
+</pre></div>
+
+
+<p>Vamos a partir también de un <em>script</em> que tarde un tiempo (para darnos tiempo a probar cosas concurrentemente). Este es el <em>script</em> que no debería tener dos ejecuciones concurrentes; recordamos que tiene permisos de ejecución.</p>
+<div class="highlight"><pre><span></span>root@helium:~# cat do_stuff.sh 
+<span class="c1">#!/bin/bash</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;</span><span class="k">$(</span>date +<span class="s1">&#39;%H:%M:%S&#39;</span><span class="k">)</span><span class="s2"> - Started process </span><span class="nv">$1</span><span class="s2">&quot;</span>
+sleep 10
+<span class="nb">echo</span> <span class="s2">&quot;</span><span class="k">$(</span>date +<span class="s1">&#39;%H:%M:%S&#39;</span><span class="k">)</span><span class="s2"> - Ended process </span><span class="nv">$1</span><span class="s2">&quot;</span>
+root@helium:~# 
+</pre></div>
+
+
+<p>Nada en especial; este <em>script</em> recibe un parámetro para identificar la ejecución que estamos mirando, y lo único que hace es perder el tiempo (usad la imaginación), previo registro de la hora de comienzo y de final. La ejecución no depara sorpresas.</p>
+<div class="highlight"><pre><span></span>root@helium:~# ./do_stuff.sh 1
+14:22:31 - Started process 1
+14:22:41 - Ended process 1
+root@helium:~# 
+</pre></div>
+
+
+<h2>Esperando en el semáforo</h2>
+<p>Como ya hemos mencionado, no nos interesaba que no ejecutaran mas de una vez concurrentemente. Para ello, vamos a disponer de un semáforo que deje pasar un solo proceso.</p>
+<div class="highlight"><pre><span></span>root@helium:~# cat protected_do_stuff.sh 
+<span class="c1">#!/bin/bash</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;</span><span class="k">$(</span>date +<span class="s1">&#39;%H:%M:%S&#39;</span><span class="k">)</span><span class="s2"> - Semaphore for process </span><span class="nv">$1</span><span class="s2">&quot;</span>
+sem --fg --id semaphore_do_stuff -j <span class="m">1</span> /root/do_stuff.sh <span class="nv">$1</span>
+root@helium:~# 
+</pre></div>
+
+
+<p>Esto indica que el comando <em>sem</em> se va a bloquear si ya hay otro proceso en marcha para el semáforo indicado con el <em>flag --id</em>. El parámetro <em>-j</em> indica el número de procesos que pueden pasar a la vez, que en este caso, es uno solo. Cuando no haya nada ejecutando en el semáforo, otro proceso podrá pasar a ejecutar un comando, que en este caso es el <em>script</em> anterior, con el mismo parámetro identificativo.</p>
+<p>Vemos que si no hay competencia en el mismo semáforo, no nos ralentiza nada. De hecho, los semáforos con distinto identificador son independientes, y no interfieren entre ellos, aunque en este ejemplo solo usemos uno.</p>
+<div class="highlight"><pre><span></span>root@helium:~# ./protected_do_stuff.sh 1
+14:30:50 - Semaphore <span class="k">for</span> process 1
+14:30:50 - Started process 1
+14:31:00 - Ended process 1
+root@helium:~# 
+</pre></div>
+
+
+<p>Supongamos ahora que se lanza dos veces el mismo <em>script</em>, con dos identificadores diferentes y con unos pocos segundos de diferencia. Los siguientes comandos se han lanzado desde dos sesiones de terminal distintas, ya que el proceso corre en primer plano.</p>
+<div class="highlight"><pre><span></span>root@helium:~# ./protected_do_stuff.sh 1
+14:35:46 - Semaphore <span class="k">for</span> process 1
+14:35:47 - Started process 1
+14:35:57 - Ended process 1
+root@helium:~# 
+</pre></div>
+
+
+<p>Esperamos unos segundos y lanzamos el otro:</p>
+<div class="highlight"><pre><span></span>root@helium:~# ./protected_do_stuff.sh 2
+14:35:50 - Semaphore <span class="k">for</span> process 2
+14:35:58 - Started process 2
+14:36:08 - Ended process 2
+root@helium:~# 
+</pre></div>
+
+
+<p>El primer proceso ha topado con el semáforo y ha empezado sin problemas en el mismo instante, aunque sin microsegundos no parece tan inmediato. Unos 4 segundos después se ha lanzado el otro comando, que ha tenido que esperar a que el primero acabara, antes de empezar. Esto se ve mejor si mezclamos las trazas de evento:</p>
+<div class="highlight"><pre><span></span><span class="mi">14</span><span class="o">:</span><span class="mi">35</span><span class="o">:</span><span class="mi">46</span> <span class="o">-</span> <span class="n">Semaphore</span> <span class="k">for</span> <span class="n">process</span> <span class="mi">1</span>
+<span class="mi">14</span><span class="o">:</span><span class="mi">35</span><span class="o">:</span><span class="mi">47</span> <span class="o">-</span> <span class="n">Started</span> <span class="n">process</span> <span class="mi">1</span>
+<span class="mi">14</span><span class="o">:</span><span class="mi">35</span><span class="o">:</span><span class="mi">50</span> <span class="o">-</span> <span class="n">Semaphore</span> <span class="k">for</span> <span class="n">process</span> <span class="mi">2</span>
+<span class="mi">14</span><span class="o">:</span><span class="mi">35</span><span class="o">:</span><span class="mi">57</span> <span class="o">-</span> <span class="n">Ended</span> <span class="n">process</span> <span class="mi">1</span>
+<span class="mi">14</span><span class="o">:</span><span class="mi">35</span><span class="o">:</span><span class="mi">58</span> <span class="o">-</span> <span class="n">Started</span> <span class="n">process</span> <span class="mi">2</span>
+<span class="mi">14</span><span class="o">:</span><span class="mi">36</span><span class="o">:</span><span class="mi">08</span> <span class="o">-</span> <span class="n">Ended</span> <span class="n">process</span> <span class="mi">2</span>
+</pre></div>
+
+
+<p>En este caso se ve claramente que el proceso 2 queda parado en el semáforo hasta que el proceso 1 acaba, momento en el que puede empezar. Estoy seguro que esto tendrá muchas aplicaciones futuras.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/07/instalando-una-maquina-con-archlinux.html">Instalando una máquina con Archlinux</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html">Crear jaulas de forma fácil basadas en Debian y Ubuntu con debootstrap</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'semaforos-en-linux';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2016/11/semaforos-en-linux.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
