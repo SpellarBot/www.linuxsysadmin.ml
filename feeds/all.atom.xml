@@ -1,5 +1,221 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-11-28T08:00:00+01:00</updated><entry><title>Semáforos en linux</title><link href="http://www.linuxsysadmin.tk/2016/11/semaforos-en-linux.html" rel="alternate"></link><published>2016-11-28T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-11-28:2016/11/semaforos-en-linux.html</id><summary type="html">&lt;p&gt;Tras revisar un &lt;em&gt;bug&lt;/em&gt; de cierto proceso en &lt;em&gt;background&lt;/em&gt; de una aplicación en mi trabajo, vimos que saltaban dos ejecuciones simultáneas y los dos procesos interferían entre ellos. Implementar una exclusión mutua en el proceso era costoso, así que opté por hacerlo con un comando &lt;strong&gt;linux&lt;/strong&gt;, que descubrí por internet.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-12-05T08:00:00+01:00</updated><entry><title>Creando un tema para Ghost</title><link href="http://www.linuxsysadmin.tk/2016/12/creando-un-tema-para-ghost.html" rel="alternate"></link><published>2016-12-05T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-12-05:2016/12/creando-un-tema-para-ghost.html</id><summary type="html">&lt;p&gt;Ya vimos lo fácil que resulta de empezar un &lt;em&gt;blog&lt;/em&gt; con &lt;strong&gt;Ghost&lt;/strong&gt;. El tema que viene por defecto es muy simple y bastante legible, pero nos puede interesar cambiarlo, por ejemplo para poner publicidad. Existen temas de pago y gratuitos ya hechos, pero hoy voy a explicar como hacer uno.&lt;/p&gt;
+&lt;p&gt;Vamos a partir de una instalación limpia de &lt;strong&gt;Ghost&lt;/strong&gt;, pero ejemplo como se indica en &lt;a href="http://www.linuxsysadmin.tk/2016/11/ghost-un-motor-para-hacer-blogs.html"&gt;otro artículo&lt;/a&gt;. Es especialmente importante desarrollar el tema en una instancia que corra en modo &lt;em&gt;development&lt;/em&gt;, así no va a &lt;em&gt;cachear&lt;/em&gt; las plantillas y nos va a ahorrar reiniciar el proceso.&lt;/p&gt;
+&lt;p&gt;Es muy útil mapear la carpeta &lt;em&gt;/usr/lib/ghost/&lt;/em&gt; del contenedor a una carpeta local, si estamos usando &lt;strong&gt;Docker&lt;/strong&gt;. De esta manera podemos editar el tema cómodamente en nuestro sistema de ficheros y con las herramientas con las que más cómodos nos sintamos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace$ docker run -d -p 2368:2368 -v /home/gerard/workspace/content:/var/lib/ghost ghost
+343d065878fb910a9f2b5b51be4a337d2e93db2e66cbff6800c2cb96a758f733
+gerard@aldebaran:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Una vez hayamos creado el tema, nos lo podemos descargar y aplicarlo a nuestra instancia productiva, sin necesidad de reiniciar nada. A fin de cuentas, en el fichero &lt;em&gt;.zip&lt;/em&gt; solo hay plantillas y ficheros de respaldo del tema.&lt;/p&gt;
+&lt;p&gt;Las plantillas están escritas en un motor de plantillas llamado &lt;a href="http://handlebarsjs.com/"&gt;Handlebars&lt;/a&gt;, y podemos encontrar un resume enfocado a &lt;strong&gt;Ghost&lt;/strong&gt; en &lt;a href="https://themes.ghost.org/docs/handlebars"&gt;la documentación&lt;/a&gt;. Como convención, todos los ficheros &lt;em&gt;.hbs&lt;/em&gt; en un tema de &lt;strong&gt;Ghost&lt;/strong&gt; son plantillas en este lenguaje.&lt;/p&gt;
+&lt;p&gt;El uso de una instancia nueva nos viene muy bien, porque tenemos un índice y un &lt;em&gt;post&lt;/em&gt;, que nos permitirán ver como evoluciona nuestro &lt;em&gt;blog&lt;/em&gt;, a medida que avanzamos en el artículo.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Índice -&amp;gt; &lt;a href="http://localhost:2368/"&gt;http://localhost:2368/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Post -&amp;gt; &lt;a href="http://localhost:2368/welcome-to-ghost/"&gt;http://localhost:2368/welcome-to-ghost/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Un tema vacío&lt;/h2&gt;
+&lt;p&gt;Vamos a crear una carpeta local temporal con los ficheros requeridos, que luego vamos a comprimir en fichero &lt;em&gt;.zip&lt;/em&gt; para poder cargarlo en la interfaz de administración. Una vez &lt;strong&gt;Ghost&lt;/strong&gt; ya reconozca nuestro tema, no vamos a tener que reiniciar ningún proceso nunca.&lt;/p&gt;
+&lt;p&gt;De acuerdo a la &lt;a href="https://themes.ghost.org/docs/structure"&gt;documentación de Ghost&lt;/a&gt;, se necesitan un mínimo de 3 ficheros, que son el &lt;em&gt;package.json&lt;/em&gt;, &lt;em&gt;index.hbs&lt;/em&gt; y &lt;em&gt;post.hbs&lt;/em&gt;. Podemos encontrar la descripción de cada fichero en otro apartado de &lt;a href="https://themes.ghost.org/docs/templates"&gt;la documentación&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Voy a poner lo justo para que se pueda cargar el tema, aunque no sea muy funcional, para ir creciendo a partir de aquí.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace$ tree minimal_theme/
+minimal_theme/
+├── index.hbs
+├── package.json
+└── post.hbs
+
+&lt;span class="m"&gt;0&lt;/span&gt; directories, &lt;span class="m"&gt;3&lt;/span&gt; files
+gerard@aldebaran:~/workspace$ cat minimal_theme/package.json 
+&lt;span class="o"&gt;{&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;minimal_theme&amp;quot;&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;0.0.0&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/workspace$ cat minimal_theme/index.hbs 
+INDEX
+gerard@aldebaran:~/workspace$ cat minimal_theme/post.hbs 
+POST
+gerard@aldebaran:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para cargarlo cómodamente desde la interfaz web, lo necesitamos en formato &lt;em&gt;.zip&lt;/em&gt;. De hecho, la carpeta contenedora tampoco nos importa, así que la podemos borrar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace$ &lt;span class="nb"&gt;cd&lt;/span&gt; minimal_theme/
+gerard@aldebaran:~/workspace/minimal_theme$ zip -r ../minimal_theme.zip *
+  adding: index.hbs &lt;span class="o"&gt;(&lt;/span&gt;stored 0%&lt;span class="o"&gt;)&lt;/span&gt;
+  adding: package.json &lt;span class="o"&gt;(&lt;/span&gt;deflated 10%&lt;span class="o"&gt;)&lt;/span&gt;
+  adding: post.hbs &lt;span class="o"&gt;(&lt;/span&gt;stored 0%&lt;span class="o"&gt;)&lt;/span&gt;
+gerard@aldebaran:~/workspace/minimal_theme$ &lt;span class="nb"&gt;cd&lt;/span&gt; ..
+gerard@aldebaran:~/workspace$ rm -R minimal_theme/
+gerard@aldebaran:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es importante mencionar que el fichero &lt;em&gt;.zip&lt;/em&gt; no debe contener la carpeta contenedora, sino sus ficheros. Para entendernos, los 3 ficheros deben quedar en la raíz del fichero comprimido.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace$ unzip -l minimal_theme.zip 
+Archive:  minimal_theme.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+        &lt;span class="m"&gt;6&lt;/span&gt;  2016-09-23 12:41   index.hbs
+       &lt;span class="m"&gt;52&lt;/span&gt;  2016-09-23 12:41   package.json
+        &lt;span class="m"&gt;5&lt;/span&gt;  2016-09-23 12:41   post.hbs
+---------                     -------
+       &lt;span class="m"&gt;63&lt;/span&gt;                     &lt;span class="m"&gt;3&lt;/span&gt; files
+gerard@aldebaran:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lo cargamos desde la interfaz de administración, en &lt;em&gt;Settings / General / Themes / Upload a theme&lt;/em&gt;. La idea es que a partir de ahora vamos a editar el tema desde la carpeta &lt;em&gt;/var/lib/ghost/themes/minimal_theme/&lt;/em&gt;; como yo he usado un volumen local, lo voy a editar cómodamente desde &lt;em&gt;/home/gerard/workspace/content/themes/minimal_theme/&lt;/em&gt;. Cuando tengamos algo digno de ser guardado, lo podemos descargar en la misma sección de la interfaz administrativa, en formato &lt;em&gt;.zip&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;En este punto, deberíamos ver una página principal con el contenido "INDEX" y la página del &lt;em&gt;post&lt;/em&gt; de bienvenida como "POST", porque la plantilla no hace nada con los objetos que recibe de &lt;strong&gt;Ghost&lt;/strong&gt;. Vamos a continuar mejorando estas plantillas en los siguientes apartados.&lt;/p&gt;
+&lt;h2&gt;Plantilla base e inyección de plantillas parciales&lt;/h2&gt;
+&lt;p&gt;Las plantillas deberían sacar contenido HTML. Como ya sabemos, hay muchos elementos comunes que se van a repetir en todas las plantillas, por ejemplo, los &lt;em&gt;tags&lt;/em&gt; propios de HTML, como el &lt;em&gt;&amp;lt;html&amp;gt;&lt;/em&gt;, el &lt;em&gt;&amp;lt;head&amp;gt;&lt;/em&gt; o el &lt;em&gt;&amp;lt;body&amp;gt;&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;La solución mas elegante para este problema es la herencia de plantillas. La idea es que nuestra plantilla se va a insertar en una mas general, de forma que todas tengan un esqueleto común.&lt;/p&gt;
+&lt;p&gt;También tenemos la opción de tener trozos de plantilla preparados para ser incluidos en otras plantillas, por ejemplo, la cabecera, el código de seguimiento o el contador de visitas. Estos trozos se llaman &lt;em&gt;partials&lt;/em&gt; y tienen una carpeta con el mismo nombre.&lt;/p&gt;
+&lt;p&gt;Para ver como funcionan ambos, vamos a crear un esqueleto HTML. Este esqueleto va a incluir un &lt;em&gt;partial&lt;/em&gt; con la cabecera del &lt;em&gt;blog&lt;/em&gt;. De esta forma conseguimos separar conceptos, para que sea mas legible y mas fácil de modificar a &lt;em&gt;posteriori&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Para ello vamos a crear nuevos ficheros, que son la plantilla base &lt;em&gt;default.hbs&lt;/em&gt; y la plantilla de la cabecera en &lt;em&gt;partials/header.hbs&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/content/themes/minimal_theme$ tree
+.
+├── partials
+│   └── header.hbs
+├── default.hbs
+├── index.hbs
+├── package.json
+└── post.hbs
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;5&lt;/span&gt; files
+gerard@aldebaran:~/workspace/content/themes/minimal_theme$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El primer paso consiste en indicar a las plantillas antes creadas que queremos que hereden de la plantilla &lt;em&gt;default&lt;/em&gt;, con el símbolo &lt;code&gt;{{!&amp;lt; default}}&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/content/themes/minimal_theme$ cat index.hbs 
+&lt;span class="o"&gt;{{&lt;/span&gt;!&amp;lt; default&lt;span class="o"&gt;}}&lt;/span&gt;
+
+INDEX
+gerard@aldebaran:~/workspace/content/themes/minimal_theme$ cat post.hbs 
+&lt;span class="o"&gt;{{&lt;/span&gt;!&amp;lt; default&lt;span class="o"&gt;}}&lt;/span&gt;
+
+POST
+gerard@aldebaran:~/workspace/content/themes/minimal_theme$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lo siguiente es escribir una plantilla &lt;em&gt;default.hbs&lt;/em&gt;. Esta plantilla debe contener la expresión &lt;em&gt;handlebars&lt;/em&gt; &lt;code&gt;{{{body}}}&lt;/code&gt;, que es donde se va a insertar la plantilla real.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/content/themes/minimal_theme$ cat default.hbs 
+&amp;lt;!DOCTYPE html&amp;gt;
+&amp;lt;html &lt;span class="nv"&gt;lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;es&amp;quot;&lt;/span&gt;&amp;gt;
+  &amp;lt;head&amp;gt;
+    &amp;lt;meta &lt;span class="nv"&gt;charset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;utf-8&amp;quot;&lt;/span&gt;&amp;gt;
+    &amp;lt;title&amp;gt;Title&amp;lt;/title&amp;gt;
+&lt;span class="o"&gt;{{&lt;/span&gt;ghost_head&lt;span class="o"&gt;}}&lt;/span&gt;
+  &amp;lt;/head&amp;gt;
+  &amp;lt;body&amp;gt;
+&lt;span class="o"&gt;{{&lt;/span&gt;&amp;gt; header&lt;span class="o"&gt;}}&lt;/span&gt;
+&lt;span class="o"&gt;{{{&lt;/span&gt;body&lt;span class="o"&gt;}}}&lt;/span&gt;
+&lt;span class="o"&gt;{{&lt;/span&gt;ghost_foot&lt;span class="o"&gt;}}&lt;/span&gt;
+  &amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+gerard@aldebaran:~/workspace/content/themes/minimal_theme$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a fijarnos en 3 expresiones nuevas, que son &lt;code&gt;{{&amp;gt; header}}&lt;/code&gt;, &lt;code&gt;{{ghost_head}}&lt;/code&gt; y &lt;code&gt;{{ghost_foot}}&lt;/code&gt;. La primera sirve para insertar un &lt;em&gt;partial&lt;/em&gt;, que va a ser el resultado de procesar &lt;em&gt;partials/header.hbs&lt;/em&gt;. Las otras dos, aunque no son estrictamente necesarias, son recomendadas por la documentación de &lt;strong&gt;Ghost&lt;/strong&gt;. Básicamente incluyen algunos &lt;em&gt;metatags&lt;/em&gt; y cualquier &lt;em&gt;snippet&lt;/em&gt; que pongamos como &lt;em&gt;Code Injection&lt;/em&gt; en el panel de administración web.&lt;/p&gt;
+&lt;p&gt;Solo faltaría poner algo de código en el &lt;em&gt;partial&lt;/em&gt; de la cabecera para que sea útil incluirlo. Vamos a pecar otra vez de simplicidad.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/content/themes/minimal_theme$ cat partials/header.hbs 
+&amp;lt;h1&amp;gt;Title&amp;lt;/h1&amp;gt;
+gerard@aldebaran:~/workspace/content/themes/minimal_theme$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: Si miramos el &lt;em&gt;blog&lt;/em&gt; ahora, veremos que da un error 500. Esto es debido a que &lt;strong&gt;Ghost&lt;/strong&gt; no ha cargado los nuevos ficheros. Como solución, basta con activar otro tema, y volver a activar el nuestro.&lt;/p&gt;
+&lt;h2&gt;Usando variables en las plantillas&lt;/h2&gt;
+&lt;p&gt;Cada plantilla dispone de sus variables para que las usemos. Algunas de las variables están disponibles para todas las plantillas. De esta forma podemos generar contenido HTML real a partir de lo que hay en la base de datos de &lt;strong&gt;Ghost&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Vamos a empezar con el título del &lt;em&gt;blog&lt;/em&gt;, visible en el &lt;em&gt;tag&lt;/em&gt; &lt;code&gt;title&lt;/code&gt; de la plantilla &lt;em&gt;default.hbs&lt;/em&gt; y en la cabecera &lt;em&gt;partials/header.hbs&lt;/em&gt;. Para poner el título real del &lt;em&gt;blog&lt;/em&gt; (tal como se define en la interfaz de administración), vamos a usar la variable &lt;code&gt;{{@blog.title}}&lt;/code&gt;. Podéis encontrar todas las variables disponibles en la documentación.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/content/themes/minimal_theme$ cat default.hbs 
+&amp;lt;!DOCTYPE html&amp;gt;
+&amp;lt;html &lt;span class="nv"&gt;lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;es&amp;quot;&lt;/span&gt;&amp;gt;
+  &amp;lt;head&amp;gt;
+    &amp;lt;meta &lt;span class="nv"&gt;charset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;utf-8&amp;quot;&lt;/span&gt;&amp;gt;
+    &amp;lt;title&amp;gt;&lt;span class="o"&gt;{{&lt;/span&gt;@blog.title&lt;span class="o"&gt;}}&lt;/span&gt;&amp;lt;/title&amp;gt;
+&lt;span class="o"&gt;{{&lt;/span&gt;ghost_head&lt;span class="o"&gt;}}&lt;/span&gt;
+  &amp;lt;/head&amp;gt;
+  &amp;lt;body&amp;gt;
+&lt;span class="o"&gt;{{&lt;/span&gt;&amp;gt; header&lt;span class="o"&gt;}}&lt;/span&gt;
+&lt;span class="o"&gt;{{{&lt;/span&gt;body&lt;span class="o"&gt;}}}&lt;/span&gt;
+&lt;span class="o"&gt;{{&lt;/span&gt;ghost_foot&lt;span class="o"&gt;}}&lt;/span&gt;
+  &amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+gerard@aldebaran:~/workspace/content/themes/minimal_theme$ cat partials/header.hbs 
+&amp;lt;h1&amp;gt;&lt;span class="o"&gt;{{&lt;/span&gt;@blog.title&lt;span class="o"&gt;}}&lt;/span&gt;&amp;lt;/h1&amp;gt;
+gerard@aldebaran:~/workspace/content/themes/minimal_theme$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para las otras plantillas, el truco consiste en localizar que variables tenemos disponibles. Podemos encontrar el contexto para cada plantilla en la barra lateral de la configuración, en el &lt;em&gt;Context Reference&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;En el caso de la plantilla &lt;em&gt;index.hbs&lt;/em&gt;, podemos mirar en &lt;a href="https://themes.ghost.org/docs/index-context"&gt;su contexto&lt;/a&gt;. De ahí se deduce que tenemos una variable &lt;em&gt;posts&lt;/em&gt; que solo tenemos que iterar para listar cada uno, de la forma que mas nos guste. Siguiendo el enlace a &lt;a href="https://themes.ghost.org/docs/post-context#post-object-attributes"&gt;post object&lt;/a&gt;, podemos ver qué campos hay para dibujar en la plantilla. Vamos a utilizar el &lt;em&gt;title&lt;/em&gt; y el &lt;em&gt;excerpt&lt;/em&gt; (título del &lt;em&gt;post&lt;/em&gt; y un resumen del mismo).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/content/themes/minimal_theme$ cat index.hbs 
+&lt;span class="o"&gt;{{&lt;/span&gt;!&amp;lt; default&lt;span class="o"&gt;}}&lt;/span&gt;
+
+&lt;span class="o"&gt;{{&lt;/span&gt;&lt;span class="c1"&gt;#foreach posts}}&lt;/span&gt;
+&amp;lt;h2&amp;gt;&lt;span class="o"&gt;{{&lt;/span&gt;title&lt;span class="o"&gt;}}&lt;/span&gt;&amp;lt;/h2&amp;gt;
+&amp;lt;p&amp;gt;&lt;span class="o"&gt;{{&lt;/span&gt;excerpt&lt;span class="o"&gt;}}&lt;/span&gt;&amp;lt;/p&amp;gt;
+&lt;span class="o"&gt;{{&lt;/span&gt;/foreach&lt;span class="o"&gt;}}&lt;/span&gt;
+gerard@aldebaran:~/workspace/content/themes/minimal_theme$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Simple, pero suficiente. Por brevedad, no se ha incluido ningún trato del la variable &lt;code&gt;{{pagination}}&lt;/code&gt;. Si hacéis temas en el futuro, vais a tener que utilizarla.&lt;/p&gt;
+&lt;p&gt;La plantilla &lt;em&gt;post.hbs&lt;/em&gt;, de similar forma, obtiene la variable &lt;em&gt;post&lt;/em&gt; y un ejemplo de como iterarla. Su documentación de contexto está &lt;a href="https://themes.ghost.org/docs/post-context"&gt;aquí&lt;/a&gt;. Vamos a pintar el título del artículo y su contenido (&lt;em&gt;title&lt;/em&gt; y &lt;em&gt;content&lt;/em&gt; respectivamente).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/content/themes/minimal_theme$ cat post.hbs 
+&lt;span class="o"&gt;{{&lt;/span&gt;!&amp;lt; default&lt;span class="o"&gt;}}&lt;/span&gt;
+
+&lt;span class="o"&gt;{{&lt;/span&gt;&lt;span class="c1"&gt;#post}}&lt;/span&gt;
+&amp;lt;h2&amp;gt;&lt;span class="o"&gt;{{&lt;/span&gt;title&lt;span class="o"&gt;}}&lt;/span&gt;&amp;lt;/h2&amp;gt;
+&lt;span class="o"&gt;{{&lt;/span&gt;content&lt;span class="o"&gt;}}&lt;/span&gt;
+&lt;span class="o"&gt;{{&lt;/span&gt;/post&lt;span class="o"&gt;}}&lt;/span&gt;      
+gerard@aldebaran:~/workspace/content/themes/minimal_theme$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Nuevamente, un ejemplo simple y breve; no soy diseñador gráfico. Pero se entiende, ¿no?&lt;/p&gt;
+&lt;h2&gt;Hojas de estilo, javascript y otros ficheros auxiliares&lt;/h2&gt;
+&lt;p&gt;Cuando escribimos un tema, muchas veces necesitamos de otros ficheros, mas allá del contenido HTML. En la jerga de &lt;strong&gt;Ghost&lt;/strong&gt; se llaman &lt;em&gt;assets&lt;/em&gt; y nos ofrece una forma muy fácil de hacerlo. Tenemos un &lt;em&gt;helper&lt;/em&gt; llamado &lt;em&gt;asset&lt;/em&gt; que podemos usar. Un &lt;em&gt;asset&lt;/em&gt; puede ser una hoja de estilo, un fichero &lt;em&gt;javascript&lt;/em&gt;, una imagen, una fuente y en general, cualquier tipo de recurso.&lt;/p&gt;
+&lt;p&gt;Para demostrar como se usa, vamos a incluir una hoja de estilo en nuestro tema. Como queremos que esté disponible en todas las páginas, la podemos poner en la plantilla base. La idea es que va a ser el código HTML normal, pero en vez de dar la ruta nosotros, vamos a poner &lt;code&gt;{{asset "css/style.css"}}&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/content/themes/minimal_theme$ cat default.hbs 
+&amp;lt;!DOCTYPE html&amp;gt;
+&amp;lt;html &lt;span class="nv"&gt;lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;es&amp;quot;&lt;/span&gt;&amp;gt;
+  &amp;lt;head&amp;gt;
+    &amp;lt;meta &lt;span class="nv"&gt;charset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;utf-8&amp;quot;&lt;/span&gt;&amp;gt;
+    &amp;lt;title&amp;gt;&lt;span class="o"&gt;{{&lt;/span&gt;@blog.title&lt;span class="o"&gt;}}&lt;/span&gt;&amp;lt;/title&amp;gt;
+    &amp;lt;link &lt;span class="nv"&gt;rel&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;stylesheet&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;text/css&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;href&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;{{asset &amp;quot;&lt;/span&gt;css/style.css&lt;span class="s2"&gt;&amp;quot;}}&amp;quot;&lt;/span&gt; /&amp;gt;
+&lt;span class="o"&gt;{{&lt;/span&gt;ghost_head&lt;span class="o"&gt;}}&lt;/span&gt;
+  &amp;lt;/head&amp;gt;
+  &amp;lt;body&amp;gt;
+&lt;span class="o"&gt;{{&lt;/span&gt;&amp;gt; header&lt;span class="o"&gt;}}&lt;/span&gt;
+&lt;span class="o"&gt;{{{&lt;/span&gt;body&lt;span class="o"&gt;}}}&lt;/span&gt;
+&lt;span class="o"&gt;{{&lt;/span&gt;ghost_foot&lt;span class="o"&gt;}}&lt;/span&gt;
+  &amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+gerard@aldebaran:~/workspace/content/themes/minimal_theme$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como le hemos indicado que queremos el &lt;em&gt;asset&lt;/em&gt; localizado en &lt;em&gt;css/style.css&lt;/em&gt;, tenemos que crear esta estructura dentro de la carpeta &lt;em&gt;assets&lt;/em&gt;, que crearemos también si no la tenemos. El fichero &lt;em&gt;.css&lt;/em&gt; va a ser bastante simple, para no aburrir con detalles de diseño.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/content/themes/minimal_theme$ cat assets/css/style.css 
+body &lt;span class="o"&gt;{&lt;/span&gt;
+    background-color: cyan&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/workspace/content/themes/minimal_theme$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Sinceramente espero que seáis mejores en el diseño gráfico que yo... Aunque lo importante es que si miramos el &lt;em&gt;blog&lt;/em&gt;, se ha aplicado el estilo definido. Podéis añadir mas &lt;em&gt;assets&lt;/em&gt; hasta que os canséis de ello.&lt;/p&gt;
+&lt;h2&gt;A partir de aquí...&lt;/h2&gt;
+&lt;p&gt;Como detalle final, solo queda decir que podéis generar mas plantillas, que van a ser cargadas en el orden de preferencia, como se indica en &lt;a href="https://themes.ghost.org/docs/context-overview#section-context-table"&gt;la documentación&lt;/a&gt;. Fijaos en las columnas &lt;em&gt;URL&lt;/em&gt; y &lt;em&gt;Template&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Por ejemplo, la plantilla que se usa para la URL &lt;em&gt;/tag/ghost&lt;/em&gt; sería &lt;em&gt;tag-ghost.hbs&lt;/em&gt;; en caso de no haber dicha plantilla, se utilizaría &lt;em&gt;tag.hbs&lt;/em&gt;; en caso de fallar ambas (como es el caso de este tutorial), se utilizaría &lt;em&gt;index.hbs&lt;/em&gt; (que está porque es una de las requeridas).&lt;/p&gt;
+&lt;p&gt;Ya tenéis todas las herramientas necesarias para escribir y para entender temas de &lt;strong&gt;Ghost&lt;/strong&gt;. Con un poco de esfuerzo y ganas, os puede quedar un tema propio genial.&lt;/p&gt;
+&lt;p&gt;En este punto, me voy a la interfaz de administración, y me descargo mi tema, a modo de &lt;em&gt;backup&lt;/em&gt;. Si os interesa, os lo dejo &lt;a href="http://www.linuxsysadmin.tk/downloads/minimal_theme.zip"&gt;aquí&lt;/a&gt;.&lt;/p&gt;</summary><category term="ghost"></category><category term="blog"></category><category term="tema"></category></entry><entry><title>Semáforos en linux</title><link href="http://www.linuxsysadmin.tk/2016/11/semaforos-en-linux.html" rel="alternate"></link><published>2016-11-28T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-11-28:2016/11/semaforos-en-linux.html</id><summary type="html">&lt;p&gt;Tras revisar un &lt;em&gt;bug&lt;/em&gt; de cierto proceso en &lt;em&gt;background&lt;/em&gt; de una aplicación en mi trabajo, vimos que saltaban dos ejecuciones simultáneas y los dos procesos interferían entre ellos. Implementar una exclusión mutua en el proceso era costoso, así que opté por hacerlo con un comando &lt;strong&gt;linux&lt;/strong&gt;, que descubrí por internet.&lt;/p&gt;
 &lt;p&gt;La idea es que podemos asegurar que un comando o &lt;em&gt;script&lt;/em&gt; pase por un semáforo tal como lo entienden en procesos concurrentes; se marca una zona de exclusión en donde solo un número determinado de procesos pueden estar a la vez. En el caso concreto de un solo proceso, se conoce como un &lt;em&gt;mutex&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Así pues, si tenemos un disparador de eventos, como por ejemplo &lt;strong&gt;incron&lt;/strong&gt;, podemos evitar una avalancha de procesos disparados en un plazo de tiempo minúsculo, limitando el &lt;em&gt;stress&lt;/em&gt; causado a la carga del sistema, y evitando también, problemas derivados de que nuestro proceso no acepte concurrencia.&lt;/p&gt;
 &lt;p&gt;Como ya va siendo habitual, vamos a empezar instalando el paquete que ofrece la utilidad &lt;em&gt;sem&lt;/em&gt;:&lt;/p&gt;
