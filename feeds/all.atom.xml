@@ -1,5 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-12-05T08:00:00+01:00</updated><entry><title>Creando un tema para Ghost</title><link href="http://www.linuxsysadmin.tk/2016/12/creando-un-tema-para-ghost.html" rel="alternate"></link><published>2016-12-05T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-12-05:2016/12/creando-un-tema-para-ghost.html</id><summary type="html">&lt;p&gt;Ya vimos lo fácil que resulta de empezar un &lt;em&gt;blog&lt;/em&gt; con &lt;strong&gt;Ghost&lt;/strong&gt;. El tema que viene por defecto es muy simple y bastante legible, pero nos puede interesar cambiarlo, por ejemplo para poner publicidad. Existen temas de pago y gratuitos ya hechos, pero hoy voy a explicar como hacer uno.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-12-12T08:00:00+01:00</updated><entry><title>Documentación fácil con markdown y strapdown.js</title><link href="http://www.linuxsysadmin.tk/2016/12/documentacion-facil-con-markdown-y-strapdownjs.html" rel="alternate"></link><published>2016-12-12T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-12-12:2016/12/documentacion-facil-con-markdown-y-strapdownjs.html</id><summary type="html">&lt;p&gt;Últimamente estoy harto de realizar documentación en formato &lt;em&gt;word&lt;/em&gt;; pierdo la mayoría de mi tiempo dando formato, colores y maquetando el poco contenido que alcanzo a poner. Tras mucho meditar y, a partir de ahora, la voy a escribir en &lt;strong&gt;markdown&lt;/strong&gt;, y se lea en &lt;strong&gt;HTML&lt;/strong&gt;, como lenguaje mas usado.&lt;/p&gt;
+&lt;p&gt;Revisando por la web, he encontrado una librería magnífica que se llama &lt;a href="http://strapdownjs.com/"&gt;strapdown.js&lt;/a&gt;, que combina la elegancia de &lt;strong&gt;bootstrap&lt;/strong&gt; con un compilador &lt;strong&gt;markdown&lt;/strong&gt; de lado cliente. De esta forma, ni siquiera necesito hacer el paso previo de convertir mis ficheros &lt;strong&gt;markdown&lt;/strong&gt; a &lt;strong&gt;HTML&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Como plus extra, como el fichero se interpreta en el navegador, no necesito nada muy caprichoso en el servidor para servir las páginas; con un &lt;strong&gt;nginx&lt;/strong&gt; nos basta. Incluso podemos sacar partido de las &lt;a href="https://pages.github.com/"&gt;GitHub Pages&lt;/a&gt;, para tener &lt;em&gt;hosting&lt;/em&gt; gratuito.&lt;/p&gt;
+&lt;p&gt;Las páginas son ficheros &lt;em&gt;.html&lt;/em&gt; estándares, con la única diferencia de que todo lo que vaya en el &lt;em&gt;tag xmp&lt;/em&gt; será interpretado como &lt;strong&gt;markdown&lt;/strong&gt;. Ahí pongo el esqueleto básico de una página.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;&amp;lt;!DOCTYPE html&amp;gt;&lt;/span&gt;
+&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;html&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;Sin título&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;xmp&lt;/span&gt; &lt;span class="na"&gt;theme&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;spacelab&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;style&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;display:none;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+...
+&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;xmp&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://strapdownjs.com/v/0.2/strapdown.js&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;html&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De hecho, el fichero incluido &lt;em&gt;strapdown.js&lt;/em&gt;, y el resto de ficheros necesarios se pueden alojar en nuestro mismo servidor, para una velocidad de acceso óptima.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo&lt;/h2&gt;
+&lt;p&gt;Supongamos que queremos hacer una web de dos páginas: el índice y otra de ejemplo. Para ello vamos a poner dos ficheros &lt;strong&gt;HTML&lt;/strong&gt;, de la misma manera que lo haríamos para una página web normal.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/www$ ls -1
+example.html
+index.html
+gerard@aldebaran:~/www$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Empezaremos creando un &lt;em&gt;index.html&lt;/em&gt; con el siguiente contenido:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;&amp;lt;!DOCTYPE html&amp;gt;&lt;/span&gt;
+&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;html&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;Home page&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;xmp&lt;/span&gt; &lt;span class="na"&gt;theme&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;spacelab&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;style&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;display:none;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+# Hello world!
+
+You are in the Home page.
+
+Navigation:
+
+* [Home page](/)
+* [Example page](/example.html)
+&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;xmp&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://strapdownjs.com/v/0.2/strapdown.js&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;html&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Hemos puesto un enlace a la página de ejemplo, así que la vamos a crear también, para no tener enlaces rotos. Pongamos algo similar:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;&amp;lt;!DOCTYPE html&amp;gt;&lt;/span&gt;
+&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;html&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;Example page&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;xmp&lt;/span&gt; &lt;span class="na"&gt;theme&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;spacelab&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;style&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;display:none;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+# This is an example
+
+You are in the example page.
+
+Navigation:
+
+* [Home page](/)
+* [Example page](/example.html)
+&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;xmp&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://strapdownjs.com/v/0.2/strapdown.js&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;html&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y no hay que hacer nada más. Solo hay que servir el contenido de esta carpeta. Podemos montar un servidor web o podemos sincronizarla a otro servidor que tengamos. Como no me quiero entretener con esto, y dado que no tiene nada que ver, me voy a limitar a levantar el servidor estándar que viene con &lt;strong&gt;python&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/www$ python -m SimpleHTTPServer
+Serving HTTP on 0.0.0.0 port &lt;span class="m"&gt;8000&lt;/span&gt; ...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto solo nos queda verificar el resultado en &lt;a href="http://localhost:8000/"&gt;http://localhost:8000/&lt;/a&gt;. Si miráis el código fuente de la página, veréis que se ve el lenguaje de marcado tal cual; incluso puede que veáis la página antes de su &lt;em&gt;renderizado&lt;/em&gt;, mientras se carga la librería &lt;strong&gt;javascript&lt;/strong&gt;. Al menos, habré cumplido con mi objetivo, que era el de escribir contenido sin perder tiempo en la maquetación.&lt;/p&gt;</summary><category term="html"></category><category term="markdown"></category><category term="strapdownjs"></category></entry><entry><title>Creando un tema para Ghost</title><link href="http://www.linuxsysadmin.tk/2016/12/creando-un-tema-para-ghost.html" rel="alternate"></link><published>2016-12-05T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-12-05:2016/12/creando-un-tema-para-ghost.html</id><summary type="html">&lt;p&gt;Ya vimos lo fácil que resulta de empezar un &lt;em&gt;blog&lt;/em&gt; con &lt;strong&gt;Ghost&lt;/strong&gt;. El tema que viene por defecto es muy simple y bastante legible, pero nos puede interesar cambiarlo, por ejemplo para poner publicidad. Existen temas de pago y gratuitos ya hechos, pero hoy voy a explicar como hacer uno.&lt;/p&gt;
 &lt;p&gt;Vamos a partir de una instalación limpia de &lt;strong&gt;Ghost&lt;/strong&gt;, pero ejemplo como se indica en &lt;a href="http://www.linuxsysadmin.tk/2016/11/ghost-un-motor-para-hacer-blogs.html"&gt;otro artículo&lt;/a&gt;. Es especialmente importante desarrollar el tema en una instancia que corra en modo &lt;em&gt;development&lt;/em&gt;, así no va a &lt;em&gt;cachear&lt;/em&gt; las plantillas y nos va a ahorrar reiniciar el proceso.&lt;/p&gt;
 &lt;p&gt;Es muy útil mapear la carpeta &lt;em&gt;/usr/lib/ghost/&lt;/em&gt; del contenedor a una carpeta local, si estamos usando &lt;strong&gt;Docker&lt;/strong&gt;. De esta manera podemos editar el tema cómodamente en nuestro sistema de ficheros y con las herramientas con las que más cómodos nos sintamos.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace$ docker run -d -p 2368:2368 -v /home/gerard/workspace/content:/var/lib/ghost ghost
