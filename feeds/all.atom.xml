@@ -1,5 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-12-12T08:00:00+01:00</updated><entry><title>Documentación fácil con markdown y strapdown.js</title><link href="http://www.linuxsysadmin.tk/2016/12/documentacion-facil-con-markdown-y-strapdownjs.html" rel="alternate"></link><published>2016-12-12T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-12-12:2016/12/documentacion-facil-con-markdown-y-strapdownjs.html</id><summary type="html">&lt;p&gt;Últimamente estoy harto de realizar documentación en formato &lt;em&gt;word&lt;/em&gt;; pierdo la mayoría de mi tiempo dando formato, colores y maquetando el poco contenido que alcanzo a poner. Tras mucho meditar y, a partir de ahora, la voy a escribir en &lt;strong&gt;markdown&lt;/strong&gt;, y se lea en &lt;strong&gt;HTML&lt;/strong&gt;, como lenguaje mas usado.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-12-19T08:00:00+01:00</updated><entry><title>Probando virtualhosts con cabeceras HTTP</title><link href="http://www.linuxsysadmin.tk/2016/12/probando-virtualhosts-con-cabeceras-http.html" rel="alternate"></link><published>2016-12-19T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-12-19:2016/12/probando-virtualhosts-con-cabeceras-http.html</id><summary type="html">&lt;p&gt;Algunas veces tenemos que montar servidores web que responden con distinto contenido dependiendo del dominio. En estas ocasiones, es posible usar un servidor DNS local o incluso resolviendo los dominios mediante el fichero &lt;em&gt;/etc/hosts&lt;/em&gt;. Sin embargo, hay una forma fácil, elegante y que no requiere modificar configuraciones del sistema.&lt;/p&gt;
+&lt;p&gt;La idea es muy fácil: se trata de suministrar la cabecera &lt;em&gt;Host&lt;/em&gt; con el dominio que queramos consultar, y el servidor web se va a comportar como si hubiéramos pedido ese &lt;em&gt;virtualhost&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;El escenario de ejemplo&lt;/h2&gt;
+&lt;p&gt;Supongamos que tenemos un servidor web &lt;strong&gt;nginx&lt;/strong&gt; (por poner algún ejemplo). Este servidor está configurado con dos &lt;em&gt;server&lt;/em&gt; (lo que en &lt;strong&gt;apache&lt;/strong&gt; se llama &lt;em&gt;virtualhost&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;Ambos se limitan a servir contenido estático, de diferentes carpetas, con la configuración siguiente:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/etc/nginx/conf.d &lt;span class="c1"&gt;# cat server1&lt;/span&gt;
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen 80&lt;span class="p"&gt;;&lt;/span&gt;
+    server_name server1&lt;span class="p"&gt;;&lt;/span&gt;
+    root /srv/www/server1&lt;span class="p"&gt;;&lt;/span&gt;
+    index index.html&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+/etc/nginx/conf.d &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y una configuración análoga para el otro &lt;em&gt;virtualhost&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/etc/nginx/conf.d &lt;span class="c1"&gt;# cat server2&lt;/span&gt;
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen 80&lt;span class="p"&gt;;&lt;/span&gt;
+    server_name server2&lt;span class="p"&gt;;&lt;/span&gt;
+    root /srv/www/server2&lt;span class="p"&gt;;&lt;/span&gt;
+    index index.html&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+/etc/nginx/conf.d &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Por supuesto, vamos a poner contenido en las carpetas raíz de cada &lt;em&gt;virtualhost&lt;/em&gt;, para que podamos ver fácilmente lo que estamos sirviendo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/srv/www &lt;span class="c1"&gt;# cat server1/index.html &lt;/span&gt;
+&amp;lt;h1&amp;gt;Hello from server1&amp;lt;/h1&amp;gt;
+/srv/www &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y algo similar para el segundo dominio:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/srv/www &lt;span class="c1"&gt;# cat server2/index.html &lt;/span&gt;
+&amp;lt;p&amp;gt;This comes from server2&amp;lt;/p&amp;gt;
+/srv/www &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A partir de aquí, se asume que el servidor está recargado y corriendo.&lt;/p&gt;
+&lt;h2&gt;Como se hace&lt;/h2&gt;
+&lt;p&gt;Podemos hacer una petición directa con las herramientas que nos parezcan adecuadas, por ejemplo, &lt;strong&gt;wget&lt;/strong&gt;, &lt;strong&gt;curl&lt;/strong&gt; o un navegador normal; el único requisito es que podamos añadir cabeceras, de forma nativa o mediante un &lt;em&gt;plugin&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;La dirección IP usada es la que corresponda; incluso se puede usar &lt;em&gt;localhost&lt;/em&gt; si hacemos las pruebas desde la misma máquina.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ curl -s http://192.168.1.48/
+&amp;lt;h1&amp;gt;Hello from server1&amp;lt;/h1&amp;gt;
+gerard@sirius:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como vemos, obtenemos un resultado... ¿Pero cuál?&lt;/p&gt;
+&lt;p&gt;No podemos saber &lt;em&gt;a priori&lt;/em&gt; de que dominio vamos a obtener las páginas. En este caso obtuvimos &lt;em&gt;server1&lt;/em&gt; porque &lt;strong&gt;nginx&lt;/strong&gt; suministra el primero que lee en las configuraciones. Pero eso no nos sirve.&lt;/p&gt;
+&lt;p&gt;Nosotros queremos probar todos los dominios, uno por uno, y posiblemente de forma automatizada. Así, por ejemplo, si queremos el dominio &lt;em&gt;server1&lt;/em&gt;, basta con indicarlo en la cabecera &lt;em&gt;Host&lt;/em&gt; de la petición. Se añade el ejemplo con &lt;strong&gt;curl&lt;/strong&gt;, pero debería poder hacerse con cualquier cliente HTTP, de acuerdo a la documentación.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ curl -s -H &lt;span class="s2"&gt;&amp;quot;Host: server1&amp;quot;&lt;/span&gt; http://192.168.1.48/
+&amp;lt;h1&amp;gt;Hello from server1&amp;lt;/h1&amp;gt;
+gerard@sirius:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos queda pedir el otro dominio, y verificar que se nos está sirviendo &lt;em&gt;server2&lt;/em&gt;, demostrando que este truco funciona:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ curl -s -H &lt;span class="s2"&gt;&amp;quot;Host: server2&amp;quot;&lt;/span&gt; http://192.168.1.48/
+&amp;lt;p&amp;gt;This comes from server2&amp;lt;/p&amp;gt;
+gerard@sirius:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto vemos que nuestros &lt;em&gt;virtualhosts&lt;/em&gt; funcionan como deben. A partir de aquí, podemos enriquecer las configuraciones de acuerdo a nuestras necesidades.&lt;/p&gt;</summary><category term="curl"></category><category term="virtual hosts"></category></entry><entry><title>Documentación fácil con markdown y strapdown.js</title><link href="http://www.linuxsysadmin.tk/2016/12/documentacion-facil-con-markdown-y-strapdownjs.html" rel="alternate"></link><published>2016-12-12T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-12-12:2016/12/documentacion-facil-con-markdown-y-strapdownjs.html</id><summary type="html">&lt;p&gt;Últimamente estoy harto de realizar documentación en formato &lt;em&gt;word&lt;/em&gt;; pierdo la mayoría de mi tiempo dando formato, colores y maquetando el poco contenido que alcanzo a poner. Tras mucho meditar y, a partir de ahora, la voy a escribir en &lt;strong&gt;markdown&lt;/strong&gt;, y se lea en &lt;strong&gt;HTML&lt;/strong&gt;, como lenguaje mas usado.&lt;/p&gt;
 &lt;p&gt;Revisando por la web, he encontrado una librería magnífica que se llama &lt;a href="http://strapdownjs.com/"&gt;strapdown.js&lt;/a&gt;, que combina la elegancia de &lt;strong&gt;bootstrap&lt;/strong&gt; con un compilador &lt;strong&gt;markdown&lt;/strong&gt; de lado cliente. De esta forma, ni siquiera necesito hacer el paso previo de convertir mis ficheros &lt;strong&gt;markdown&lt;/strong&gt; a &lt;strong&gt;HTML&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Como plus extra, como el fichero se interpreta en el navegador, no necesito nada muy caprichoso en el servidor para servir las páginas; con un &lt;strong&gt;nginx&lt;/strong&gt; nos basta. Incluso podemos sacar partido de las &lt;a href="https://pages.github.com/"&gt;GitHub Pages&lt;/a&gt;, para tener &lt;em&gt;hosting&lt;/em&gt; gratuito.&lt;/p&gt;
 &lt;p&gt;Las páginas son ficheros &lt;em&gt;.html&lt;/em&gt; estándares, con la única diferencia de que todo lo que vaya en el &lt;em&gt;tag xmp&lt;/em&gt; será interpretado como &lt;strong&gt;markdown&lt;/strong&gt;. Ahí pongo el esqueleto básico de una página.&lt;/p&gt;
@@ -1648,7 +1716,7 @@ gerard@seginus:~/docker/jenkins_ansible$
 
 
 &lt;p&gt;Levantamos un contenedor para la nueva imagen creada, de la misma forma que levantaríamos la imagen de &lt;strong&gt;Jenkins&lt;/strong&gt; oficial. Mas información en &lt;a href="https://hub.docker.com/_/jenkins/"&gt;Docker Hub&lt;/a&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@seginus:~/docker/jenkins_ansible$ docker run -p 8080:8080 -d jenkins
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@seginus:~/docker/jenkins_ansible$ docker run -p 8080:8080 -d jenkins_ansible
 f9b6a9d23fde25411cd2086d13b7a171633eb2cf0b18295fde89c4466c08ef54
 gerard@seginus:~/docker/jenkins_ansible$ 
 &lt;/pre&gt;&lt;/div&gt;
