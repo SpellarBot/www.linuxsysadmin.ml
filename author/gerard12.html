@@ -92,6 +92,13 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
+                <h2><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></h2>
+                <div class="summary"><p>El otro día estaba habilitando un servidor de <em>mongodb</em> para un entorno de producción. Como me interesaba mejorar el rendimiento de los accesos a disco y no disponía de discos SSD con una durabilidad aceptable, me propuse montar un <em>array de discos</em> en configuración de <strong>RAID 10</strong>, como se recomienda ...</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Construyendo una replica set en mongodb</a></h2>
                 <div class="summary"><p>Muchas veces nos interesa obtener alta disponibilidad en los servicios que gestionamos. No hay nada mas desagradable que una llamada a las tantas de la noche porque se ha caído un nodo de una base de datos y no damos servicio. Para eso <em>mongodb</em> nos ofrece el mecanismo de replicación ...</p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Seguir leyendo</a>
@@ -116,13 +123,6 @@ Linux Sysadmin            </a>
                 <h2><a href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html">Creando sistemas de ficheros temporales con tmpfs</a></h2>
                 <div class="summary"><p>A veces nos podemos encontrar con un sistema de ficheros lleno que no nos permite completar alguna acción por falta de espacio en disco. En un caso así, existe la posibilidad de sacar un sistema de ficheros completo de memoria, de una forma temporal, usando el sistema de ficheros <em>tmpfs ...</em></p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Escribiendo units en systemd</a></h2>
-                <div class="summary"><p>Cuando se anunció <em>systemd</em> me llamó la atención que además de las funciones estándares de otros sistemas de <em>init</em> (por ejemplo <em>sysvinit</em>), también se ofrecían otras funcionalidades normalmente delegadas a otros procesos, como por ejemplo, la posibilidad de reiniciar procesos automáticamente o de lanzar procesos temporales al estilo de <em>cron ...</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
@@ -341,11 +341,6 @@ Linux Sysadmin            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/dns.html">
-                            dns
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/dnsmasq.html">
                             dnsmasq
                         </a>
@@ -363,6 +358,11 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/drop-caches.html">
                             drop caches
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/editor.html">
+                            editor
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -440,6 +440,11 @@ Linux Sysadmin            </a>
                             jaula
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/javascript.html">
+                            javascript
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/jessie.html">
                             jessie
@@ -490,7 +495,7 @@ Linux Sysadmin            </a>
                             maipo
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/markdown.html">
                             markdown
                         </a>
@@ -503,11 +508,6 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-2">
                         <a href="http://www.linuxsysadmin.tk/tag/mongodb.html">
                             mongodb
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/musl.html">
-                            musl
                         </a>
                     </li>
                     <li class="list-group-item tag-2">
@@ -734,7 +734,7 @@ Linux Sysadmin            </a>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2016 Gerard
+         <div class="col-xs-10">&copy; 2017 Gerard
             &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>

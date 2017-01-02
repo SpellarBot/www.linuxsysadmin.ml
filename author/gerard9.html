@@ -92,6 +92,13 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
+                <h2><a href="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">Sistemas de ficheros multicapa con aufs</a></h2>
+                <div class="summary"><p>Trabajando con contenedores tenemos una parte que se repite: el sistema de ficheros base, que copiamos siempre. Otras veces nos puede interesar hacer un sistema capaz de descartar los cambios desde un punto inicial. Podemos crear una capa base de solo lectura y añadir otra capa de cambios con <strong>aufs ...</strong></p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html">Creando un entorno escalable (IV)</a></h2>
                 <div class="summary"><p>Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un <em>proxy HTTP</em> que haga las funciones de terminación <em>SSL</em> y de <em>balanceador</em>, exponiendo todo el sistema en una sola dirección IP ...</p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html">Seguir leyendo</a>
@@ -116,13 +123,6 @@ Linux Sysadmin            </a>
                 <h2><a href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html">Creando un entorno escalable (I)</a></h2>
                 <div class="summary"><p>Mucha gente tiene un servidor único para alojar páginas web dinámicas, por ejemplo con <strong>PHP</strong> y con <strong>MySQL</strong>. Sin embargo, a veces esto puede resultar insuficiente; nos puede interesar tener un entorno de bajas especificaciones y de bajo coste, pero preparado crecer al mismo ritmo que lo hacen los usuarios ...</p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">Restringiendo accesos mediante certificados de cliente</a></h2>
-                <div class="summary"><p>De vez en cuando, tenemos algún contenido web o una API que necesita un control de acceso superior. El método mas eficaz del que disponemos hoy en día es la autenticación con certificados SSL cliente, en donde es el cliente el que debe ofrecer un certificado que el servidor validará ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
@@ -341,11 +341,6 @@ Linux Sysadmin            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/dns.html">
-                            dns
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/dnsmasq.html">
                             dnsmasq
                         </a>
@@ -363,6 +358,11 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/drop-caches.html">
                             drop caches
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/editor.html">
+                            editor
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -440,6 +440,11 @@ Linux Sysadmin            </a>
                             jaula
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/javascript.html">
+                            javascript
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/jessie.html">
                             jessie
@@ -490,7 +495,7 @@ Linux Sysadmin            </a>
                             maipo
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/markdown.html">
                             markdown
                         </a>
@@ -503,11 +508,6 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-2">
                         <a href="http://www.linuxsysadmin.tk/tag/mongodb.html">
                             mongodb
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/musl.html">
-                            musl
                         </a>
                     </li>
                     <li class="list-group-item tag-2">
@@ -734,7 +734,7 @@ Linux Sysadmin            </a>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2016 Gerard
+         <div class="col-xs-10">&copy; 2017 Gerard
             &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
