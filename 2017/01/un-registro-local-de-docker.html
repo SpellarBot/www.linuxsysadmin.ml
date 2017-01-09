@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Sistemas de ficheros multicapa con aufs - Linux Sysadmin</title>
+    <title>Un registro local de Docker - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,26 +9,21 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2017/01/un-registro-local-de-docker.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="keywords" content="linux,debian,jessie,mount,aufs,squashfs,debootstrap" />
-        <meta name="description" content="Trabajando con contenedores tenemos una parte que se repite: el sistema de ficheros base, que copiamos siempre. Otras veces nos puede interesar hacer un sistema capaz de descartar los cambios desde un punto inicial. Podemos crear una capa base de solo lectura y añadir otra capa de cambios con aufs ..." />
+        <meta name="keywords" content="registro,docker" />
+        <meta name="description" content="He llegado a ese momento en el que el número de imágenes docker que he construido se me ha ido de las manos. Ya no pueden seguir ocupando espacio en mi local, así que me he decidido a montar mi propio registro de imágenes, para mi uso y disfrute privado ..." />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Sistemas de ficheros multicapa con aufs"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html"/>
-        <meta property="og:description" content="Trabajando con contenedores tenemos una parte que se repite: el sistema de ficheros base, que copiamos siempre. Otras veces nos puede interesar hacer un sistema capaz de descartar los cambios desde un punto inicial. Podemos crear una capa base de solo lectura y añadir otra capa de cambios con aufs ..."/>
-        <meta property="article:published_time" content="2016-03-28" />
-            <meta property="article:section" content="Operaciones" />
-            <meta property="article:tag" content="linux" />
-            <meta property="article:tag" content="debian" />
-            <meta property="article:tag" content="jessie" />
-            <meta property="article:tag" content="mount" />
-            <meta property="article:tag" content="aufs" />
-            <meta property="article:tag" content="squashfs" />
-            <meta property="article:tag" content="debootstrap" />
+        <meta property="og:title" content="Un registro local de Docker"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/01/un-registro-local-de-docker.html"/>
+        <meta property="og:description" content="He llegado a ese momento en el que el número de imágenes docker que he construido se me ha ido de las manos. Ya no pueden seguir ocupando espacio en mi local, así que me he decidido a montar mi propio registro de imágenes, para mi uso y disfrute privado ..."/>
+        <meta property="article:published_time" content="2017-01-09" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="registro" />
+            <meta property="article:tag" content="docker" />
             <meta property="article:author" content="Gerard" />
 
 
@@ -45,8 +40,8 @@
 
 
 
-        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Operaciones ATOM Feed"/>
+        <link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -90,8 +85,8 @@ Linux Sysadmin            </a>
         <div class="col-sm-9">
             <ol class="breadcrumb">
                 <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
-                <li class="active">Sistemas de ficheros multicapa con aufs</li>
+                <li><a href="http://www.linuxsysadmin.tk/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Un registro local de Docker</li>
             </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -109,10 +104,10 @@ Linux Sysadmin            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html"
+                    <a href="http://www.linuxsysadmin.tk/2017/01/un-registro-local-de-docker.html"
                        rel="bookmark"
-                       title="Permalink to Sistemas de ficheros multicapa con aufs">
-                        Sistemas de ficheros multicapa con aufs
+                       title="Permalink to Un registro local de Docker">
+                        Un registro local de Docker
                     </a>
                 </h1>
             </header>
@@ -122,221 +117,233 @@ Linux Sysadmin            </a>
 <footer class="post-info">
     <span class="label label-default">Fecha</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2016-03-28T08:00:00+02:00"> 2016-03-28</time>
+        <i class="fa fa-calendar"></i><time datetime="2017-01-09T10:00:00+01:00"> 2017-01-09</time>
     </span>
 
 
             <span class="label label-default">Autor</span>
             <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
 
-        <span class="label label-default">Tiempo de lectura</span> 5 minutos
+        <span class="label label-default">Tiempo de lectura</span> 6 minutos
         <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
+        <a href="http://www.linuxsysadmin.tk/category/sistemas.html">Sistemas</a>
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+	<a href="http://www.linuxsysadmin.tk/tag/registro.html">registro</a>
         /
-	<a href="http://www.linuxsysadmin.tk/tag/debian.html">debian</a>
-        /
-	<a href="http://www.linuxsysadmin.tk/tag/jessie.html">jessie</a>
-        /
-	<a href="http://www.linuxsysadmin.tk/tag/mount.html">mount</a>
-        /
-	<a href="http://www.linuxsysadmin.tk/tag/aufs.html">aufs</a>
-        /
-	<a href="http://www.linuxsysadmin.tk/tag/squashfs.html">squashfs</a>
-        /
-	<a href="http://www.linuxsysadmin.tk/tag/debootstrap.html">debootstrap</a>
+	<a href="http://www.linuxsysadmin.tk/tag/docker.html">docker</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>Trabajando con contenedores tenemos una parte que se repite: el sistema de ficheros base, que copiamos siempre. Otras veces nos puede interesar hacer un sistema capaz de descartar los cambios desde un punto inicial. Podemos crear una capa base de solo lectura y añadir otra capa de cambios con <strong>aufs</strong>.</p>
-<p>La idea es crear un sistema de ficheros que sea el resultado de mezclar otros dos: una capa de solo lectura y una capa de cambios, que podría ser de lectura y escritura. Esta nueva capa puede, a su vez, servir de base para otro sistema de ficheros.</p>
-<p>De hecho, esta técnica de "apilado" se utiliza en la distribución de pendrive llamada <a href="http://www.slax.org/">Slax</a>. Mediante el apilado de módulos, mas una capa final de cambios, consiguen crear un sistema de ficheros linux entero, con una capa de cambios que se puede descartar en cualquier momento.</p>
-<p>Empezaremos con un sistema de ficheros simulado en una carpeta, que llamaremos <em>base</em>. También pondremos una carpeta <em>unified</em> que va a ser el sistema de ficheros resultante, y una carpeta <em>changes</em> que va a alojar los cambios del sistema de ficheros respecto al sistema <em>base</em>.</p>
-<div class="highlight"><pre><span></span>root@server:~# tree
-.
-├── base
-│   ├── bin
-│   │   └── hello.sh
-│   └── conf
-│       └── hello.conf
-├── changes
-└── unified
-
-<span class="m">5</span> directories, <span class="m">2</span> files
-root@server:~#
+                <p>He llegado a ese momento en el que el número de imágenes <strong>docker</strong> que he construido se me ha ido de las manos. Ya no pueden seguir ocupando espacio en mi local, así que me he decidido a montar mi propio registro de imágenes, para mi uso y disfrute privado.</p>
+<p>Si miramos en <a href="https://hub.docker.com/_/registry/">DockerHub</a> no nos va a costar demasiado encontrar una imagen que nos proporciones este servicio. Ejecutar esta imagen para uso local no tiene ninguna complicación, y basta con seguir las instrucciones. La cosa se complica si queremos sacarlo de nuestra infraestructura, pero no va a ser el caso de hoy.</p>
+<h2>Levantando un registro local</h2>
+<p>Siguiendo las instrucciones, lanzamos el comando indicado en la documentación:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/registry$ docker run -d -p 5000:5000 registry
+735016f722f25c0d8a8f09c1e2b856011d46fa4efd3a4d6c7846405140443128
+gerard@aldebaran:~/docker/registry$ 
 </pre></div>
 
 
-<p>Para esta demostración nos vale poca cosa, por ejemplo un binario y su configuración. En casos algo mas complejos podría tratarse de una jaula entera de sistema operativo.</p>
-<p>La "aplicación" y su configuración son simples, se muestran como guía, para ver como lo evolucionamos.</p>
-<div class="highlight"><pre><span></span>root@server:~# cat base/bin/hello.sh
-<span class="c1">#!/bin/bash</span>
-
-<span class="nb">source</span> conf/hello.conf
-
-<span class="nb">echo</span> <span class="s2">&quot;Hello </span><span class="si">${</span><span class="nv">NAME</span><span class="si">}</span><span class="s2">!&quot;</span>
-root@server:~# cat base/conf/hello.conf
-<span class="nv">NAME</span><span class="o">=</span><span class="s2">&quot;Gerard&quot;</span>
-root@server:~#
+<p>Solo necesitamos exponer el puerto 5000 que, por comodidad, va a usar el mismo puerto en mi máquina local. La única parte con estado de la imagen es <em>/var/lib/registry</em>, y puede resultar interesante saberlo para hacer copias de seguridad; no voy a hacerlo porque la imagen ya lleva por defecto un <em>container volume</em> declarado.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/registry$ docker <span class="nb">history</span> registry
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+c9bd19d022f6        <span class="m">7</span> weeks ago         /bin/sh -c <span class="c1">#(nop)  CMD [&quot;/etc/docker/registry   0 B                 </span>
+&lt;missing&gt;           <span class="m">7</span> weeks ago         /bin/sh -c <span class="c1">#(nop)  ENTRYPOINT [&quot;/entrypoint.s   0 B                 </span>
+&lt;missing&gt;           <span class="m">7</span> weeks ago         /bin/sh -c <span class="c1">#(nop) COPY file:7b57f7ab1a8cf85c0   155 B               </span>
+&lt;missing&gt;           <span class="m">7</span> weeks ago         /bin/sh -c <span class="c1">#(nop)  EXPOSE 5000/tcp              0 B                 </span>
+&lt;missing&gt;           <span class="m">7</span> weeks ago         /bin/sh -c <span class="c1">#(nop)  VOLUME [/var/lib/registry]   0 B                 </span>
+&lt;missing&gt;           <span class="m">7</span> weeks ago         /bin/sh -c <span class="c1">#(nop) COPY file:6c4758d509045dc45   295 B               </span>
+&lt;missing&gt;           <span class="m">7</span> weeks ago         /bin/sh -c <span class="c1">#(nop) COPY file:3f73dd916d906a0db   27.21 MB            </span>
+&lt;missing&gt;           <span class="m">7</span> weeks ago         /bin/sh -c <span class="nb">set</span> -ex     <span class="o">&amp;&amp;</span> apk add --no-cache    1.287 MB            
+&lt;missing&gt;           <span class="m">7</span> weeks ago         /bin/sh -c <span class="c1">#(nop) ADD file:7afbc23fda8b0b3872   4.803 MB            </span>
+gerard@aldebaran:~/docker/registry$ docker inspect 735016f722f2
+<span class="o">[</span>
+    <span class="o">{</span>
+...  
+        <span class="s2">&quot;Mounts&quot;</span>: <span class="o">[</span>
+            <span class="o">{</span>
+                <span class="s2">&quot;Name&quot;</span>: <span class="s2">&quot;875b58044b85426eb82b5ea74f51f22865994d1bb84d26317c91abaaf1d5f83c&quot;</span>,
+                <span class="s2">&quot;Source&quot;</span>: <span class="s2">&quot;/var/lib/docker/volumes/875b58044b85426eb82b5ea74f51f22865994d1bb84d26317c91abaaf1d5f83c/_data&quot;</span>,
+                <span class="s2">&quot;Destination&quot;</span>: <span class="s2">&quot;/var/lib/registry&quot;</span>,
+                <span class="s2">&quot;Driver&quot;</span>: <span class="s2">&quot;local&quot;</span>,
+                <span class="s2">&quot;Mode&quot;</span>: <span class="s2">&quot;&quot;</span>,
+                <span class="s2">&quot;RW&quot;</span>: true,
+                <span class="s2">&quot;Propagation&quot;</span>: <span class="s2">&quot;&quot;</span>
+            <span class="o">}</span>
+        <span class="o">]</span>,
+...  
+    <span class="o">}</span>
+<span class="o">]</span>
+gerard@aldebaran:~/docker/registry$ 
 </pre></div>
 
 
-<p>Ahora vamos a crear el sistema combinado en la carpeta <em>unified</em>, usando la <em>base</em> como capa de solo lectura, y la carpeta <em>changes</em> como la capa de lectura escritura.</p>
-<div class="highlight"><pre><span></span>root@server:~# mount -t aufs -o br:changes<span class="o">=</span>rw:base<span class="o">=</span>ro none unified
-root@server:~#
+<p>Si preferís la versión usando <strong>docker-compose</strong>, no difiere demasiado:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/registry$ cat docker-compose.yml 
+version: <span class="s1">&#39;2&#39;</span>
+services:
+  registry:
+    image: registry
+    hostname: registry
+    container_name: registry
+    volumes:
+      - ./data:/var/lib/registry
+    ports:
+      - <span class="s2">&quot;5000:5000&quot;</span>
+gerard@aldebaran:~/docker/registry$ docker-compose up -d
+Creating network <span class="s2">&quot;registry_default&quot;</span> with the default driver
+Creating registry
+gerard@aldebaran:~/docker/registry$ 
 </pre></div>
 
 
-<p>Podemos ver que la carpeta <em>unified</em> es una unión de la capa base con la de cambios. Puesto que no hay cambios, por ahora las carpetas coinciden en contenido.</p>
-<div class="highlight"><pre><span></span>root@server:~# tree
-.
-├── base
-│   ├── bin
-│   │   └── hello.sh
-│   └── conf
-│       └── hello.conf
-├── changes
-└── unified
-    ├── bin
-    │   └── hello.sh
-    └── conf
-        └── hello.conf
-
-<span class="m">7</span> directories, <span class="m">4</span> files
-root@server:~#
+<p>En este caso, se ha optado por mapear el volumen <em>/var/lib/registry</em> en una carpeta local, para poder inspeccionarlo fácilmente y para sacar <em>backups</em> con mas facilidad todavía.</p>
+<h2>Uso de nuestro registro local</h2>
+<p>Se puede trabajar con nuestro registro de la misma forma con la que lo haríamos con <em>DockerHub</em>, a base de usar el comando <em>docker push</em> y <em>docker pull</em>. Solo hay que mencionar que el registro destino viene especificado en el nombre de la imagen, en el formato <code>&lt;host&gt;:&lt;port&gt;/&lt;imagen&gt;:&lt;tag&gt;</code>. Por ejemplo, vamos a subir una imagen <em>alpine:3.4</em>, aunque podría ser una imagen nuestra.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/registry$ docker tag alpine:3.4 localhost:5000/alpine:3.4
+gerard@aldebaran:~/docker/registry$ docker images
+REPOSITORY                                                                                      TAG                 IMAGE ID            CREATED             SIZE
+alpine                                                                                          3.4                 baa5d63471ea        <span class="m">7</span> weeks ago         4.803 MB
+localhost:5000/alpine                                                                           3.4                 baa5d63471ea        <span class="m">7</span> weeks ago         4.803 MB
+gerard@aldebaran:~/docker/registry$ docker push localhost:5000/alpine:3.4
+The push refers to a repository <span class="o">[</span>localhost:5000/alpine<span class="o">]</span>
+011b303988d2: Pushed 
+3.4: digest: sha256:1354db23ff5478120c980eca1611a51c9f2b88b61f24283ee8200bf9a54f2e5c size: 528
+gerard@aldebaran:~/docker/registry$ 
 </pre></div>
 
 
-<p>De ahora en adelante, solo queda trabajar con el sistema de ficheros <em>unified</em>, así que vamos a trabajar en esa carpeta.</p>
-<div class="highlight"><pre><span></span>root@server:~# <span class="nb">cd</span> unified/
-root@server:~/unified#
+<p>Y las capas que conforman nuestra imagen, quedan guardadas en nuestro registro local, como podemos ver:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/registry$ tree data/
+data/
+└── docker
+    └── registry
+        └── v2
+            ├── blobs
+            │   └── sha256
+            │       ├── 13
+            │       │   └── 1354db23ff5478120c980eca1611a51c9f2b88b61f24283ee8200bf9a54f2e5c
+            │       │       └── data
+            │       ├── 36
+            │       │   └── 3690ec4760f95690944da86dc4496148a63d85c9e3100669a318110092f6862f
+            │       │       └── data
+            │       └── ba
+            │           └── baa5d63471ead618ff91ddfacf1e2c81bf0612bfeb1daf00eb0843a41fbfade3
+            │               └── data
+            └── repositories
+                └── alpine
+                    ├── _layers
+                    │   └── sha256
+                    │       ├── 3690ec4760f95690944da86dc4496148a63d85c9e3100669a318110092f6862f
+                    │       │   └── link
+                    │       └── baa5d63471ead618ff91ddfacf1e2c81bf0612bfeb1daf00eb0843a41fbfade3
+                    │           └── link
+                    ├── _manifests
+                    │   ├── revisions
+                    │   │   └── sha256
+                    │   │       └── 1354db23ff5478120c980eca1611a51c9f2b88b61f24283ee8200bf9a54f2e5c
+                    │   │           └── link
+                    │   └── tags
+                    │       └── 3.4
+                    │           ├── current
+                    │           │   └── link
+                    │           └── index
+                    │               └── sha256
+                    │                   └── 1354db23ff5478120c980eca1611a51c9f2b88b61f24283ee8200bf9a54f2e5c
+                    │                       └── link
+                    └── _uploads
+
+<span class="m">28</span> directories, <span class="m">8</span> files
+gerard@aldebaran:~/docker/registry$ 
 </pre></div>
 
 
-<p>Si ejecutamos el binario, vemos que reacciona como se supone que debe hacerlo.</p>
-<div class="highlight"><pre><span></span>root@server:~/unified# ./bin/hello.sh
-Hello Gerard!
-root@server:~/unified#
+<p>Nada nos impediría hacer un <code>docker pull localhost:5000/alpine:3.4</code> en el futuro.</p>
+<p><strong>TRUCO</strong>: En caso de querer hacer un <em>push</em> de un tag <em>default</em> de la imagen <code>tools/tsung</code>, bastaría con que usar <code>localhost:5000/tools/tsung</code>; el nombre de la imagen puede contener el separador <code>/</code> y el <em>tag</em> es opcional, usando el <em>tag</em> por defecto <em>default</em>, justo como pasa con <em>DockerHub</em>.</p>
+<h2>Consultando el contenido de nuestro registro</h2>
+<p>Ahora mismo nuestro registro solo tiene guardado un <em>alpine:3.4</em>. Para poder ver una salida mas interesante de la API del registro, subo una <em>alpine:edge</em> y una <em>debian:jessie</em>. Así podemos apreciar dos imágenes, y una de ellas, con dos <em>tags</em>.</p>
+<p>Empezamos dando un nombre que contenga <em>localhost:5000</em> como ya hemos visto más arriba:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/registry$ docker tag <span class="o">{</span>,localhost:5000/<span class="o">}</span>alpine:edge
+gerard@aldebaran:~/docker/registry$ docker tag <span class="o">{</span>,localhost:5000/<span class="o">}</span>debian:jessie
+gerard@aldebaran:~/docker/registry$ docker images <span class="p">|</span> grep localhost
+localhost:5000/debian                                                                           jessie              73e72bf822ca        <span class="m">4</span> weeks ago         <span class="m">123</span> MB
+localhost:5000/alpine                                                                           edge                a1a3cae7a75e        <span class="m">7</span> weeks ago         3.979 MB
+localhost:5000/alpine                                                                           3.4                 baa5d63471ea        <span class="m">7</span> weeks ago         4.803 MB
+gerard@aldebaran:~/docker/registry$ 
 </pre></div>
 
 
-<p>En un momento dado, vemos que queremos modificar un fichero, por ejemplo, el de configuración, cambiando el parámetro <strong>NAME</strong>.</p>
-<div class="highlight"><pre><span></span>root@server:~/unified# cat conf/hello.conf
-<span class="nv">NAME</span><span class="o">=</span><span class="s2">&quot;Gerard Monells&quot;</span>
-root@server:~/unified#
+<p>Y los empujamos al registro:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/registry$ docker push localhost:5000/alpine:edge
+The push refers to a repository <span class="o">[</span>localhost:5000/alpine<span class="o">]</span>
+6f4ada5745cd: Pushed 
+edge: digest: sha256:cd9c03c2d382fcf00c31dc1635445163ec185dfffb51242d9e097892b3b0d5b4 size: 528
+gerard@aldebaran:~/docker/registry$ docker push localhost:5000/debian:jessie
+The push refers to a repository <span class="o">[</span>localhost:5000/debian<span class="o">]</span>
+fe4c16cbf7a4: Pushed 
+jessie: digest: sha256:c1ce85a0f7126a3b5cbf7c57676b01b37c755b9ff9e2f39ca88181c02b985724 size: 529
+gerard@aldebaran:~/docker/registry$ 
 </pre></div>
 
 
-<p>Efectivamente, el resultado es el esperado.</p>
-<div class="highlight"><pre><span></span>root@server:~/unified# ./bin/hello.sh
-Hello Gerard Monells!
-root@server:~/unified#
+<p>Disponemos de una API con -al menos- dos métodos que nos sirven para ver lo que hay en el registro:</p>
+<ul>
+<li>Listar las imágenes de nuestro repositorio -&gt; <code>GET /v2/_catalog</code></li>
+<li>Listar los <em>tags</em> de una imagen concreta -&gt; <code>GET /v2/&lt;imagen&gt;/tags/list</code></li>
+</ul>
+<p>Así, podemos ver lo que hay con las siguientes invocaciones:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/registry$ curl http://localhost:5000/v2/_catalog
+<span class="o">{</span><span class="s2">&quot;repositories&quot;</span>:<span class="o">[</span><span class="s2">&quot;alpine&quot;</span>,<span class="s2">&quot;debian&quot;</span><span class="o">]}</span>
+gerard@aldebaran:~/docker/registry$ curl http://localhost:5000/v2/alpine/tags/list
+<span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="s2">&quot;alpine&quot;</span>,<span class="s2">&quot;tags&quot;</span>:<span class="o">[</span><span class="s2">&quot;edge&quot;</span>,<span class="s2">&quot;3.4&quot;</span><span class="o">]}</span>
+gerard@aldebaran:~/docker/registry$ curl http://localhost:5000/v2/debian/tags/list
+<span class="o">{</span><span class="s2">&quot;name&quot;</span>:<span class="s2">&quot;debian&quot;</span>,<span class="s2">&quot;tags&quot;</span>:<span class="o">[</span><span class="s2">&quot;jessie&quot;</span><span class="o">]}</span>
+gerard@aldebaran:~/docker/registry$ 
 </pre></div>
 
 
-<p>Ahora vamos a crear nuevas carpetas y nuevos ficheros, por ejemplo, una carpeta <em>data</em> con un fichero <em>greetings</em>.</p>
-<div class="highlight"><pre><span></span>root@server:~/unified# mkdir data
-root@server:~/unified# ./bin/hello.sh &gt; data/greetings
-root@server:~/unified#
+<p>Se puede automatizar esta salida con un simple <em>script</em>, que he escrito en <strong>python</strong>:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/registry$ cat list_registry.py 
+<span class="c1">#!/usr/bin/env python</span>
+
+import httplib
+import json
+
+def get_json_response<span class="o">(</span>host, port, uri<span class="o">)</span>:
+    <span class="nv">c</span> <span class="o">=</span> httplib.HTTPConnection<span class="o">(</span>host, port<span class="o">)</span>
+    c.request<span class="o">(</span><span class="s1">&#39;GET&#39;</span>, uri<span class="o">)</span>
+    <span class="nv">r</span> <span class="o">=</span> c.getresponse<span class="o">()</span>
+    <span class="k">return</span> json.load<span class="o">(</span>r<span class="o">)</span>
+
+<span class="nv">catalog</span> <span class="o">=</span> get_json_response<span class="o">(</span><span class="s1">&#39;localhost&#39;</span>, 5000, <span class="s1">&#39;/v2/_catalog&#39;</span><span class="o">)</span>
+<span class="k">for</span> image in catalog<span class="o">[</span><span class="s1">&#39;repositories&#39;</span><span class="o">]</span>:
+    print <span class="s1">&#39;* %s&#39;</span> % image
+    <span class="nv">taginfo</span> <span class="o">=</span> get_json_response<span class="o">(</span><span class="s1">&#39;localhost&#39;</span>, 5000, <span class="s1">&#39;/v2/%s/tags/list&#39;</span> % image<span class="o">)</span>
+    <span class="k">for</span> tag in taginfo<span class="o">[</span><span class="s1">&#39;tags&#39;</span><span class="o">]</span>:
+        print <span class="s1">&#39;    * %s:%s&#39;</span> % <span class="o">(</span>taginfo<span class="o">[</span><span class="s1">&#39;name&#39;</span><span class="o">]</span>, tag<span class="o">)</span>
+gerard@aldebaran:~/docker/registry$ 
 </pre></div>
 
 
-<p>Volvemos al nivel de carpetas anteriores, para investigar lo que está pasando.</p>
-<div class="highlight"><pre><span></span>root@server:~/unified# <span class="nb">cd</span> ..
-root@server:~#
+<p>Y con esto vemos una salida bastante legible.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/registry$ ./list_registry.py 
+* alpine
+    * alpine:edge
+    * alpine:3.4
+* debian
+    * debian:jessie
+gerard@aldebaran:~/docker/registry$ 
 </pre></div>
-
-
-<p>Podemos ver que el sistema <em>base</em> ha quedado intacto. De la misma forma, todas las modificaciones respecto a la base se han almacenado en la carpeta <em>changes</em>. En conjunto, nos queda la carpeta <em>unified</em> con la suma de ambos.</p>
-<div class="highlight"><pre><span></span>root@server:~# tree
-.
-├── base
-│   ├── bin
-│   │   └── hello.sh
-│   └── conf
-│       └── hello.conf
-├── changes
-│   ├── conf
-│   │   └── hello.conf
-│   └── data
-│       └── greetings
-└── unified
-    ├── bin
-    │   └── hello.sh
-    ├── conf
-    │   └── hello.conf
-    └── data
-        └── greetings
-
-<span class="m">10</span> directories, <span class="m">7</span> files
-root@server:~#
-</pre></div>
-
-
-<p>Es fácil intuir que el fichero <em>greetings</em> es el de la capa de cambios, ya que no hay otro. En el caso del fichero <em>hello.conf</em> modificado, se ha modificado el de la capa de cambios, y es el que vemos en el punto de montaje <em>unified</em>, aunque hayan dos.</p>
-<div class="highlight"><pre><span></span>root@server:~# cat base/conf/hello.conf
-<span class="nv">NAME</span><span class="o">=</span><span class="s2">&quot;Gerard&quot;</span>
-root@server:~# cat unified/conf/hello.conf
-<span class="nv">NAME</span><span class="o">=</span><span class="s2">&quot;Gerard Monells&quot;</span>
-root@server:~# cat changes/conf/hello.conf
-<span class="nv">NAME</span><span class="o">=</span><span class="s2">&quot;Gerard Monells&quot;</span>
-root@server:~#
-</pre></div>
-
-
-<p><strong>TRUCO</strong>: el sistema de ficheros de solo lectura <em>base</em> no tiene porque estar en una carpeta; podría tratarse se un sistema de fichero simulado montado en un fichero, montado mediante un <strong>mount -o loop</strong>; por ejemplo, un sistema de ficheros <strong>squashfs</strong>.</p>
-<p>De hecho, como la capa <em>base</em> no se modifica, nada nos impide crear otro sistema de ficheros, a base de sumar esta misma <em>base</em> con otra capa de cambios.</p>
-<div class="highlight"><pre><span></span>root@server:~# mkdir changes2 unified2
-root@server:~# mount -t aufs -o br:changes2<span class="o">=</span>rw:base<span class="o">=</span>ro none unified2
-root@server:~#
-</pre></div>
-
-
-<p>Y con esto tenemos dos sistemas de ficheros, <em>unified</em> y <em>unified2</em>, que comparten una capa <em>base</em> común.</p>
-<div class="highlight"><pre><span></span>root@server:~# tree
-.
-├── base
-│   ├── bin
-│   │   └── hello.sh
-│   └── conf
-│       └── hello.conf
-├── changes
-│   ├── conf
-│   │   └── hello.conf
-│   └── data
-│       └── greetings
-├── changes2
-├── unified
-│   ├── bin
-│   │   └── hello.sh
-│   ├── conf
-│   │   └── hello.conf
-│   └── data
-│       └── greetings
-└── unified2
-    ├── bin
-    │   └── hello.sh
-    └── conf
-        └── hello.conf
-
-<span class="m">14</span> directories, <span class="m">9</span> files
-root@server:~#
-</pre></div>
-
-
-<p>En este caso no supone mucho ahorro, ya que la capa base es pequeña, pero... ¿os imagináis que la capa base es una jaula entera resultado de un <strong>debootstrap</strong>?</p>
-<p>De hecho, esta capa <em>base</em> compartida no hay que copiarla, con lo que ganamos tiempo al crear una jaula grande, y además, si lo juntamos con <strong>squashfs</strong> podemos ahorrar bastante espacio.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2015/12/creacion-de-un-livecd-con-debian.html">Creación de un livecd con Debian</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/02/un-proxy-dns-con-dnsmasq.html">Un proxy DNS con dnsmasq</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html">Crear jaulas de forma fácil basadas en Debian y Ubuntu con debootstrap</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/07/tipos-de-volumenes-en-docker.html">Tipos de volúmenes en Docker</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/10/microservicios-con-docker-compose.html">Microservicios con docker-compose</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
     </ul>
 </section>
     <hr/>
@@ -348,8 +355,8 @@ root@server:~#
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'sistemas-de-ficheros-multicapa-con-aufs';
-                var disqus_url = 'http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html';
+                    var disqus_identifier = 'un-registro-local-de-docker';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2017/01/un-registro-local-de-docker.html';
 
             var disqus_config = function () {
                 this.language = "es";
