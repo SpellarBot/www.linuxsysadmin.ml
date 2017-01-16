@@ -1,5 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-01-09T10:00:00+01:00</updated><entry><title>Un registro local de Docker</title><link href="http://www.linuxsysadmin.tk/2017/01/un-registro-local-de-docker.html" rel="alternate"></link><published>2017-01-09T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-01-09:2017/01/un-registro-local-de-docker.html</id><summary type="html">&lt;p&gt;He llegado a ese momento en el que el número de imágenes &lt;strong&gt;docker&lt;/strong&gt; que he construido se me ha ido de las manos. Ya no pueden seguir ocupando espacio en mi local, así que me he decidido a montar mi propio registro de imágenes, para mi uso y disfrute privado.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-01-16T10:00:00+01:00</updated><entry><title>Acumulando los logs en un servidor centralizado con Kibana</title><link href="http://www.linuxsysadmin.tk/2017/01/acumulando-los-logs-en-un-servidor-centralizado-con-kibana.html" rel="alternate"></link><published>2017-01-16T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-01-16:2017/01/acumulando-los-logs-en-un-servidor-centralizado-con-kibana.html</id><summary type="html">&lt;p&gt;Buscar en los &lt;em&gt;logs&lt;/em&gt; es fácil cuando tenemos una máquina de cada tipo, pero es una actividad muy poco gratificante cuando tenemos un número grande o variable de cada tipo. La mejor manera de tenerlos controlados es hacer que envíen sus &lt;em&gt;logs&lt;/em&gt; a un almacén central, para su fácil consulta.&lt;/p&gt;
+&lt;p&gt;En este artículo se pretende dar a conocer una de estas soluciones de acumulación y búsqueda de &lt;em&gt;logs&lt;/em&gt;, conocida como &lt;strong&gt;ELK&lt;/strong&gt; (hace poco se renombró a &lt;strong&gt;Elastic Stack&lt;/strong&gt;). Se trata de un conjunto de servicios que cooperan para obtener una solución completa:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Elastic search&lt;/strong&gt;: se trata de la base de datos que almacena todos los &lt;em&gt;logs&lt;/em&gt; que se le envían.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Logstash&lt;/strong&gt;: Es un agente que envía los &lt;em&gt;logs&lt;/em&gt; de varias fuentes al &lt;strong&gt;elastic search&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Kibana&lt;/strong&gt;: Es una interfaz gráfica que nos permite buscar &lt;em&gt;logs&lt;/em&gt; y dibujar bonitas gráficas, partiendo de los datos del &lt;strong&gt;elastic search&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img alt="Esquema de un ELK" src="http://www.linuxsysadmin.tk/images/the-elk-stack.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;De esto se puede deducir que vamos a necesitar una instancia de cada tipo, a excepción de &lt;strong&gt;logstash&lt;/strong&gt;, que debe ponerse en todos los servidores que recojan &lt;em&gt;logs&lt;/em&gt;. Se podría poner, por ejemplo, el &lt;strong&gt;elastic search&lt;/strong&gt; y el &lt;strong&gt;kibana&lt;/strong&gt; en una misma máquina, dedicada solamente al consumo de los &lt;em&gt;logs&lt;/em&gt; de todos los servidores productivos.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo rápido&lt;/h2&gt;
+&lt;p&gt;Si miramos en &lt;a href="https://hub.docker.com/"&gt;DockerHub&lt;/a&gt;, podremos comprobar que las 3 piezas disponen de una imagen que las satisface. Eso nos va a ahorrar mucho tiempo, a costa de las particularidades de cada imagen.&lt;/p&gt;
+&lt;p&gt;Vamos a poner todas las imágenes en el mismo servidor por economía, pero lo ideal sería un &lt;strong&gt;logstash&lt;/strong&gt; por servidor y otro servidor con &lt;strong&gt;elastic search&lt;/strong&gt; y &lt;strong&gt;kibana&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;El primer paso es acondicionar la memoria que pueden usar nuestros procesos. Esto se hace porque el &lt;strong&gt;elastic search&lt;/strong&gt; consume mucha memoria y va a fallar iniciándose.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@styx:~/docker/elk$ sudo sysctl -w vm.max_map_count&lt;span class="o"&gt;=&lt;/span&gt;262144
+vm.max_map_count &lt;span class="o"&gt;=&lt;/span&gt; 262144
+gerard@styx:~/docker/elk$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La mayoría de imágenes funcionan bien de serie, pero no es el caso de &lt;strong&gt;logstash&lt;/strong&gt;, que necesita una configuraciṕon para indicar qué &lt;em&gt;logs&lt;/em&gt; recoger, las transformaciones que deben sufrir, y el destino al que ir. Más información en &lt;a href="https://www.elastic.co/guide/en/logstash/current/index.html"&gt;la documentación&lt;/a&gt;. De momento nos vamos a limitar a recoger todos los ficheros &lt;em&gt;.log&lt;/em&gt; recursivamente de la carpeta &lt;em&gt;/logs&lt;/em&gt;; esta va a ser un volumen de &lt;em&gt;/var/log&lt;/em&gt; del servidor real.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@styx:~/docker/elk$ cat logstash.conf 
+input &lt;span class="o"&gt;{&lt;/span&gt;
+  file &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="nv"&gt;path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="s2"&gt;&amp;quot;/logs/**/*.log&amp;quot;&lt;/span&gt;
+    &lt;span class="nv"&gt;start_position&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="s2"&gt;&amp;quot;beginning&amp;quot;&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+output &lt;span class="o"&gt;{&lt;/span&gt;
+  elasticsearch &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="nv"&gt;hosts&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;elasticsearch:9200&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@styx:~/docker/elk$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para simplificar el despliegue, vamos a usar &lt;strong&gt;docker-compose&lt;/strong&gt;, con algunas variaciones interesantes.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@styx:~/docker/elk$ cat docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;
+services:
+  elasticsearch:
+    image: elasticsearch
+    container_name: elasticsearch
+    hostname: elasticsearch
+  kibana:
+    image: kibana
+    container_name: kibana
+    hostname: kibana
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;5601:5601&amp;quot;&lt;/span&gt;
+  logstash:
+    image: logstash
+    container_name: logstash
+    hostname: logstash
+    volumes:
+      - ./logstash.conf:/logstash.conf:ro
+      - /var/log:/logs:ro
+    user: root
+    command: &lt;span class="o"&gt;[&lt;/span&gt;bash, -c, &lt;span class="s2"&gt;&amp;quot;logstash -f /logstash.conf&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@styx:~/docker/elk$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Se hace notar especialmente que publicamos el puerto del &lt;strong&gt;kibana&lt;/strong&gt;, para poderlo ver cómodamente en nuestro navegador. Aparte de esto, vamos a poner el fichero de configuración de &lt;strong&gt;logstash&lt;/strong&gt; como un volumen local, tal como la carpeta de &lt;em&gt;logs&lt;/em&gt;. Un último detalle es que modificamos el comando a ejecutar para que el &lt;em&gt;entrypoint&lt;/em&gt; que viene por defecto no nos fuerce el usuario &lt;em&gt;logstash&lt;/em&gt;, puesto que entonces no podríamos leer muchos de los &lt;em&gt;logs&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@styx:~/docker/elk$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;elk_default&amp;quot;&lt;/span&gt; with the default driver
+Creating elasticsearch
+Creating logstash
+Creating kibana
+gerard@styx:~/docker/elk$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos falta acceder a la interfaz del &lt;strong&gt;Kibana&lt;/strong&gt; en &lt;a href="http://localhost:5601/"&gt;http://localhost:5601/&lt;/a&gt; y disfrutar del resultado.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Frontend de Kibana" src="http://www.linuxsysadmin.tk/images/kibana-frontend.jpg" /&gt;&lt;/p&gt;</summary><category term="ELK"></category><category term="elastic search"></category><category term="logstash"></category><category term="kibana"></category><category term="logs"></category></entry><entry><title>Un registro local de Docker</title><link href="http://www.linuxsysadmin.tk/2017/01/un-registro-local-de-docker.html" rel="alternate"></link><published>2017-01-09T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-01-09:2017/01/un-registro-local-de-docker.html</id><summary type="html">&lt;p&gt;He llegado a ese momento en el que el número de imágenes &lt;strong&gt;docker&lt;/strong&gt; que he construido se me ha ido de las manos. Ya no pueden seguir ocupando espacio en mi local, así que me he decidido a montar mi propio registro de imágenes, para mi uso y disfrute privado.&lt;/p&gt;
 &lt;p&gt;Si miramos en &lt;a href="https://hub.docker.com/_/registry/"&gt;DockerHub&lt;/a&gt; no nos va a costar demasiado encontrar una imagen que nos proporciones este servicio. Ejecutar esta imagen para uso local no tiene ninguna complicación, y basta con seguir las instrucciones. La cosa se complica si queremos sacarlo de nuestra infraestructura, pero no va a ser el caso de hoy.&lt;/p&gt;
 &lt;h2&gt;Levantando un registro local&lt;/h2&gt;
 &lt;p&gt;Siguiendo las instrucciones, lanzamos el comando indicado en la documentación:&lt;/p&gt;
@@ -1704,7 +1779,7 @@ gerard@sirius:~/docker/autobuilder$
 
 &lt;p&gt;El &lt;em&gt;script&lt;/em&gt; de &lt;em&gt;build&lt;/em&gt; va a depender bastante de como se prepara nuestra aplicación. En este caso va a clonar el repositorio en una carpeta &lt;em&gt;/build&lt;/em&gt;, y va a copiar la referencia solicitada en una carpeta &lt;em&gt;/app&lt;/em&gt;, que luego va a ser acompañada con un &lt;em&gt;virtualenv&lt;/em&gt;. Puesto que el &lt;em&gt;virtualenv&lt;/em&gt; es dependiente de la localización en el servidor, vamos a usar también &lt;em&gt;/app&lt;/em&gt; en la máquina de &lt;em&gt;runtime&lt;/em&gt;. En este paso es cuando hace falta usar la convención del fichero &lt;em&gt;requirements.txt&lt;/em&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/autobuilder$ cat builder/build.sh 
-&lt;span class="c1"&gt;#/bin/sh&lt;/span&gt;
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
 
 mkdir /app
 git clone &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;REPO&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; /build

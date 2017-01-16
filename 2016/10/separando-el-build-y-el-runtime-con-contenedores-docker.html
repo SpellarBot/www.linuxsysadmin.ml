@@ -182,7 +182,7 @@ gerard@sirius:~/docker/autobuilder$
 
 <p>El <em>script</em> de <em>build</em> va a depender bastante de como se prepara nuestra aplicación. En este caso va a clonar el repositorio en una carpeta <em>/build</em>, y va a copiar la referencia solicitada en una carpeta <em>/app</em>, que luego va a ser acompañada con un <em>virtualenv</em>. Puesto que el <em>virtualenv</em> es dependiente de la localización en el servidor, vamos a usar también <em>/app</em> en la máquina de <em>runtime</em>. En este paso es cuando hace falta usar la convención del fichero <em>requirements.txt</em>.</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder$ cat builder/build.sh 
-<span class="c1">#/bin/sh</span>
+<span class="c1">#!/bin/sh</span>
 
 mkdir /app
 git clone <span class="si">${</span><span class="nv">REPO</span><span class="si">}</span> /build
@@ -432,8 +432,8 @@ gerard@sirius:~/docker/autobuilder/runner$
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/07/tipos-de-volumenes-en-docker.html">Tipos de volúmenes en Docker</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/10/python-como-una-calculadora-estadistica.html">Python como una calculadora estadística</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/10/microservicios-con-docker-compose.html">Microservicios con docker-compose</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/08/generando-passwords-complejas-con-python.html">Generando passwords complejas con python</a></li>
     </ul>
 </section>
     <hr/>
@@ -620,11 +620,6 @@ gerard@sirius:~/docker/autobuilder/runner$
                             concurrencia
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/contenedor.html">
-                            contenedor
-                        </a>
-                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -671,8 +666,13 @@ gerard@sirius:~/docker/autobuilder/runner$
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/editor.html">
-                            editor
+                        <a href="http://www.linuxsysadmin.tk/tag/elastic-search.html">
+                            elastic search
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/elk.html">
+                            ELK
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -708,11 +708,6 @@ gerard@sirius:~/docker/autobuilder/runner$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/git.html">
                             git
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/gpg.html">
-                            gpg
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -766,6 +761,11 @@ gerard@sirius:~/docker/autobuilder/runner$
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/kibana.html">
+                            kibana
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/ldd.html">
                             ldd
                         </a>
@@ -788,6 +788,16 @@ gerard@sirius:~/docker/autobuilder/runner$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/logical-volume-manager.html">
                             logical volume manager
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/logs.html">
+                            logs
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/logstash.html">
+                            logstash
                         </a>
                     </li>
                     <li class="list-group-item tag-3">
@@ -926,11 +936,6 @@ gerard@sirius:~/docker/autobuilder/runner$
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/script.html">
-                            script
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/seguridad.html">
                             seguridad
                         </a>
@@ -938,11 +943,6 @@ gerard@sirius:~/docker/autobuilder/runner$
                     <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/semaforo.html">
                             semáforo
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/shell.html">
-                            shell
                         </a>
                     </li>
                     <li class="list-group-item tag-3">
