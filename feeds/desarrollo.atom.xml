@@ -1,5 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-10-17T08:00:00+02:00</updated><entry><title>Python como una calculadora estadística</title><link href="http://www.linuxsysadmin.tk/2016/10/python-como-una-calculadora-estadistica.html" rel="alternate"></link><published>2016-10-17T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-10-17:2016/10/python-como-una-calculadora-estadistica.html</id><summary type="html">&lt;p&gt;El otro día me encontraba en mi trabajo con otra petición muy especial: se necesitaba un &lt;em&gt;check&lt;/em&gt; para &lt;strong&gt;Nagios&lt;/strong&gt; que contara las apariciones de cierto tipo de errores en un fichero de &lt;em&gt;log&lt;/em&gt;. Ese &lt;em&gt;check&lt;/em&gt; debía saltar en función de cuán alejado estaba el valor de las últimas 100 muestras.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-01-23T10:00:00+01:00</updated><entry><title>Usando SSH en nuestros scripts python mediante paramiko</title><link href="http://www.linuxsysadmin.tk/2017/01/usando-ssh-en-nuestros-scripts-python-mediante-paramiko.html" rel="alternate"></link><published>2017-01-23T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-01-23:2017/01/usando-ssh-en-nuestros-scripts-python-mediante-paramiko.html</id><summary type="html">&lt;p&gt;Es muy útil lanzar comandos &lt;strong&gt;SSH&lt;/strong&gt; desde un &lt;em&gt;script&lt;/em&gt; de &lt;strong&gt;bash&lt;/strong&gt;. Sin embargo, los &lt;em&gt;scripts&lt;/em&gt; en &lt;strong&gt;bash&lt;/strong&gt; se vuelve ilegibles rápidamente, y no nos ofrece el poderío de la librería &lt;strong&gt;python&lt;/strong&gt;. No es de extrañar que herramientas como &lt;strong&gt;ansible&lt;/strong&gt; o &lt;strong&gt;fabric&lt;/strong&gt; estén escritas en &lt;strong&gt;python&lt;/strong&gt;, usando una librería llamada &lt;strong&gt;paramiko&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Una vez en el terreno de &lt;strong&gt;python&lt;/strong&gt;, disponemos de todas las opciones que tenemos habitualmente en el lenguaje, como por ejemplo, el módulo de expresiones regulares para &lt;em&gt;parsear&lt;/em&gt; la salida. Estos &lt;em&gt;scripts&lt;/em&gt; quedan muy pequeños, legibles y limpios.&lt;/p&gt;
+&lt;p&gt;En este artículo vamos a explicar como instalar y usar &lt;strong&gt;paramiko&lt;/strong&gt;, con un ejemplo simple. El resto quedará a la imaginación de los lectores.&lt;/p&gt;
+&lt;h2&gt;Instalando la librería en un virtualenv&lt;/h2&gt;
+&lt;p&gt;Vamos a hacernos con el control de &lt;em&gt;root&lt;/em&gt;, de forma interactiva o mediante &lt;strong&gt;sudo&lt;/strong&gt; para instalar las herramientas básicas para utilizar &lt;em&gt;virtualenvs&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@desktop:~# apt-get install python-virtualenv  
+...
+root@desktop:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como adelanto, el comando &lt;strong&gt;pip&lt;/strong&gt; se va a ir quejando porque no dispone de un compilador y de ciertas librerías para construir las librerías de las que &lt;strong&gt;paramiko&lt;/strong&gt; depende. Podéis ir instalando estas librerías a medida que las vaya pidiendo, o por comodidad, las instalamos ahora de golpe.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@desktop:~# apt-get install gcc python-dev libssl-dev libffi-dev
+...  
+root@desktop:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y ya con las dependencias cumplidas, volvemos a utilizar un usuario sin privilegios, por seguridad. Vamos a crear un &lt;em&gt;virtualenv&lt;/em&gt; en una localización arbitraria.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@desktop:~/ssl$ virtualenv env
+Running virtualenv with interpreter /usr/bin/python2
+New python executable in env/bin/python2
+Also creating executable in env/bin/python
+Installing setuptools, pip...done.
+gerard@desktop:~/ssl$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Activamos el &lt;em&gt;virtualenv&lt;/em&gt;, para asegurar que la instalación de &lt;strong&gt;paramiko&lt;/strong&gt; se hace en el mismo, y así no ensuciamos el sistema con nuestras librerías propias.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@desktop:~/ssl$ . env/bin/activate
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt;gerard@desktop:~/ssl$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Instalar la librería es tan fácil como utilizar &lt;strong&gt;pip&lt;/strong&gt; o &lt;strong&gt;easy_install&lt;/strong&gt; para instalarla. Como &lt;strong&gt;pip&lt;/strong&gt; es el futuro de las herramientas &lt;strong&gt;python&lt;/strong&gt;, vamos con este comando. Este se va a bajar todos los paquetes y va a construir las librerías auxiliares; es un proceso con mucha salida, pero tarda poco.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt;gerard@desktop:~/ssl$ pip install paramiko
+...  
+Successfully installed paramiko pyasn1 cryptography idna six setuptools enum34 ipaddress cffi pycparser
+Cleaning up...
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt;gerard@desktop:~/ssl$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A partir de aquí, solo queda hacer un script que satisfaga nuestras necesidades.&lt;/p&gt;
+&lt;h2&gt;Un script de ejemplo&lt;/h2&gt;
+&lt;p&gt;Vamos a suponer que tenemos un servidor llamado &lt;em&gt;server&lt;/em&gt;, con un usuario &lt;em&gt;gerard&lt;/em&gt; con permiso para hacer &lt;strong&gt;sudo&lt;/strong&gt;. Vamos a lanzar tres comandos por &lt;strong&gt;SSH&lt;/strong&gt;, que nos van a indicar su &lt;em&gt;hostname&lt;/em&gt; y el usuario con el que ejecutamos los comandos, con y sin &lt;strong&gt;sudo&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Siguiendo &lt;a href="http://docs.paramiko.org/en/2.1/"&gt;la documentación&lt;/a&gt;, rápidamente sacamos un &lt;em&gt;script&lt;/em&gt; mínimo. Para poder reutilizarlo en futuras aventuras, vamos a separar la lógica de ejecutar un comando del resto, mediante una función.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt;gerard@desktop:~/ssl$ cat test.py 
+&lt;span class="c1"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+import paramiko
+
+def execute_command&lt;span class="o"&gt;(&lt;/span&gt;command, host, user, password, &lt;span class="nv"&gt;sudo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;False&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="nv"&gt;client&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; paramiko.SSHClient&lt;span class="o"&gt;()&lt;/span&gt;
+    client.set_missing_host_key_policy&lt;span class="o"&gt;(&lt;/span&gt;paramiko.AutoAddPolicy&lt;span class="o"&gt;())&lt;/span&gt;
+    client.connect&lt;span class="o"&gt;(&lt;/span&gt;host, &lt;span class="nv"&gt;username&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;user, &lt;span class="nv"&gt;password&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;password, &lt;span class="nv"&gt;timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;2&lt;span class="o"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; sudo:
+        stdin, stdout, &lt;span class="nv"&gt;stderr&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; client.exec_command&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;sudo -S &amp;#39;&lt;/span&gt; + &lt;span class="nb"&gt;command&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+        stdin.write&lt;span class="o"&gt;(&lt;/span&gt;password + &lt;span class="s1"&gt;&amp;#39;\n&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;:
+        stdin, stdout, &lt;span class="nv"&gt;stderr&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; client.exec_command&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;command&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+    &lt;span class="nv"&gt;output&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; stdout.read&lt;span class="o"&gt;()&lt;/span&gt;
+    client.close&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; output
+
+&lt;span class="nv"&gt;HOST&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;172.17.0.2&amp;#39;&lt;/span&gt;
+&lt;span class="nv"&gt;USER&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;gerard&amp;#39;&lt;/span&gt;
+&lt;span class="nv"&gt;PASSWORD&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;s3cr3t&amp;#39;&lt;/span&gt;
+
+print &lt;span class="s1"&gt;&amp;#39;Remote hostname:&amp;#39;&lt;/span&gt;, execute_command&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;hostname&amp;#39;&lt;/span&gt;, HOST, USER, PASSWORD&lt;span class="o"&gt;)&lt;/span&gt;,
+print &lt;span class="s1"&gt;&amp;#39;Remote user:&amp;#39;&lt;/span&gt;, execute_command&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;whoami&amp;#39;&lt;/span&gt;, HOST, USER, PASSWORD&lt;span class="o"&gt;)&lt;/span&gt;,
+print &lt;span class="s1"&gt;&amp;#39;Remote user after sudo:&amp;#39;&lt;/span&gt;, execute_command&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;whoami&amp;#39;&lt;/span&gt;, HOST, USER, PASSWORD, &lt;span class="nv"&gt;sudo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;True&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt;gerard@desktop:~/ssl$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos queda ejecutar para comprobar que funciona como debe:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt;gerard@desktop:~/ssl$ ./test.py 
+Remote hostname: server
+Remote user: gerard
+Remote user after sudo: root
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt;gerard@desktop:~/ssl$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En un &lt;em&gt;script&lt;/em&gt; real, posiblemente habríamos sacado información mas útil, y habríamos &lt;em&gt;parseado&lt;/em&gt; la salida para no mostrar nada que no nos aporte valor. De momento, nos basta con obtener la salida y mostrarla.&lt;/p&gt;</summary><category term="ssh"></category><category term="python"></category><category term="paramiko"></category><category term="script"></category></entry><entry><title>Python como una calculadora estadística</title><link href="http://www.linuxsysadmin.tk/2016/10/python-como-una-calculadora-estadistica.html" rel="alternate"></link><published>2016-10-17T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-10-17:2016/10/python-como-una-calculadora-estadistica.html</id><summary type="html">&lt;p&gt;El otro día me encontraba en mi trabajo con otra petición muy especial: se necesitaba un &lt;em&gt;check&lt;/em&gt; para &lt;strong&gt;Nagios&lt;/strong&gt; que contara las apariciones de cierto tipo de errores en un fichero de &lt;em&gt;log&lt;/em&gt;. Ese &lt;em&gt;check&lt;/em&gt; debía saltar en función de cuán alejado estaba el valor de las últimas 100 muestras.&lt;/p&gt;
 &lt;p&gt;Guardar una muestra de valores en un fichero no supone ningún problema en &lt;strong&gt;Linux&lt;/strong&gt;. Sin embargo, hacer cálculos estadísticos en &lt;strong&gt;bash&lt;/strong&gt; es un suicidio. Eso nos obligaba a utilizar un lenguaje mas elaborado, pero existente en todas las máquinas: &lt;strong&gt;python&lt;/strong&gt;. Sin embargo, el módulo &lt;strong&gt;numpy&lt;/strong&gt; no estaba en todas las máquinas interesadas; instalarlo no era una opción. Así que me tocó programarlo a mí.&lt;/p&gt;
 &lt;p&gt;Desempolvando mis apuntes de estadística en forma de &lt;a href="https://en.wikipedia.org/wiki/Standard_deviation"&gt;Wikipedia&lt;/a&gt;, tenemos lo siguiente:&lt;/p&gt;
 &lt;blockquote&gt;

@@ -92,6 +92,13 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
+                <h2><a href="http://www.linuxsysadmin.tk/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html">Separando el build y el runtime con contenedores Docker</a></h2>
+                <div class="summary"><p>Cuando montamos un contenedor <strong>Docker</strong> para servir una aplicación cualquiera, solemos poner un montón de dependencias necesarias solamente para compilar el paquete o para empaquetar sus librerías. Esto supone un gasto innecesario en espacio y en tiempo de ejecución; usando contenedores desechables podemos agilizar este proceso de forma altamente considerable ...</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://www.linuxsysadmin.tk/2016/10/disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron.html">Disparando acciones en respuesta a modificaciones en el sistema de fichero con incron</a></h2>
                 <div class="summary"><p>El otro día recibí una petición diferente en mi trabajo. Se necesitaba monitorizar una carpeta, de forma que cuando alguien dejara ficheros, se lanzara una tarea para procesarlos. Tras buscar un poco por internet, topé con una herramienta tipo <em>cron</em>, que ejecutaba comandos ante eventos en el sistema de ficheros ...</p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/10/disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron.html">Seguir leyendo</a>
@@ -116,13 +123,6 @@ Linux Sysadmin            </a>
                 <h2><a href="http://www.linuxsysadmin.tk/2016/09/imagenes-docker-reusables-mediante-configuraciones-dinamicas.html">Imágenes docker reusables mediante configuraciones dinámicas</a></h2>
                 <div class="summary"><p>Muchos de los servicios que necesitamos son siempre los mismos, cambiando solamente algunos parámetros. Incluso los mismos servicios pueden sufrir variaciones en su configuración, por ejemplo, un balanceador al que se añaden o quitan <em>hosts</em>. Siguiendo las prácticas de <a href="http://12factor.net/es/">12factor</a> podemos ahorrar trabajo, mediante el uso de variables de entorno ...</p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/09/imagenes-docker-reusables-mediante-configuraciones-dinamicas.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html">Un servidor pypi local</a></h2>
-                <div class="summary"><p>Cuando trabajamos con <strong>python</strong>, muchas veces necesitamos instalar librerías con <em>pip</em> o <em>easy_install</em>. Dependiendo de la naturaleza de nuestros proyectos, las librerías suelen variar, pero siempre solemos utilizar los mismos. En estos casos puede ser útil tenerlos cerca, cacheados en un servidor en nuestra red local, para su rápido acceso ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
@@ -250,11 +250,6 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/aufs.html">
                             aufs
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/autenticacion.html">
-                            autenticación
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -625,6 +620,11 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/runtime.html">
                             runtime
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/script.html">
+                            script
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
