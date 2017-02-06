@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2017-01-30T10:09:02-00:00</lastmod>
+<lastmod>2017-02-06T09:11:47-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2017-01-30T10:09:02-00:00</lastmod>
+<lastmod>2017-02-06T09:11:47-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2017-01-30T10:09:02-00:00</lastmod>
+<lastmod>2017-02-06T09:11:47-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2017-01-30T10:09:02-00:00</lastmod>
+<lastmod>2017-02-06T09:11:47-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2017-01-30T10:09:02-00:00</lastmod>
+<lastmod>2017-02-06T09:11:47-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2017/02/compartiendo-carpetas-con-nfs.html</loc>
+<lastmod>2017-02-06T10:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -551,7 +558,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/sistemas.html</loc>
-<lastmod>2017-01-09T10:00:00-00:15</lastmod>
+<lastmod>2017-02-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -627,8 +634,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/elk.html</loc>
-<lastmod>2017-01-16T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/jessie.html</loc>
+<lastmod>2017-02-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -760,6 +767,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/dhcp.html</loc>
+<lastmod>2016-02-01T08:30:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/volumenes.html</loc>
 <lastmod>2016-07-18T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -795,8 +809,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/dnsmasq.html</loc>
-<lastmod>2016-02-01T08:30:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/nfs.html</loc>
+<lastmod>2017-02-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -928,7 +942,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/dhcp.html</loc>
+<loc>http://www.linuxsysadmin.tk/tag/dnsmasq.html</loc>
 <lastmod>2016-02-01T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -942,8 +956,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/jessie.html</loc>
-<lastmod>2016-05-02T00:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/elk.html</loc>
+<lastmod>2017-01-16T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1118,7 +1132,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/linux.html</loc>
-<lastmod>2016-11-28T08:00:00-00:15</lastmod>
+<lastmod>2017-02-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1482,7 +1496,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/debian.html</loc>
-<lastmod>2016-09-19T08:00:00-00:15</lastmod>
+<lastmod>2017-02-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1552,7 +1566,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2017-01-30T10:00:00-00:15</lastmod>
+<lastmod>2017-02-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

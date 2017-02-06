@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Artículos de Gerard - Linux Sysadmin</title>
+    <title>Compartiendo carpetas con NFS - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,15 +9,24 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2017/02/compartiendo-carpetas-con-nfs.html">
 
         <meta name="author" content="Gerard" />
+        <meta name="keywords" content="linux,debian,jessie,NFS" />
+        <meta name="description" content="Son muchas las veces que queremos tener una carpeta disponible en todas las máquinas que usamos habitualmente, sea una unidad de backup, o sea una carpeta de intercambio de fotos. Disponemos de servidores tipo FTP, pero es mas cómodo tener una unidad remota como una carpeta mas de nuestra máquina ..." />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Compartiendo carpetas con NFS"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/02/compartiendo-carpetas-con-nfs.html"/>
+        <meta property="og:description" content="Son muchas las veces que queremos tener una carpeta disponible en todas las máquinas que usamos habitualmente, sea una unidad de backup, o sea una carpeta de intercambio de fotos. Disponemos de servidores tipo FTP, pero es mas cómodo tener una unidad remota como una carpeta mas de nuestra máquina ..."/>
+        <meta property="article:published_time" content="2017-02-06" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="debian" />
+            <meta property="article:tag" content="jessie" />
+            <meta property="article:tag" content="NFS" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -33,6 +42,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -74,11 +85,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-        <ol class="breadcrumb">
-            <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-            <li><a href="http://www.linuxsysadmin.tk/authors.html" title="Autores de Linux Sysadmin">Autores</a></li>
-            <li class="active">Gerard</li>
-        </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Compartiendo carpetas con NFS</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -91,76 +102,217 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html">Dirección IP compartida manualmente entre servidores</a></h2>
-                <div class="summary"><p>Cuando hablamos de alta disponibilidad, uno de los métodos mas utilizados es el <strong>failover</strong>. La idea es que una de las máquinas es la que asume la totalidad del servicio, y el resto están preparadas para ejercer la misma función en el caso de que la primera deje de funcionar ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/07/instalando-una-maquina-con-archlinux.html">Instalando una máquina con Archlinux</a></h2>
-                <div class="summary"><p>Hoy quiero presentar una distribución de <em>linux</em> que es una maravilla; es rápida, altamente actualizada, y lo último en innovación. Se trata de una distribución tipo <em>rolling</em>, con una filosofía de última tendencia que es especialmente útil en un entorno no tan crítico, como puede ser una máquina tipo escritorio ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/07/instalando-una-maquina-con-archlinux.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html">Balanceando peticiones con HAProxy</a></h2>
-                <div class="summary"><p>Cuando tenemos un entorno grande o con previsiones de crecimiento, nos interesa poder poner a trabajar varios servidores similares. En casos así nos hace falta un <strong>balanceador de carga</strong>, que actúa como un agente de tráfico, dirigiendo las peticiones que él mismo recibe a los diferentes servidores, por ejemplo, <strong>haproxy ...</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/06/preparando-un-servidor-de-repositorios-git.html">Preparando un servidor de repositorios GIT</a></h2>
-                <div class="summary"><p>Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando <strong>git</strong> y <strong>ssh ...</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/06/preparando-un-servidor-de-repositorios-git.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/06/un-root-shell-en-c.html">Un root shell en C</a></h2>
-                <div class="summary"><p>Cuando operamos un servidor de producción es habitual que no tengamos acceso habitual al usuario <em>root</em>, e incluso lo tengan altamente vigilado. Podemos intentar dejar una puerta trasera, por ejemplo poniendo un binario con el <em>setuid</em> bit activado, te pueden pillar. Sin embargo es posible dejar una puerta abierta oculta ...</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/06/un-root-shell-en-c.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2017/02/compartiendo-carpetas-con-nfs.html"
+                       rel="bookmark"
+                       title="Permalink to Compartiendo carpetas con NFS">
+                        Compartiendo carpetas con NFS
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2017-02-06T10:00:00+01:00"> 2017-02-06</time>
+    </span>
 
-        <ul class="pagination">
-                <li class="prev"><a href="http://www.linuxsysadmin.tk/author/gerard6.html">&laquo;</a>
-                </li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard2.html">2</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard3.html">3</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard4.html">4</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard5.html">5</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard6.html">6</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.tk/author/gerard7.html">7</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard8.html">8</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard9.html">9</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard10.html">10</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard11.html">11</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard12.html">12</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard13.html">13</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard14.html">14</a></li>
-                <li class="next"><a
-                        href="http://www.linuxsysadmin.tk/author/gerard8.html">&raquo;</a></li>
-        </ul>
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 5 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/sistemas.html">Sistemas</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/debian.html">debian</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/jessie.html">jessie</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/nfs.html">NFS</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>Son muchas las veces que queremos tener una carpeta disponible en todas las máquinas que usamos habitualmente, sea una unidad de <em>backup</em>, o sea una carpeta de intercambio de fotos. Disponemos de servidores tipo FTP, pero es mas cómodo tener una unidad remota como una carpeta mas de nuestra máquina.</p>
+<p>Para esta guía, vamos a utilizar dos máquinas <em>Debian Jessie</em>, actuando como el servidor (el que tiene las carpetas compartidas) y como el cliente (el ordenador de un usuario concreto).</p>
+<p>Un <em>setup</em> mas realista sería poner el servidor en un servidor casero (tipo <em>Raspberry Pi</em>), mientras que los ordenadores cliente serían los de los diferentes usuarios de casa.</p>
+<p><strong>CUIDADO</strong>: El servidor NFS de <em>linux</em> va por <em>kernel</em>, así que nos os va a funcionar desde un contenedor, por ejemplo <em>LXC</em> o <em>Docker</em>. En este caso, las máquinas disponen de <em>kernel</em> completo, porque se han utilizado <em>VirtualBox</em>.</p>
+<p>Así pues, disponemos de 2 máquinas:</p>
+<ul>
+<li><strong>server</strong> &rarr; 10.0.0.2</li>
+<li><strong>client</strong> &rarr; 10.0.0.3</li>
+</ul>
+<h2>Preparando el servidor</h2>
+<p>Para preparar el servidor, necesitamos instalar el paquete que provee el servidor de <strong>NFS</strong>, que en este caso es <strong>nfs-kernel-server</strong>.</p>
+<div class="highlight"><pre><span></span>root@server:~# apt-get install -y nfs-kernel-server
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes extras:
+  file libevent-2.0-5 libldap-2.4-2 libmagic1 libnfsidmap2 libpython-stdlib libpython2.7-minimal libpython2.7-stdlib libsasl2-2
+  libsasl2-modules libsasl2-modules-db libsqlite3-0 libtirpc1 mime-support nfs-common python python-minimal python2.7
+  python2.7-minimal rpcbind
+Paquetes sugeridos:
+  libsasl2-modules-otp libsasl2-modules-ldap libsasl2-modules-sql libsasl2-modules-gssapi-mit libsasl2-modules-gssapi-heimdal
+  open-iscsi watchdog python-doc python-tk python2.7-doc binutils binfmt-support
+Se instalarán los siguientes paquetes NUEVOS:
+  file libevent-2.0-5 libldap-2.4-2 libmagic1 libnfsidmap2 libpython-stdlib libpython2.7-minimal libpython2.7-stdlib libsasl2-2
+  libsasl2-modules libsasl2-modules-db libsqlite3-0 libtirpc1 mime-support nfs-common nfs-kernel-server python python-minimal
+  python2.7 python2.7-minimal rpcbind
+<span class="m">0</span> actualizados, <span class="m">21</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar 6.072 kB de archivos.
+Se utilizarán 23,7 MB de espacio de disco adicional después de esta operación.
+...
+root@server:~#
+</pre></div>
+
+
+<p>Supongamos que queremos compartir la carpeta <em>/shared/</em>, lo que significa que tenemos que crearla si no existiera, y hay que darle los permisos adecuados al uso que se le vaya a dar. A modo de ejemplo, vamos a dar todos los permisos posibles a todo el mundo.</p>
+<div class="highlight"><pre><span></span>root@server:~# mkdir /shared
+root@server:~# chmod <span class="m">777</span> /shared/
+root@server:~#
+</pre></div>
+
+
+<p>Vamos a declarar este punto <em>exportable</em>, con permisos de escritura para las máquinas que lo necesiten.</p>
+<div class="highlight"><pre><span></span>root@server:~# cat /etc/exports
+/shared 10.0.0.3<span class="o">(</span>rw,sync<span class="o">)</span>
+root@server:~#
+</pre></div>
+
+
+<p>Finalmente hacemos un <em>restart</em> o un <em>reload</em> del servicio de <strong>NFS</strong> para que recargue la configuración.</p>
+<p><strong>AVISO</strong>: Este servicio no arranca en contenedores.</p>
+<div class="highlight"><pre><span></span>root@server:~# systemctl restart nfs-kernel-server
+root@server:~#
+</pre></div>
+
+
+<p>Y con esto ya tenemos nuestra carpeta <em>exportable</em> disponible para los clientes definidos en <em>/etc/exports</em>.</p>
+<h2>Preparando una de las máquinas cliente</h2>
+<p>El primer paso consiste en instalar el paquete <strong>nfs-common</strong>, que nos va a proveer de las utilidades necesarias para montar el sistema de ficheros remoto.</p>
+<div class="highlight"><pre><span></span>root@client:~# apt-get install -y nfs-common
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes extras:
+  file libevent-2.0-5 libldap-2.4-2 libmagic1 libnfsidmap2 libpython-stdlib libpython2.7-minimal libpython2.7-stdlib libsasl2-2
+  libsasl2-modules libsasl2-modules-db libsqlite3-0 libtirpc1 mime-support python python-minimal python2.7 python2.7-minimal
+  rpcbind
+Paquetes sugeridos:
+  libsasl2-modules-otp libsasl2-modules-ldap libsasl2-modules-sql libsasl2-modules-gssapi-mit libsasl2-modules-gssapi-heimdal
+  open-iscsi watchdog python-doc python-tk python2.7-doc binutils binfmt-support
+Se instalarán los siguientes paquetes NUEVOS:
+  file libevent-2.0-5 libldap-2.4-2 libmagic1 libnfsidmap2 libpython-stdlib libpython2.7-minimal libpython2.7-stdlib libsasl2-2
+  libsasl2-modules libsasl2-modules-db libsqlite3-0 libtirpc1 mime-support nfs-common python python-minimal python2.7
+  python2.7-minimal rpcbind
+<span class="m">0</span> actualizados, <span class="m">20</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar 5.954 kB de archivos.
+Se utilizarán 23,3 MB de espacio de disco adicional después de esta operación.
+...
+root@client:~#
+</pre></div>
+
+
+<p>Creamos un punto de montaje para la carpeta remota, en caso de necesitarla.</p>
+<div class="highlight"><pre><span></span>root@client:~# mkdir /compartida
+root@client:~#
+</pre></div>
+
+
+<p>Y montamos la carpeta remota, usando las herramientas estándar.</p>
+<div class="highlight"><pre><span></span>root@client:~# mount -t nfs 10.0.0.2:/shared /compartida
+root@client:~#
+</pre></div>
+
+
+<p>Si nos gustara el resultado, podemos hacer el montaje automático añadiendo una línea en <em>/etc/fstab</em>, que podéis copiar tal cual de <em>/etc/mtab</em> cuando la carpeta remota esté montada.</p>
+<h2>Algunas pruebas de funcionamiento</h2>
+<p>Partimos de una carpeta compartida vacía, y vemos que también está vacía en el cliente.</p>
+<div class="highlight"><pre><span></span>root@server:~# ls /shared/
+root@server:~#
+
+root@client:~# ls /compartida/
+root@client:~#
+</pre></div>
+
+
+<p>Ahora podemos crear un fichero cualquiera en la máquina cliente.</p>
+<div class="highlight"><pre><span></span>root@client:~# touch /compartida/client_data
+root@client:~#
+</pre></div>
+
+
+<p>Podemos ver que no hay ningún problema por trabajar en la carpeta desde otra máquina, por ejemplo, creando un fichero en la máquina servidor.</p>
+<div class="highlight"><pre><span></span>root@server:~# touch /shared/server_data
+root@server:~#
+</pre></div>
+
+
+<p>Finalmente vemos que la carpeta, sea la carpeta local del servidor o la carpeta montada remotamente del cliente, reflejan ambos cambios aplicados anteriormente.</p>
+<div class="highlight"><pre><span></span>root@server:~# ls /shared/
+client_data  server_data
+root@server:~#
+
+root@client:~# ls /compartida/
+client_data  server_data
+root@client:~#
+</pre></div>
+
+
+<p>Y con esto vemos que funciona como debe.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">Sistemas de ficheros multicapa con aufs</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'compartiendo-carpetas-con-nfs';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2017/02/compartiendo-carpetas-con-nfs.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
