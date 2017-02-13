@@ -1,5 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-01-23T10:00:00+01:00</updated><entry><title>Usando SSH en nuestros scripts python mediante paramiko</title><link href="http://www.linuxsysadmin.tk/2017/01/usando-ssh-en-nuestros-scripts-python-mediante-paramiko.html" rel="alternate"></link><published>2017-01-23T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-01-23:2017/01/usando-ssh-en-nuestros-scripts-python-mediante-paramiko.html</id><summary type="html">&lt;p&gt;Es muy útil lanzar comandos &lt;strong&gt;SSH&lt;/strong&gt; desde un &lt;em&gt;script&lt;/em&gt; de &lt;strong&gt;bash&lt;/strong&gt;. Sin embargo, los &lt;em&gt;scripts&lt;/em&gt; en &lt;strong&gt;bash&lt;/strong&gt; se vuelve ilegibles rápidamente, y no nos ofrece el poderío de la librería &lt;strong&gt;python&lt;/strong&gt;. No es de extrañar que herramientas como &lt;strong&gt;ansible&lt;/strong&gt; o &lt;strong&gt;fabric&lt;/strong&gt; estén escritas en &lt;strong&gt;python&lt;/strong&gt;, usando una librería llamada &lt;strong&gt;paramiko&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-02-13T00:00:00+01:00</updated><entry><title>Escribiendo un servidor DNS en python con twisted</title><link href="http://www.linuxsysadmin.tk/2017/02/escribiendo-un-servidor-dns-en-python-con-twisted.html" rel="alternate"></link><published>2017-02-13T00:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-02-13:2017/02/escribiendo-un-servidor-dns-en-python-con-twisted.html</id><summary type="html">&lt;p&gt;El otro día tuvimos una caída del centro de datos de desarrollo. Inmediatamente después vimos que teníamos afectación en el entorno de producción, ya que lanzaba peticiones al &lt;strong&gt;DNS&lt;/strong&gt; de desarrollo. Sin saber claramente porque pasaba, hice un servidor &lt;strong&gt;DNS&lt;/strong&gt; en &lt;strong&gt;python&lt;/strong&gt;, para ver que tipos de peticiones se lanzaban.&lt;/p&gt;
+&lt;p&gt;Para hacerlo, utilicé una librería magnífica llamada &lt;strong&gt;twisted&lt;/strong&gt;, que hace la mayoría del trabajo. Aunque su documentación es bastante escasa, tirando de ejemplos pude sacar algo interesante en poco tiempo.&lt;/p&gt;
+&lt;h2&gt;Un servidor chivato&lt;/h2&gt;
+&lt;p&gt;Cambiamos el fichero &lt;em&gt;/etc/resolv&lt;/em&gt; de nuestro servidor de producción, para añadirle su propia dirección IP, en la que ejecutamos el siguiente &lt;em&gt;script&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;twisted.internet&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;reactor&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;defer&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;twisted.names&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;client&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dns&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;error&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;server&lt;/span&gt;
+
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;DynamicResolver&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;query&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;query&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;defer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fail&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;error&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DomainError&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="n"&gt;factory&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;server&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DNSServerFactory&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+        &lt;span class="n"&gt;clients&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;
+            &lt;span class="n"&gt;DynamicResolver&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;
+        &lt;span class="p"&gt;],&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;protocol&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;dns&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DNSDatagramProtocol&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;controller&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;factory&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;reactor&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;listenUDP&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10053&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;protocol&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;reactor&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;listenTCP&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10053&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;factory&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;reactor&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="ne"&gt;SystemExit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;main&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si os interesa trabajar con &lt;em&gt;virtualenv&lt;/em&gt;, aquí os dejo el &lt;em&gt;requirements.txt&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/projects/dns$ cat requirements.txt 
+&lt;span class="nv"&gt;Twisted&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;16.3.2
+zope.interface&lt;span class="o"&gt;==&lt;/span&gt;4.2.0
+gerard@sirius:~/projects/dns$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es el resultado de ejecutar &lt;em&gt;pip install twisted&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Comprobamos lo que pasa cuando el servidor recibe peticiones:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; nowhere.com
+
+&lt;span class="p"&gt;;&lt;/span&gt; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.9.5-9+deb8u6-Debian &amp;lt;&amp;lt;&amp;gt;&amp;gt; @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; nowhere.com
+&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; servers found&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; global options: +cmd
+&lt;span class="p"&gt;;;&lt;/span&gt; Got answer:
+&lt;span class="p"&gt;;;&lt;/span&gt; -&amp;gt;&amp;gt;HEADER&lt;span class="s"&gt;&amp;lt;&amp;lt;- opco&lt;/span&gt;de: QUERY, status: NXDOMAIN, id: 42644
+&lt;span class="p"&gt;;;&lt;/span&gt; flags: qr ra&lt;span class="p"&gt;;&lt;/span&gt; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 0
+
+&lt;span class="p"&gt;;;&lt;/span&gt; QUESTION SECTION:
+&lt;span class="p"&gt;;&lt;/span&gt;nowhere.com.           IN  A
+
+&lt;span class="p"&gt;;;&lt;/span&gt; Query time: &lt;span class="m"&gt;1&lt;/span&gt; msec
+&lt;span class="p"&gt;;;&lt;/span&gt; SERVER: 127.0.0.1#10053&lt;span class="o"&gt;(&lt;/span&gt;127.0.0.1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; WHEN: Wed Aug &lt;span class="m"&gt;24&lt;/span&gt; 15:29:38 CEST 2016
+&lt;span class="p"&gt;;;&lt;/span&gt; MSG SIZE  rcvd: 29
+
+gerard@sirius:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y en el otro terminal:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/projects/dns$ ./env/bin/python dns.py 
+&amp;lt;Query nowhere.com A IN&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Este &lt;em&gt;script&lt;/em&gt; implementa un servidor que no es capaz de encontrar el dominio, pero registra la petición recibida. Con el tipo de peticiones nos dimos cuenta de que había algo mal configurado en el entorno de producción.&lt;/p&gt;
+&lt;h2&gt;Añadiendo resolución de peticiones&lt;/h2&gt;
+&lt;p&gt;La librería &lt;strong&gt;twisted&lt;/strong&gt; ofrece clases para entender las peticiones y para formular las respuestas. Eso nos da una &lt;em&gt;toolbox&lt;/em&gt; muy interesante para hacer nuestro propio servidor.&lt;/p&gt;
+&lt;p&gt;Supongamos que queremos asociar &lt;em&gt;example.com&lt;/em&gt; a las direcciones &lt;em&gt;1.2.3.4&lt;/em&gt; y &lt;em&gt;1.2.3.5&lt;/em&gt;; adicionalmente asociaremos también el nombre &lt;em&gt;example.my&lt;/em&gt; a la dirección &lt;em&gt;1.2.3.5&lt;/em&gt;. Se podría utilizar una base de datos, pero vamos a no hacerlo para mantener el ejemplo pequeño.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;twisted.internet&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;reactor&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;defer&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;twisted.names&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;client&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dns&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;error&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;server&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;itertools&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;groupby&lt;/span&gt;
+
+&lt;span class="n"&gt;records&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;example.com&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;1.2.3.4&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;example.com&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;1.2.3.5&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;example.my&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;1.2.3.5&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;span class="p"&gt;]&lt;/span&gt;
+
+&lt;span class="n"&gt;name2ip&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;dict&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;e&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;group&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;group&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;groupby&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;records&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]))&lt;/span&gt;
+&lt;span class="n"&gt;ip2name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;dict&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;e&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;group&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;group&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;groupby&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;records&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]))&lt;/span&gt;
+
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;DynamicResolver&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;calculate_responses&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;type&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;dns&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;records&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;name2ip&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[])&lt;/span&gt;
+            &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;record&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;records&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+                &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;dns&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Record_A&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;address&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;record&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;type&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;dns&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;PTR&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;aux&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;.&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;reversed&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;split&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;.&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)))[&lt;/span&gt;&lt;span class="mi"&gt;13&lt;/span&gt;&lt;span class="p"&gt;:]&lt;/span&gt;
+            &lt;span class="n"&gt;records&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ip2name&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;aux&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[])&lt;/span&gt;
+            &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;record&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;records&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+                &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;dns&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Record_PTR&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;record&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;query&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;responses&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;calculate_responses&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;answers&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+            &lt;span class="n"&gt;dns&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;RRHeader&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+                &lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;answer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;TYPE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+                &lt;span class="n"&gt;payload&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;answer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;answer&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;responses&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+        &lt;span class="n"&gt;authority&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+        &lt;span class="n"&gt;additional&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;defer&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;succeed&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;answers&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;additional&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="n"&gt;factory&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;server&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DNSServerFactory&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+        &lt;span class="n"&gt;clients&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;
+            &lt;span class="n"&gt;DynamicResolver&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;
+        &lt;span class="p"&gt;],&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;protocol&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;dns&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DNSDatagramProtocol&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;controller&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;factory&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;reactor&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;listenUDP&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10053&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;protocol&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;reactor&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;listenTCP&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10053&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;factory&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;reactor&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="ne"&gt;SystemExit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;main&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y si ejecutamos este nuevo &lt;em&gt;script&lt;/em&gt; y le lanzamos peticiones, vemos que funciona.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short example.com
+1.2.3.4
+1.2.3.5
+gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short example.my
+1.2.3.5
+gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short nowhere.com
+gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short -x 1.2.3.4
+example.com.
+gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short -x 1.2.3.5
+example.com.
+example.my.
+gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short -x 1.2.3.6
+gerard@sirius:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Aunque ya hay servidores &lt;strong&gt;DNS&lt;/strong&gt; magníficos, podemos levantar uno con &lt;strong&gt;python&lt;/strong&gt; de forma fácil, rápida y sencilla.&lt;/p&gt;</summary><category term="python"></category><category term="dns"></category><category term="twisted"></category></entry><entry><title>Usando SSH en nuestros scripts python mediante paramiko</title><link href="http://www.linuxsysadmin.tk/2017/01/usando-ssh-en-nuestros-scripts-python-mediante-paramiko.html" rel="alternate"></link><published>2017-01-23T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-01-23:2017/01/usando-ssh-en-nuestros-scripts-python-mediante-paramiko.html</id><summary type="html">&lt;p&gt;Es muy útil lanzar comandos &lt;strong&gt;SSH&lt;/strong&gt; desde un &lt;em&gt;script&lt;/em&gt; de &lt;strong&gt;bash&lt;/strong&gt;. Sin embargo, los &lt;em&gt;scripts&lt;/em&gt; en &lt;strong&gt;bash&lt;/strong&gt; se vuelve ilegibles rápidamente, y no nos ofrece el poderío de la librería &lt;strong&gt;python&lt;/strong&gt;. No es de extrañar que herramientas como &lt;strong&gt;ansible&lt;/strong&gt; o &lt;strong&gt;fabric&lt;/strong&gt; estén escritas en &lt;strong&gt;python&lt;/strong&gt;, usando una librería llamada &lt;strong&gt;paramiko&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Una vez en el terreno de &lt;strong&gt;python&lt;/strong&gt;, disponemos de todas las opciones que tenemos habitualmente en el lenguaje, como por ejemplo, el módulo de expresiones regulares para &lt;em&gt;parsear&lt;/em&gt; la salida. Estos &lt;em&gt;scripts&lt;/em&gt; quedan muy pequeños, legibles y limpios.&lt;/p&gt;
 &lt;p&gt;En este artículo vamos a explicar como instalar y usar &lt;strong&gt;paramiko&lt;/strong&gt;, con un ejemplo simple. El resto quedará a la imaginación de los lectores.&lt;/p&gt;
 &lt;h2&gt;Instalando la librería en un virtualenv&lt;/h2&gt;
