@@ -1,5 +1,395 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-02-20T10:00:00+01:00</updated><entry><title>Sincronizando ficheros con ownCloud</title><link href="http://www.linuxsysadmin.tk/2017/02/sincronizando-ficheros-con-owncloud.html" rel="alternate"></link><published>2017-02-20T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-02-20:2017/02/sincronizando-ficheros-con-owncloud.html</id><summary type="html">&lt;p&gt;Finalmente ha sucedido: el ingeniero de seguridad de la empresa ha decidido cerrar servicios de sincronizado de ficheros, dejando inútiles servicios como &lt;strong&gt;Dropbox&lt;/strong&gt;, &lt;strong&gt;Mega&lt;/strong&gt; y otros. Sin embargo, cualquier bloqueo que se haga mediante el dominio hace que sea imposible cerrar todos estos servicios, e incluso podemos poner el nuestro.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-02-27T10:00:00+01:00</updated><entry><title>Alta disponibilidad con Keepalived</title><link href="http://www.linuxsysadmin.tk/2017/02/alta-disponibilidad-con-keepalived.html" rel="alternate"></link><published>2017-02-27T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-02-27:2017/02/alta-disponibilidad-con-keepalived.html</id><summary type="html">&lt;p&gt;Cuando tenemos un servicio balanceado, los &lt;em&gt;backends&lt;/em&gt; no tienen relación entre sí y podemos poner tantos como queramos, sin miedo a que alguno se caiga. Sin embargo, para los servicios tipo "ventanilla única" interesa tener varios dispuestos a dar un servicio &lt;em&gt;failover&lt;/em&gt;; si uno se cae, otro asume la carga.&lt;/p&gt;
+&lt;p&gt;La idea general es que existe una dirección IP flotante y existe un servicio que se dedica a decidir quién la tiene asignada. Uno de estos servicios es &lt;strong&gt;keepalived&lt;/strong&gt;, que es sencillo y fácil de montar.&lt;/p&gt;
+&lt;h2&gt;El entorno de trabajo&lt;/h2&gt;
+&lt;p&gt;Para hacer este ejemplo, he dispuesto dos máquinas, una como prioritaria, y una de &lt;em&gt;failover&lt;/em&gt;, que va a asumir el servicio siempre que la otra no pueda hacerlo.&lt;/p&gt;
+&lt;p&gt;Para mi comodidad, he dispuesto contenedores &lt;strong&gt;docker&lt;/strong&gt;, como se describe en &lt;a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html"&gt;otro artículo&lt;/a&gt; y voy a hacer la instalación por &lt;strong&gt;ansible&lt;/strong&gt;. Aunque el entorno no es muy complejo, por comodidad lo he levantado con &lt;strong&gt;docker-compose&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@gatria:~/docker/keepalived$ cat docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;
+services:
+  gemini:
+    image: master
+    hostname: gemini
+    container_name: gemini
+    volumes:
+      - ./playbooks:/root/playbooks:ro
+      - ./inventory/hosts:/root/inventory/hosts:ro
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;22:22&amp;quot;&lt;/span&gt;
+  castor:
+    image: slave
+    hostname: castor
+    container_name: castor
+    privileged: &lt;span class="nb"&gt;true&lt;/span&gt;
+  pollux:
+    image: slave
+    hostname: pollux
+    container_name: pollux
+    privileged: &lt;span class="nb"&gt;true&lt;/span&gt;
+gerard@gatria:~/docker/keepalived$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La diferencia radica en que he puesto un servidor &lt;strong&gt;SSH&lt;/strong&gt; en la máquina &lt;em&gt;master&lt;/em&gt; para poder acceder fácilmente a ella y que los &lt;em&gt;playbooks&lt;/em&gt; y parte del inventario vienen de la máquina &lt;em&gt;host&lt;/em&gt;, para su fácil edición con un editor adecuado.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: Las máquinas &lt;em&gt;slave&lt;/em&gt; van a disputarse la dirección flotante; esto no es posible en un contenedor normal. Para evitar ese problema, les he puesto el &lt;em&gt;flag privilieged&lt;/em&gt;, para que puedan hacer lo que quieran.&lt;/p&gt;
+&lt;p&gt;Finalmente creamos el entorno, con el comando adecuado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@gatria:~/docker/keepalived$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;keepalived_default&amp;quot;&lt;/span&gt; with the default driver
+Creating gemini
+Creating castor
+Creating pollux
+gerard@gatria:~/docker/keepalived$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Todos los comandos a partir de ahora se vana ejecutar en &lt;em&gt;gemini&lt;/em&gt;, que es el &lt;em&gt;master&lt;/em&gt; de &lt;strong&gt;ansible&lt;/strong&gt;, y al que vamos a acceder por &lt;strong&gt;SSH&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@gatria:~/docker/keepalived$ ssh root@localhost
+Warning: Permanently added &lt;span class="s1"&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;ECDSA&lt;span class="o"&gt;)&lt;/span&gt; to the list of known hosts.
+root@localhost&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+
+The programs included with the Debian GNU/Linux system are free software&lt;span class="p"&gt;;&lt;/span&gt;
+the exact distribution terms &lt;span class="k"&gt;for&lt;/span&gt; each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+root@gemini:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El fichero de &lt;em&gt;hosts&lt;/em&gt; no tiene ningún secreto (aparte de las variables dependientes de cada máquina, que ya veremos), pero lo ponemos por completitud:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~# cat inventory/hosts 
+&lt;span class="o"&gt;[&lt;/span&gt;gemini&lt;span class="o"&gt;]&lt;/span&gt;
+castor &lt;span class="nv"&gt;keepalived_priority&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;101
+pollux &lt;span class="nv"&gt;keepalived_priority&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;100
+root@gemini:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Ofreciendo un servicio cualquiera&lt;/h2&gt;
+&lt;p&gt;Normalmente, las máquinas en configuración de &lt;em&gt;failover&lt;/em&gt; suelen ser balanceadores o servidores web. En realidad, esto es irrelevante para &lt;strong&gt;keepalived&lt;/strong&gt;, así que vamos a poner cualquiera.&lt;/p&gt;
+&lt;p&gt;Nos hemos decantado por un servidor &lt;strong&gt;nginx&lt;/strong&gt; en configuración de servidor web estático, para que no absorba la atención del artículo. En la vida real, estaría en configuración de balanceador web, o sería directamente un &lt;strong&gt;haproxy&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Nos movemos a la carpeta de trabajo para este &lt;em&gt;playbook&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~# &lt;span class="nb"&gt;cd&lt;/span&gt; ~/playbooks/webserver/
+root@gemini:~/playbooks/webserver# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El &lt;em&gt;playbook&lt;/em&gt; en sí no tiene mucho misterio; instala &lt;strong&gt;nginx&lt;/strong&gt;, lo levanta con una configuración propia y pone un fichero &lt;strong&gt;HTML&lt;/strong&gt; con una plantilla indicando el nombre de la máquina que ha servido la petición, a modo de chivato.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/webserver# cat webserver.yml 
+- hosts: gemini
+  gather_facts: &lt;span class="nb"&gt;false&lt;/span&gt;
+  tasks:
+    - apt: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;nginx-light &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;present
+    - file: &lt;span class="nv"&gt;path&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/etc/nginx/sites-enabled/default &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;absent
+    - file: &lt;span class="nv"&gt;path&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/www &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;directory
+    - template: &lt;span class="nv"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;web.j2 &lt;span class="nv"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/etc/nginx/sites-enabled/web
+    - template: &lt;span class="nv"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;index.html.j2 &lt;span class="nv"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/www/index.html
+    - service: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;nginx &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;started
+    - service: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;nginx &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;reloaded
+root@gemini:~/playbooks/webserver# cat web.j2 
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen 80&lt;span class="p"&gt;;&lt;/span&gt;
+    server_name _&lt;span class="p"&gt;;&lt;/span&gt;
+    root /www&lt;span class="p"&gt;;&lt;/span&gt;
+    index index.html&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@gemini:~/playbooks/webserver# cat index.html.j2 
+&amp;lt;p&amp;gt;Hello from &amp;lt;em&amp;gt;&lt;span class="o"&gt;{{&lt;/span&gt; inventory_hostname &lt;span class="o"&gt;}}&lt;/span&gt;&amp;lt;/em&amp;gt;&amp;lt;/p&amp;gt;
+root@gemini:~/playbooks/webserver# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lo lanzamos y ya tenemos dos servidores web para nuestra demostración:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/webserver# ansible-playbook webserver.yml 
+
+PLAY &lt;span class="o"&gt;[&lt;/span&gt;gemini&lt;span class="o"&gt;]&lt;/span&gt; ******************************************************************
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;apt&lt;span class="o"&gt;]&lt;/span&gt; *********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;castor&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;pollux&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;file&lt;span class="o"&gt;]&lt;/span&gt; ********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;castor&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;pollux&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;file&lt;span class="o"&gt;]&lt;/span&gt; ********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;pollux&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;castor&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;template&lt;span class="o"&gt;]&lt;/span&gt; ****************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;pollux&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;castor&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;template&lt;span class="o"&gt;]&lt;/span&gt; ****************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;castor&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;pollux&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;service&lt;span class="o"&gt;]&lt;/span&gt; *****************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;castor&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;pollux&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;service&lt;span class="o"&gt;]&lt;/span&gt; *****************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;pollux&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;castor&lt;span class="o"&gt;]&lt;/span&gt;
+
+PLAY RECAP *********************************************************************
+castor                     : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;   
+pollux                     : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;   
+
+root@gemini:~/playbooks/webserver# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Comprobamos que funciona, y con esto estamos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/webserver# wget -qO- http://castor/
+&amp;lt;p&amp;gt;Hello from &amp;lt;em&amp;gt;castor&amp;lt;/em&amp;gt;&amp;lt;/p&amp;gt;
+root@gemini:~/playbooks/webserver# wget -qO- http://pollux/
+&amp;lt;p&amp;gt;Hello from &amp;lt;em&amp;gt;pollux&amp;lt;/em&amp;gt;&amp;lt;/p&amp;gt;
+root@gemini:~/playbooks/webserver# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Keepalived, o como compartir una dirección IP&lt;/h2&gt;
+&lt;p&gt;Ante nada, nos movemos a la carpeta de trabajo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/webserver# &lt;span class="nb"&gt;cd&lt;/span&gt; ~/playbooks/keepalived/
+root@gemini:~/playbooks/keepalived# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Realmente, el servicio &lt;strong&gt;keepalived&lt;/strong&gt; es como cualquier otro: instalar, configurar y recargar la configuración. Lo importante en este caso son las configuraciones. Así que el &lt;em&gt;playbook&lt;/em&gt; queda un poco simple, pero mejor. Solo cabe destacar que he instalado también &lt;strong&gt;rsyslog&lt;/strong&gt; que me va a proporcionar capacidades de &lt;em&gt;syslog&lt;/em&gt;, que es donde &lt;strong&gt;keepalived&lt;/strong&gt; deja lo &lt;em&gt;logs&lt;/em&gt;. Gracias este &lt;em&gt;log&lt;/em&gt;, pude ver que hacía una operación no permitida para un contenedor normal.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/keepalived# cat keepalived.yml 
+- hosts: gemini
+  gather_facts: &lt;span class="nb"&gt;false&lt;/span&gt;
+  tasks:
+    - apt: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;rsyslog &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;present
+    - service: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;rsyslog &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;started
+- hosts: gemini
+  gather_facts: &lt;span class="nb"&gt;false&lt;/span&gt;
+  tasks:
+    - apt: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;keepalived &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;present
+    - template: &lt;span class="nv"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;keepalived.conf.j2 &lt;span class="nv"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/etc/keepalived/keepalived.conf
+    - service: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;keepalived &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;restarted
+root@gemini:~/playbooks/keepalived# cat keepalived.conf.j2 
+vrrp_script chk_nginx &lt;span class="o"&gt;{&lt;/span&gt;
+      script &lt;span class="s2"&gt;&amp;quot;killall -0 nginx&amp;quot;&lt;/span&gt;
+      interval 2
+      weight 2
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+vrrp_instance VI_1 &lt;span class="o"&gt;{&lt;/span&gt;
+      interface eth0
+      state MASTER
+      virtual_router_id 51
+      priority &lt;span class="o"&gt;{{&lt;/span&gt; keepalived_priority &lt;span class="o"&gt;}}&lt;/span&gt;
+      virtual_ipaddress &lt;span class="o"&gt;{&lt;/span&gt;
+           172.18.0.10
+      &lt;span class="o"&gt;}&lt;/span&gt;
+      track_script &lt;span class="o"&gt;{&lt;/span&gt;
+           chk_nginx
+      &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@gemini:~/playbooks/keepalived# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La idea es que cada máquina del &lt;em&gt;cluster&lt;/em&gt; tiene una prioridad, y la máquina con mas prioridad va a obtener la IP flotante, dando el servicio efectivo. Esta prioridad se ve afectada por los &lt;em&gt;checks&lt;/em&gt; que pongamos, sumando el &lt;em&gt;weight&lt;/em&gt; de cada &lt;em&gt;check&lt;/em&gt; que devuelva un código de retorno 0 (se considera un OK).&lt;/p&gt;
+&lt;p&gt;Con los valores 101 y 100 (que salen del fichero de &lt;em&gt;hosts&lt;/em&gt;) y el propio funcionamiento de &lt;strong&gt;keepalived&lt;/strong&gt;, nos aseguramos de que:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Si una máquina está caída no es candidata a tener la IP flotante (las dos caídas son un tema serio).&lt;/li&gt;
+&lt;li&gt;Si &lt;em&gt;castor&lt;/em&gt; tiene el &lt;strong&gt;nginx&lt;/strong&gt; funcional, suma 103, y gana a &lt;em&gt;pollux&lt;/em&gt; (102 o 100, dependiendo si corre o no el &lt;strong&gt;nginx&lt;/strong&gt;).&lt;/li&gt;
+&lt;li&gt;Si el &lt;strong&gt;nginx&lt;/strong&gt; de &lt;em&gt;castor&lt;/em&gt; no funciona, depende; si el de &lt;em&gt;pollux funciona, pasa este a ser el &lt;/em&gt;MASTER&lt;em&gt; del &lt;/em&gt;cluster&lt;em&gt; (101 vs 102); sino, gana &lt;/em&gt;castor* (101 vs 100), aunque este caso también es un problema.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Lanzamos el &lt;em&gt;playbook&lt;/em&gt; para instalar &lt;strong&gt;keepalived&lt;/strong&gt; y su configuración:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/keepalived# ansible-playbook keepalived.yml 
+
+PLAY &lt;span class="o"&gt;[&lt;/span&gt;gemini&lt;span class="o"&gt;]&lt;/span&gt; ******************************************************************
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;apt&lt;span class="o"&gt;]&lt;/span&gt; *********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;castor&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;pollux&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;service&lt;span class="o"&gt;]&lt;/span&gt; *****************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;pollux&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;castor&lt;span class="o"&gt;]&lt;/span&gt;
+
+PLAY &lt;span class="o"&gt;[&lt;/span&gt;gemini&lt;span class="o"&gt;]&lt;/span&gt; ******************************************************************
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;apt&lt;span class="o"&gt;]&lt;/span&gt; *********************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;pollux&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;castor&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;template&lt;span class="o"&gt;]&lt;/span&gt; ****************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;castor&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;pollux&lt;span class="o"&gt;]&lt;/span&gt;
+
+TASK &lt;span class="o"&gt;[&lt;/span&gt;service&lt;span class="o"&gt;]&lt;/span&gt; *****************************************************************
+changed: &lt;span class="o"&gt;[&lt;/span&gt;castor&lt;span class="o"&gt;]&lt;/span&gt;
+changed: &lt;span class="o"&gt;[&lt;/span&gt;pollux&lt;span class="o"&gt;]&lt;/span&gt;
+
+PLAY RECAP *********************************************************************
+castor                     : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;   
+pollux                     : &lt;span class="nv"&gt;ok&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;    &lt;span class="nv"&gt;changed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;    &lt;span class="nv"&gt;unreachable&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="nv"&gt;failed&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;   
+
+root@gemini:~/playbooks/keepalived# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y solo nos queda observar quien tiene la IP flotante (es &lt;em&gt;castor&lt;/em&gt; porque ambos &lt;strong&gt;nginx&lt;/strong&gt; funcionan y es un 103 vs 102).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/keepalived# ansible -m raw -a &lt;span class="s1"&gt;&amp;#39;ip addr | grep &amp;quot;inet &amp;quot;&amp;#39;&lt;/span&gt; gemini
+castor &lt;span class="p"&gt;|&lt;/span&gt; SUCCESS &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;rc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; &amp;gt;&amp;gt;
+
+    inet 127.0.0.1/8 scope host lo
+    inet 172.18.0.3/16 scope global eth0
+    inet 172.18.0.10/32 scope global eth0
+
+
+pollux &lt;span class="p"&gt;|&lt;/span&gt; SUCCESS &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;rc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; &amp;gt;&amp;gt;
+
+    inet 127.0.0.1/8 scope host lo
+    inet 172.18.0.4/16 scope global eth0
+
+
+root@gemini:~/playbooks/keepalived# wget -qO- http://172.18.0.10/
+&amp;lt;p&amp;gt;Hello from &amp;lt;em&amp;gt;castor&amp;lt;/em&amp;gt;&amp;lt;/p&amp;gt;
+root@gemini:~/playbooks/keepalived# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Pruebas de alta disponibilidad&lt;/h2&gt;
+&lt;p&gt;Vamos a simular una caída de &lt;em&gt;castor&lt;/em&gt; o de su &lt;strong&gt;nginx&lt;/strong&gt; (el resultado es el mismo):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/keepalived# ansible -m service -a &lt;span class="s2"&gt;&amp;quot;name=nginx state=stopped&amp;quot;&lt;/span&gt; castor
+castor &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: true, 
+    &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;nginx&amp;quot;&lt;/span&gt;, 
+    &lt;span class="s2"&gt;&amp;quot;state&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;stopped&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@gemini:~/playbooks/keepalived# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;¿Que pasa con la IP flotante? Por supuesto, la hereda &lt;em&gt;pollux&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/keepalived# ansible -m raw -a &lt;span class="s1"&gt;&amp;#39;ip addr | grep &amp;quot;inet &amp;quot;&amp;#39;&lt;/span&gt; gemini
+castor &lt;span class="p"&gt;|&lt;/span&gt; SUCCESS &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;rc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; &amp;gt;&amp;gt;
+
+    inet 127.0.0.1/8 scope host lo
+    inet 172.18.0.3/16 scope global eth0
+
+
+pollux &lt;span class="p"&gt;|&lt;/span&gt; SUCCESS &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;rc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; &amp;gt;&amp;gt;
+
+
+    inet 127.0.0.1/8 scope host lo
+    inet 172.18.0.4/16 scope global eth0
+    inet 172.18.0.10/32 scope global eth0
+
+
+root@gemini:~/playbooks/keepalived# wget -qO- http://172.18.0.10/
+&amp;lt;p&amp;gt;Hello from &amp;lt;em&amp;gt;pollux&amp;lt;/em&amp;gt;&amp;lt;/p&amp;gt;
+root@gemini:~/playbooks/keepalived# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora simularemos que se cae &lt;em&gt;pollux&lt;/em&gt;. Esto nos deja sin servicio...&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/keepalived# ansible -m service -a &lt;span class="s2"&gt;&amp;quot;name=nginx state=stopped&amp;quot;&lt;/span&gt; pollux
+pollux &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: true, 
+    &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;nginx&amp;quot;&lt;/span&gt;, 
+    &lt;span class="s2"&gt;&amp;quot;state&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;stopped&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@gemini:~/playbooks/keepalived# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como las dos máquinas están levantadas, se trata de un 101 vs 100, lo que le da la IP a &lt;em&gt;castor&lt;/em&gt;. El servicio no responde porque el &lt;strong&gt;nginx&lt;/strong&gt; de &lt;em&gt;castor&lt;/em&gt; está caído. Mal asunto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/keepalived# ansible -m raw -a &lt;span class="s1"&gt;&amp;#39;ip addr | grep &amp;quot;inet &amp;quot;&amp;#39;&lt;/span&gt; gemini
+pollux &lt;span class="p"&gt;|&lt;/span&gt; SUCCESS &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;rc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; &amp;gt;&amp;gt;
+
+    inet 127.0.0.1/8 scope host lo
+    inet 172.18.0.4/16 scope global eth0
+
+
+castor &lt;span class="p"&gt;|&lt;/span&gt; SUCCESS &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;rc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; &amp;gt;&amp;gt;
+
+    inet 127.0.0.1/8 scope host lo
+    inet 172.18.0.3/16 scope global eth0
+    inet 172.18.0.10/32 scope global eth0
+
+
+root@gemini:~/playbooks/keepalived# wget -O- http://172.18.0.10/
+converted &lt;span class="s1"&gt;&amp;#39;http://172.18.0.10/&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;ANSI_X3.4-1968&lt;span class="o"&gt;)&lt;/span&gt; -&amp;gt; &lt;span class="s1"&gt;&amp;#39;http://172.18.0.10/&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;UTF-8&lt;span class="o"&gt;)&lt;/span&gt;
+--2016-10-14 11:00:08--  http://172.18.0.10/
+Connecting to 172.18.0.10:80... failed: Connection refused.
+root@gemini:~/playbooks/keepalived# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora, supongamos que &lt;em&gt;pollux&lt;/em&gt; se recupera.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/keepalived# ansible -m service -a &lt;span class="s2"&gt;&amp;quot;name=nginx state=started&amp;quot;&lt;/span&gt; pollux
+pollux &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: true, 
+    &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;nginx&amp;quot;&lt;/span&gt;, 
+    &lt;span class="s2"&gt;&amp;quot;state&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;started&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@gemini:~/playbooks/keepalived# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Sin sorpresas, asume la IP flotante (101 vs 102).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/keepalived# ansible -m raw -a &lt;span class="s1"&gt;&amp;#39;ip addr | grep &amp;quot;inet &amp;quot;&amp;#39;&lt;/span&gt; gemini
+pollux &lt;span class="p"&gt;|&lt;/span&gt; SUCCESS &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;rc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; &amp;gt;&amp;gt;
+
+    inet 127.0.0.1/8 scope host lo
+    inet 172.18.0.4/16 scope global eth0
+    inet 172.18.0.10/32 scope global eth0
+
+
+castor &lt;span class="p"&gt;|&lt;/span&gt; SUCCESS &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;rc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; &amp;gt;&amp;gt;
+
+    inet 127.0.0.1/8 scope host lo
+    inet 172.18.0.3/16 scope global eth0
+
+
+root@gemini:~/playbooks/keepalived# wget -qO- http://172.18.0.10/
+&amp;lt;p&amp;gt;Hello from &amp;lt;em&amp;gt;pollux&amp;lt;/em&amp;gt;&amp;lt;/p&amp;gt;
+root@gemini:~/playbooks/keepalived# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y finalmente se recupera &lt;em&gt;castor&lt;/em&gt;, lo que le da la prioridad para asumir su posición como &lt;em&gt;master&lt;/em&gt; del &lt;em&gt;cluster&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/keepalived# ansible -m service -a &lt;span class="s2"&gt;&amp;quot;name=nginx state=started&amp;quot;&lt;/span&gt; castor
+castor &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;SUCCESS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;&amp;gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;changed&amp;quot;&lt;/span&gt;: true, 
+    &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;nginx&amp;quot;&lt;/span&gt;, 
+    &lt;span class="s2"&gt;&amp;quot;state&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;started&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@gemini:~/playbooks/keepalived# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y sin sorpresas, recibe las peticiones para sí mismo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@gemini:~/playbooks/keepalived# ansible -m raw -a &lt;span class="s1"&gt;&amp;#39;ip addr | grep &amp;quot;inet &amp;quot;&amp;#39;&lt;/span&gt; gemini
+castor &lt;span class="p"&gt;|&lt;/span&gt; SUCCESS &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;rc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; &amp;gt;&amp;gt;
+
+    inet 127.0.0.1/8 scope host lo
+    inet 172.18.0.3/16 scope global eth0
+    inet 172.18.0.10/32 scope global eth0
+
+
+pollux &lt;span class="p"&gt;|&lt;/span&gt; SUCCESS &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nv"&gt;rc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; &amp;gt;&amp;gt;
+
+    inet 127.0.0.1/8 scope host lo
+    inet 172.18.0.4/16 scope global eth0
+
+
+root@gemini:~/playbooks/keepalived# wget -qO- http://172.18.0.10/
+&amp;lt;p&amp;gt;Hello from &amp;lt;em&amp;gt;castor&amp;lt;/em&amp;gt;&amp;lt;/p&amp;gt;
+root@gemini:~/playbooks/keepalived# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En caso de haberse levantado antes &lt;em&gt;castor&lt;/em&gt;, habría ejercido como &lt;em&gt;master&lt;/em&gt; enseguida, y el levantamiento de &lt;em&gt;pollux&lt;/em&gt; no habría provocado un &lt;em&gt;failover&lt;/em&gt; nuevo (103 vs 100 y 103 vs 102, respectivamente).&lt;/p&gt;
+&lt;p&gt;Y con esto ya podemos tener nuestros servicios y balanceadores tipo "ventanilla única" redundados y con alta disponibilidad. Cabe indicar que esto no es útil ni con los &lt;em&gt;bakcends&lt;/em&gt; (el balanceador ya suele controlar si una de ellos está caído o no), ni con los &lt;em&gt;clusters&lt;/em&gt; con tecnología de &lt;em&gt;clustering&lt;/em&gt; propia (bases de datos, colas, ...).&lt;/p&gt;</summary><category term="keepalived"></category><category term="failover"></category><category term="ansible"></category><category term="ip flotante"></category></entry><entry><title>Sincronizando ficheros con ownCloud</title><link href="http://www.linuxsysadmin.tk/2017/02/sincronizando-ficheros-con-owncloud.html" rel="alternate"></link><published>2017-02-20T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-02-20:2017/02/sincronizando-ficheros-con-owncloud.html</id><summary type="html">&lt;p&gt;Finalmente ha sucedido: el ingeniero de seguridad de la empresa ha decidido cerrar servicios de sincronizado de ficheros, dejando inútiles servicios como &lt;strong&gt;Dropbox&lt;/strong&gt;, &lt;strong&gt;Mega&lt;/strong&gt; y otros. Sin embargo, cualquier bloqueo que se haga mediante el dominio hace que sea imposible cerrar todos estos servicios, e incluso podemos poner el nuestro.&lt;/p&gt;
 &lt;p&gt;La forma mas simple de tener un servicio privado es utilizar algo que ya esté hecho, y en esta categoría tenemos un contendiente ganador: &lt;a href="https://owncloud.org/"&gt;ownCloud&lt;/a&gt;. Solo sería necesario alojarlo en algún lugar desde donde todos nuestros dispositivos tengan acceso.&lt;/p&gt;
 &lt;p&gt;Vamos a tirar de &lt;strong&gt;Docker&lt;/strong&gt; y de &lt;strong&gt;DockerHub&lt;/strong&gt;, concretamente de la imagen oficial, que podemos encontrar &lt;a href="https://hub.docker.com/_/owncloud/"&gt;aquí&lt;/a&gt;. Como necesitamos una base de datos, vamos a utilizar &lt;strong&gt;docker-compose&lt;/strong&gt; para levantar fácilmente ambas, usando también la imagen oficial de &lt;strong&gt;MariaDB&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Así nos queda el &lt;em&gt;docker-compose.yml&lt;/em&gt;:&lt;/p&gt;

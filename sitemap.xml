@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2017-02-20T10:12:43-00:00</lastmod>
+<lastmod>2017-02-28T09:20:23-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2017-02-20T10:12:43-00:00</lastmod>
+<lastmod>2017-02-28T09:20:23-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2017-02-20T10:12:43-00:00</lastmod>
+<lastmod>2017-02-28T09:20:23-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2017-02-20T10:12:43-00:00</lastmod>
+<lastmod>2017-02-28T09:20:23-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2017-02-20T10:12:43-00:00</lastmod>
+<lastmod>2017-02-28T09:20:23-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2017/02/alta-disponibilidad-con-keepalived.html</loc>
+<lastmod>2017-02-27T10:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -572,7 +579,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/sistemas.html</loc>
-<lastmod>2017-02-06T10:00:00-00:15</lastmod>
+<lastmod>2017-02-27T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -949,6 +956,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/keepalived.html</loc>
+<lastmod>2017-02-27T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/semaforo.html</loc>
 <lastmod>2016-11-28T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1314,7 +1328,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/ansible.html</loc>
-<lastmod>2016-09-26T08:00:00-00:15</lastmod>
+<lastmod>2017-02-27T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1460,6 +1474,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/ip-flotante.html</loc>
+<lastmod>2017-02-27T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/mongodb.html</loc>
 <lastmod>2016-05-02T00:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1552,7 +1573,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/failover.html</loc>
-<lastmod>2016-07-11T08:00:00-00:15</lastmod>
+<lastmod>2017-02-27T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1594,7 +1615,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2017-02-20T10:00:00-00:15</lastmod>
+<lastmod>2017-02-27T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
