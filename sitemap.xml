@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2017-02-28T09:20:23-00:00</lastmod>
+<lastmod>2017-03-06T09:47:28-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2017-02-28T09:20:23-00:00</lastmod>
+<lastmod>2017-03-06T09:47:28-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2017-02-28T09:20:23-00:00</lastmod>
+<lastmod>2017-03-06T09:47:28-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2017-02-28T09:20:23-00:00</lastmod>
+<lastmod>2017-03-06T09:47:28-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2017-02-28T09:20:23-00:00</lastmod>
+<lastmod>2017-03-06T09:47:28-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html</loc>
+<lastmod>2017-03-06T10:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -579,7 +586,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/sistemas.html</loc>
-<lastmod>2017-02-27T10:00:00-00:15</lastmod>
+<lastmod>2017-03-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -613,8 +620,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/desviacion-estandar.html</loc>
-<lastmod>2016-10-17T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/runit.html</loc>
+<lastmod>2017-03-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -650,6 +657,20 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/playbook.html</loc>
 <lastmod>2016-09-26T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/mysql.html</loc>
+<lastmod>2017-03-06T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/desviacion-estandar.html</loc>
+<lastmod>2016-10-17T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -879,8 +900,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/logs.html</loc>
-<lastmod>2017-01-16T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/templating.html</loc>
+<lastmod>2016-09-12T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1054,6 +1075,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/apache.html</loc>
+<lastmod>2017-03-06T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/logstash.html</loc>
 <lastmod>2017-01-16T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1089,8 +1117,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/bots.html</loc>
-<lastmod>2016-08-08T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/vault.html</loc>
+<lastmod>2016-08-15T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1173,8 +1201,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/templating.html</loc>
-<lastmod>2016-09-12T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/logs.html</loc>
+<lastmod>2017-01-16T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1217,6 +1245,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/twisted.html</loc>
 <lastmod>2017-02-13T00:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/debian.html</loc>
+<lastmod>2017-02-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1432,6 +1467,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/lamp.html</loc>
+<lastmod>2017-03-06T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/html.html</loc>
 <lastmod>2016-12-12T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1523,13 +1565,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/vault.html</loc>
-<lastmod>2016-08-15T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
 <loc>http://www.linuxsysadmin.tk/tag/sharding.html</loc>
 <lastmod>2016-05-02T00:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1538,14 +1573,14 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/php.html</loc>
-<lastmod>2016-08-01T10:00:00-00:15</lastmod>
+<lastmod>2017-03-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/debian.html</loc>
-<lastmod>2017-02-06T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/bots.html</loc>
+<lastmod>2016-08-08T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1608,14 +1643,14 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/docker.html</loc>
-<lastmod>2017-02-20T10:00:00-00:15</lastmod>
+<lastmod>2017-03-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2017-02-27T10:00:00-00:15</lastmod>
+<lastmod>2017-03-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

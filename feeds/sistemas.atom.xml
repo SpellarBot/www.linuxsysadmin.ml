@@ -1,5 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-02-27T10:00:00+01:00</updated><entry><title>Alta disponibilidad con Keepalived</title><link href="http://www.linuxsysadmin.tk/2017/02/alta-disponibilidad-con-keepalived.html" rel="alternate"></link><published>2017-02-27T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-02-27:2017/02/alta-disponibilidad-con-keepalived.html</id><summary type="html">&lt;p&gt;Cuando tenemos un servicio balanceado, los &lt;em&gt;backends&lt;/em&gt; no tienen relación entre sí y podemos poner tantos como queramos, sin miedo a que alguno se caiga. Sin embargo, para los servicios tipo "ventanilla única" interesa tener varios dispuestos a dar un servicio &lt;em&gt;failover&lt;/em&gt;; si uno se cae, otro asume la carga.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-03-06T10:00:00+01:00</updated><entry><title>Múltiples servicios en un mismo contenedor Docker</title><link href="http://www.linuxsysadmin.tk/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html" rel="alternate"></link><published>2017-03-06T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-06:2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html</id><summary type="html">&lt;p&gt;Como ya sabemos, un contenedor &lt;strong&gt;docker&lt;/strong&gt; solo puede ejecutar un proceso, y su finalización implica la parada del contenedor. Sin embargo, a veces nos puede interesar cargar los contenedores con algún servicio más, para hacerlos autosuficientes. Para ello, nos podemos ayudar de un &lt;em&gt;gestor de procesos&lt;/em&gt;, como por ejemplo, &lt;strong&gt;runit&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Antes de nada, &lt;a href="https://blog.docker.com/2014/06/why-you-dont-need-to-run-sshd-in-docker/"&gt;una referencia en contra&lt;/a&gt;; esto complica nuestro contenedor de una forma no recomendad por el propia autor de &lt;strong&gt;docker&lt;/strong&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;If you need multiple processes, you need to add one at the top-level to take care of the others. In other words, you’re turning a lean and simple container into something much more complicated.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Avisados quedáis; a partir de aquí, vamos a ver como hacerlo con un ejemplo bastante extendido: un servidor &lt;a href="https://es.wikipedia.org/wiki/LAMP"&gt;LAMP&lt;/a&gt;. La idea es que usaremos un &lt;em&gt;gestor de procesos&lt;/em&gt; llamado &lt;strong&gt;runit&lt;/strong&gt; (aunque hay otros candidatos), que me gusta por su simplicidad.&lt;/p&gt;
+&lt;h2&gt;Ejemplo: El contenedor LAMP&lt;/h2&gt;
+&lt;p&gt;Nuestro contenedor va a ser un servidor muy clásico, con un &lt;strong&gt;apache&lt;/strong&gt;, un &lt;strong&gt;mysql&lt;/strong&gt;, &lt;strong&gt;php5&lt;/strong&gt; y los paquetes que esta configuración requiera, como por ejemplo, el driver de la base de datos &lt;strong&gt;php5-mysql&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: No voy a añadir las instrucciones de &lt;em&gt;docker build&lt;/em&gt; ni de &lt;em&gt;docker run&lt;/em&gt; porque no aportan nada nuevo. Mejor centrémonos en las partes importantes.&lt;/p&gt;
+&lt;p&gt;Vamos a utilizar la siguiente topología en la carpeta del &lt;em&gt;Dockerfile&lt;/em&gt;. La idea es que vamos a alojar el código &lt;strong&gt;php&lt;/strong&gt; en la carpeta &lt;em&gt;www&lt;/em&gt;, las configuraciones del &lt;strong&gt;apache&lt;/strong&gt; en la carpeta &lt;em&gt;apache2&lt;/em&gt; y las configuraciones de &lt;strong&gt;runit&lt;/strong&gt; en &lt;em&gt;services&lt;/em&gt;. No hay configuración específica para el &lt;strong&gt;mysql&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@antares:~/docker/lamp$ tree
+.
+├── apache2
+│   ├── custom.conf
+│   └── site.conf
+├── services
+│   ├── apache2
+│   │   └── run
+│   └── mysql
+│       └── run
+├── www
+│   └── adminer.php
+└── Dockerfile
+
+&lt;span class="m"&gt;5&lt;/span&gt; directories, &lt;span class="m"&gt;6&lt;/span&gt; files
+gerard@antares:~/docker/lamp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y como no, el &lt;em&gt;Dockerfile&lt;/em&gt; usado:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@antares:~/docker/lamp$ cat Dockerfile 
+FROM debian:jessie
+ENV DEBIAN_FRONTEND noninteractive
+
+&lt;span class="c1"&gt;# Paquetes necesarios&lt;/span&gt;
+RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    apt-get install -y runit php5 php5-mysql mysql-server &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm -rf /var/lib/apt/lists/*
+
+&lt;span class="c1"&gt;# Configuracion de runit&lt;/span&gt;
+COPY services /etc/service
+
+&lt;span class="c1"&gt;# Configuracion de apache&lt;/span&gt;
+RUN unlink /etc/apache2/sites-enabled/000-default.conf
+COPY apache2/custom.conf /etc/apache2/conf-enabled
+
+&lt;span class="c1"&gt;# Configuracion y contenido del sitio&lt;/span&gt;
+COPY apache2/site.conf /etc/apache2/sites-enabled
+COPY www /srv/www
+
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/bin/runsvdir&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;/etc/service&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@antares:~/docker/lamp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Runit&lt;/h3&gt;
+&lt;p&gt;El proceso principal, que se va a dedicar a controlar los otros procesos es &lt;strong&gt;runit&lt;/strong&gt;, concretamente mediante el binario &lt;em&gt;runsvdir&lt;/em&gt;. De acuerdo a nuestro &lt;em&gt;Dockerfile&lt;/em&gt;, va a gestionar un proceso por carpeta en &lt;em&gt;/etc/service&lt;/em&gt;. Dentro de esta carpeta va a tener información de ejecución e información de estado.&lt;/p&gt;
+&lt;p&gt;Es importante poner un &lt;em&gt;script&lt;/em&gt; llamado &lt;em&gt;run&lt;/em&gt; con permisos de ejecución, que es el &lt;em&gt;script&lt;/em&gt; que &lt;strong&gt;runit&lt;/strong&gt; va a ejecutar y monitorizar, reiniciándolo en caso de caerse. No hay sorpresas en estos &lt;em&gt;scripts&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@antares:~/docker/lamp$ cat services/apache2/run 
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class="nb"&gt;exec&lt;/span&gt; /usr/sbin/apache2ctl -D FOREGROUND
+gerard@antares:~/docker/lamp$ cat services/mysql/run 
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class="nb"&gt;exec&lt;/span&gt; /usr/bin/mysqld_safe
+gerard@antares:~/docker/lamp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Apache&lt;/h3&gt;
+&lt;p&gt;El &lt;strong&gt;apache&lt;/strong&gt; necesita la configuración del &lt;em&gt;virtualhost&lt;/em&gt; que le indica lo que debe servir, y donde está; esto debe ir en &lt;em&gt;/etc/apache2/sites-enabled&lt;/em&gt;, de acuerdo con el &lt;em&gt;layout&lt;/em&gt; de directorios que utiliza la distribución usada (&lt;strong&gt;Debian&lt;/strong&gt; en este caso). Hemos eliminado el &lt;em&gt;virtualhost&lt;/em&gt; que viene por defecto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@antares:~/docker/lamp$ cat apache2/site.conf 
+&amp;lt;VirtualHost *:80&amp;gt;
+    DocumentRoot /srv/www
+    LogLevel info
+    ErrorLog &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;APACHE_LOG_DIR&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/error.log
+    CustomLog &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;APACHE_LOG_DIR&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;/access.log combined
+&amp;lt;/VirtualHost&amp;gt;
+gerard@antares:~/docker/lamp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El otro punto conflictivo es que el fichero de configuración base no lleva permisos para servir nada en &lt;em&gt;/srv/www&lt;/em&gt;, sino en &lt;em&gt;/var/www&lt;/em&gt;. Personalmente creo que el contenido debería estar en &lt;em&gt;/srv/www&lt;/em&gt;, así que tengo que añadir estos permisos, que se puede hacer cómodamente con un fichero adicional en la carpeta &lt;em&gt;/etc/apache2/conf-enabled&lt;/em&gt;, que se incluye desde el fichero &lt;em&gt;/etc/apache2/apache2.conf&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@antares:~/docker/lamp$ cat apache2/custom.conf 
+&amp;lt;Directory /srv/&amp;gt;
+    Options Indexes FollowSymLinks
+    AllowOverride None
+    Require all granted
+&amp;lt;/Directory&amp;gt;
+gerard@antares:~/docker/lamp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;MySQL&lt;/h3&gt;
+&lt;p&gt;No hay nada especial para &lt;strong&gt;mysql&lt;/strong&gt;. Simplemente dejamos que la variable de entorno &lt;em&gt;DEBIAN_FRONTEND&lt;/em&gt; indique a &lt;strong&gt;apt-get&lt;/strong&gt; que no pregunte una contraseña para el usuario &lt;em&gt;root&lt;/em&gt;, quedando este usuario sin contraseña. Esto debe ser revisado con esmero.&lt;/p&gt;
+&lt;h3&gt;Contenido web&lt;/h3&gt;
+&lt;p&gt;Para mantener limpia la carpeta de &lt;em&gt;build&lt;/em&gt;, he decidido poner el contenido web en una carpeta &lt;em&gt;www&lt;/em&gt; aparte. Simplemente se trata del &lt;em&gt;document root&lt;/em&gt; de nuestro &lt;em&gt;virtualhost&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;En este caso se ha usado &lt;a href="https://www.adminer.org/"&gt;Adminer&lt;/a&gt; que es una aplicación prefabricada de un solo fichero para administrar nuestra base de datos. La parte interesante es que se trata de algo hecho en &lt;strong&gt;php&lt;/strong&gt; que se conecta a nuestro &lt;strong&gt;mysql&lt;/strong&gt;, y nos demuestra que todo funciona. Reemplazad el contenido de esta carpeta por vuestro código final.&lt;/p&gt;
+&lt;h3&gt;Más servicios&lt;/h3&gt;
+&lt;p&gt;Se necesita subir código mediante un servidor &lt;strong&gt;FTP&lt;/strong&gt; o &lt;strong&gt;SFTP&lt;/strong&gt;, algún &lt;strong&gt;cron job&lt;/strong&gt;, &lt;strong&gt;logrotate&lt;/strong&gt; o lo que sea? Pues usad la misma filosofía: instalad, configurad e instruid a &lt;strong&gt;runit&lt;/strong&gt; para que levante el proceso. Sin límites.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;RESULTADO&lt;/strong&gt;: Tras construir la imagen y ejecutarla, ya tenemos nuestro servidor funcionando en un solo contenedor.&lt;/p&gt;</summary><category term="docker"></category><category term="runit"></category><category term="LAMP"></category><category term="apache"></category><category term="mysql"></category><category term="php"></category></entry><entry><title>Alta disponibilidad con Keepalived</title><link href="http://www.linuxsysadmin.tk/2017/02/alta-disponibilidad-con-keepalived.html" rel="alternate"></link><published>2017-02-27T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-02-27:2017/02/alta-disponibilidad-con-keepalived.html</id><summary type="html">&lt;p&gt;Cuando tenemos un servicio balanceado, los &lt;em&gt;backends&lt;/em&gt; no tienen relación entre sí y podemos poner tantos como queramos, sin miedo a que alguno se caiga. Sin embargo, para los servicios tipo "ventanilla única" interesa tener varios dispuestos a dar un servicio &lt;em&gt;failover&lt;/em&gt;; si uno se cae, otro asume la carga.&lt;/p&gt;
 &lt;p&gt;La idea general es que existe una dirección IP flotante y existe un servicio que se dedica a decidir quién la tiene asignada. Uno de estos servicios es &lt;strong&gt;keepalived&lt;/strong&gt;, que es sencillo y fácil de montar.&lt;/p&gt;
 &lt;h2&gt;El entorno de trabajo&lt;/h2&gt;
 &lt;p&gt;Para hacer este ejemplo, he dispuesto dos máquinas, una como prioritaria, y una de &lt;em&gt;failover&lt;/em&gt;, que va a asumir el servicio siempre que la otra no pueda hacerlo.&lt;/p&gt;
