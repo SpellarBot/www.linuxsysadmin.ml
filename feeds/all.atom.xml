@@ -1,5 +1,235 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-03-06T10:00:00+01:00</updated><entry><title>Múltiples servicios en un mismo contenedor Docker</title><link href="http://www.linuxsysadmin.tk/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html" rel="alternate"></link><published>2017-03-06T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-06:2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html</id><summary type="html">&lt;p&gt;Como ya sabemos, un contenedor &lt;strong&gt;docker&lt;/strong&gt; solo puede ejecutar un proceso, y su finalización implica la parada del contenedor. Sin embargo, a veces nos puede interesar cargar los contenedores con algún servicio más, para hacerlos autosuficientes. Para ello, nos podemos ayudar de un &lt;em&gt;gestor de procesos&lt;/em&gt;, como por ejemplo, &lt;strong&gt;runit&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-03-13T10:00:00+01:00</updated><entry><title>Generadores de contenido web estáticos</title><link href="http://www.linuxsysadmin.tk/2017/03/generadores-de-contenido-web-estaticos.html" rel="alternate"></link><published>2017-03-13T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-13:2017/03/generadores-de-contenido-web-estaticos.html</id><summary type="html">&lt;p&gt;Antes de la masiva invasión de &lt;strong&gt;PHP&lt;/strong&gt; y &lt;strong&gt;mysql&lt;/strong&gt; en todos los proveedores de internet, existían solamente las páginas &lt;strong&gt;HTML&lt;/strong&gt; estáticas. Los servidores eran más simples y tenían menos superficie de ataque, aunque mantener las páginas web era un auténtica pesadilla; para eso se han creado los generadores web estáticos.&lt;/p&gt;
+&lt;p&gt;Cuando solicitamos una página web a un servidor dinámico, existe un código fuente que se suele encargar de conseguir los datos de una base de datos y mezclarlos con un tema para generar la página, todo en tiempo de &lt;em&gt;runtime&lt;/em&gt;. Este modelo es relativamente lento y exige la existencia de una base de datos y de un procesado en el servidor, aunque suele ofrecer una bonita interfaz para añadir contenido &lt;em&gt;online&lt;/em&gt; desde casi cualquier sitio.&lt;/p&gt;
+&lt;p&gt;Este modelo es muy adecuado para páginas y &lt;strong&gt;APIs&lt;/strong&gt; con un contenido rápidamente cambiante, pero para una página tipo &lt;em&gt;blog&lt;/em&gt; es poco eficiente. Si tenemos en cuenta que un &lt;em&gt;blog&lt;/em&gt; se actualiza relativamente poco, pero se lee teóricamente mucho, entonces necesitamos reducir el tiempo de &lt;em&gt;renderizado&lt;/em&gt; de la página, incluso suprimiéndolo.&lt;/p&gt;
+&lt;p&gt;Sin embargo, a alguien se le ocurrió una idea nueva: ¿que pasaría si cuando un editor cambia su contenido, generara &lt;strong&gt;TODAS&lt;/strong&gt; las páginas posibles y el servidor se limitara a servir esos ficheros previamente generados?&lt;/p&gt;
+&lt;p&gt;En este caso, solamente necesitaríamos un servidor web normal, como por ejemplo &lt;em&gt;Apache&lt;/em&gt; o &lt;em&gt;Nginx&lt;/em&gt;, e incluso se podría alojar gratuitamente en servicios que sirvan páginas &lt;strong&gt;HTML&lt;/strong&gt; estáticas, como por ejemplo, en &lt;em&gt;GitHub&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: La combinación de &lt;em&gt;GitHub Pages&lt;/em&gt; con el generador estático &lt;em&gt;Pelican&lt;/em&gt; es lo que utiliza este &lt;em&gt;blog&lt;/em&gt; para llegar al público general.&lt;/p&gt;
+&lt;p&gt;La clave de éxito para simplificar el mantenimiento de cualquier página web consiste en separar el contenido de la presentación, de forma que un editor no necesita conocer &lt;strong&gt;HTML&lt;/strong&gt; para crear su web, mientras que un diseñador se puede limitar a crear temas. También es interesante usar un formato de ficheros para no depender de una base de datos.&lt;/p&gt;
+&lt;p&gt;Con esto en mente, la mayoría de los generadores estáticos son mas o menos iguales: se trata de un &lt;em&gt;software&lt;/em&gt; que se dedica a generar todas las páginas web a partir de un contenido (normalmente en ficheros) y de unas plantillas (el tema). Como la lista es gigantesca, vamos a dejar a otros que la mantengan, pero ejemplo en &lt;a href="https://www.staticgen.com/"&gt;StaticGen - Top Open-Source Static Site Generators&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Un caso práctico con Hugo&lt;/h2&gt;
+&lt;p&gt;Ojeando el &lt;em&gt;ranking&lt;/em&gt;, vemos que la lista es muy larga y elegir una de estas soluciones no es fácil. Vamos a ser prácticos: no quiero instalar &lt;strong&gt;ruby&lt;/strong&gt; en mi máquina, así que usaremos el siguiente, que es un binario solitario y no ensucia mi entorno de trabajo; además presume de ser rápido. Así pues, el candidato es &lt;a href="http://gohugo.io/"&gt;Hugo&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Otros enlaces de interés para seguir este artículo se localizan en la documentación, concretamente en &lt;a href="http://gohugo.io/overview/installing/"&gt;Installing&lt;/a&gt; y en &lt;a href="http://gohugo.io/overview/installing/"&gt;Quickstart&lt;/a&gt;. Encontraréis una buena documentación de cada aspecto del funcionamiento en la barra lateral de cualquier página de documentación.&lt;/p&gt;
+&lt;h3&gt;Instalación&lt;/h3&gt;
+&lt;p&gt;En mi caso, la &lt;em&gt;release&lt;/em&gt; que necesito es &lt;a href="https://github.com/spf13/hugo/releases/download/v0.18.1/hugo_0.18.1_Linux-64bit.tar.gz"&gt;https://github.com/spf13/hugo/releases/download/v0.18.1/hugo_0.18.1_Linux-64bit.tar.gz&lt;/a&gt;. Así que la descargo. El fichero comprimido lleva el binario y otros ficheros de documentación.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ tar tf hugo_0.18.1_Linux-64bit.tar.gz 
+hugo_0.18.1_linux_amd64/hugo_0.18.1_linux_amd64
+hugo_0.18.1_linux_amd64/README.md
+hugo_0.18.1_linux_amd64/LICENSE.md
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lo descomprimimos y lo ponemos en algún lugar del &lt;em&gt;path&lt;/em&gt; por comodidad, asegurando que tiene permisos de ejecución y que lo ejecutamos sin problemas:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ tar xf hugo_0.18.1_Linux-64bit.tar.gz 
+gerard@aldebaran:~$ cp hugo_0.18.1_linux_amd64/hugo_0.18.1_linux_amd64 ~/bin/hugo
+gerard@aldebaran:~$ chmod a+x bin/hugo 
+gerard@aldebaran:~$ hugo version
+Hugo Static Site Generator v0.18.1 BuildDate: 2017-02-14T13:43:15+01:00
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Creación de una nueva web&lt;/h3&gt;
+&lt;p&gt;Nuestra nueva web necesita una estructura de carpetas muy concreta que podemos crear con un simple comando, indicando la carpeta contenedora.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace$ hugo new site site1
+Congratulations! Your new Hugo site is created in /home/gerard/workspace/site1.
+
+Just a few more steps and you&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;re ready to go:
+
+1. Download a theme into the same-named folder.
+   Choose a theme from https://themes.gohugo.io/, or
+   create your own with the &lt;span class="s2"&gt;&amp;quot;hugo new theme &amp;lt;THEMENAME&amp;gt;&amp;quot;&lt;/span&gt; command.
+2. Perhaps you want to add some content. You can add single files
+   with &lt;span class="s2"&gt;&amp;quot;hugo new &amp;lt;SECTIONNAME&amp;gt;/&amp;lt;FILENAME&amp;gt;.&amp;lt;FORMAT&amp;gt;&amp;quot;&lt;/span&gt;.
+3. Start the built-in live server via &lt;span class="s2"&gt;&amp;quot;hugo server&amp;quot;&lt;/span&gt;.
+
+Visit https://gohugo.io/ &lt;span class="k"&gt;for&lt;/span&gt; quickstart guide and full documentation.
+gerard@aldebaran:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;O de forma similar, para usar la carpeta actual:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace$ mkdir site2
+gerard@aldebaran:~/workspace$ &lt;span class="nb"&gt;cd&lt;/span&gt; site2
+gerard@aldebaran:~/workspace/site2$ hugo new site .
+Congratulations! Your new Hugo site is created in /home/gerard/workspace/site2.
+
+Just a few more steps and you&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;re ready to go:
+
+1. Download a theme into the same-named folder.
+   Choose a theme from https://themes.gohugo.io/, or
+   create your own with the &lt;span class="s2"&gt;&amp;quot;hugo new theme &amp;lt;THEMENAME&amp;gt;&amp;quot;&lt;/span&gt; command.
+2. Perhaps you want to add some content. You can add single files
+   with &lt;span class="s2"&gt;&amp;quot;hugo new &amp;lt;SECTIONNAME&amp;gt;/&amp;lt;FILENAME&amp;gt;.&amp;lt;FORMAT&amp;gt;&amp;quot;&lt;/span&gt;.
+3. Start the built-in live server via &lt;span class="s2"&gt;&amp;quot;hugo server&amp;quot;&lt;/span&gt;.
+
+Visit https://gohugo.io/ &lt;span class="k"&gt;for&lt;/span&gt; quickstart guide and full documentation.
+gerard@aldebaran:~/workspace/site2$ &lt;span class="nb"&gt;cd&lt;/span&gt; ..
+gerard@aldebaran:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Así nos queda el esqueleto de nuestra carpeta contenedora:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/site1$ tree -F
+.
+├── archetypes/
+├── content/
+├── data/
+├── layouts/
+├── static/
+├── themes/
+└── config.toml
+
+&lt;span class="m"&gt;6&lt;/span&gt; directories, &lt;span class="m"&gt;1&lt;/span&gt; file
+gerard@aldebaran:~/workspace/site1$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora necesitamos un tema para &lt;em&gt;renderizar&lt;/em&gt; nuestra web. Podemos crear un tema propio siguiendo la documentación, si así lo deseamos; para no extendernos, voy a utilizar uno que ya existe y que podemos encontrar en el sitio de &lt;a href="http://themes.gohugo.io/"&gt;temas de Hugo&lt;/a&gt;. Por defecto no viene ningún tema, así que las páginas saldrían en blanco.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/site1$ &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; themes&lt;span class="p"&gt;;&lt;/span&gt; git clone https://github.com/comfusion/after-dark&lt;span class="o"&gt;)&lt;/span&gt;
+Cloning into &lt;span class="s1"&gt;&amp;#39;after-dark&amp;#39;&lt;/span&gt;...
+remote: Counting objects: 542, &lt;span class="k"&gt;done&lt;/span&gt;.
+remote: Total &lt;span class="m"&gt;542&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;, reused &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;, pack-reused 542
+Receiving objects: 100% &lt;span class="o"&gt;(&lt;/span&gt;542/542&lt;span class="o"&gt;)&lt;/span&gt;, 6.26 MiB &lt;span class="p"&gt;|&lt;/span&gt; 941.00 KiB/s, &lt;span class="k"&gt;done&lt;/span&gt;.
+Resolving deltas: 100% &lt;span class="o"&gt;(&lt;/span&gt;296/296&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="k"&gt;done&lt;/span&gt;.
+Checking connectivity... &lt;span class="k"&gt;done&lt;/span&gt;.
+gerard@aldebaran:~/workspace/site1$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si miramos en la carpeta &lt;code&gt;themes/&lt;/code&gt;, veremos que ha aparecido una nueva carpeta con el tema deseado; el nombre de la carpeta es el parámetro que vamos a usar para indicar que tema usaremos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/site1$ ls themes/
+after-dark
+gerard@aldebaran:~/workspace/site1$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es un buen momento para modificar la configuración del sitio, siendo especialmente importante indicar el tema a usar. Si no lo hacemos, tendremos que indicarlo como parámetro cada vez que invoquemos el resto de comandos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/site1$ cat config.toml 
+&lt;span class="nv"&gt;languageCode&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;en-us&amp;quot;&lt;/span&gt;
+&lt;span class="nv"&gt;title&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;My New Hugo Site&amp;quot;&lt;/span&gt;
+&lt;span class="nv"&gt;baseurl&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;http://example.org/&amp;quot;&lt;/span&gt;
+&lt;span class="nv"&gt;theme&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;after-dark&amp;quot;&lt;/span&gt;
+gerard@aldebaran:~/workspace/site1$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Para cambiar el tema de nuestra web, solo hace falta poner un tema nuevo en la carpeta &lt;code&gt;themes/&lt;/code&gt; y configurar el fichero con el nuevo tema. Esto nos permite probar temas diferentes; de hecho, todas las páginas van a ser reconstruidas con el nuevo tema. Si solo queremos ver que tal queda un tema, no hace falta modificar el fichero de configuración; con ejecutar &lt;code&gt;hugo&lt;/code&gt; con el &lt;em&gt;flag&lt;/em&gt; &lt;code&gt;--theme &amp;lt;tema&amp;gt;&lt;/code&gt; nos bastaría.&lt;/p&gt;
+&lt;h3&gt;Generando contenido&lt;/h3&gt;
+&lt;p&gt;La mecánica básica de trabajo es muy simple: creamos un nuevo contenido, levantamos el servidor de desarrollo y nos limitamos a ir viendo como cambia la página tal como vamos modificando y guardando el contenido.&lt;/p&gt;
+&lt;p&gt;El servidor de desarrollo es una herramienta muy útil, y no hay ningún motivo por el que no esté permanentemente corriendo mientras trabajamos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Levanta un servidor web local que sirve las páginas desde memoria&lt;/li&gt;
+&lt;li&gt;Reconstruye el contenido en memoria cada vez que un fichero cambia&lt;/li&gt;
+&lt;li&gt;Sustituye todas las ocurrencias del parámetro &lt;code&gt;baseurl&lt;/code&gt; por &lt;code&gt;localhost&lt;/code&gt;, para su funcionamiento local&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Esto significa que se generará ningún fichero en disco. Para eso hay otros comandos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/site1$ hugo server
+Started building sites ...
+Built site &lt;span class="k"&gt;for&lt;/span&gt; language en:
+&lt;span class="m"&gt;0&lt;/span&gt; draft content
+&lt;span class="m"&gt;0&lt;/span&gt; future content
+&lt;span class="m"&gt;0&lt;/span&gt; expired content
+&lt;span class="m"&gt;0&lt;/span&gt; regular pages created
+&lt;span class="m"&gt;1&lt;/span&gt; other pages created
+&lt;span class="m"&gt;0&lt;/span&gt; non-page files copied
+&lt;span class="m"&gt;0&lt;/span&gt; paginator pages created
+&lt;span class="m"&gt;0&lt;/span&gt; tags created
+&lt;span class="m"&gt;0&lt;/span&gt; categories created
+total in &lt;span class="m"&gt;14&lt;/span&gt; ms
+Watching &lt;span class="k"&gt;for&lt;/span&gt; changes in /home/gerard/workspace/site1/&lt;span class="o"&gt;{&lt;/span&gt;data,content,layouts,static,themes&lt;span class="o"&gt;}&lt;/span&gt;
+Serving pages from memory
+Web Server is available at http://localhost:1313/ &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;bind&lt;/span&gt; address 127.0.0.1&lt;span class="o"&gt;)&lt;/span&gt;
+Press Ctrl+C to stop
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora creamos una nueva página, por ejemplo un &lt;em&gt;post&lt;/em&gt; nuevo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/site1$ hugo new post/lorem-ipsum.md
+/home/gerard/workspace/site1/content/post/lorem-ipsum.md created
+gerard@aldebaran:~/workspace/site1$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y lo editamos a placer. Me voy a limitar a usar un generador de texto &lt;em&gt;markdown&lt;/em&gt;, que se encuentra &lt;a href="https://jaspervdj.be/lorem-markdownum/"&gt;aquí&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;+++
+&lt;span class="nv"&gt;description&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;no description&amp;quot;&lt;/span&gt;
+&lt;span class="nv"&gt;date&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;2017-02-14T15:51:57+01:00&amp;quot;&lt;/span&gt;
+&lt;span class="nv"&gt;title&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Gratia retia iamque&amp;quot;&lt;/span&gt;
+&lt;span class="nv"&gt;tags&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;lorem&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;ipsum&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;categories&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;uncathegorized&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;draft&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;false&lt;/span&gt;
++++
+
+
+
+&lt;span class="c1"&gt;## Mihi arguit hastam securaque face vigilans obruta&lt;/span&gt;
+
+Lorem markdownum amoris illis, spicea, daedalus intonsum procul certo dubioque, inmitibus. Verti frondescere et natura Hymettia carmine *candidus Agenorides* perdere.
+
+    swappableEbookHard.metaSkinNybble&lt;span class="o"&gt;(&lt;/span&gt;simmApple&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="nv"&gt;desktopWebMouse&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; page&lt;span class="o"&gt;(&lt;/span&gt;analog_rt_regular, eSession, menu_oem&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    var &lt;span class="nv"&gt;prompt&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; dns_megabit&lt;span class="o"&gt;(&lt;/span&gt;softShell&lt;span class="o"&gt;(&lt;/span&gt;duplexMediaYoutube, netiquette, fontBrouterPng&lt;span class="o"&gt;)&lt;/span&gt;, 2&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="c1"&gt;## Imagine sub nomine occursu&lt;/span&gt;
+
+Parvas pater. Ter modo quassaque collo. Aequora chori nec tumulum *gemitus quibus*.
+
+Odiumque duo, aera prolem mox silvas poteratque sagittis quoque crine fert. Longo ferarum temptaminis stagna vultum et urbe Peripha, Aeginam. Ne O acuto tam Thetis solita cognati robora sit tellure, et Alcyone moenia vitiorum. Solis iam omnes Lucina non suis *utroque novis* sagittam suo carchesia Achivi repleri ingratus quem.
+
+&lt;span class="c1"&gt;## Iactasque caelatus me foret aequi&lt;/span&gt;
+
+Has serta relictis, non Lucina, Phylius falsa adflata sudore. &lt;span class="o"&gt;[&lt;/span&gt;Fago inserit palpitat&lt;span class="o"&gt;](&lt;/span&gt;http://romamtot.io/hos&lt;span class="o"&gt;)&lt;/span&gt; rubentia adspicit et dolore *refert ita*, et. Quod suppressis novat sororis ubique astu&lt;span class="p"&gt;;&lt;/span&gt; pedibus spectabat dixere loquax comitem, nobis effugit&lt;span class="p"&gt;;&lt;/span&gt; tibi cibo nunc oppugnant.
+
+Inania agat cum vidi cruribus et lanas nepotem Tethyn, umbris Agenorides stamina omnes sed fecit absumitur acclinia. Morati femina deam thyrsos vultus aequales suo deum faciem draconis diurnis liquor contentus.
+
+Sine in robora aureus ignavis bella vaga super multa saepe atque tot **sceleratior sunt**, est furiale. Felix flammas quiete&lt;span class="p"&gt;;&lt;/span&gt; omnis vidi quoque sagittas cruentum prosunt tot vultus iamque! Auget comis me precibus vetus, hausit diversa an tulimus laniem amores *retro aequalique*. Molli arbore, altera nota&lt;span class="p"&gt;;&lt;/span&gt; furore posuisset in post Midan pollice et multos poteras.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vemos que el servidor de desarrollo ha detectado el cambio y ha regenerado el contenido:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/site1$ hugo server
+...
+Change detected, rebuilding site
+2017-02-14 15:56 +0100
+Source changed /home/gerard/workspace/site1/content/post/lorem-ipsum.md
+Built site &lt;span class="k"&gt;for&lt;/span&gt; language en:
+&lt;span class="m"&gt;0&lt;/span&gt; draft content
+&lt;span class="m"&gt;0&lt;/span&gt; future content
+&lt;span class="m"&gt;0&lt;/span&gt; expired content
+&lt;span class="m"&gt;1&lt;/span&gt; regular pages created
+&lt;span class="m"&gt;7&lt;/span&gt; other pages created
+&lt;span class="m"&gt;1&lt;/span&gt; non-page files copied
+&lt;span class="m"&gt;5&lt;/span&gt; paginator pages created
+&lt;span class="m"&gt;2&lt;/span&gt; tags created
+&lt;span class="m"&gt;1&lt;/span&gt; categories created
+total in &lt;span class="m"&gt;8&lt;/span&gt; ms
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y si apuntamos nuestro navegador a la URL sugerida &lt;a href="http://localhost:1313/"&gt;http://localhost:1313/&lt;/a&gt; podremos ver nuestro sitio web con las modificaciones pertinentes.&lt;/p&gt;
+&lt;p&gt;A lo largo de la vida de la página, vamos a repetir este paso muchas veces, tal como queramos ir añadiendo más páginas.&lt;/p&gt;
+&lt;h3&gt;Listos para publicar&lt;/h3&gt;
+&lt;p&gt;Finalmente estamos contentos con el contenido y decidimos que está listo para ser generado como ficheros &lt;strong&gt;HTML&lt;/strong&gt; para su publicación. Esto se consigue con el uso del comando &lt;code&gt;hugo&lt;/code&gt; sin mas parámetros.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/site1$ hugo
+Started building sites ...
+Built site &lt;span class="k"&gt;for&lt;/span&gt; language en:
+&lt;span class="m"&gt;0&lt;/span&gt; draft content
+&lt;span class="m"&gt;0&lt;/span&gt; future content
+&lt;span class="m"&gt;0&lt;/span&gt; expired content
+&lt;span class="m"&gt;1&lt;/span&gt; regular pages created
+&lt;span class="m"&gt;7&lt;/span&gt; other pages created
+&lt;span class="m"&gt;0&lt;/span&gt; non-page files copied
+&lt;span class="m"&gt;5&lt;/span&gt; paginator pages created
+&lt;span class="m"&gt;2&lt;/span&gt; tags created
+&lt;span class="m"&gt;1&lt;/span&gt; categories created
+total in &lt;span class="m"&gt;27&lt;/span&gt; ms
+gerard@aldebaran:~/workspace/site1$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y esto nos deja los ficheros en la carpeta &lt;code&gt;public/&lt;/code&gt; para que los publiquemos según nuestro método de despliegue favorito, sea &lt;strong&gt;FTP&lt;/strong&gt;, &lt;strong&gt;rsync&lt;/strong&gt;, o cualquier otro método. Encuentro especialmente interesante el &lt;a href="https://gohugo.io/tutorials/github-pages-blog/"&gt;uso de GitHub&lt;/a&gt; para alojar la web.&lt;/p&gt;</summary><category term="html"></category><category term="generador estático"></category><category term="hugo"></category></entry><entry><title>Múltiples servicios en un mismo contenedor Docker</title><link href="http://www.linuxsysadmin.tk/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html" rel="alternate"></link><published>2017-03-06T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-06:2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html</id><summary type="html">&lt;p&gt;Como ya sabemos, un contenedor &lt;strong&gt;docker&lt;/strong&gt; solo puede ejecutar un proceso, y su finalización implica la parada del contenedor. Sin embargo, a veces nos puede interesar cargar los contenedores con algún servicio más, para hacerlos autosuficientes. Para ello, nos podemos ayudar de un &lt;em&gt;gestor de procesos&lt;/em&gt;, como por ejemplo, &lt;strong&gt;runit&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Antes de nada, &lt;a href="https://blog.docker.com/2014/06/why-you-dont-need-to-run-sshd-in-docker/"&gt;una referencia en contra&lt;/a&gt;; esto complica nuestro contenedor de una forma no recomendad por el propia autor de &lt;strong&gt;docker&lt;/strong&gt;.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;If you need multiple processes, you need to add one at the top-level to take care of the others. In other words, you’re turning a lean and simple container into something much more complicated.&lt;/p&gt;

@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2017-03-06T09:47:28-00:00</lastmod>
+<lastmod>2017-03-13T10:40:26-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2017-03-06T09:47:28-00:00</lastmod>
+<lastmod>2017-03-13T10:40:26-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2017-03-06T09:47:28-00:00</lastmod>
+<lastmod>2017-03-13T10:40:26-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2017-03-06T09:47:28-00:00</lastmod>
+<lastmod>2017-03-13T10:40:26-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2017-03-06T09:47:28-00:00</lastmod>
+<lastmod>2017-03-13T10:40:26-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2017/03/generadores-de-contenido-web-estaticos.html</loc>
+<lastmod>2017-03-13T10:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -565,7 +572,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/miscelanea.html</loc>
-<lastmod>2017-02-20T10:00:00-00:15</lastmod>
+<lastmod>2017-03-13T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1096,8 +1103,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/12factor.html</loc>
-<lastmod>2016-09-12T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/root.html</loc>
+<lastmod>2016-06-13T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1112,6 +1119,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/iso.html</loc>
 <lastmod>2015-12-02T12:30:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/generador-estatico.html</loc>
+<lastmod>2017-03-13T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1390,8 +1404,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/root.html</loc>
-<lastmod>2016-06-13T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/12factor.html</loc>
+<lastmod>2016-09-12T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1453,6 +1467,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/hugo.html</loc>
+<lastmod>2017-03-13T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/autenticacion-basica.html</loc>
 <lastmod>2016-02-08T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1475,7 +1496,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/html.html</loc>
-<lastmod>2016-12-12T08:00:00-00:15</lastmod>
+<lastmod>2017-03-13T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1650,7 +1671,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2017-03-06T10:00:00-00:15</lastmod>
+<lastmod>2017-03-13T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
