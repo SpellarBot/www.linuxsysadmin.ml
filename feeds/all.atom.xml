@@ -1,5 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-03-13T10:00:00+01:00</updated><entry><title>Generadores de contenido web estáticos</title><link href="http://www.linuxsysadmin.tk/2017/03/generadores-de-contenido-web-estaticos.html" rel="alternate"></link><published>2017-03-13T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-13:2017/03/generadores-de-contenido-web-estaticos.html</id><summary type="html">&lt;p&gt;Antes de la masiva invasión de &lt;strong&gt;PHP&lt;/strong&gt; y &lt;strong&gt;mysql&lt;/strong&gt; en todos los proveedores de internet, existían solamente las páginas &lt;strong&gt;HTML&lt;/strong&gt; estáticas. Los servidores eran más simples y tenían menos superficie de ataque, aunque mantener las páginas web era un auténtica pesadilla; para eso se han creado los generadores web estáticos.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-03-20T10:00:00+01:00</updated><entry><title>Hospedando contenido estático en Github pages</title><link href="http://www.linuxsysadmin.tk/2017/03/hospedando-contenido-estatico-en-github-pages.html" rel="alternate"></link><published>2017-03-20T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-20:2017/03/hospedando-contenido-estatico-en-github-pages.html</id><summary type="html">&lt;p&gt;Algunas veces nos hemos planteado la posibilidad de tener nuestro propio servidor con nuestras propias aplicaciones, pero el coste del &lt;em&gt;hosting&lt;/em&gt; nos lo ha hecho replantear, especialmente para proyectos de pruebas sin beneficio. Si no nos importa hospedar contenido &lt;strong&gt;HTML&lt;/strong&gt; estático, las páginas de &lt;strong&gt;GitHub&lt;/strong&gt; pueden cumplir con nuestras necesidades.&lt;/p&gt;
+&lt;p&gt;De hecho, este &lt;em&gt;blog&lt;/em&gt; está hospedado en &lt;em&gt;GitHub pages&lt;/em&gt; sin ningún coste de &lt;em&gt;hosting&lt;/em&gt;. Añadimos un nombre de registro gratuito, y obtenemos una plataforma sin coste de mantenimiento.&lt;/p&gt;
+&lt;p&gt;La contrapartida es que este &lt;em&gt;blog&lt;/em&gt; está compuesto de páginas &lt;strong&gt;HTML&lt;/strong&gt; y no dispone de ninguna base de datos ni de ningún tipo de procesado en el servidor. Mantener este contenido sería una pesadilla, a no ser que se utilicen &lt;a href="http://www.linuxsysadmin.tk/2017/03/generadores-de-contenido-web-estaticos.html"&gt;generadores automáticos de HTML&lt;/a&gt;, que es lo que utilizo en este &lt;em&gt;blog&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Las páginas de &lt;em&gt;GitHub&lt;/em&gt; pueden ser de dos tipos: una por cada cuenta de usuario, y una por cada proyecto. De esta forma, como usuarios normales, deberíamos trabajar con las páginas de proyecto, puesto que solo disponemos de una página personal.&lt;/p&gt;
+&lt;h2&gt;Páginas de proyecto&lt;/h2&gt;
+&lt;p&gt;Cada repositorio puede disponer de un espacio web propio. Solo se necesita indicar a &lt;em&gt;GitHub&lt;/em&gt; qué rama tratar como &lt;em&gt;document root&lt;/em&gt;, para que pueda servirla adecuadamente. Vamos a ilustrar como se hace con un ejemplo:&lt;/p&gt;
+&lt;p&gt;Vamos a empezar creando un nuevo repositorio en &lt;a href="https://github.com/new"&gt;https://github.com/new&lt;/a&gt;, de acuerdo a vuestras preferencias. En mi caso, me he dejado llevar por la sugerencia, puesto que este nombre no influye en nada; de esta forma nuestro repositorio se llama &lt;code&gt;didactic-meme&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Como no puede ser de otra forma, vamos a tener que clonar este repositorio para poder trabajar con él.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/projects$ git clone https://github.com/Sirtea/didactic-meme.git
+Cloning into &lt;span class="s1"&gt;&amp;#39;didactic-meme&amp;#39;&lt;/span&gt;...
+warning: You appear to have cloned an empty repository.
+Checking connectivity... &lt;span class="k"&gt;done&lt;/span&gt;.
+gerard@aldebaran:~/projects$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Tras poner algún fichero en la rama &lt;code&gt;master&lt;/code&gt; y hacer un &lt;em&gt;commit&lt;/em&gt;, podemos crear una rama para alojar nuestro contenido &lt;strong&gt;HTML&lt;/strong&gt;. Esta rama se puede llamar &lt;code&gt;master&lt;/code&gt; (que viene por defecto) o &lt;code&gt;gh-pages&lt;/code&gt;. Esto es una decisión personal, pero como yo utilizo un generador de páginas &lt;strong&gt;HTML&lt;/strong&gt;, yo prefiero dejar la rama &lt;code&gt;master&lt;/code&gt; para el contenido escrito, y la rama &lt;code&gt;gh-pages&lt;/code&gt; para el contenido generado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/projects/didactic-meme$ git checkout -b gh-pages master
+Switched to a new branch &lt;span class="s1"&gt;&amp;#39;gh-pages&amp;#39;&lt;/span&gt;
+gerard@aldebaran:~/projects/didactic-meme$ git branch -v
+* gh-pages 9b33086 Some master content
+  master   9b33086 Some master content
+gerard@aldebaran:~/projects/didactic-meme$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A partir de aquí el flujo de trabajo es el que usaríamos normalmente con &lt;strong&gt;Git&lt;/strong&gt;. Creamos el contenido &lt;strong&gt;HTML&lt;/strong&gt;, lo copiamos a lo generamos; el resto es tan simple como hacer un &lt;em&gt;commit&lt;/em&gt; y subirlo a &lt;em&gt;GitHub&lt;/em&gt; con un &lt;em&gt;push&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/projects/didactic-meme$ cat index.html 
+&amp;lt;h1&amp;gt;Hello World&amp;lt;/h1&amp;gt;
+gerard@aldebaran:~/projects/didactic-meme$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Un detalle del &lt;em&gt;push&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/projects/didactic-meme$ git push origin gh-pages
+Username &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;https://github.com&amp;#39;&lt;/span&gt;: sirtea
+Password &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;https://sirtea@github.com&amp;#39;&lt;/span&gt;: 
+Total &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;, reused &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;
+To https://github.com/Sirtea/didactic-meme.git
+ * &lt;span class="o"&gt;[&lt;/span&gt;new branch&lt;span class="o"&gt;]&lt;/span&gt;      gh-pages -&amp;gt; gh-pages
+gerard@aldebaran:~/projects/didactic-meme$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y como ya tenemos las dos ramas en &lt;em&gt;GitHub&lt;/em&gt;, podemos continuar con el &lt;em&gt;setup&lt;/em&gt; de nuestro sitio. Para ello vamos a la página de nuestro repositorio y cambiamos a la pestaña &lt;em&gt;Settings&lt;/em&gt;. En esta sección existe un desplegable para elegir la rama que queremos servir como página de proyecto. Seleccionamos &lt;code&gt;gh-pages&lt;/code&gt; y guardamos.&lt;/p&gt;
+&lt;p&gt;Solo nos queda visitar la dirección que nos proporcionan en la misma página de &lt;em&gt;Settings&lt;/em&gt;, y ver que ya tenemos un espacio web.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ curl https://sirtea.github.io/didactic-meme/
+&amp;lt;h1&amp;gt;Hello World&amp;lt;/h1&amp;gt;
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: las páginas se sirven usando mecanismos de &lt;em&gt;caché&lt;/em&gt;, así que puede pasar algunos segundos hasta que el contenido se actualice o aparezca. Sed pacientes.&lt;/p&gt;
+&lt;h2&gt;Sirviendo la página de proyecto con un dominio propio&lt;/h2&gt;
+&lt;p&gt;La verdad es que la dirección que nos ha quedado no es bonita. La buena noticia es que puede ser mejor; podemos servir el contenido en un dominio propio, sin la coletilla del nombre del repositorio.&lt;/p&gt;
+&lt;p&gt;El primer paso es conseguir un dominio al que tengamos acceso a los registros; vamos a tener que poner un registro &lt;em&gt;CNAME&lt;/em&gt; apuntando a &lt;em&gt;GitHub&lt;/em&gt;. Para evitar la lentitud del proceso, vamos a mostrar el caso de este &lt;em&gt;blog&lt;/em&gt;, ya configurado.&lt;/p&gt;
+&lt;p&gt;Para que &lt;em&gt;GitHub&lt;/em&gt; sepa qué página de proyecto debe servir con cada dominio, nos sugieren que pongamos un fichero &lt;em&gt;CNAME&lt;/em&gt; en la raíz del espacio web. Este fichero solo puede contener un dominio, y debe coincidir con el del dominio elegido.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ curl http://www.linuxsysadmin.tk/CNAME
+www.linuxsysadmin.tk
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora solo falta instruir a nuestro DNS para que resuelva las peticiones contra &lt;em&gt;GitHub&lt;/em&gt;. La forma recomendada es poner un registro &lt;em&gt;CNAME&lt;/em&gt; apuntando a &lt;code&gt;&amp;lt;usuario&amp;gt;.github.io&lt;/code&gt;, dejando a su criterio donde apunta este dominio, y despreocupándonos en el caso de que esta dirección IP final cambiara.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ dig www.linuxsysadmin.tk
+...  
+&lt;span class="p"&gt;;;&lt;/span&gt; QUESTION SECTION:
+&lt;span class="p"&gt;;&lt;/span&gt;www.linuxsysadmin.tk.      IN  A
+
+&lt;span class="p"&gt;;;&lt;/span&gt; ANSWER SECTION:
+www.linuxsysadmin.tk.   &lt;span class="m"&gt;14018&lt;/span&gt;   IN  CNAME   sirtea.github.io.
+sirtea.github.io.   &lt;span class="m"&gt;2394&lt;/span&gt;    IN  CNAME   github.map.fastly.net.
+github.map.fastly.net.  &lt;span class="m"&gt;20&lt;/span&gt;  IN  A   151.101.120.133
+...  
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Cada vez que pidamos nuestro dominio, &lt;em&gt;GitHub&lt;/em&gt; se va a encargar a servir la página de proyecto que corresponde a ese dominio, cosa que sabe porque el fichero &lt;em&gt;CNAME&lt;/em&gt; se lo indica. con esto nos queda una dirección mas bonita en el navegador web.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ curl -s http://www.linuxsysadmin.tk/ &lt;span class="p"&gt;|&lt;/span&gt; head
+&amp;lt;!DOCTYPE html&amp;gt;
+&amp;lt;html &lt;span class="nv"&gt;lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;es&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;prefix&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml&amp;quot;&lt;/span&gt;&amp;gt;
+&amp;lt;head&amp;gt;
+    &amp;lt;title&amp;gt;Linux Sysadmin&amp;lt;/title&amp;gt;
+    &amp;lt;!-- Using the latest rendering mode &lt;span class="k"&gt;for&lt;/span&gt; IE --&amp;gt;
+    &amp;lt;meta http-equiv&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;X-UA-Compatible&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;content&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;IE=edge&amp;quot;&lt;/span&gt;&amp;gt;
+    &amp;lt;meta &lt;span class="nv"&gt;charset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;utf-8&amp;quot;&lt;/span&gt;&amp;gt;
+    &amp;lt;meta &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;viewport&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;content&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;width=device-width, initial-scale=1.0&amp;quot;&lt;/span&gt;&amp;gt;
+
+
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De hecho, si solicitamos la dirección anterior, &lt;em&gt;GitHub&lt;/em&gt; nos devuelve una redirección al nuevo dominio, ya que asume que es la dirección "oficial".&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ curl -i http://sirtea.github.io/www.linuxsysadmin.tk/
+HTTP/1.1 &lt;span class="m"&gt;301&lt;/span&gt; Moved Permanently
+...  
+Location: http://www.linuxsysadmin.tk/
+...  
+
+&amp;lt;html&amp;gt;
+&amp;lt;head&amp;gt;&amp;lt;title&amp;gt;301 Moved Permanently&amp;lt;/title&amp;gt;&amp;lt;/head&amp;gt;
+&amp;lt;body &lt;span class="nv"&gt;bgcolor&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;white&amp;quot;&lt;/span&gt;&amp;gt;
+&amp;lt;center&amp;gt;&amp;lt;h1&amp;gt;301 Moved Permanently&amp;lt;/h1&amp;gt;&amp;lt;/center&amp;gt;
+&amp;lt;hr&amp;gt;&amp;lt;center&amp;gt;nginx&amp;lt;/center&amp;gt;
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Páginas personales&lt;/h2&gt;
+&lt;p&gt;Las páginas personales son las que se encargan de servir las direcciones tipo &lt;code&gt;&amp;lt;http|https&amp;gt;://&amp;lt;usuario&amp;gt;.github.io/&lt;/code&gt;, sin la coletilla del proyecto.&lt;/p&gt;
+&lt;p&gt;El funcionamiento es el mismo, con dos excepciones:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;El repositorio debe llamarse igual que el dominio (&lt;code&gt;&amp;lt;usuario&amp;gt;.github.io&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;La rama que se sirve SIEMPRE es la rama &lt;code&gt;master&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Entonces solo hace falta cargar esa rama de contenido &lt;strong&gt;HTML&lt;/strong&gt;. De hecho, el truco del &lt;em&gt;CNAME&lt;/em&gt; también funciona.&lt;/p&gt;</summary><category term="git"></category><category term="github"></category><category term="github pages"></category><category term="html"></category></entry><entry><title>Generadores de contenido web estáticos</title><link href="http://www.linuxsysadmin.tk/2017/03/generadores-de-contenido-web-estaticos.html" rel="alternate"></link><published>2017-03-13T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-13:2017/03/generadores-de-contenido-web-estaticos.html</id><summary type="html">&lt;p&gt;Antes de la masiva invasión de &lt;strong&gt;PHP&lt;/strong&gt; y &lt;strong&gt;mysql&lt;/strong&gt; en todos los proveedores de internet, existían solamente las páginas &lt;strong&gt;HTML&lt;/strong&gt; estáticas. Los servidores eran más simples y tenían menos superficie de ataque, aunque mantener las páginas web era un auténtica pesadilla; para eso se han creado los generadores web estáticos.&lt;/p&gt;
 &lt;p&gt;Cuando solicitamos una página web a un servidor dinámico, existe un código fuente que se suele encargar de conseguir los datos de una base de datos y mezclarlos con un tema para generar la página, todo en tiempo de &lt;em&gt;runtime&lt;/em&gt;. Este modelo es relativamente lento y exige la existencia de una base de datos y de un procesado en el servidor, aunque suele ofrecer una bonita interfaz para añadir contenido &lt;em&gt;online&lt;/em&gt; desde casi cualquier sitio.&lt;/p&gt;
 &lt;p&gt;Este modelo es muy adecuado para páginas y &lt;strong&gt;APIs&lt;/strong&gt; con un contenido rápidamente cambiante, pero para una página tipo &lt;em&gt;blog&lt;/em&gt; es poco eficiente. Si tenemos en cuenta que un &lt;em&gt;blog&lt;/em&gt; se actualiza relativamente poco, pero se lee teóricamente mucho, entonces necesitamos reducir el tiempo de &lt;em&gt;renderizado&lt;/em&gt; de la página, incluso suprimiéndolo.&lt;/p&gt;
 &lt;p&gt;Sin embargo, a alguien se le ocurrió una idea nueva: ¿que pasaría si cuando un editor cambia su contenido, generara &lt;strong&gt;TODAS&lt;/strong&gt; las páginas posibles y el servidor se limitara a servir esos ficheros previamente generados?&lt;/p&gt;
