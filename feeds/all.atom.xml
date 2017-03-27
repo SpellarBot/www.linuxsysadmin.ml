@@ -1,5 +1,220 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-03-20T10:00:00+01:00</updated><entry><title>Hospedando contenido estático en Github pages</title><link href="http://www.linuxsysadmin.tk/2017/03/hospedando-contenido-estatico-en-github-pages.html" rel="alternate"></link><published>2017-03-20T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-20:2017/03/hospedando-contenido-estatico-en-github-pages.html</id><summary type="html">&lt;p&gt;Algunas veces nos hemos planteado la posibilidad de tener nuestro propio servidor con nuestras propias aplicaciones, pero el coste del &lt;em&gt;hosting&lt;/em&gt; nos lo ha hecho replantear, especialmente para proyectos de pruebas sin beneficio. Si no nos importa hospedar contenido &lt;strong&gt;HTML&lt;/strong&gt; estático, las páginas de &lt;strong&gt;GitHub&lt;/strong&gt; pueden cumplir con nuestras necesidades.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-03-27T10:00:00+02:00</updated><entry><title>Un entorno web estático con nginx, rsync y docker</title><link href="http://www.linuxsysadmin.tk/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html" rel="alternate"></link><published>2017-03-27T10:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-27:2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html</id><summary type="html">&lt;p&gt;Hemos hablado de generar nuestro contenido HTML estático con otras herramientas, y finalmente ha llegado la hora de servirlo. Normalmente, los ficheros que cambian tal y como vamos generando páginas son pocos y nos interesa copiarlo de forma remota, pero no podemos hacerlo con &lt;strong&gt;docker&lt;/strong&gt; porque hacen falta dos servicios.&lt;/p&gt;
+&lt;p&gt;Si has asentido con la cabeza, mal. Es verdad que se necesitan dos servicios, pero hay maneras de ejecutar dos procesos en un mismo contenedor, por ejemplo &lt;a href="http://www.linuxsysadmin.tk/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html"&gt;con un gestor de procesos&lt;/a&gt;. Sin embargo, esa no es la filosofía de &lt;strong&gt;docker&lt;/strong&gt;. Un contenedor solo debería ejecutar un proceso, simplificando su contenido y siendo necesarios varios contenedores para hacer nuestro sistema modular.&lt;/p&gt;
+&lt;p&gt;Así que solo nos queda pensar las partes que tiene nuestro pequeño entorno, para luego levantar contenedores que ejecuten todos los servicios necesarios, posiblemente con &lt;strong&gt;docker-compose&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Un servidor web&lt;/li&gt;
+&lt;li&gt;Un servicio de transferencia de archivos&lt;/li&gt;
+&lt;li&gt;Algún sitio compartido para dejar los ficheros&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Puesto que ambos servicios van a necesitar acceder al mismo sitio, necesitamos volúmenes. Sin embargo, no queremos mezclar los datos con ninguno de los otros contenedores, ya que en caso de actualizarlos, perderíamos el volumen. Eso nos deja dos opciones: un &lt;em&gt;host volume&lt;/em&gt; o un &lt;em&gt;data container&lt;/em&gt;, que usaremos por portabilidad.&lt;/p&gt;
+&lt;h2&gt;El servidor web&lt;/h2&gt;
+&lt;p&gt;Vamos a utilizar &lt;strong&gt;nginx&lt;/strong&gt; por su eficiencia y velocidad. Consume poco, ocupa poco, y es simple de configurar. Como ligereza adicional, vamos a partir de una imagen de &lt;em&gt;Alpine Linux&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;La imagen no tiene misterio: un &lt;em&gt;Dockerfile&lt;/em&gt;, un fichero de arranque ejecutable y dos ficheros de configuración.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/syncweb/web$ cat Dockerfile 
+FROM alpine:3.5
+RUN apk add --no-cache nginx tini &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    ln -s /dev/stdout /var/log/nginx/access.log &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    ln -s /dev/stderr /var/log/nginx/error.log &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    mkdir /run/nginx &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    mkdir /srv/www &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/
+COPY conf.d/* /etc/nginx/conf.d/
+COPY start.sh /
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/sbin/tini&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/start.sh&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@aldebaran:~/docker/syncweb/web$ cat start.sh 
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class="nb"&gt;exec&lt;/span&gt; /usr/sbin/nginx -g &lt;span class="s2"&gt;&amp;quot;daemon off;&amp;quot;&lt;/span&gt;
+gerard@aldebaran:~/docker/syncweb/web$ cat nginx.conf 
+worker_processes 1&lt;span class="p"&gt;;&lt;/span&gt;
+events &lt;span class="o"&gt;{&lt;/span&gt;
+    worker_connections 1024&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+http &lt;span class="o"&gt;{&lt;/span&gt;
+    include mime.types&lt;span class="p"&gt;;&lt;/span&gt;
+    default_type application/octet-stream&lt;span class="p"&gt;;&lt;/span&gt;
+    sendfile on&lt;span class="p"&gt;;&lt;/span&gt;
+    keepalive_timeout 65&lt;span class="p"&gt;;&lt;/span&gt;
+    include conf.d/*&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/docker/syncweb/web$ cat conf.d/web 
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    server_name _&lt;span class="p"&gt;;&lt;/span&gt;
+    listen 80&lt;span class="p"&gt;;&lt;/span&gt;
+    root /srv/www&lt;span class="p"&gt;;&lt;/span&gt;
+    index index.html&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/docker/syncweb/web$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a asumir que la carpeta &lt;code&gt;/srv/www/&lt;/code&gt; existe, puesto que la montaremos como un volumen.&lt;/p&gt;
+&lt;h2&gt;Transfiriendo ficheros&lt;/h2&gt;
+&lt;p&gt;Dada la naturaleza incremental de nuestro contenido HTML, nos viene muy bien utilizar &lt;strong&gt;rsync&lt;/strong&gt;, que funciona sobre &lt;strong&gt;ssh&lt;/strong&gt; y nos aporta encriptación, compresión y copia diferencial. Vamos a restringir el uso del &lt;strong&gt;ssh&lt;/strong&gt; mediante &lt;strong&gt;rssh&lt;/strong&gt;, permitiendo solamente usar &lt;strong&gt;rsync&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Nuevamente vamos a partir de una imagen &lt;em&gt;Alpine Linux&lt;/em&gt;, que es pequeña, segura y en este caso nos sirve de maravilla. Creamos la imagen con un simple &lt;em&gt;Dockerfile&lt;/em&gt; y un fichero de arranque, con permiso de ejecución.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/syncweb/rsync$ cat Dockerfile 
+FROM alpine:3.5
+RUN apk add --no-cache openssh rsync rssh tini &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    sed &lt;span class="s1"&gt;&amp;#39;s/^#allowrsync/allowrsync/g&amp;#39;&lt;/span&gt; /etc/rssh.conf.default &amp;gt; /etc/rssh.conf &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    adduser web -s /usr/bin/rssh -D -H &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;web:web&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; chpasswd
+COPY start.sh /
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/sbin/tini&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/start.sh&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@aldebaran:~/docker/syncweb/rsync$ cat start.sh 
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+chown -R web:web /srv/www
+ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+&lt;span class="nb"&gt;exec&lt;/span&gt; /usr/sbin/sshd -D -e
+gerard@aldebaran:~/docker/syncweb/rsync$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lo más interesante de decir es que la carpeta &lt;code&gt;/srv/www/&lt;/code&gt; va a ser montada como volumen. Como no podemos asegurar que los permisos sean correctos, los forzamos al usuario &lt;em&gt;web&lt;/em&gt;, que es el que va a poder entrar por &lt;strong&gt;rsync&lt;/strong&gt;. Otro punto a tener en cuenta es que se ha movido la creación de la clave de &lt;em&gt;host&lt;/em&gt; al fichero &lt;em&gt;start.sh&lt;/em&gt; para evitar duplicarla a base de crear contenedores a partir de la clave de la imagen.&lt;/p&gt;
+&lt;h2&gt;El contenedor de datos&lt;/h2&gt;
+&lt;p&gt;Se trata de un contenedor que va a acabar tras levantar. Su única función es albergar un volumen de datos para exportarlo a otros contenedores.&lt;/p&gt;
+&lt;p&gt;Lo crearemos usando una imagen mínima, que solo tiene el comando &lt;em&gt;true&lt;/em&gt;, así podemos ejecutar un comando que no hace nada y no cargamos nada adicional. Le ponemos un contenido básico, que nos permite ver que todo funciona y que luego será sustituido mediante &lt;strong&gt;rsync&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/syncweb/data$ cat Dockerfile 
+FROM tianon/true
+COPY index.html /srv/www/
+gerard@aldebaran:~/docker/syncweb/data$ cat index.html 
+&amp;lt;h1&amp;gt;Hello world&amp;lt;/h1&amp;gt;
+&amp;lt;p&amp;gt;This is a placeholder file&amp;lt;/p&amp;gt;
+gerard@aldebaran:~/docker/syncweb/data$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Este contenedor solamente ejecuta &lt;em&gt;true&lt;/em&gt; y acaba. Sin embargo, su volumen sigue siendo accesible por aquellos contenedores que lo exporten.&lt;/p&gt;
+&lt;h2&gt;Todo junto&lt;/h2&gt;
+&lt;p&gt;Antes que nada creamos las imágenes, según los comandos habituales:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/syncweb$ docker build -t data data/
+...  
+gerard@aldebaran:~/docker/syncweb$ docker build -t web web/
+...  
+gerard@aldebaran:~/docker/syncweb$ docker build -t rsync rsync/
+...  
+gerard@aldebaran:~/docker/syncweb$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Comprobamos las imágenes que hemos creado, viendo que se han hecho bien y que ocupan una cantidad de espacio razonable.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/syncweb$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED              SIZE
+rsync               latest              cb33669eb5f6        &lt;span class="m"&gt;54&lt;/span&gt; seconds ago       8.77 MB
+web                 latest              1ae71f497ae0        About a minute ago   5.75 MB
+data                latest              cc6555822fd9        About a minute ago   &lt;span class="m"&gt;180&lt;/span&gt; B
+gerard@aldebaran:~/docker/syncweb$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y ya solo nos queda levantar el entorno con &lt;strong&gt;docker-compose&lt;/strong&gt;, por ejemplo con un &lt;em&gt;docker-compose.yml&lt;/em&gt; como el que sigue:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/syncweb$ cat docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;
+services:
+  data:
+    image: data
+    hostname: data
+    container_name: data
+    volumes:
+      - /srv/www
+  rsync:
+    image: rsync
+    hostname: rsync
+    container_name: rsync
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;22:22&amp;quot;&lt;/span&gt;
+    volumes_from:
+      - data
+  web:
+    image: web
+    hostname: web
+    container_name: web
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;8000:80&amp;quot;&lt;/span&gt;
+    volumes_from:
+      - data
+gerard@aldebaran:~/docker/syncweb$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;syncweb_default&amp;quot;&lt;/span&gt; with the default driver
+Creating data
+Creating rsync
+Creating web
+gerard@aldebaran:~/docker/syncweb$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De esta forma, todos importan el contenedor de datos, y podemos copiar ficheros por &lt;strong&gt;rsync&lt;/strong&gt; al puerto 22, y ver la web en el puerto 8000. Cambiad estos valores según vuestras necesidades.&lt;/p&gt;
+&lt;h2&gt;Comprobaciones&lt;/h2&gt;
+&lt;p&gt;Vemos que si hacemos una petición normal, nos devuelve el contenido inicial.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/syncweb$ curl http://localhost:8000/
+&amp;lt;h1&amp;gt;Hello world&amp;lt;/h1&amp;gt;
+&amp;lt;p&amp;gt;This is a placeholder file&amp;lt;/p&amp;gt;
+gerard@aldebaran:~/docker/syncweb$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Eso significa que el servidor web funciona y está sirviendo el contenido del contenedor de datos. Ahora vamos a probar que el contenedor &lt;strong&gt;rsync&lt;/strong&gt; puede actualizar este contenido. Para comodidad lo he puesto en un &lt;em&gt;script&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/syncweb$ cat sync.sh 
+&lt;span class="c1"&gt;#!/bin/bash&lt;/span&gt;
+
+rsync -rvzc --delete content/ web@localhost:/srv/www/
+gerard@aldebaran:~/docker/syncweb$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Asumimos que tenemos la carpeta &lt;code&gt;content/&lt;/code&gt; con otro fichero &lt;em&gt;index.html&lt;/em&gt;. Lo he creado a mano para la prueba, pero esto podría aparecer generado por un &lt;a href="http://www.linuxsysadmin.tk/2017/03/generadores-de-contenido-web-estaticos.html"&gt;generador de contenido estático&lt;/a&gt;. Lanzamos el &lt;em&gt;script&lt;/em&gt; por primera vez:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/syncweb$ ./sync.sh 
+Warning: Permanently added &lt;span class="s1"&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;RSA&lt;span class="o"&gt;)&lt;/span&gt; to the list of known hosts.
+web@localhost&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+Could not chdir to home directory /home/web: No such file or directory
+sending incremental file list
+index.html
+
+sent &lt;span class="m"&gt;182&lt;/span&gt; bytes  received &lt;span class="m"&gt;41&lt;/span&gt; bytes  63.71 bytes/sec
+total size is &lt;span class="m"&gt;60&lt;/span&gt;  speedup is 0.27
+gerard@aldebaran:~/docker/syncweb$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El fichero &lt;em&gt;index.html&lt;/em&gt; ha cambiado, así que lo vuelve a enviar, y por supuesto, es lo que el servidor web va a servir, cosa que demuestra que también hace uso del contenedor de datos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/syncweb$ curl http://localhost:8000/
+&amp;lt;h1&amp;gt;My autogenerated blog&amp;lt;/h1&amp;gt;
+&amp;lt;p&amp;gt;This is the home page&amp;lt;/p&amp;gt;
+gerard@aldebaran:~/docker/syncweb$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para comprobar el carácter incremental de &lt;strong&gt;rsync&lt;/strong&gt;, vamos a añadir un nuevo fichero &lt;em&gt;.html&lt;/em&gt; y a ejecutar de nuevo. En caso de un generador estático, veremos que solo se enviarían las nuevas páginas y aquellos índices que hayan cambiado, resultando en una ganancia alta, a nivel de tamaño enviado y tiempo invertido.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/syncweb$ ./sync.sh 
+Warning: Permanently added &lt;span class="s1"&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;RSA&lt;span class="o"&gt;)&lt;/span&gt; to the list of known hosts.
+web@localhost&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+Could not chdir to home directory /home/web: No such file or directory
+sending incremental file list
+newpage.html
+
+sent &lt;span class="m"&gt;179&lt;/span&gt; bytes  received &lt;span class="m"&gt;35&lt;/span&gt; bytes  47.56 bytes/sec
+total size is &lt;span class="m"&gt;71&lt;/span&gt;  speedup is 0.33
+gerard@aldebaran:~/docker/syncweb$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo ha enviado el fichero nuevo, puesto que es un cambio con respecto a lo que ya tiene. De hecho, de no haber cambios, no se enviaría nada.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/syncweb$ ./sync.sh 
+Warning: Permanently added &lt;span class="s1"&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;RSA&lt;span class="o"&gt;)&lt;/span&gt; to the list of known hosts.
+web@localhost&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+Could not chdir to home directory /home/web: No such file or directory
+sending incremental file list
+
+sent &lt;span class="m"&gt;128&lt;/span&gt; bytes  received &lt;span class="m"&gt;12&lt;/span&gt; bytes  56.00 bytes/sec
+total size is &lt;span class="m"&gt;71&lt;/span&gt;  speedup is 0.51
+gerard@aldebaran:~/docker/syncweb$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos nuestro pequeño entorno funcional.&lt;/p&gt;</summary><category term="docker"></category><category term="docker-compose"></category><category term="nginx"></category><category term="volumenes"></category><category term="rsync"></category><category term="rssh"></category></entry><entry><title>Hospedando contenido estático en Github pages</title><link href="http://www.linuxsysadmin.tk/2017/03/hospedando-contenido-estatico-en-github-pages.html" rel="alternate"></link><published>2017-03-20T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-20:2017/03/hospedando-contenido-estatico-en-github-pages.html</id><summary type="html">&lt;p&gt;Algunas veces nos hemos planteado la posibilidad de tener nuestro propio servidor con nuestras propias aplicaciones, pero el coste del &lt;em&gt;hosting&lt;/em&gt; nos lo ha hecho replantear, especialmente para proyectos de pruebas sin beneficio. Si no nos importa hospedar contenido &lt;strong&gt;HTML&lt;/strong&gt; estático, las páginas de &lt;strong&gt;GitHub&lt;/strong&gt; pueden cumplir con nuestras necesidades.&lt;/p&gt;
 &lt;p&gt;De hecho, este &lt;em&gt;blog&lt;/em&gt; está hospedado en &lt;em&gt;GitHub pages&lt;/em&gt; sin ningún coste de &lt;em&gt;hosting&lt;/em&gt;. Añadimos un nombre de registro gratuito, y obtenemos una plataforma sin coste de mantenimiento.&lt;/p&gt;
 &lt;p&gt;La contrapartida es que este &lt;em&gt;blog&lt;/em&gt; está compuesto de páginas &lt;strong&gt;HTML&lt;/strong&gt; y no dispone de ninguna base de datos ni de ningún tipo de procesado en el servidor. Mantener este contenido sería una pesadilla, a no ser que se utilicen &lt;a href="http://www.linuxsysadmin.tk/2017/03/generadores-de-contenido-web-estaticos.html"&gt;generadores automáticos de HTML&lt;/a&gt;, que es lo que utilizo en este &lt;em&gt;blog&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Las páginas de &lt;em&gt;GitHub&lt;/em&gt; pueden ser de dos tipos: una por cada cuenta de usuario, y una por cada proyecto. De esta forma, como usuarios normales, deberíamos trabajar con las páginas de proyecto, puesto que solo disponemos de una página personal.&lt;/p&gt;

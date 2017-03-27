@@ -93,6 +93,13 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
+                <h2><a href="http://www.linuxsysadmin.tk/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html">Un entorno web estático con nginx, rsync y docker</a></h2>
+                <div class="summary"><p>Hemos hablado de generar nuestro contenido HTML estático con otras herramientas, y finalmente ha llegado la hora de servirlo. Normalmente, los ficheros que cambian tal y como vamos generando páginas son pocos y nos interesa copiarlo de forma remota, pero no podemos hacerlo con <strong>docker</strong> porque hacen falta dos servicios ...</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html">Creando un entorno escalable (IV)</a></h2>
                 <div class="summary"><p>Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un <em>proxy HTTP</em> que haga las funciones de terminación <em>SSL</em> y de <em>balanceador</em>, exponiendo todo el sistema en una sola dirección IP ...</p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html">Seguir leyendo</a>
@@ -120,14 +127,16 @@ Linux Sysadmin            </a>
                 </div>
             </article>
             <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Restart automático de servicios con systemd</a></h2>
-                <div class="summary"><p>Cuando estamos gestionando un servidor, es posible que se caiga alguno de sus servicios. Esto es especialmente molesto cuando nos interesa tener un <em>uptime</em> elevado. Para conseguirlo, se han utilizado diferentes maneras, desde poner personas a monitorizar en modo 24x7 hasta herramientas auxiliares como gestores tipo <em>runit</em>, <em>supervisor</em> o <em>monit ...</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
 
+        <ul class="pagination">
+                <li class="prev disabled"><a href="#">&laquo;</a></li>
+                    <li class="active"><a
+                            href="http://www.linuxsysadmin.tk/tag/nginx.html">1</a></li>
+                    <li class=""><a
+                            href="http://www.linuxsysadmin.tk/tag/nginx2.html">2</a></li>
+                <li class="next"><a
+                        href="http://www.linuxsysadmin.tk/tag/nginx2.html">&raquo;</a></li>
+        </ul>
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
@@ -345,11 +354,6 @@ Linux Sysadmin            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/github-pages.html">
-                            github pages
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/haproxy.html">
                             haproxy
                         </a>
@@ -407,6 +411,11 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/kibana.html">
                             kibana
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/lamp.html">
+                            LAMP
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -574,12 +583,12 @@ Linux Sysadmin            </a>
                             root
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/rssh.html">
                             rssh
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/rsync.html">
                             rsync
                         </a>
@@ -669,7 +678,7 @@ Linux Sysadmin            </a>
                             virtualenv
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/volumenes.html">
                             volumenes
                         </a>
@@ -703,7 +712,7 @@ Linux Sysadmin            </a>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2016 Gerard
+         <div class="col-xs-10">&copy; 2017 Gerard
             &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
