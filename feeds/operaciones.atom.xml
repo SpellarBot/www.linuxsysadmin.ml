@@ -1,5 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-01-16T10:00:00+01:00</updated><entry><title>Acumulando los logs en un servidor centralizado con Kibana</title><link href="http://www.linuxsysadmin.tk/2017/01/acumulando-los-logs-en-un-servidor-centralizado-con-kibana.html" rel="alternate"></link><published>2017-01-16T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-01-16:2017/01/acumulando-los-logs-en-un-servidor-centralizado-con-kibana.html</id><summary type="html">&lt;p&gt;Buscar en los &lt;em&gt;logs&lt;/em&gt; es fácil cuando tenemos una máquina de cada tipo, pero es una actividad muy poco gratificante cuando tenemos un número grande o variable de cada tipo. La mejor manera de tenerlos controlados es hacer que envíen sus &lt;em&gt;logs&lt;/em&gt; a un almacén central, para su fácil consulta.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-04-03T10:00:00+02:00</updated><entry><title>Auditando las acciones de los usuarios de nuestro SFTP</title><link href="http://www.linuxsysadmin.tk/2017/04/auditando-las-acciones-de-los-usuarios-de-nuestro-sftp.html" rel="alternate"></link><published>2017-04-03T10:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-04-03:2017/04/auditando-las-acciones-de-los-usuarios-de-nuestro-sftp.html</id><summary type="html">&lt;p&gt;Algunas veces me he encontrado con usuarios de alguno de mis servidores SFTP que se quejan porque "les desaparecen archivos". Si estamos seguros que esas desapariciones no tienen nada que ver con nosotros, lo mas probable es que lo hayan hecho los mismos usuarios, sea manualmente o de forma automática.&lt;/p&gt;
+&lt;p&gt;En casos así, no podemos hacer nada para demostrar cuando y porqué ha pasado, pero podemos pillar al usuario &lt;em&gt;in fraganti&lt;/em&gt; en casos posteriores. Para eso solo es necesario habilitar un nivel de trazas que nos permita capturar la actividad de un usuario.&lt;/p&gt;
+&lt;p&gt;El mismo servidor SFTP nos enviará esta actividad al &lt;em&gt;rsyslog&lt;/em&gt; de forma automática si habilitamos el &lt;em&gt;loglevel&lt;/em&gt; adecuado a nuestro comando SFTP. A partir de aquí se asume que el servicio &lt;em&gt;rsyslog&lt;/em&gt; está instalado en nuestro sistema.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;admin@sftpserver:~$ cat /etc/ssh/ssh_config 
+...
+ForceCommand internal-sftp -l VERBOSE
+...
+admin@sftpserver:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esta directiva nos va a enviar las trazas al &lt;em&gt;rsyslog&lt;/em&gt; escribiendo los mensajes en &lt;em&gt;/dev/log&lt;/em&gt;, &lt;strong&gt;siempre desde el punto de vista de la sesión activa&lt;/strong&gt;. Eso significa que si hemos enjaulado a nuestros usuarios, la posición del dispositivo no será la de siempre; un usuario enjaulado en &lt;em&gt;/srv/jails/guest/&lt;/em&gt; debería tener el dispositivo en &lt;em&gt;/srv/jails/guest/dev/log&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;La parte buena es que el mismo &lt;em&gt;rsyslog&lt;/em&gt; se encarga de crear ese dispositivo para nosotros, con la configuración adecuada. Solo necesitamos crear la carpeta &lt;em&gt;dev/&lt;/em&gt; en la jaula de nuestro usuario y añadir la directiva correcta.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;admin@sftpserver:~$ mkdir /srv/jails/guest/dev
+admin@sftpserver:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El otro punto espinoso es que la configuración del &lt;em&gt;rsyslog&lt;/em&gt; no lleva ninguna regla por defecto para guardar esos &lt;em&gt;logs&lt;/em&gt; en ningún fichero. Con añadir una nueva línea a la configuración de nuestro &lt;em&gt;rsyslog&lt;/em&gt; será suficiente.&lt;/p&gt;
+&lt;p&gt;Podemos añadir ambas directivas mediante un fichero de configuración nuevo, utilizando la carpeta &lt;em&gt;/etc/rsyslog.d/&lt;/em&gt;, como sigue:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;admin@sftpserver:~$ cat /etc/rsyslog.d/jails.conf 
+&lt;span class="nv"&gt;$AddUnixListenSocket&lt;/span&gt; /srv/jails/guest/dev/log
+
+:programname, isequal, &lt;span class="s2"&gt;&amp;quot;internal-sftp&amp;quot;&lt;/span&gt; -/var/log/sftp.log
+admin@sftpserver:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y tras recargar la configuración de los servicios SFTP y &lt;em&gt;rsyslog&lt;/em&gt;, habremos acabado y podremos ver el resultado funcionando, asumiendo que haya entrado alguna sesión desde la recarga de los servicios.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;admin@sftpserver:~$ cat /var/log/sftp.log
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:02:31 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: session opened &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="nb"&gt;local&lt;/span&gt; user guest from &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.1&lt;span class="o"&gt;]&lt;/span&gt;
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:02:31 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: received client version 3
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:02:31 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: realpath &lt;span class="s2"&gt;&amp;quot;.&amp;quot;&lt;/span&gt;
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:02:50 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: opendir &lt;span class="s2"&gt;&amp;quot;/&amp;quot;&lt;/span&gt;
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:02:50 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: closedir &lt;span class="s2"&gt;&amp;quot;/&amp;quot;&lt;/span&gt;
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:02:50 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: lstat name &lt;span class="s2"&gt;&amp;quot;/archives&amp;quot;&lt;/span&gt;
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:02:52 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: realpath &lt;span class="s2"&gt;&amp;quot;/archives/&amp;quot;&lt;/span&gt;
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:02:52 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: stat name &lt;span class="s2"&gt;&amp;quot;/archives&amp;quot;&lt;/span&gt;
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:03:00 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: open &lt;span class="s2"&gt;&amp;quot;/archives/testfile&amp;quot;&lt;/span&gt; flags WRITE,CREATE,TRUNCATE mode 0644
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:03:00 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: close &lt;span class="s2"&gt;&amp;quot;/archives/testfile&amp;quot;&lt;/span&gt; bytes &lt;span class="nb"&gt;read&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt; written 12
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:03:10 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: opendir &lt;span class="s2"&gt;&amp;quot;/archives/&amp;quot;&lt;/span&gt;
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:03:10 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: closedir &lt;span class="s2"&gt;&amp;quot;/archives/&amp;quot;&lt;/span&gt;
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:03:10 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: lstat name &lt;span class="s2"&gt;&amp;quot;/archives/testfile&amp;quot;&lt;/span&gt;
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:03:12 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: lstat name &lt;span class="s2"&gt;&amp;quot;/archives/testfile&amp;quot;&lt;/span&gt;
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:03:12 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: remove name &lt;span class="s2"&gt;&amp;quot;/archives/testfile&amp;quot;&lt;/span&gt;
+Nov &lt;span class="m"&gt;24&lt;/span&gt; 11:03:16 sftpserver internal-sftp&lt;span class="o"&gt;[&lt;/span&gt;32&lt;span class="o"&gt;]&lt;/span&gt;: session closed &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="nb"&gt;local&lt;/span&gt; user guest from &lt;span class="o"&gt;[&lt;/span&gt;172.17.0.1&lt;span class="o"&gt;]&lt;/span&gt;
+admin@sftpserver:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La lectura de estos &lt;em&gt;logs&lt;/em&gt; es todo un arte; solo quiero recalcar que las sesiones se indican mediante el PID del &lt;em&gt;internal-sftp&lt;/em&gt; y que las acciones son bastante descriptivas. En este caso solo hay una sesión que es la número 32.&lt;/p&gt;
+&lt;p&gt;Si intentamos entender lo que se ha hecho en esta sesión, vemos que las acciones mas importantes son el &lt;em&gt;open/close&lt;/em&gt; de &lt;em&gt;testfile&lt;/em&gt;, en modo de escritura y tras escribir 12 &lt;em&gt;bytes&lt;/em&gt;. Poco después, en la misma sesión, se ha borrado el fichero. El resto de acciones se disparan cuando nos movemos por las carpetas.&lt;/p&gt;</summary><category term="sftp"></category><category term="ssh"></category><category term="auditoría"></category></entry><entry><title>Acumulando los logs en un servidor centralizado con Kibana</title><link href="http://www.linuxsysadmin.tk/2017/01/acumulando-los-logs-en-un-servidor-centralizado-con-kibana.html" rel="alternate"></link><published>2017-01-16T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-01-16:2017/01/acumulando-los-logs-en-un-servidor-centralizado-con-kibana.html</id><summary type="html">&lt;p&gt;Buscar en los &lt;em&gt;logs&lt;/em&gt; es fácil cuando tenemos una máquina de cada tipo, pero es una actividad muy poco gratificante cuando tenemos un número grande o variable de cada tipo. La mejor manera de tenerlos controlados es hacer que envíen sus &lt;em&gt;logs&lt;/em&gt; a un almacén central, para su fácil consulta.&lt;/p&gt;
 &lt;p&gt;En este artículo se pretende dar a conocer una de estas soluciones de acumulación y búsqueda de &lt;em&gt;logs&lt;/em&gt;, conocida como &lt;strong&gt;ELK&lt;/strong&gt; (hace poco se renombró a &lt;strong&gt;Elastic Stack&lt;/strong&gt;). Se trata de un conjunto de servicios que cooperan para obtener una solución completa:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Elastic search&lt;/strong&gt;: se trata de la base de datos que almacena todos los &lt;em&gt;logs&lt;/em&gt; que se le envían.&lt;/li&gt;

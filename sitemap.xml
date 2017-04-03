@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2017-03-27T08:39:11-00:00</lastmod>
+<lastmod>2017-04-03T08:22:04-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2017-03-27T08:39:11-00:00</lastmod>
+<lastmod>2017-04-03T08:22:04-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2017-03-27T08:39:11-00:00</lastmod>
+<lastmod>2017-04-03T08:22:04-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2017-03-27T08:39:11-00:00</lastmod>
+<lastmod>2017-04-03T08:22:04-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2017-03-27T08:39:11-00:00</lastmod>
+<lastmod>2017-04-03T08:22:04-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2017/04/auditando-las-acciones-de-los-usuarios-de-nuestro-sftp.html</loc>
+<lastmod>2017-04-03T10:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -593,7 +600,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/operaciones.html</loc>
-<lastmod>2017-01-16T10:00:00-00:15</lastmod>
+<lastmod>2017-04-03T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -676,8 +683,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/playbook.html</loc>
-<lastmod>2016-09-26T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/auditoria.html</loc>
+<lastmod>2017-04-03T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -725,8 +732,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/lamp.html</loc>
-<lastmod>2017-03-06T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/github-pages.html</loc>
+<lastmod>2017-03-20T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -831,7 +838,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/ssh.html</loc>
-<lastmod>2017-01-23T10:00:00-00:15</lastmod>
+<lastmod>2017-04-03T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -902,6 +909,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/chronograf.html</loc>
 <lastmod>2016-11-07T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/playbook.html</loc>
+<lastmod>2016-09-26T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1397,8 +1411,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/ansible.html</loc>
-<lastmod>2017-02-27T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/owncloud.html</loc>
+<lastmod>2017-02-20T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1453,8 +1467,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/owncloud.html</loc>
-<lastmod>2017-02-20T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/ansible.html</loc>
+<lastmod>2017-02-27T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1509,8 +1523,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/github-pages.html</loc>
-<lastmod>2017-03-20T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/lamp.html</loc>
+<lastmod>2017-03-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1663,6 +1677,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/sftp.html</loc>
+<lastmod>2017-04-03T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/repositorio.html</loc>
 <lastmod>2016-01-11T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1699,7 +1720,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2017-03-27T10:00:00-00:15</lastmod>
+<lastmod>2017-04-03T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
