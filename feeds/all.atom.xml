@@ -1,5 +1,250 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-04-03T10:00:00+02:00</updated><entry><title>Auditando las acciones de los usuarios de nuestro SFTP</title><link href="http://www.linuxsysadmin.tk/2017/04/auditando-las-acciones-de-los-usuarios-de-nuestro-sftp.html" rel="alternate"></link><published>2017-04-03T10:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-04-03:2017/04/auditando-las-acciones-de-los-usuarios-de-nuestro-sftp.html</id><summary type="html">&lt;p&gt;Algunas veces me he encontrado con usuarios de alguno de mis servidores SFTP que se quejan porque "les desaparecen archivos". Si estamos seguros que esas desapariciones no tienen nada que ver con nosotros, lo mas probable es que lo hayan hecho los mismos usuarios, sea manualmente o de forma automática.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-04-10T10:00:00+02:00</updated><entry><title>Una toolbox empaquetada en contenedores</title><link href="http://www.linuxsysadmin.tk/2017/04/una-toolbox-empaquetada-en-contenedores.html" rel="alternate"></link><published>2017-04-10T10:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-04-10:2017/04/una-toolbox-empaquetada-en-contenedores.html</id><summary type="html">&lt;p&gt;Muchas veces necesitamos herramientas para nuestro trabajo y no las usamos desde la misma máquina; otras veces no queremos instalar muchos paquetes en nuestra máquina. Tener una máquina virtual suele ser &lt;em&gt;overkill&lt;/em&gt; para ejecutar algunos binarios. En este caso podemos tener nuestras imágenes &lt;strong&gt;docker&lt;/strong&gt; listas para ser usadas según convenga.&lt;/p&gt;
+&lt;p&gt;En este artículo vamos a ver algunos ejemplos de imágenes de mi &lt;em&gt;toolbox&lt;/em&gt; como inspiración para otras, demostrando que podemos tener nuestras herramientas con una portabilidad máxima, y sin ocupar tanto espacio como nos podríamos imaginar; y lo mejor de todo: de usar y tirar, sin ensuciar nuestras distribuciones habituales.&lt;/p&gt;
+&lt;h2&gt;Generando contraseñas&lt;/h2&gt;
+&lt;p&gt;Creo que este es el peor ejemplo, ya que hay miles de webs que hacen esto mismo, pero cumple con la función didáctica. Hay un paquete en linux llamado &lt;strong&gt;pwgen&lt;/strong&gt; que nos ofrece el binario con el mismo nombre. Solo necesitamos un contenedor que invoque esta herramienta, escriba una contraseña aleatoria y se acabe, sin dejar nada instalado.&lt;/p&gt;
+&lt;p&gt;Este paquete está disponible en &lt;strong&gt;Alpine Linux&lt;/strong&gt;, así que es muy fácil generar el contenedor con un tamaño adecuado. solamente necesitamos instalarlo y darle el comando base.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ cat pwgen/Dockerfile 
+FROM alpine:3.4
+RUN apk add --no-cache pwgen
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;pwgen&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-cnyB&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;8&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;1&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lo podemos construir si no lo tuviéramos, o lo podemos descargar de un registro &lt;strong&gt;docker&lt;/strong&gt;. Ocupa menos de 5 mb, contando el sistema operativo; nada mal.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ docker build -t pwgen pwgen/
+...
+gerard@hermes:~/docker/tools$ docker images
+REPOSITORY                                                                            TAG                 IMAGE ID            CREATED             SIZE
+pwgen                                                                                 latest              4b338afada4e        &lt;span class="m"&gt;19&lt;/span&gt; seconds ago      4.844 MB
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La ejecución es bastante simple también; basta con ejecutar hasta encontrar una contraseña que nos guste:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ docker run --rm pwgen
+Es4toh&lt;span class="o"&gt;(&lt;/span&gt;f
+gerard@hermes:~/docker/tools$ docker run --rm pwgen
+ieV7yoh&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@hermes:~/docker/tools$ docker run --rm pwgen
+jei!s7ph
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Analizando el rendimiento de un servidor&lt;/h2&gt;
+&lt;p&gt;Existe una aplicación llamada &lt;strong&gt;sysbench&lt;/strong&gt; que hace una batería de pruebas para determinar el rendimiento de los parámetros básicos de una máquina. Como no podemos ir instalando este paquete, y como no tenemos la certeza que el sistema operativo del servidor soporte este binario, lo podemos poner en un contenedor y acompañarlo del sistema operativo que nos apetezca.&lt;/p&gt;
+&lt;p&gt;En este caso, el contenedor ejecuta usando los recursos de la máquina &lt;em&gt;host&lt;/em&gt;, y eso es precisamente lo que &lt;strong&gt;sysbench&lt;/strong&gt; mide. Así obtendremos diferentes resultados en cada máquina, a pesar de que la imagen es la misma.&lt;/p&gt;
+&lt;p&gt;La mala noticia es que este paquete no está disponible para &lt;strong&gt;Alpine Linux&lt;/strong&gt;, así que usaré otra imagen, por ejemplo, &lt;strong&gt;Debian Jessie&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ cat sysbench/Dockerfile 
+FROM debian:jessie
+RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    apt-get install -y sysbench &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm -rf /var/lib/apt/lists/*
+COPY bench.sh /
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/bench.sh&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@hermes:~/docker/tools$ cat sysbench/bench.sh 
+&lt;span class="c1"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="c1"&gt;# CPU&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;CPU: &lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;sysbench --test&lt;span class="o"&gt;=&lt;/span&gt;cpu run &lt;span class="p"&gt;|&lt;/span&gt; grep &lt;span class="s2"&gt;&amp;quot;total time:&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; awk &lt;span class="s1"&gt;&amp;#39;{print $3}&amp;#39;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Memory&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Memory: &lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;sysbench --test&lt;span class="o"&gt;=&lt;/span&gt;memory run &lt;span class="p"&gt;|&lt;/span&gt; grep &lt;span class="s2"&gt;&amp;quot;transferred&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; cut -d&lt;span class="se"&gt;\(&lt;/span&gt; -f2 &lt;span class="p"&gt;|&lt;/span&gt; cut -d&lt;span class="se"&gt;\)&lt;/span&gt; -f1&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Disk&lt;/span&gt;
+sysbench --test&lt;span class="o"&gt;=&lt;/span&gt;fileio prepare &amp;gt; /dev/null
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Disk: &lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;sysbench --test&lt;span class="o"&gt;=&lt;/span&gt;fileio --file-test-mode&lt;span class="o"&gt;=&lt;/span&gt;rndrw run &lt;span class="p"&gt;|&lt;/span&gt; grep &lt;span class="s2"&gt;&amp;quot;transferred&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; cut -d&lt;span class="se"&gt;\(&lt;/span&gt; -f2 &lt;span class="p"&gt;|&lt;/span&gt; cut -d&lt;span class="se"&gt;\)&lt;/span&gt; -f1&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+sysbench --test&lt;span class="o"&gt;=&lt;/span&gt;fileio cleanup &amp;gt; /dev/null
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;CUIDADO&lt;/strong&gt;: el &lt;em&gt;script bench.sh&lt;/em&gt; tiene permisos de ejecución, por lo que también lo tendrá en la imagen.&lt;/p&gt;
+&lt;p&gt;Tras construir o hacer el correspondiente &lt;em&gt;docker pull&lt;/em&gt;, comprobamos que el tamaño es bastante superior, debido al sistema operativo base.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ docker build -t sysbench sysbench/
+...  
+gerard@hermes:~/docker/tools$ docker images
+REPOSITORY                                                                            TAG                 IMAGE ID            CREATED             SIZE
+sysbench                                                                              latest              ec75e66aae41        &lt;span class="m"&gt;5&lt;/span&gt; seconds ago       127.1 MB
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo queda ejecutar para ver el rendimiento de la máquina testeada, sin dejar basura en la máquina destino.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ docker run --rm sysbench
+CPU: 11.1682s
+Memory: 3059.66 MB/sec
+Disk: 12.088Mb/sec
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Pruebas de carga web&lt;/h2&gt;
+&lt;p&gt;Hay muchas herramientas en este campo, pero a mi me sigue gustando mucho el &lt;em&gt;Apache benchmark&lt;/em&gt;. El binario &lt;strong&gt;ab&lt;/strong&gt; se suele encontrar en el paquete &lt;strong&gt;apache2-utils&lt;/strong&gt; y este está disponible en &lt;strong&gt;Alpine Linux&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ cat ab/Dockerfile 
+FROM alpine:3.4
+RUN apk add --no-cache apache2-utils
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/bin/ab&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Conseguimos nuestra imagen por los medios habituales; la imagen no llega a los 10 mb.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ docker build -t ab ab/
+...  
+gerard@hermes:~/docker/tools$ docker images
+REPOSITORY                                                                            TAG                 IMAGE ID            CREATED             SIZE
+ab                                                                                    latest              51b78f9dfeea        &lt;span class="m"&gt;4&lt;/span&gt; seconds ago       9.808 MB
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y solo nos queda testear contra la víctima de nuestra prueba de estrés.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ docker run --rm ab -k -c5 -t5 http://www.linuxsysadmin.tk/
+This is ApacheBench, Version 2.3 &amp;lt;&lt;span class="nv"&gt;$Revision&lt;/span&gt;: &lt;span class="m"&gt;1748469&lt;/span&gt; $&amp;gt;
+Copyright &lt;span class="m"&gt;1996&lt;/span&gt; Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking www.linuxsysadmin.tk &lt;span class="o"&gt;(&lt;/span&gt;be patient&lt;span class="o"&gt;)&lt;/span&gt;
+Completed &lt;span class="m"&gt;5000&lt;/span&gt; requests
+Completed &lt;span class="m"&gt;10000&lt;/span&gt; requests
+Finished &lt;span class="m"&gt;10152&lt;/span&gt; requests
+
+
+Server Software:        GitHub.com
+Server Hostname:        www.linuxsysadmin.tk
+Server Port:            80
+
+Document Path:          /
+Document Length:        &lt;span class="m"&gt;37545&lt;/span&gt; bytes
+
+Concurrency Level:      5
+Time taken &lt;span class="k"&gt;for&lt;/span&gt; tests:   5.001 seconds
+Complete requests:      10152
+Failed requests:        0
+Keep-Alive requests:    10152
+Total transferred:      &lt;span class="m"&gt;387253740&lt;/span&gt; bytes
+HTML transferred:       &lt;span class="m"&gt;381176513&lt;/span&gt; bytes
+Requests per second:    2030.04 &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="c1"&gt;#/sec] (mean)&lt;/span&gt;
+Time per request:       2.463 &lt;span class="o"&gt;[&lt;/span&gt;ms&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;mean&lt;span class="o"&gt;)&lt;/span&gt;
+Time per request:       0.493 &lt;span class="o"&gt;[&lt;/span&gt;ms&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;mean, across all concurrent requests&lt;span class="o"&gt;)&lt;/span&gt;
+Transfer rate:          75622.04 &lt;span class="o"&gt;[&lt;/span&gt;Kbytes/sec&lt;span class="o"&gt;]&lt;/span&gt; received
+
+Connection Times &lt;span class="o"&gt;(&lt;/span&gt;ms&lt;span class="o"&gt;)&lt;/span&gt;
+              min  mean&lt;span class="o"&gt;[&lt;/span&gt;+/-sd&lt;span class="o"&gt;]&lt;/span&gt; median   max
+Connect:        &lt;span class="m"&gt;0&lt;/span&gt;    &lt;span class="m"&gt;0&lt;/span&gt;   0.0      &lt;span class="m"&gt;0&lt;/span&gt;       1
+Processing:     &lt;span class="m"&gt;2&lt;/span&gt;    &lt;span class="m"&gt;2&lt;/span&gt;   3.9      &lt;span class="m"&gt;2&lt;/span&gt;     216
+Waiting:        &lt;span class="m"&gt;1&lt;/span&gt;    &lt;span class="m"&gt;2&lt;/span&gt;   2.5      &lt;span class="m"&gt;1&lt;/span&gt;     109
+Total:          &lt;span class="m"&gt;2&lt;/span&gt;    &lt;span class="m"&gt;2&lt;/span&gt;   3.9      &lt;span class="m"&gt;2&lt;/span&gt;     216
+
+Percentage of the requests served within a certain &lt;span class="nb"&gt;time&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;ms&lt;span class="o"&gt;)&lt;/span&gt;
+  50%      2
+  66%      2
+  75%      2
+  80%      2
+  90%      3
+  95%      3
+  98%      4
+  99%      4
+ 100%    &lt;span class="m"&gt;216&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;longest request&lt;span class="o"&gt;)&lt;/span&gt;
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Pruebas de penetración de puertos&lt;/h2&gt;
+&lt;p&gt;La herramienta más versátil en este campo es &lt;strong&gt;nmap&lt;/strong&gt;. El uso de este comando no es trivial, y un &lt;em&gt;pentester&lt;/em&gt; experto puede hacer cosas realmente impresionantes. De momento nos basta con que funcione.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ cat nmap/Dockerfile 
+FROM alpine:3.4
+RUN apk add --no-cache nmap
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/bin/nmap&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Usamos el anterior &lt;em&gt;Dockerfile&lt;/em&gt; para crear la imagen (o hacemos el &lt;em&gt;docker pull&lt;/em&gt; correspondiente) y vemos que la imagen se nos va a 18 mb. Nada mal.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ docker build -t nmap nmap/
+...  
+gerard@hermes:~/docker/tools$ docker images
+REPOSITORY                                                                            TAG                 IMAGE ID            CREATED             SIZE
+nmap                                                                                  latest              d808ce19de05        &lt;span class="m"&gt;4&lt;/span&gt; seconds ago       17.58 MB
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos faltaría probar que todo funciona, lanzando un contenedor para testear alguna IP o nombre de dominio. En este caso, con escanear los puertos web, ssh, mongodb y mysql, nos vale. El resultado es que solamente los puertos web están abiertos, con un &lt;em&gt;firewall&lt;/em&gt; cortando los demás.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ docker run --rm nmap www.linuxsysadmin.tk -p80,443,22,27017,3306 -Pn
+
+Starting Nmap 7.12 &lt;span class="o"&gt;(&lt;/span&gt; https://nmap.org &lt;span class="o"&gt;)&lt;/span&gt; at 2016-12-21 10:14 UTC
+Nmap scan report &lt;span class="k"&gt;for&lt;/span&gt; www.linuxsysadmin.tk &lt;span class="o"&gt;(&lt;/span&gt;151.101.0.133&lt;span class="o"&gt;)&lt;/span&gt;
+Host is up &lt;span class="o"&gt;(&lt;/span&gt;0.0011s latency&lt;span class="o"&gt;)&lt;/span&gt;.
+Other addresses &lt;span class="k"&gt;for&lt;/span&gt; www.linuxsysadmin.tk &lt;span class="o"&gt;(&lt;/span&gt;not scanned&lt;span class="o"&gt;)&lt;/span&gt;: 151.101.192.133 151.101.128.133 151.101.64.133
+PORT      STATE    SERVICE
+22/tcp    filtered ssh
+80/tcp    open     http
+443/tcp   open     https
+3306/tcp  filtered mysql
+27017/tcp filtered mongod
+
+Nmap &lt;span class="k"&gt;done&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&gt; IP address &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; host up&lt;span class="o"&gt;)&lt;/span&gt; scanned in 1.41 seconds
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Pruebas de seguridad web&lt;/h2&gt;
+&lt;p&gt;Una &lt;em&gt;suite&lt;/em&gt; muy interesante para descubrir vulnerabilidades web es &lt;strong&gt;nikto&lt;/strong&gt;. Se trata de un &lt;em&gt;script&lt;/em&gt; de &lt;strong&gt;perl&lt;/strong&gt; bastante completo, que va a probar las vulnerabilidades conocidas y nos va a dar los códigos en la &lt;a href="https://en.wikipedia.org/wiki/Open_Source_Vulnerability_Database"&gt;Open_Source_Vulnerability_Database&lt;/a&gt;, ahora cerrada.&lt;/p&gt;
+&lt;p&gt;Para obtener nuestra imagen, basta con instalar el paquete en una imagen &lt;strong&gt;Alpine Linux&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ cat nikto/Dockerfile 
+FROM alpine:3.4
+RUN apk add --no-cache nikto
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/bin/nikto.pl&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Tras la construcción vemos que esta imagen es la mas grande de las anteriormente mencionadas, de entre las que hemos basado en &lt;strong&gt;Alpine Linux&lt;/strong&gt;, ocupando mas de 60 mb; pensad en el tamaño de una máquina virtual dedicada: no bajaría de 1 gb.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ docker build -t nikto nikto/
+...  
+gerard@hermes:~/docker/tools$ docker images
+REPOSITORY                                                                            TAG                 IMAGE ID            CREATED             SIZE
+nikto                                                                                 latest              9167dce64715        &lt;span class="m"&gt;3&lt;/span&gt; seconds ago       61.05 MB
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El comando &lt;strong&gt;nikto&lt;/strong&gt; tiene muchas opciones, que saltan a la vista si usáis el contenedor sin parámetros adicionales. Para verificar su funcionamiento me voy a limitar a escanear un solo &lt;em&gt;host&lt;/em&gt; con la batería de pruebas estándares.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@hermes:~/docker/tools$ docker run --rm nikto -host www.linuxsysadmin.tk
+- ***** SSL support not available &lt;span class="o"&gt;(&lt;/span&gt;see docs &lt;span class="k"&gt;for&lt;/span&gt; SSL install&lt;span class="o"&gt;)&lt;/span&gt; *****
+- Nikto v2.1.5
+---------------------------------------------------------------------------
++ Target IP:          151.101.192.133
++ Target Hostname:    www.linuxsysadmin.tk
++ Target Port:        80
++ Start Time:         2016-12-21 10:19:15 &lt;span class="o"&gt;(&lt;/span&gt;GMT0&lt;span class="o"&gt;)&lt;/span&gt;
+---------------------------------------------------------------------------
++ Server: GitHub.com
++ Retrieved via header: 1.1 varnish
++ Retrieved x-served-by header: cache-cdg8733-CDG
++ The anti-clickjacking X-Frame-Options header is not present.
++ Uncommon header &lt;span class="s1"&gt;&amp;#39;x-github-request-id&amp;#39;&lt;/span&gt; found, with contents: 689C5D15:51BA:5DE0B1A:585A54BB
++ Uncommon header &lt;span class="s1"&gt;&amp;#39;x-served-by&amp;#39;&lt;/span&gt; found, with contents: cache-cdg8733-CDG
++ Uncommon header &lt;span class="s1"&gt;&amp;#39;x-fastly-request-id&amp;#39;&lt;/span&gt; found, with contents: 43f82a2690743c1b1b674d92672b1e277016f83e
++ Uncommon header &lt;span class="s1"&gt;&amp;#39;x-cache-hits&amp;#39;&lt;/span&gt; found, with contents: 3
++ Uncommon header &lt;span class="s1"&gt;&amp;#39;access-control-allow-origin&amp;#39;&lt;/span&gt; found, with contents: *
++ Uncommon header &lt;span class="s1"&gt;&amp;#39;x-timer&amp;#39;&lt;/span&gt; found, with contents: S1482315555.254611,VS0,VE0
++ Uncommon header &lt;span class="s1"&gt;&amp;#39;x-cache&amp;#39;&lt;/span&gt; found, with contents: HIT
++ Server leaks inodes via ETags, header found with file /JoHeWXqS.AP, fields: 0x585799bc 0x8045 
++ No CGI Directories found &lt;span class="o"&gt;(&lt;/span&gt;use &lt;span class="s1"&gt;&amp;#39;-C all&amp;#39;&lt;/span&gt; to force check all possible &lt;span class="nb"&gt;dirs&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
++ Uncommon header &lt;span class="s1"&gt;&amp;#39;content-security-policy&amp;#39;&lt;/span&gt; found, with contents: default-src &lt;span class="s1"&gt;&amp;#39;none&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; style-src &lt;span class="s1"&gt;&amp;#39;unsafe-inline&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; img-src data:&lt;span class="p"&gt;;&lt;/span&gt; connect-src &lt;span class="s1"&gt;&amp;#39;self&amp;#39;&lt;/span&gt;
++ Server banner has changed from &lt;span class="s1"&gt;&amp;#39;GitHub.com&amp;#39;&lt;/span&gt; to &lt;span class="s1"&gt;&amp;#39;Varnish&amp;#39;&lt;/span&gt; which may suggest a WAF, load balancer or proxy is in place
++ OSVDB-3092: /sitemap.xml: This gives a nice listing of the site content.
++ &lt;span class="m"&gt;6544&lt;/span&gt; items checked: &lt;span class="m"&gt;0&lt;/span&gt; error&lt;span class="o"&gt;(&lt;/span&gt;s&lt;span class="o"&gt;)&lt;/span&gt; and &lt;span class="m"&gt;13&lt;/span&gt; item&lt;span class="o"&gt;(&lt;/span&gt;s&lt;span class="o"&gt;)&lt;/span&gt; reported on remote host
++ End Time:           2016-12-21 10:31:23 &lt;span class="o"&gt;(&lt;/span&gt;GMT0&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;728&lt;/span&gt; seconds&lt;span class="o"&gt;)&lt;/span&gt;
+---------------------------------------------------------------------------
++ &lt;span class="m"&gt;1&lt;/span&gt; host&lt;span class="o"&gt;(&lt;/span&gt;s&lt;span class="o"&gt;)&lt;/span&gt; tested
+gerard@hermes:~/docker/tools$ 
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="toolbox"></category><category term="docker"></category><category term="pwgen"></category><category term="sysbench"></category><category term="apache benchmark"></category><category term="nmap"></category><category term="nikto"></category></entry><entry><title>Auditando las acciones de los usuarios de nuestro SFTP</title><link href="http://www.linuxsysadmin.tk/2017/04/auditando-las-acciones-de-los-usuarios-de-nuestro-sftp.html" rel="alternate"></link><published>2017-04-03T10:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-04-03:2017/04/auditando-las-acciones-de-los-usuarios-de-nuestro-sftp.html</id><summary type="html">&lt;p&gt;Algunas veces me he encontrado con usuarios de alguno de mis servidores SFTP que se quejan porque "les desaparecen archivos". Si estamos seguros que esas desapariciones no tienen nada que ver con nosotros, lo mas probable es que lo hayan hecho los mismos usuarios, sea manualmente o de forma automática.&lt;/p&gt;
 &lt;p&gt;En casos así, no podemos hacer nada para demostrar cuando y porqué ha pasado, pero podemos pillar al usuario &lt;em&gt;in fraganti&lt;/em&gt; en casos posteriores. Para eso solo es necesario habilitar un nivel de trazas que nos permita capturar la actividad de un usuario.&lt;/p&gt;
 &lt;p&gt;El mismo servidor SFTP nos enviará esta actividad al &lt;em&gt;rsyslog&lt;/em&gt; de forma automática si habilitamos el &lt;em&gt;loglevel&lt;/em&gt; adecuado a nuestro comando SFTP. A partir de aquí se asume que el servicio &lt;em&gt;rsyslog&lt;/em&gt; está instalado en nuestro sistema.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;admin@sftpserver:~$ cat /etc/ssh/ssh_config 

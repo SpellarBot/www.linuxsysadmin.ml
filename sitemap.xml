@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2017-04-03T08:22:04-00:00</lastmod>
+<lastmod>2017-04-10T07:39:03-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2017-04-03T08:22:04-00:00</lastmod>
+<lastmod>2017-04-10T07:39:03-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2017-04-03T08:22:04-00:00</lastmod>
+<lastmod>2017-04-10T07:39:03-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2017-04-03T08:22:04-00:00</lastmod>
+<lastmod>2017-04-10T07:39:03-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2017-04-03T08:22:04-00:00</lastmod>
+<lastmod>2017-04-10T07:39:03-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2017/04/una-toolbox-empaquetada-en-contenedores.html</loc>
+<lastmod>2017-04-10T10:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -600,7 +607,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/operaciones.html</loc>
-<lastmod>2017-04-03T10:00:00-00:15</lastmod>
+<lastmod>2017-04-10T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -795,6 +802,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/sysbench.html</loc>
+<lastmod>2017-04-10T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/point-in-time.html</loc>
 <lastmod>2016-02-15T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -853,6 +867,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/volumenes.html</loc>
 <lastmod>2017-03-27T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/toolbox.html</loc>
+<lastmod>2017-04-10T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -986,6 +1007,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/replica-set.html</loc>
 <lastmod>2016-05-02T00:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/pwgen.html</loc>
+<lastmod>2017-04-10T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1145,6 +1173,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/apache-benchmark.html</loc>
+<lastmod>2017-04-10T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/root.html</loc>
 <lastmod>2016-06-13T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1216,7 +1251,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/nmap.html</loc>
-<lastmod>2015-10-29T11:30:00-00:15</lastmod>
+<lastmod>2017-04-10T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1713,14 +1748,21 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/docker.html</loc>
-<lastmod>2017-03-27T10:00:00-00:15</lastmod>
+<lastmod>2017-04-10T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/nikto.html</loc>
+<lastmod>2017-04-10T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2017-04-03T10:00:00-00:15</lastmod>
+<lastmod>2017-04-10T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
