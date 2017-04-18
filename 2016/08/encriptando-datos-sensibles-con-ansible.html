@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="ansible,vault,encriptación,inventario" />
-        <meta name="description" content="Si usamos ansible para configurar otras máquinas tenemos pleno poder para acceder a otras, sea mediante claves SSH o por accesos remotos normales. En este último caso, conviene aplicar un poco de seguridad para evitar que un posible intruso acceda libremente. Para esto podemos encriptar la información sensible con ansible-vault ..." />
+        <meta name="description" content="Si usamos ansible para configurar otras máquinas tenemos pleno poder para acceder a otras, sea mediante claves SSH o por accesos remotos normales. En este último caso, conviene aplicar un poco de seguridad para evitar que un posible intruso acceda libremente. Para esto podemos encriptar la información sensible con ansible-vault …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Encriptando datos sensibles con Ansible"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/08/encriptando-datos-sensibles-con-ansible.html"/>
-        <meta property="og:description" content="Si usamos ansible para configurar otras máquinas tenemos pleno poder para acceder a otras, sea mediante claves SSH o por accesos remotos normales. En este último caso, conviene aplicar un poco de seguridad para evitar que un posible intruso acceda libremente. Para esto podemos encriptar la información sensible con ansible-vault ..."/>
+        <meta property="og:description" content="Si usamos ansible para configurar otras máquinas tenemos pleno poder para acceder a otras, sea mediante claves SSH o por accesos remotos normales. En este último caso, conviene aplicar un poco de seguridad para evitar que un posible intruso acceda libremente. Para esto podemos encriptar la información sensible con ansible-vault …"/>
         <meta property="article:published_time" content="2016-08-15" />
             <meta property="article:section" content="Operaciones" />
             <meta property="article:tag" content="ansible" />
@@ -69,9 +69,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -246,20 +243,20 @@ Encryption successful
 slave1
 slave2
 ~ <span class="c1"># cat inventory/vault </span>
-<span class="nv">$ANSIBLE_VAULT</span><span class="p">;</span>1.1<span class="p">;</span>AES256
-37306639633165383030626335356261333436646539373962623937653137666430366330313663
+<span class="nv">$ANSIBLE_VAULT</span><span class="p">;</span><span class="m">1</span>.1<span class="p">;</span>AES256
+<span class="m">37306639633165383030626335356261333436646539373962623937653137666430366330313663</span>
 3666396533313031633236383964323235376262386337360a303037366336666135363266616363
-63656431623363343639663331613262643032393034623337383134306635313235623463316466
+<span class="m">63656431623363343639663331613262643032393034623337383134306635313235623463316466</span>
 3161613332306136310a663261346565386634663938656136363939653061373035346332616164
-62353865313265306132366166653263623964306536633163393764306166366236666362323165
-39353835346263646134383037386465656131356130376165646331623438336336363462383066
-34353062396364393239333563336466653637343030326262323338313065623864393131343165
-35313134666566663636636237376563316436666437316632613630396565643539623661323436
-30383261333230613130666465626137656463326238626163656465316632303638373334623137
-61653537396535346266623462396165333731326462646534343833346165333034613037663033
-64613763363635333030393464646139373339333436343861313462666537636461303238326433
-30346333303336643663623563613465393661626565636630383931643863343430613335373234
-3336
+<span class="m">62353865313265306132366166653263623964306536633163393764306166366236666362323165</span>
+<span class="m">39353835346263646134383037386465656131356130376165646331623438336336363462383066</span>
+<span class="m">34353062396364393239333563336466653637343030326262323338313065623864393131343165</span>
+<span class="m">35313134666566663636636237376563316436666437316632613630396565643539623661323436</span>
+<span class="m">30383261333230613130666465626137656463326238626163656465316632303638373334623137</span>
+<span class="m">61653537396535346266623462396165333731326462646534343833346165333034613037663033</span>
+<span class="m">64613763363635333030393464646139373339333436343861313462666537636461303238326433</span>
+<span class="m">30346333303336643663623563613465393661626565636630383931643863343430613335373234</span>
+<span class="m">3336</span>
 ~ <span class="c1"># </span>
 </pre></div>
 
@@ -322,20 +319,20 @@ slave2 <span class="p">|</span> <span class="nv">SUCCESS</span> <span class="o">
 
 <p>De hecho, este parámetro también afecta a otras herramientas, como por ejemplo el mismo comando <strong>ansible-vault</strong>, por ejemplo, para inspeccionar el fichero encriptado.</p>
 <div class="highlight"><pre><span></span>~ <span class="c1"># cat inventory/vault </span>
-<span class="nv">$ANSIBLE_VAULT</span><span class="p">;</span>1.1<span class="p">;</span>AES256
-30313636313462346536346262333462633131633666653238313239333330343036346263653962
+<span class="nv">$ANSIBLE_VAULT</span><span class="p">;</span><span class="m">1</span>.1<span class="p">;</span>AES256
+<span class="m">30313636313462346536346262333462633131633666653238313239333330343036346263653962</span>
 3862623363393436656334636361303263336333363431610a346666653539643065383765613466
-64626437633565323866316466636166623432313630323362393961383663356233626263386530
+<span class="m">64626437633565323866316466636166623432313630323362393961383663356233626263386530</span>
 3539353266343237310a396536326337313232663466333361316666376364323634623638353865
-66323636336137303863643736636666353631613230633231386434373266343764343730653238
-38643462636330663864626237366631346439303739323030306336396266366666303262363735
-30303034333532336532306432643265653963646132393939386561326539646566613961393963
-62363633626135376532336137373631383839393231356265653932333639343762353937356439
-64346465323263623830306436636134613561646232663664306262383136646265383834306336
-62646537666135393032306338313166316631303134363363633833663862663933366436613461
-35343039646430393235383238653733343465653863363835303537383437613933306137636161
-37643432373531613565633431636461666661343561393764376239313637663362333136363237
-3131
+<span class="m">66323636336137303863643736636666353631613230633231386434373266343764343730653238</span>
+<span class="m">38643462636330663864626237366631346439303739323030306336396266366666303262363735</span>
+<span class="m">30303034333532336532306432643265653963646132393939386561326539646566613961393963</span>
+<span class="m">62363633626135376532336137373631383839393231356265653932333639343762353937356439</span>
+<span class="m">64346465323263623830306436636134613561646232663664306262383136646265383834306336</span>
+<span class="m">62646537666135393032306338313166316631303134363363633833663862663933366436613461</span>
+<span class="m">35343039646430393235383238653733343465653863363835303537383437613933306137636161</span>
+<span class="m">37643432373531613565633431636461666661343561393764376239313637663362333136363237</span>
+<span class="m">3131</span>
 ~ <span class="c1"># ansible-vault view inventory/vault</span>
 <span class="o">[</span>slaves:vars<span class="o">]</span>
 <span class="nv">ansible_user</span> <span class="o">=</span> ansible
@@ -354,12 +351,12 @@ lorem ipsum
 ~ <span class="c1"># ansible-vault encrypt aaaa </span>
 Encryption successful
 ~ <span class="c1"># cat aaaa </span>
-<span class="nv">$ANSIBLE_VAULT</span><span class="p">;</span>1.1<span class="p">;</span>AES256
-38666531306261623531363836623436333061326536323066386139643630323336336565626663
+<span class="nv">$ANSIBLE_VAULT</span><span class="p">;</span><span class="m">1</span>.1<span class="p">;</span>AES256
+<span class="m">38666531306261623531363836623436333061326536323066386139643630323336336565626663</span>
 6238383334333666376338363366353066333763393330340a353365343234646430393236356464
-62346166356430346564343539313436346661656335343733623836663563633630346138636661
+<span class="m">62346166356430346564343539313436346661656335343733623836663563633630346138636661</span>
 3838633536383934360a343232306237373864616237386164376136323737373739623062306562
-3964
+<span class="m">3964</span>
 ~ <span class="c1"># </span>
 </pre></div>
 
@@ -370,9 +367,9 @@ Encryption successful
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html">Balanceando peticiones con HAProxy</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html">Algunas ideas sueltas sobre Ansible</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/08/creando-roles-con-ansible.html">Creando roles con ansible</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html">Balanceando peticiones con HAProxy</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
     </ul>
 </section>
     <hr/>
@@ -524,6 +521,11 @@ Encryption successful
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -637,11 +639,6 @@ Encryption successful
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

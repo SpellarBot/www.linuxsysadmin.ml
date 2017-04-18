@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>release - Linux Sysadmin</title>
+    <title>Testear dominios sin tener el DNS con curl - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,22 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2017/04/testear-dominios-sin-tener-el-dns-con-curl.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="release" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="curl,dns" />
+        <meta name="description" content="En mi trabajo, los problemas llegan sin previo aviso. De repente, alguien te pone en aviso que su aplicación web está caída y es inaccesible. Se trata de un problema de resolución DNS, pero queremos probarlo para estar seguros de que solo es ese el problema y no es general …" />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Testear dominios sin tener el DNS con curl"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/04/testear-dominios-sin-tener-el-dns-con-curl.html"/>
+        <meta property="og:description" content="En mi trabajo, los problemas llegan sin previo aviso. De repente, alguien te pone en aviso que su aplicación web está caída y es inaccesible. Se trata de un problema de resolución DNS, pero queremos probarlo para estar seguros de que solo es ese el problema y no es general …"/>
+        <meta property="article:published_time" content="2017-04-17" />
+            <meta property="article:section" content="Operaciones" />
+            <meta property="article:tag" content="curl" />
+            <meta property="article:tag" content="dns" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,6 +40,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -72,11 +80,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.tk/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
-        <li class="active">release</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
+                <li class="active">Testear dominios sin tener el DNS con curl</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -89,13 +97,161 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html">Separando el build y el runtime con contenedores Docker</a></h2>
-                <div class="summary"><p>Cuando montamos un contenedor <strong>Docker</strong> para servir una aplicación cualquiera, solemos poner un montón de dependencias necesarias solamente para compilar el paquete o para empaquetar sus librerías. Esto supone un gasto innecesario en espacio y en tiempo de ejecución; usando contenedores desechables podemos agilizar este proceso de forma altamente considerable …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html">Seguir leyendo</a>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2017/04/testear-dominios-sin-tener-el-dns-con-curl.html"
+                       rel="bookmark"
+                       title="Permalink to Testear dominios sin tener el DNS con curl">
+                        Testear dominios sin tener el DNS con curl
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2017-04-17T00:00:00+02:00"> 2017-04-17</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 3 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/curl.html">curl</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/dns.html">dns</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 </div>
-            </article>
-            <hr/>
+                <p>En mi trabajo, los problemas llegan sin previo aviso. De repente, alguien te pone en aviso que su aplicación web está caída y es inaccesible. Se trata de un problema de resolución DNS, pero queremos probarlo para estar seguros de que solo es ese el problema y no es general.</p>
+<p>Lo primero que nos viene a la cabeza es montar un servidor DNS local e intentar acceder de nuevo, pero es mucho trabajo. Luego nos acordamos del fichero <em>/etc/hosts</em>, pero no siempre es posible editarlo. Sin embargo, el comando <strong>curl</strong> nos ofrece una opción para suplantar un dominio con la dirección IP que queramos.</p>
+<h2>Preparación</h2>
+<p>Vamos a crear un servidor web con contenido irrelevante solo para ver una demostración de como funciona esta opción. Para ello empezaremos instalando un servidor web cualquiera. Ya sabéis que me gusta mucho el <strong>nginx</strong>...</p>
+<div class="highlight"><pre><span></span>root@helium:~# apt-get install -y nginx-light
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following extra packages will be installed:
+  nginx-common
+Suggested packages:
+  fcgiwrap nginx-doc ssl-cert
+The following NEW packages will be installed:
+  nginx-common nginx-light
+<span class="m">0</span> upgraded, <span class="m">2</span> newly installed, <span class="m">0</span> to remove and <span class="m">2</span> not upgraded.
+Need to get <span class="m">421</span> kB of archives.
+After this operation, <span class="m">1020</span> kB of additional disk space will be used.
+...
+root@helium:~# 
+</pre></div>
+
+
+<p>Vamos a eliminar el <em>site</em> que viene por defecto porque es un ejemplo y no es relevante.</p>
+<div class="highlight"><pre><span></span>root@helium:~# unlink /etc/nginx/sites-enabled/default 
+root@helium:~# 
+</pre></div>
+
+
+<p>Crearemos una carpeta para alojar el contenido web. Según la <a href="https://es.wikipedia.org/wiki/Filesystem_Hierarchy_Standard">FHS</a>, lo correcto es usar <em>/srv/www</em>, que no viene en una distribución <strong>Debian</strong> por defecto.</p>
+<div class="highlight"><pre><span></span>root@helium:~# mkdir /srv/www
+root@helium:~# 
+</pre></div>
+
+
+<p>Ponemos una página web cualquiera, solo para ver si llegamos o no a nuestro servidor.</p>
+<div class="highlight"><pre><span></span>root@helium:~# <span class="nb">echo</span> <span class="s2">&quot;Hello World&quot;</span> &gt; /srv/www/index.html
+root@helium:~# 
+</pre></div>
+
+
+<p>Y vamos a crear un <em>site</em> para que nuestro <strong>nginx</strong> sepa lo que tiene que servir:</p>
+<div class="highlight"><pre><span></span>root@helium:~# cat /etc/nginx/sites-enabled/example 
+server <span class="o">{</span>
+    listen <span class="m">80</span><span class="p">;</span>
+    server_name _<span class="p">;</span>
+    root /srv/www<span class="p">;</span>
+    index index.html<span class="p">;</span>
+<span class="o">}</span>
+root@helium:~# 
+</pre></div>
+
+
+<p>Recargamos o reiniciamos el servidor web para que use la nueva configuración y listo.</p>
+<div class="highlight"><pre><span></span>root@helium:~# service nginx reload
+<span class="o">[</span> ok <span class="o">]</span> Reloading nginx configuration: nginx.
+root@helium:~# 
+</pre></div>
+
+
+<p>Ahora tenemos un servidor web normal y corriente en nuestro entorno.</p>
+<h2>Funcionamiento</h2>
+<p>Vamos ha hacer una petición a nuestro dominio. Voy a usar esta misma web por comodidad, pero si tenéis un dominio que no funciona por culpa del DNS, también lo podéis comprobar ahí.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~$ curl -s http://www.linuxsysadmin.tk/ <span class="p">|</span> grep <span class="s1">&#39;&lt;title&gt;&#39;</span>
+    &lt;title&gt;Linux Sysadmin&lt;/title&gt;
+gerard@aldebaran:~$ 
+</pre></div>
+
+
+<p>Magnífico; esta es la web. Vamos ahora a pedirle a <strong>curl</strong> que resuelva las peticiones a este mismo dominio y puerto 80 usando la dirección de nuestro servidor, con la opción <em>--resolve</em>. Más información en las páginas <strong>man</strong>.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~$ curl -s --resolve www.linuxsysadmin.tk:80:172.18.0.2 http://www.linuxsysadmin.tk/
+Hello World
+gerard@aldebaran:~$ 
+</pre></div>
+
+
+<p>Y con esto vemos que este comando ha pasado olímpicamente de lo que le decía el DNS y ha lanzado la petición a nuestro servidor, cuya dirección IP es 172.18.0.2, que es el que hemos preparado más arriba.</p>
+<p>Y con este truco tan simple pudimos comprobar que el problema era solo de DNS, ya que si lo evitamos con <strong>curl</strong>, el resto funcionaba a la perfección.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/un-proxy-dns-con-dnsmasq.html">Un proxy DNS con dnsmasq</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/12/probando-virtualhosts-con-cabeceras-http.html">Probando virtualhosts con cabeceras HTTP</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2017/02/escribiendo-un-servidor-dns-en-python-con-twisted.html">Escribiendo un servidor DNS en python con twisted</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'testear-dominios-sin-tener-el-dns-con-curl';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2017/04/testear-dominios-sin-tener-el-dns-con-curl.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
 
         </div>
         <div class="col-sm-3" id="sidebar">
@@ -672,7 +828,7 @@ Linux Sysadmin            </a>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2016 Gerard
+         <div class="col-xs-10">&copy; 2017 Gerard
             &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>

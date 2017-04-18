@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,semáforo,concurrencia" />
-        <meta name="description" content="Tras revisar un bug de cierto proceso en background de una aplicación en mi trabajo, vimos que saltaban dos ejecuciones simultáneas y los dos procesos interferían entre ellos. Implementar una exclusión mutua en el proceso era costoso, así que opté por hacerlo con un comando linux, que descubrí por internet ..." />
+        <meta name="description" content="Tras revisar un bug de cierto proceso en background de una aplicación en mi trabajo, vimos que saltaban dos ejecuciones simultáneas y los dos procesos interferían entre ellos. Implementar una exclusión mutua en el proceso era costoso, así que opté por hacerlo con un comando linux, que descubrí por internet …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Semáforos en linux"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/11/semaforos-en-linux.html"/>
-        <meta property="og:description" content="Tras revisar un bug de cierto proceso en background de una aplicación en mi trabajo, vimos que saltaban dos ejecuciones simultáneas y los dos procesos interferían entre ellos. Implementar una exclusión mutua en el proceso era costoso, así que opté por hacerlo con un comando linux, que descubrí por internet ..."/>
+        <meta property="og:description" content="Tras revisar un bug de cierto proceso en background de una aplicación en mi trabajo, vimos que saltaban dos ejecuciones simultáneas y los dos procesos interferían entre ellos. Implementar una exclusión mutua en el proceso era costoso, así que opté por hacerlo con un comando linux, que descubrí por internet …"/>
         <meta property="article:published_time" content="2016-11-28" />
             <meta property="article:section" content="Operaciones" />
             <meta property="article:tag" content="linux" />
@@ -68,9 +68,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -163,7 +160,7 @@ The following NEW packages will be installed:
   libtext-template-perl parallel perl perl-modules rename
 <span class="m">0</span> upgraded, <span class="m">32</span> newly installed, <span class="m">0</span> to remove and <span class="m">1</span> not upgraded.
 Need to get <span class="m">6794</span> kB of archives.
-After this operation, 38.4 MB of additional disk space will be used.
+After this operation, <span class="m">38</span>.4 MB of additional disk space will be used.
 ...
 root@helium:~# 
 </pre></div>
@@ -174,16 +171,16 @@ root@helium:~#
 <span class="c1">#!/bin/bash</span>
 
 <span class="nb">echo</span> <span class="s2">&quot;</span><span class="k">$(</span>date +<span class="s1">&#39;%H:%M:%S&#39;</span><span class="k">)</span><span class="s2"> - Started process </span><span class="nv">$1</span><span class="s2">&quot;</span>
-sleep 10
+sleep <span class="m">10</span>
 <span class="nb">echo</span> <span class="s2">&quot;</span><span class="k">$(</span>date +<span class="s1">&#39;%H:%M:%S&#39;</span><span class="k">)</span><span class="s2"> - Ended process </span><span class="nv">$1</span><span class="s2">&quot;</span>
 root@helium:~# 
 </pre></div>
 
 
 <p>Nada en especial; este <em>script</em> recibe un parámetro para identificar la ejecución que estamos mirando, y lo único que hace es perder el tiempo (usad la imaginación), previo registro de la hora de comienzo y de final. La ejecución no depara sorpresas.</p>
-<div class="highlight"><pre><span></span>root@helium:~# ./do_stuff.sh 1
-14:22:31 - Started process 1
-14:22:41 - Ended process 1
+<div class="highlight"><pre><span></span>root@helium:~# ./do_stuff.sh <span class="m">1</span>
+<span class="m">14</span>:22:31 - Started process <span class="m">1</span>
+<span class="m">14</span>:22:41 - Ended process <span class="m">1</span>
 root@helium:~# 
 </pre></div>
 
@@ -201,28 +198,28 @@ root@helium:~#
 
 <p>Esto indica que el comando <em>sem</em> se va a bloquear si ya hay otro proceso en marcha para el semáforo indicado con el <em>flag --id</em>. El parámetro <em>-j</em> indica el número de procesos que pueden pasar a la vez, que en este caso, es uno solo. Cuando no haya nada ejecutando en el semáforo, otro proceso podrá pasar a ejecutar un comando, que en este caso es el <em>script</em> anterior, con el mismo parámetro identificativo.</p>
 <p>Vemos que si no hay competencia en el mismo semáforo, no nos ralentiza nada. De hecho, los semáforos con distinto identificador son independientes, y no interfieren entre ellos, aunque en este ejemplo solo usemos uno.</p>
-<div class="highlight"><pre><span></span>root@helium:~# ./protected_do_stuff.sh 1
-14:30:50 - Semaphore <span class="k">for</span> process 1
-14:30:50 - Started process 1
-14:31:00 - Ended process 1
+<div class="highlight"><pre><span></span>root@helium:~# ./protected_do_stuff.sh <span class="m">1</span>
+<span class="m">14</span>:30:50 - Semaphore <span class="k">for</span> process <span class="m">1</span>
+<span class="m">14</span>:30:50 - Started process <span class="m">1</span>
+<span class="m">14</span>:31:00 - Ended process <span class="m">1</span>
 root@helium:~# 
 </pre></div>
 
 
 <p>Supongamos ahora que se lanza dos veces el mismo <em>script</em>, con dos identificadores diferentes y con unos pocos segundos de diferencia. Los siguientes comandos se han lanzado desde dos sesiones de terminal distintas, ya que el proceso corre en primer plano.</p>
-<div class="highlight"><pre><span></span>root@helium:~# ./protected_do_stuff.sh 1
-14:35:46 - Semaphore <span class="k">for</span> process 1
-14:35:47 - Started process 1
-14:35:57 - Ended process 1
+<div class="highlight"><pre><span></span>root@helium:~# ./protected_do_stuff.sh <span class="m">1</span>
+<span class="m">14</span>:35:46 - Semaphore <span class="k">for</span> process <span class="m">1</span>
+<span class="m">14</span>:35:47 - Started process <span class="m">1</span>
+<span class="m">14</span>:35:57 - Ended process <span class="m">1</span>
 root@helium:~# 
 </pre></div>
 
 
 <p>Esperamos unos segundos y lanzamos el otro:</p>
-<div class="highlight"><pre><span></span>root@helium:~# ./protected_do_stuff.sh 2
-14:35:50 - Semaphore <span class="k">for</span> process 2
-14:35:58 - Started process 2
-14:36:08 - Ended process 2
+<div class="highlight"><pre><span></span>root@helium:~# ./protected_do_stuff.sh <span class="m">2</span>
+<span class="m">14</span>:35:50 - Semaphore <span class="k">for</span> process <span class="m">2</span>
+<span class="m">14</span>:35:58 - Started process <span class="m">2</span>
+<span class="m">14</span>:36:08 - Ended process <span class="m">2</span>
 root@helium:~# 
 </pre></div>
 
@@ -243,9 +240,9 @@ root@helium:~#
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Enjaulado de usuarios para uso de rsync</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2015/11/liberando-memoria-cache.html">Liberando memoria caché</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html">Creando un entorno escalable (I)</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html">Creando sistemas de ficheros temporales con tmpfs</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/un-proxy-dns-con-dnsmasq.html">Un proxy DNS con dnsmasq</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">Restringiendo accesos mediante certificados de cliente</a></li>
     </ul>
 </section>
     <hr/>
@@ -397,6 +394,11 @@ root@helium:~#
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -510,11 +512,6 @@ root@helium:~#
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

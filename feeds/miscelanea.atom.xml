@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/miscelanea.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-03-20T10:00:00+01:00</updated><entry><title>Hospedando contenido estático en Github pages</title><link href="http://www.linuxsysadmin.tk/2017/03/hospedando-contenido-estatico-en-github-pages.html" rel="alternate"></link><published>2017-03-20T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-20:2017/03/hospedando-contenido-estatico-en-github-pages.html</id><summary type="html">&lt;p&gt;Algunas veces nos hemos planteado la posibilidad de tener nuestro propio servidor con nuestras propias aplicaciones, pero el coste del &lt;em&gt;hosting&lt;/em&gt; nos lo ha hecho replantear, especialmente para proyectos de pruebas sin beneficio. Si no nos importa hospedar contenido &lt;strong&gt;HTML&lt;/strong&gt; estático, las páginas de &lt;strong&gt;GitHub&lt;/strong&gt; pueden cumplir con nuestras necesidades.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Miscelánea</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/miscelanea.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-03-20T10:00:00+01:00</updated><entry><title>Hospedando contenido estático en Github pages</title><link href="http://www.linuxsysadmin.tk/2017/03/hospedando-contenido-estatico-en-github-pages.html" rel="alternate"></link><published>2017-03-20T10:00:00+01:00</published><updated>2017-03-20T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-20:/2017/03/hospedando-contenido-estatico-en-github-pages.html</id><summary type="html">&lt;p&gt;Algunas veces nos hemos planteado la posibilidad de tener nuestro propio servidor con nuestras propias aplicaciones, pero el coste del &lt;em&gt;hosting&lt;/em&gt; nos lo ha hecho replantear, especialmente para proyectos de pruebas sin beneficio. Si no nos importa hospedar contenido &lt;strong&gt;HTML&lt;/strong&gt; estático, las páginas de &lt;strong&gt;GitHub&lt;/strong&gt; pueden cumplir con nuestras necesidades …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Algunas veces nos hemos planteado la posibilidad de tener nuestro propio servidor con nuestras propias aplicaciones, pero el coste del &lt;em&gt;hosting&lt;/em&gt; nos lo ha hecho replantear, especialmente para proyectos de pruebas sin beneficio. Si no nos importa hospedar contenido &lt;strong&gt;HTML&lt;/strong&gt; estático, las páginas de &lt;strong&gt;GitHub&lt;/strong&gt; pueden cumplir con nuestras necesidades.&lt;/p&gt;
 &lt;p&gt;De hecho, este &lt;em&gt;blog&lt;/em&gt; está hospedado en &lt;em&gt;GitHub pages&lt;/em&gt; sin ningún coste de &lt;em&gt;hosting&lt;/em&gt;. Añadimos un nombre de registro gratuito, y obtenemos una plataforma sin coste de mantenimiento.&lt;/p&gt;
 &lt;p&gt;La contrapartida es que este &lt;em&gt;blog&lt;/em&gt; está compuesto de páginas &lt;strong&gt;HTML&lt;/strong&gt; y no dispone de ninguna base de datos ni de ningún tipo de procesado en el servidor. Mantener este contenido sería una pesadilla, a no ser que se utilicen &lt;a href="http://www.linuxsysadmin.tk/2017/03/generadores-de-contenido-web-estaticos.html"&gt;generadores automáticos de HTML&lt;/a&gt;, que es lo que utilizo en este &lt;em&gt;blog&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Las páginas de &lt;em&gt;GitHub&lt;/em&gt; pueden ser de dos tipos: una por cada cuenta de usuario, y una por cada proyecto. De esta forma, como usuarios normales, deberíamos trabajar con las páginas de proyecto, puesto que solo disponemos de una página personal.&lt;/p&gt;
@@ -36,7 +36,7 @@ gerard@aldebaran:~/projects/didactic-meme$
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/projects/didactic-meme$ git push origin gh-pages
 Username &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;https://github.com&amp;#39;&lt;/span&gt;: sirtea
 Password &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;https://sirtea@github.com&amp;#39;&lt;/span&gt;: 
-Total &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;, reused &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;
+Total &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta &lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;, reused &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta &lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
 To https://github.com/Sirtea/didactic-meme.git
  * &lt;span class="o"&gt;[&lt;/span&gt;new branch&lt;span class="o"&gt;]&lt;/span&gt;      gh-pages -&amp;gt; gh-pages
 gerard@aldebaran:~/projects/didactic-meme$ 
@@ -71,7 +71,7 @@ gerard@aldebaran:~$
 &lt;span class="p"&gt;;;&lt;/span&gt; ANSWER SECTION:
 www.linuxsysadmin.tk.   &lt;span class="m"&gt;14018&lt;/span&gt;   IN  CNAME   sirtea.github.io.
 sirtea.github.io.   &lt;span class="m"&gt;2394&lt;/span&gt;    IN  CNAME   github.map.fastly.net.
-github.map.fastly.net.  &lt;span class="m"&gt;20&lt;/span&gt;  IN  A   151.101.120.133
+github.map.fastly.net.  &lt;span class="m"&gt;20&lt;/span&gt;  IN  A   &lt;span class="m"&gt;151&lt;/span&gt;.101.120.133
 ...  
 gerard@aldebaran:~$ 
 &lt;/pre&gt;&lt;/div&gt;
@@ -118,7 +118,7 @@ gerard@aldebaran:~$
 &lt;li&gt;El repositorio debe llamarse igual que el dominio (&lt;code&gt;&amp;lt;usuario&amp;gt;.github.io&lt;/code&gt;)&lt;/li&gt;
 &lt;li&gt;La rama que se sirve SIEMPRE es la rama &lt;code&gt;master&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Entonces solo hace falta cargar esa rama de contenido &lt;strong&gt;HTML&lt;/strong&gt;. De hecho, el truco del &lt;em&gt;CNAME&lt;/em&gt; también funciona.&lt;/p&gt;</summary><category term="git"></category><category term="github"></category><category term="github pages"></category><category term="html"></category></entry><entry><title>Generadores de contenido web estáticos</title><link href="http://www.linuxsysadmin.tk/2017/03/generadores-de-contenido-web-estaticos.html" rel="alternate"></link><published>2017-03-13T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-13:2017/03/generadores-de-contenido-web-estaticos.html</id><summary type="html">&lt;p&gt;Antes de la masiva invasión de &lt;strong&gt;PHP&lt;/strong&gt; y &lt;strong&gt;mysql&lt;/strong&gt; en todos los proveedores de internet, existían solamente las páginas &lt;strong&gt;HTML&lt;/strong&gt; estáticas. Los servidores eran más simples y tenían menos superficie de ataque, aunque mantener las páginas web era un auténtica pesadilla; para eso se han creado los generadores web estáticos.&lt;/p&gt;
+&lt;p&gt;Entonces solo hace falta cargar esa rama de contenido &lt;strong&gt;HTML&lt;/strong&gt;. De hecho, el truco del &lt;em&gt;CNAME&lt;/em&gt; también funciona.&lt;/p&gt;</content><category term="git"></category><category term="github"></category><category term="github pages"></category><category term="html"></category></entry><entry><title>Generadores de contenido web estáticos</title><link href="http://www.linuxsysadmin.tk/2017/03/generadores-de-contenido-web-estaticos.html" rel="alternate"></link><published>2017-03-13T10:00:00+01:00</published><updated>2017-03-13T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-13:/2017/03/generadores-de-contenido-web-estaticos.html</id><summary type="html">&lt;p&gt;Antes de la masiva invasión de &lt;strong&gt;PHP&lt;/strong&gt; y &lt;strong&gt;mysql&lt;/strong&gt; en todos los proveedores de internet, existían solamente las páginas &lt;strong&gt;HTML&lt;/strong&gt; estáticas. Los servidores eran más simples y tenían menos superficie de ataque, aunque mantener las páginas web era un auténtica pesadilla; para eso se han creado los generadores web estáticos …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Antes de la masiva invasión de &lt;strong&gt;PHP&lt;/strong&gt; y &lt;strong&gt;mysql&lt;/strong&gt; en todos los proveedores de internet, existían solamente las páginas &lt;strong&gt;HTML&lt;/strong&gt; estáticas. Los servidores eran más simples y tenían menos superficie de ataque, aunque mantener las páginas web era un auténtica pesadilla; para eso se han creado los generadores web estáticos.&lt;/p&gt;
 &lt;p&gt;Cuando solicitamos una página web a un servidor dinámico, existe un código fuente que se suele encargar de conseguir los datos de una base de datos y mezclarlos con un tema para generar la página, todo en tiempo de &lt;em&gt;runtime&lt;/em&gt;. Este modelo es relativamente lento y exige la existencia de una base de datos y de un procesado en el servidor, aunque suele ofrecer una bonita interfaz para añadir contenido &lt;em&gt;online&lt;/em&gt; desde casi cualquier sitio.&lt;/p&gt;
 &lt;p&gt;Este modelo es muy adecuado para páginas y &lt;strong&gt;APIs&lt;/strong&gt; con un contenido rápidamente cambiante, pero para una página tipo &lt;em&gt;blog&lt;/em&gt; es poco eficiente. Si tenemos en cuenta que un &lt;em&gt;blog&lt;/em&gt; se actualiza relativamente poco, pero se lee teóricamente mucho, entonces necesitamos reducir el tiempo de &lt;em&gt;renderizado&lt;/em&gt; de la página, incluso suprimiéndolo.&lt;/p&gt;
 &lt;p&gt;Sin embargo, a alguien se le ocurrió una idea nueva: ¿que pasaría si cuando un editor cambia su contenido, generara &lt;strong&gt;TODAS&lt;/strong&gt; las páginas posibles y el servidor se limitara a servir esos ficheros previamente generados?&lt;/p&gt;
@@ -144,7 +144,7 @@ gerard@aldebaran:~$
 gerard@aldebaran:~$ cp hugo_0.18.1_linux_amd64/hugo_0.18.1_linux_amd64 ~/bin/hugo
 gerard@aldebaran:~$ chmod a+x bin/hugo 
 gerard@aldebaran:~$ hugo version
-Hugo Static Site Generator v0.18.1 BuildDate: 2017-02-14T13:43:15+01:00
+Hugo Static Site Generator v0.18.1 BuildDate: &lt;span class="m"&gt;2017&lt;/span&gt;-02-14T13:43:15+01:00
 gerard@aldebaran:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -156,12 +156,12 @@ Congratulations! Your new Hugo site is created in /home/gerard/workspace/site1.
 
 Just a few more steps and you&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;re ready to go:
 
-1. Download a theme into the same-named folder.
+&lt;span class="m"&gt;1&lt;/span&gt;. Download a theme into the same-named folder.
    Choose a theme from https://themes.gohugo.io/, or
    create your own with the &lt;span class="s2"&gt;&amp;quot;hugo new theme &amp;lt;THEMENAME&amp;gt;&amp;quot;&lt;/span&gt; command.
-2. Perhaps you want to add some content. You can add single files
+&lt;span class="m"&gt;2&lt;/span&gt;. Perhaps you want to add some content. You can add single files
    with &lt;span class="s2"&gt;&amp;quot;hugo new &amp;lt;SECTIONNAME&amp;gt;/&amp;lt;FILENAME&amp;gt;.&amp;lt;FORMAT&amp;gt;&amp;quot;&lt;/span&gt;.
-3. Start the built-in live server via &lt;span class="s2"&gt;&amp;quot;hugo server&amp;quot;&lt;/span&gt;.
+&lt;span class="m"&gt;3&lt;/span&gt;. Start the built-in live server via &lt;span class="s2"&gt;&amp;quot;hugo server&amp;quot;&lt;/span&gt;.
 
 Visit https://gohugo.io/ &lt;span class="k"&gt;for&lt;/span&gt; quickstart guide and full documentation.
 gerard@aldebaran:~/workspace$ 
@@ -176,12 +176,12 @@ Congratulations! Your new Hugo site is created in /home/gerard/workspace/site2.
 
 Just a few more steps and you&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;re ready to go:
 
-1. Download a theme into the same-named folder.
+&lt;span class="m"&gt;1&lt;/span&gt;. Download a theme into the same-named folder.
    Choose a theme from https://themes.gohugo.io/, or
    create your own with the &lt;span class="s2"&gt;&amp;quot;hugo new theme &amp;lt;THEMENAME&amp;gt;&amp;quot;&lt;/span&gt; command.
-2. Perhaps you want to add some content. You can add single files
+&lt;span class="m"&gt;2&lt;/span&gt;. Perhaps you want to add some content. You can add single files
    with &lt;span class="s2"&gt;&amp;quot;hugo new &amp;lt;SECTIONNAME&amp;gt;/&amp;lt;FILENAME&amp;gt;.&amp;lt;FORMAT&amp;gt;&amp;quot;&lt;/span&gt;.
-3. Start the built-in live server via &lt;span class="s2"&gt;&amp;quot;hugo server&amp;quot;&lt;/span&gt;.
+&lt;span class="m"&gt;3&lt;/span&gt;. Start the built-in live server via &lt;span class="s2"&gt;&amp;quot;hugo server&amp;quot;&lt;/span&gt;.
 
 Visit https://gohugo.io/ &lt;span class="k"&gt;for&lt;/span&gt; quickstart guide and full documentation.
 gerard@aldebaran:~/workspace/site2$ &lt;span class="nb"&gt;cd&lt;/span&gt; ..
@@ -208,10 +208,10 @@ gerard@aldebaran:~/workspace/site1$
 &lt;p&gt;Ahora necesitamos un tema para &lt;em&gt;renderizar&lt;/em&gt; nuestra web. Podemos crear un tema propio siguiendo la documentación, si así lo deseamos; para no extendernos, voy a utilizar uno que ya existe y que podemos encontrar en el sitio de &lt;a href="http://themes.gohugo.io/"&gt;temas de Hugo&lt;/a&gt;. Por defecto no viene ningún tema, así que las páginas saldrían en blanco.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/site1$ &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; themes&lt;span class="p"&gt;;&lt;/span&gt; git clone https://github.com/comfusion/after-dark&lt;span class="o"&gt;)&lt;/span&gt;
 Cloning into &lt;span class="s1"&gt;&amp;#39;after-dark&amp;#39;&lt;/span&gt;...
-remote: Counting objects: 542, &lt;span class="k"&gt;done&lt;/span&gt;.
-remote: Total &lt;span class="m"&gt;542&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;, reused &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta 0&lt;span class="o"&gt;)&lt;/span&gt;, pack-reused 542
-Receiving objects: 100% &lt;span class="o"&gt;(&lt;/span&gt;542/542&lt;span class="o"&gt;)&lt;/span&gt;, 6.26 MiB &lt;span class="p"&gt;|&lt;/span&gt; 941.00 KiB/s, &lt;span class="k"&gt;done&lt;/span&gt;.
-Resolving deltas: 100% &lt;span class="o"&gt;(&lt;/span&gt;296/296&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="k"&gt;done&lt;/span&gt;.
+remote: Counting objects: &lt;span class="m"&gt;542&lt;/span&gt;, &lt;span class="k"&gt;done&lt;/span&gt;.
+remote: Total &lt;span class="m"&gt;542&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta &lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;, reused &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;delta &lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;, pack-reused &lt;span class="m"&gt;542&lt;/span&gt;
+Receiving objects: &lt;span class="m"&gt;100&lt;/span&gt;% &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;542&lt;/span&gt;/542&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="m"&gt;6&lt;/span&gt;.26 MiB &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;941&lt;/span&gt;.00 KiB/s, &lt;span class="k"&gt;done&lt;/span&gt;.
+Resolving deltas: &lt;span class="m"&gt;100&lt;/span&gt;% &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;296&lt;/span&gt;/296&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="k"&gt;done&lt;/span&gt;.
 Checking connectivity... &lt;span class="k"&gt;done&lt;/span&gt;.
 gerard@aldebaran:~/workspace/site1$ 
 &lt;/pre&gt;&lt;/div&gt;
@@ -259,7 +259,7 @@ Built site &lt;span class="k"&gt;for&lt;/span&gt; language en:
 total in &lt;span class="m"&gt;14&lt;/span&gt; ms
 Watching &lt;span class="k"&gt;for&lt;/span&gt; changes in /home/gerard/workspace/site1/&lt;span class="o"&gt;{&lt;/span&gt;data,content,layouts,static,themes&lt;span class="o"&gt;}&lt;/span&gt;
 Serving pages from memory
-Web Server is available at http://localhost:1313/ &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;bind&lt;/span&gt; address 127.0.0.1&lt;span class="o"&gt;)&lt;/span&gt;
+Web Server is available at http://localhost:1313/ &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;bind&lt;/span&gt; address &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1&lt;span class="o"&gt;)&lt;/span&gt;
 Press Ctrl+C to stop
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -289,7 +289,7 @@ Lorem markdownum amoris illis, spicea, daedalus intonsum procul certo dubioque, 
 
     swappableEbookHard.metaSkinNybble&lt;span class="o"&gt;(&lt;/span&gt;simmApple&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
     &lt;span class="nv"&gt;desktopWebMouse&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; page&lt;span class="o"&gt;(&lt;/span&gt;analog_rt_regular, eSession, menu_oem&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    var &lt;span class="nv"&gt;prompt&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; dns_megabit&lt;span class="o"&gt;(&lt;/span&gt;softShell&lt;span class="o"&gt;(&lt;/span&gt;duplexMediaYoutube, netiquette, fontBrouterPng&lt;span class="o"&gt;)&lt;/span&gt;, 2&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    var &lt;span class="nv"&gt;prompt&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; dns_megabit&lt;span class="o"&gt;(&lt;/span&gt;softShell&lt;span class="o"&gt;(&lt;/span&gt;duplexMediaYoutube, netiquette, fontBrouterPng&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 
 &lt;span class="c1"&gt;## Imagine sub nomine occursu&lt;/span&gt;
 
@@ -311,7 +311,7 @@ Sine in robora aureus ignavis bella vaga super multa saepe atque tot **scelerati
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace/site1$ hugo server
 ...
 Change detected, rebuilding site
-2017-02-14 15:56 +0100
+&lt;span class="m"&gt;2017&lt;/span&gt;-02-14 &lt;span class="m"&gt;15&lt;/span&gt;:56 +0100
 Source changed /home/gerard/workspace/site1/content/post/lorem-ipsum.md
 Built site &lt;span class="k"&gt;for&lt;/span&gt; language en:
 &lt;span class="m"&gt;0&lt;/span&gt; draft content
@@ -348,7 +348,7 @@ gerard@aldebaran:~/workspace/site1$
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y esto nos deja los ficheros en la carpeta &lt;code&gt;public/&lt;/code&gt; para que los publiquemos según nuestro método de despliegue favorito, sea &lt;strong&gt;FTP&lt;/strong&gt;, &lt;strong&gt;rsync&lt;/strong&gt;, o cualquier otro método. Encuentro especialmente interesante el &lt;a href="https://gohugo.io/tutorials/github-pages-blog/"&gt;uso de GitHub&lt;/a&gt; para alojar la web.&lt;/p&gt;</summary><category term="html"></category><category term="generador estático"></category><category term="hugo"></category></entry><entry><title>Sincronizando ficheros con ownCloud</title><link href="http://www.linuxsysadmin.tk/2017/02/sincronizando-ficheros-con-owncloud.html" rel="alternate"></link><published>2017-02-20T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-02-20:2017/02/sincronizando-ficheros-con-owncloud.html</id><summary type="html">&lt;p&gt;Finalmente ha sucedido: el ingeniero de seguridad de la empresa ha decidido cerrar servicios de sincronizado de ficheros, dejando inútiles servicios como &lt;strong&gt;Dropbox&lt;/strong&gt;, &lt;strong&gt;Mega&lt;/strong&gt; y otros. Sin embargo, cualquier bloqueo que se haga mediante el dominio hace que sea imposible cerrar todos estos servicios, e incluso podemos poner el nuestro.&lt;/p&gt;
+&lt;p&gt;Y esto nos deja los ficheros en la carpeta &lt;code&gt;public/&lt;/code&gt; para que los publiquemos según nuestro método de despliegue favorito, sea &lt;strong&gt;FTP&lt;/strong&gt;, &lt;strong&gt;rsync&lt;/strong&gt;, o cualquier otro método. Encuentro especialmente interesante el &lt;a href="https://gohugo.io/tutorials/github-pages-blog/"&gt;uso de GitHub&lt;/a&gt; para alojar la web.&lt;/p&gt;</content><category term="html"></category><category term="generador estático"></category><category term="hugo"></category></entry><entry><title>Sincronizando ficheros con ownCloud</title><link href="http://www.linuxsysadmin.tk/2017/02/sincronizando-ficheros-con-owncloud.html" rel="alternate"></link><published>2017-02-20T10:00:00+01:00</published><updated>2017-02-20T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-02-20:/2017/02/sincronizando-ficheros-con-owncloud.html</id><summary type="html">&lt;p&gt;Finalmente ha sucedido: el ingeniero de seguridad de la empresa ha decidido cerrar servicios de sincronizado de ficheros, dejando inútiles servicios como &lt;strong&gt;Dropbox&lt;/strong&gt;, &lt;strong&gt;Mega&lt;/strong&gt; y otros. Sin embargo, cualquier bloqueo que se haga mediante el dominio hace que sea imposible cerrar todos estos servicios, e incluso podemos poner el nuestro …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Finalmente ha sucedido: el ingeniero de seguridad de la empresa ha decidido cerrar servicios de sincronizado de ficheros, dejando inútiles servicios como &lt;strong&gt;Dropbox&lt;/strong&gt;, &lt;strong&gt;Mega&lt;/strong&gt; y otros. Sin embargo, cualquier bloqueo que se haga mediante el dominio hace que sea imposible cerrar todos estos servicios, e incluso podemos poner el nuestro.&lt;/p&gt;
 &lt;p&gt;La forma mas simple de tener un servicio privado es utilizar algo que ya esté hecho, y en esta categoría tenemos un contendiente ganador: &lt;a href="https://owncloud.org/"&gt;ownCloud&lt;/a&gt;. Solo sería necesario alojarlo en algún lugar desde donde todos nuestros dispositivos tengan acceso.&lt;/p&gt;
 &lt;p&gt;Vamos a tirar de &lt;strong&gt;Docker&lt;/strong&gt; y de &lt;strong&gt;DockerHub&lt;/strong&gt;, concretamente de la imagen oficial, que podemos encontrar &lt;a href="https://hub.docker.com/_/owncloud/"&gt;aquí&lt;/a&gt;. Como necesitamos una base de datos, vamos a utilizar &lt;strong&gt;docker-compose&lt;/strong&gt; para levantar fácilmente ambas, usando también la imagen oficial de &lt;strong&gt;MariaDB&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Así nos queda el &lt;em&gt;docker-compose.yml&lt;/em&gt;:&lt;/p&gt;
@@ -382,7 +382,7 @@ gerard@sirius:~/docker/owncloud$
 
 
 &lt;p&gt;Y solamente nos queda acceder al puerto expuesto, desde un navegador cualquiera, usando la URL que corresponda. En mi caso, accedo desde la máquina local, que es donde he levantado ambos contenedores; simplemente usamos &lt;a href="http://localhost/"&gt;http://localhost/&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Owncloud setup" src="http://www.linuxsysadmin.tk/images/owncloud_setup.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Owncloud setup" src="http://www.linuxsysadmin.tk/images/owncloud_setup.jpg"&gt;&lt;/p&gt;
 &lt;p&gt;Vemos que la primera vez que accedemos nos pide configurar algunas cosas. Rellenamos los campos con los valores mas apropiados, con un usuario de administrador y su contraseña, y los datos de conexión de la base de datos, con cuidado de elegir &lt;strong&gt;mysql&lt;/strong&gt;. Usad los valores del &lt;em&gt;docker-compose.yml&lt;/em&gt;.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Database user&lt;/strong&gt;: root&lt;/li&gt;
@@ -391,8 +391,8 @@ gerard@sirius:~/docker/owncloud$
 &lt;li&gt;&lt;strong&gt;Database host&lt;/strong&gt;: mysql (el &lt;em&gt;container_name&lt;/em&gt;)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Si le damos a "Finalizar", no hay mas pasos a seguir; finalmente ya lo tenemos funcional.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Owncloud setup" src="http://www.linuxsysadmin.tk/images/owncloud_panel.jpg" /&gt;&lt;/p&gt;
-&lt;p&gt;Ahora podemos descargarnos cualquier cliente para sincronizar nuestros datos desde cualquier dispositivo, sea para escritorio, &lt;em&gt;android&lt;/em&gt; o &lt;em&gt;iphone&lt;/em&gt;. Solamente necesitamos la precaución de crear usuarios para garantizar la privacidad entre todos ellos.&lt;/p&gt;</summary><category term="owncloud"></category><category term="docker"></category><category term="docker-compose"></category></entry><entry><title>Un editor Markdown en javascript</title><link href="http://www.linuxsysadmin.tk/2017/01/un-editor-markdown-en-javascript.html" rel="alternate"></link><published>2017-01-02T12:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-01-02:2017/01/un-editor-markdown-en-javascript.html</id><summary type="html">&lt;p&gt;Cuando utilizas el lenguaje &lt;strong&gt;markdown&lt;/strong&gt; de forma casi diaria, es muy probable que tengas editores dedicados para tal tarea. Sin embargo, es muy probable que la idea a escribir nos venga mientras estamos utilizando un ordenador distinto del habitual, en el que es posible que no tengamos nuestro editor favorito.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Owncloud setup" src="http://www.linuxsysadmin.tk/images/owncloud_panel.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;Ahora podemos descargarnos cualquier cliente para sincronizar nuestros datos desde cualquier dispositivo, sea para escritorio, &lt;em&gt;android&lt;/em&gt; o &lt;em&gt;iphone&lt;/em&gt;. Solamente necesitamos la precaución de crear usuarios para garantizar la privacidad entre todos ellos.&lt;/p&gt;</content><category term="owncloud"></category><category term="docker"></category><category term="docker-compose"></category></entry><entry><title>Un editor Markdown en javascript</title><link href="http://www.linuxsysadmin.tk/2017/01/un-editor-markdown-en-javascript.html" rel="alternate"></link><published>2017-01-02T12:00:00+01:00</published><updated>2017-01-02T12:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-01-02:/2017/01/un-editor-markdown-en-javascript.html</id><summary type="html">&lt;p&gt;Cuando utilizas el lenguaje &lt;strong&gt;markdown&lt;/strong&gt; de forma casi diaria, es muy probable que tengas editores dedicados para tal tarea. Sin embargo, es muy probable que la idea a escribir nos venga mientras estamos utilizando un ordenador distinto del habitual, en el que es posible que no tengamos nuestro editor favorito …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando utilizas el lenguaje &lt;strong&gt;markdown&lt;/strong&gt; de forma casi diaria, es muy probable que tengas editores dedicados para tal tarea. Sin embargo, es muy probable que la idea a escribir nos venga mientras estamos utilizando un ordenador distinto del habitual, en el que es posible que no tengamos nuestro editor favorito.&lt;/p&gt;
 &lt;p&gt;Aunque la sintaxis de &lt;strong&gt;markdown&lt;/strong&gt; es tan simple que no se necesita un editor particular, podemos salir del paso con un editor web, de los que existen cientos. Luego podemos transferirnos el resultado usando un servicio en la nube o directamente enviándolo por &lt;em&gt;email&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Si queremos crear un formulario para integrar en una aplicación web, podemos utilizar un complemento &lt;em&gt;javascript&lt;/em&gt; que nos va a convertir un &lt;em&gt;textarea&lt;/em&gt; de HTML en un editor magnífico. Este editor se llama &lt;a href="https://simplemde.com/"&gt;SimpleMDE&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;La misma página web oficial incluye una demostración que nos da una idea de como se vería nuestro editor. Para simplificar este ejemplo, pongo un código HTML mínimo con el esqueleto de la página, con algunos complementos auxiliares activados, así como de la &lt;em&gt;feature&lt;/em&gt; de iluminación de sintaxis.&lt;/p&gt;
@@ -430,7 +430,7 @@ gerard@sirius:~/docker/owncloud$
 
 &lt;p&gt;Por supuesto, los archivos &lt;em&gt;.css&lt;/em&gt; y los &lt;em&gt;.js&lt;/em&gt; se pueden servir localmente, previa descarga, si la situación lo hiciera necesario o recomendable.&lt;/p&gt;
 &lt;p&gt;Os pongo una imagen para ver como queda; posiblemente acabe integrado en un proyecto futuro.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Editor SimpleMDE" src="http://www.linuxsysadmin.tk/images/editor_simpleMDE.jpg" /&gt;&lt;/p&gt;</summary><category term="editor"></category><category term="markdown"></category><category term="javascript"></category></entry><entry><title>Varios blogs de Ghost en el mismo servidor con Docker y Nginx</title><link href="http://www.linuxsysadmin.tk/2016/12/varios-blogs-de-ghost-en-el-mismo-servidor-con-docker-y-nginx.html" rel="alternate"></link><published>2016-12-26T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-12-26:2016/12/varios-blogs-de-ghost-en-el-mismo-servidor-con-docker-y-nginx.html</id><summary type="html">&lt;p&gt;Como ya vimos en &lt;a href="http://www.linuxsysadmin.tk/2016/11/ghost-un-motor-para-hacer-blogs.html"&gt;un artículo anterior&lt;/a&gt; cada instancia de &lt;strong&gt;Ghost&lt;/strong&gt; necesita una combinación de dirección y puerto distinta. Esto supone un problema porque la pesadez de indicar el puerto en el navegador. Podemos poner un único servidor &lt;strong&gt;Nginx&lt;/strong&gt; que redirija las peticiones de forma transparente según el dominio pedido.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Editor SimpleMDE" src="http://www.linuxsysadmin.tk/images/editor_simpleMDE.jpg"&gt;&lt;/p&gt;</content><category term="editor"></category><category term="markdown"></category><category term="javascript"></category></entry><entry><title>Varios blogs de Ghost en el mismo servidor con Docker y Nginx</title><link href="http://www.linuxsysadmin.tk/2016/12/varios-blogs-de-ghost-en-el-mismo-servidor-con-docker-y-nginx.html" rel="alternate"></link><published>2016-12-26T10:00:00+01:00</published><updated>2016-12-26T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-12-26:/2016/12/varios-blogs-de-ghost-en-el-mismo-servidor-con-docker-y-nginx.html</id><summary type="html">&lt;p&gt;Como ya vimos en &lt;a href="http://www.linuxsysadmin.tk/2016/11/ghost-un-motor-para-hacer-blogs.html"&gt;un artículo anterior&lt;/a&gt; cada instancia de &lt;strong&gt;Ghost&lt;/strong&gt; necesita una combinación de dirección y puerto distinta. Esto supone un problema porque la pesadez de indicar el puerto en el navegador. Podemos poner un único servidor &lt;strong&gt;Nginx&lt;/strong&gt; que redirija las peticiones de forma transparente según el dominio pedido …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Como ya vimos en &lt;a href="http://www.linuxsysadmin.tk/2016/11/ghost-un-motor-para-hacer-blogs.html"&gt;un artículo anterior&lt;/a&gt; cada instancia de &lt;strong&gt;Ghost&lt;/strong&gt; necesita una combinación de dirección y puerto distinta. Esto supone un problema porque la pesadez de indicar el puerto en el navegador. Podemos poner un único servidor &lt;strong&gt;Nginx&lt;/strong&gt; que redirija las peticiones de forma transparente según el dominio pedido.&lt;/p&gt;
 &lt;p&gt;Ya vimos la facilidad de levantar un contenedor con un &lt;em&gt;blog&lt;/em&gt; de &lt;strong&gt;Ghost&lt;/strong&gt;. De hecho, podemos levantar tantos como queramos, porque &lt;strong&gt;Docker&lt;/strong&gt; provee a cada uno de su propia dirección IP. Sin embargo, la red de contenedores &lt;strong&gt;Docker&lt;/strong&gt; es privada y no es visible para el resto del mundo.&lt;/p&gt;
 &lt;p&gt;Podemos solventar este problema exponiendo los puertos en la máquina huésped. Sin embargo, el hecho de que cada usuario tenga que indicar el puerto en la URL no es bonito. Así pues, vamos a esconder todos los contenedores sin exponer sus puertos. La única parte expuesta va a ser un contenedor &lt;strong&gt;Nginx&lt;/strong&gt; representante de todo el sistema (esto es lo que se llama un &lt;em&gt;proxy&lt;/em&gt; reverso), en el puerto 80. Este servicio va a recibir todas las peticiones a nuestro servidor, y las va a dirigir al contenedor que le corresponda de acuerdo con el dominio pedido.&lt;/p&gt;
 &lt;p&gt;Vamos a simplificarnos el proceso usando &lt;strong&gt;docker-compose&lt;/strong&gt; para declarar el entorno y levantarlo de un solo comando. Es especialmente importante que las imágenes no se repitan, porque implicaría reconstruirlas cada vez. En vez de eso, vamos a abusar de las configuraciones vía variables de entorno.&lt;/p&gt;
@@ -513,15 +513,15 @@ gerard@sirius:~/docker/multighost$
 
 &lt;p&gt;Solo falta poner la configuración general, el punto de acceso al contenedor y el generador de configuraciones específicas según las variables de entorno.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/multighost$ cat proxy/nginx.conf 
-worker_processes  1&lt;span class="p"&gt;;&lt;/span&gt;
+worker_processes  &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 events &lt;span class="o"&gt;{&lt;/span&gt;
-    worker_connections  1024&lt;span class="p"&gt;;&lt;/span&gt;
+    worker_connections  &lt;span class="m"&gt;1024&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 &lt;span class="o"&gt;}&lt;/span&gt;
 http &lt;span class="o"&gt;{&lt;/span&gt;
     include mime.types&lt;span class="p"&gt;;&lt;/span&gt;
     default_type application/octet-stream&lt;span class="p"&gt;;&lt;/span&gt;
     sendfile on&lt;span class="p"&gt;;&lt;/span&gt;
-    keepalive_timeout 65&lt;span class="p"&gt;;&lt;/span&gt;
+    keepalive_timeout &lt;span class="m"&gt;65&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
     include conf.d/*&lt;span class="p"&gt;;&lt;/span&gt;
 &lt;span class="o"&gt;}&lt;/span&gt;
 gerard@sirius:~/docker/multighost$ cat proxy/generate_configs.sh 
@@ -574,14 +574,14 @@ services:
   ghost1:
     build: ghost_blog
     expose:
-      - 2368
+      - &lt;span class="m"&gt;2368&lt;/span&gt;
     environment:
       - &lt;span class="nv"&gt;NODE_ENV&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;production
       - &lt;span class="nv"&gt;GHOST_URL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;http://ghost1.my
   ghost2:
     build: ghost_blog
     expose:
-      - 2368
+      - &lt;span class="m"&gt;2368&lt;/span&gt;
     environment:
       - &lt;span class="nv"&gt;NODE_ENV&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;production
       - &lt;span class="nv"&gt;GHOST_URL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;http://ghost2.my
@@ -616,10 +616,10 @@ Step &lt;span class="m"&gt;2&lt;/span&gt; : RUN apk add --no-cache nginx &lt;spa
  ---&amp;gt; Running in aa6bdbca5088
 fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/main/x86_64/APKINDEX.tar.gz
 fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/community/x86_64/APKINDEX.tar.gz
-&lt;span class="o"&gt;(&lt;/span&gt;1/3&lt;span class="o"&gt;)&lt;/span&gt; Installing nginx-common &lt;span class="o"&gt;(&lt;/span&gt;1.10.1-r1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;/3&lt;span class="o"&gt;)&lt;/span&gt; Installing nginx-common &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.10.1-r1&lt;span class="o"&gt;)&lt;/span&gt;
 Executing nginx-common-1.10.1-r1.pre-install
-&lt;span class="o"&gt;(&lt;/span&gt;2/3&lt;span class="o"&gt;)&lt;/span&gt; Installing pcre &lt;span class="o"&gt;(&lt;/span&gt;8.38-r1&lt;span class="o"&gt;)&lt;/span&gt;
-&lt;span class="o"&gt;(&lt;/span&gt;3/3&lt;span class="o"&gt;)&lt;/span&gt; Installing nginx &lt;span class="o"&gt;(&lt;/span&gt;1.10.1-r1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;/3&lt;span class="o"&gt;)&lt;/span&gt; Installing pcre &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;8&lt;/span&gt;.38-r1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;/3&lt;span class="o"&gt;)&lt;/span&gt; Installing nginx &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.10.1-r1&lt;span class="o"&gt;)&lt;/span&gt;
 Executing busybox-1.24.2-r11.trigger
 OK: &lt;span class="m"&gt;6&lt;/span&gt; MiB in &lt;span class="m"&gt;14&lt;/span&gt; packages
  ---&amp;gt; 6cb42f2e3eb3
@@ -644,9 +644,9 @@ gerard@sirius:~/docker/multighost$
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/multighost$ docker-compose ps
        Name                   Command            State         Ports        
 ---------------------------------------------------------------------------
-multighost_ghost1_1   /entrypoint.sh npm start   Up      2368/tcp           
-multighost_ghost2_1   /entrypoint.sh npm start   Up      2368/tcp           
-multighost_proxy_1    /entrypoint.sh             Up      0.0.0.0:80-&amp;gt;80/tcp 
+multighost_ghost1_1   /entrypoint.sh npm start   Up      &lt;span class="m"&gt;2368&lt;/span&gt;/tcp           
+multighost_ghost2_1   /entrypoint.sh npm start   Up      &lt;span class="m"&gt;2368&lt;/span&gt;/tcp           
+multighost_proxy_1    /entrypoint.sh             Up      &lt;span class="m"&gt;0&lt;/span&gt;.0.0.0:80-&amp;gt;80/tcp 
 gerard@sirius:~/docker/multighost$ 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -659,7 +659,7 @@ gerard@sirius:~/docker/multighost$
 &lt;li&gt;Se podría levantar una base de datos &lt;strong&gt;mysql&lt;/strong&gt; (u otra) en el fichero &lt;em&gt;docker-compose.yml&lt;/em&gt;. El resto de instancias de &lt;strong&gt;Ghost&lt;/strong&gt; podrían conectarse a esta base de datos, pasando los parámetros de conexión como variables de entorno, con lo que habría que modificar el &lt;em&gt;config.js&lt;/em&gt;.&lt;/li&gt;
 &lt;li&gt;Otra posibilidad sería la de aprovecharnos de la capacidad de &lt;em&gt;escalar&lt;/em&gt; el número de contenedores. Modificando la variable de entorno &lt;em&gt;DOMAINS&lt;/em&gt; del &lt;em&gt;proxy&lt;/em&gt; y el &lt;em&gt;script&lt;/em&gt; generador de configuraciones &lt;em&gt;generate_configs.sh&lt;/em&gt;, se podría balancear cada dominio entre varios contenedores. Esto tendría sentido siempre y cuando la base de datos no sea &lt;strong&gt;sqlite&lt;/strong&gt;.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;La lista de mejoras podría crecer indefinidamente, pero por brevedad lo vamos a dejar como ejercicio para el lector.&lt;/p&gt;</summary><category term="ghost"></category><category term="blog"></category><category term="virtual hosts"></category></entry><entry><title>Documentación fácil con markdown y strapdown.js</title><link href="http://www.linuxsysadmin.tk/2016/12/documentacion-facil-con-markdown-y-strapdownjs.html" rel="alternate"></link><published>2016-12-12T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-12-12:2016/12/documentacion-facil-con-markdown-y-strapdownjs.html</id><summary type="html">&lt;p&gt;Últimamente estoy harto de realizar documentación en formato &lt;em&gt;word&lt;/em&gt;; pierdo la mayoría de mi tiempo dando formato, colores y maquetando el poco contenido que alcanzo a poner. Tras mucho meditar y, a partir de ahora, la voy a escribir en &lt;strong&gt;markdown&lt;/strong&gt;, y se lea en &lt;strong&gt;HTML&lt;/strong&gt;, como lenguaje mas usado.&lt;/p&gt;
+&lt;p&gt;La lista de mejoras podría crecer indefinidamente, pero por brevedad lo vamos a dejar como ejercicio para el lector.&lt;/p&gt;</content><category term="ghost"></category><category term="blog"></category><category term="virtual hosts"></category></entry><entry><title>Documentación fácil con markdown y strapdown.js</title><link href="http://www.linuxsysadmin.tk/2016/12/documentacion-facil-con-markdown-y-strapdownjs.html" rel="alternate"></link><published>2016-12-12T08:00:00+01:00</published><updated>2016-12-12T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-12-12:/2016/12/documentacion-facil-con-markdown-y-strapdownjs.html</id><summary type="html">&lt;p&gt;Últimamente estoy harto de realizar documentación en formato &lt;em&gt;word&lt;/em&gt;; pierdo la mayoría de mi tiempo dando formato, colores y maquetando el poco contenido que alcanzo a poner. Tras mucho meditar y, a partir de ahora, la voy a escribir en &lt;strong&gt;markdown&lt;/strong&gt;, y se lea en &lt;strong&gt;HTML&lt;/strong&gt;, como lenguaje mas usado …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Últimamente estoy harto de realizar documentación en formato &lt;em&gt;word&lt;/em&gt;; pierdo la mayoría de mi tiempo dando formato, colores y maquetando el poco contenido que alcanzo a poner. Tras mucho meditar y, a partir de ahora, la voy a escribir en &lt;strong&gt;markdown&lt;/strong&gt;, y se lea en &lt;strong&gt;HTML&lt;/strong&gt;, como lenguaje mas usado.&lt;/p&gt;
 &lt;p&gt;Revisando por la web, he encontrado una librería magnífica que se llama &lt;a href="http://strapdownjs.com/"&gt;strapdown.js&lt;/a&gt;, que combina la elegancia de &lt;strong&gt;bootstrap&lt;/strong&gt; con un compilador &lt;strong&gt;markdown&lt;/strong&gt; de lado cliente. De esta forma, ni siquiera necesito hacer el paso previo de convertir mis ficheros &lt;strong&gt;markdown&lt;/strong&gt; a &lt;strong&gt;HTML&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Como plus extra, como el fichero se interpreta en el navegador, no necesito nada muy caprichoso en el servidor para servir las páginas; con un &lt;strong&gt;nginx&lt;/strong&gt; nos basta. Incluso podemos sacar partido de las &lt;a href="https://pages.github.com/"&gt;GitHub Pages&lt;/a&gt;, para tener &lt;em&gt;hosting&lt;/em&gt; gratuito.&lt;/p&gt;
 &lt;p&gt;Las páginas son ficheros &lt;em&gt;.html&lt;/em&gt; estándares, con la única diferencia de que todo lo que vaya en el &lt;em&gt;tag xmp&lt;/em&gt; será interpretado como &lt;strong&gt;markdown&lt;/strong&gt;. Ahí pongo el esqueleto básico de una página.&lt;/p&gt;
@@ -730,14 +730,14 @@ Navigation:
 
 &lt;p&gt;Y no hay que hacer nada más. Solo hay que servir el contenido de esta carpeta. Podemos montar un servidor web o podemos sincronizarla a otro servidor que tengamos. Como no me quiero entretener con esto, y dado que no tiene nada que ver, me voy a limitar a levantar el servidor estándar que viene con &lt;strong&gt;python&lt;/strong&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/www$ python -m SimpleHTTPServer
-Serving HTTP on 0.0.0.0 port &lt;span class="m"&gt;8000&lt;/span&gt; ...
+Serving HTTP on &lt;span class="m"&gt;0&lt;/span&gt;.0.0.0 port &lt;span class="m"&gt;8000&lt;/span&gt; ...
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y con esto solo nos queda verificar el resultado en &lt;a href="http://localhost:8000/"&gt;http://localhost:8000/&lt;/a&gt;. Si miráis el código fuente de la página, veréis que se ve el lenguaje de marcado tal cual; incluso puede que veáis la página antes de su &lt;em&gt;renderizado&lt;/em&gt;, mientras se carga la librería &lt;strong&gt;javascript&lt;/strong&gt;. Al menos, habré cumplido con mi objetivo, que era el de escribir contenido sin perder tiempo en la maquetación.&lt;/p&gt;</summary><category term="html"></category><category term="markdown"></category><category term="strapdownjs"></category></entry><entry><title>Creando un tema para Ghost</title><link href="http://www.linuxsysadmin.tk/2016/12/creando-un-tema-para-ghost.html" rel="alternate"></link><published>2016-12-05T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-12-05:2016/12/creando-un-tema-para-ghost.html</id><summary type="html">&lt;p&gt;Ya vimos lo fácil que resulta de empezar un &lt;em&gt;blog&lt;/em&gt; con &lt;strong&gt;Ghost&lt;/strong&gt;. El tema que viene por defecto es muy simple y bastante legible, pero nos puede interesar cambiarlo, por ejemplo para poner publicidad. Existen temas de pago y gratuitos ya hechos, pero hoy voy a explicar como hacer uno.&lt;/p&gt;
+&lt;p&gt;Y con esto solo nos queda verificar el resultado en &lt;a href="http://localhost:8000/"&gt;http://localhost:8000/&lt;/a&gt;. Si miráis el código fuente de la página, veréis que se ve el lenguaje de marcado tal cual; incluso puede que veáis la página antes de su &lt;em&gt;renderizado&lt;/em&gt;, mientras se carga la librería &lt;strong&gt;javascript&lt;/strong&gt;. Al menos, habré cumplido con mi objetivo, que era el de escribir contenido sin perder tiempo en la maquetación.&lt;/p&gt;</content><category term="html"></category><category term="markdown"></category><category term="strapdownjs"></category></entry><entry><title>Creando un tema para Ghost</title><link href="http://www.linuxsysadmin.tk/2016/12/creando-un-tema-para-ghost.html" rel="alternate"></link><published>2016-12-05T08:00:00+01:00</published><updated>2016-12-05T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-12-05:/2016/12/creando-un-tema-para-ghost.html</id><summary type="html">&lt;p&gt;Ya vimos lo fácil que resulta de empezar un &lt;em&gt;blog&lt;/em&gt; con &lt;strong&gt;Ghost&lt;/strong&gt;. El tema que viene por defecto es muy simple y bastante legible, pero nos puede interesar cambiarlo, por ejemplo para poner publicidad. Existen temas de pago y gratuitos ya hechos, pero hoy voy a explicar como hacer uno …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ya vimos lo fácil que resulta de empezar un &lt;em&gt;blog&lt;/em&gt; con &lt;strong&gt;Ghost&lt;/strong&gt;. El tema que viene por defecto es muy simple y bastante legible, pero nos puede interesar cambiarlo, por ejemplo para poner publicidad. Existen temas de pago y gratuitos ya hechos, pero hoy voy a explicar como hacer uno.&lt;/p&gt;
 &lt;p&gt;Vamos a partir de una instalación limpia de &lt;strong&gt;Ghost&lt;/strong&gt;, pero ejemplo como se indica en &lt;a href="http://www.linuxsysadmin.tk/2016/11/ghost-un-motor-para-hacer-blogs.html"&gt;otro artículo&lt;/a&gt;. Es especialmente importante desarrollar el tema en una instancia que corra en modo &lt;em&gt;development&lt;/em&gt;, así no va a &lt;em&gt;cachear&lt;/em&gt; las plantillas y nos va a ahorrar reiniciar el proceso.&lt;/p&gt;
 &lt;p&gt;Es muy útil mapear la carpeta &lt;em&gt;/usr/lib/ghost/&lt;/em&gt; del contenedor a una carpeta local, si estamos usando &lt;strong&gt;Docker&lt;/strong&gt;. De esta manera podemos editar el tema cómodamente en nuestro sistema de ficheros y con las herramientas con las que más cómodos nos sintamos.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace$ docker run -d -p 2368:2368 -v /home/gerard/workspace/content:/var/lib/ghost ghost
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace$ docker run -d -p &lt;span class="m"&gt;2368&lt;/span&gt;:2368 -v /home/gerard/workspace/content:/var/lib/ghost ghost
 343d065878fb910a9f2b5b51be4a337d2e93db2e66cbff6800c2cb96a758f733
 gerard@aldebaran:~/workspace$ 
 &lt;/pre&gt;&lt;/div&gt;
@@ -778,9 +778,9 @@ gerard@aldebaran:~/workspace$
 &lt;p&gt;Para cargarlo cómodamente desde la interfaz web, lo necesitamos en formato &lt;em&gt;.zip&lt;/em&gt;. De hecho, la carpeta contenedora tampoco nos importa, así que la podemos borrar.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/workspace$ &lt;span class="nb"&gt;cd&lt;/span&gt; minimal_theme/
 gerard@aldebaran:~/workspace/minimal_theme$ zip -r ../minimal_theme.zip *
-  adding: index.hbs &lt;span class="o"&gt;(&lt;/span&gt;stored 0%&lt;span class="o"&gt;)&lt;/span&gt;
-  adding: package.json &lt;span class="o"&gt;(&lt;/span&gt;deflated 10%&lt;span class="o"&gt;)&lt;/span&gt;
-  adding: post.hbs &lt;span class="o"&gt;(&lt;/span&gt;stored 0%&lt;span class="o"&gt;)&lt;/span&gt;
+  adding: index.hbs &lt;span class="o"&gt;(&lt;/span&gt;stored &lt;span class="m"&gt;0&lt;/span&gt;%&lt;span class="o"&gt;)&lt;/span&gt;
+  adding: package.json &lt;span class="o"&gt;(&lt;/span&gt;deflated &lt;span class="m"&gt;10&lt;/span&gt;%&lt;span class="o"&gt;)&lt;/span&gt;
+  adding: post.hbs &lt;span class="o"&gt;(&lt;/span&gt;stored &lt;span class="m"&gt;0&lt;/span&gt;%&lt;span class="o"&gt;)&lt;/span&gt;
 gerard@aldebaran:~/workspace/minimal_theme$ &lt;span class="nb"&gt;cd&lt;/span&gt; ..
 gerard@aldebaran:~/workspace$ rm -R minimal_theme/
 gerard@aldebaran:~/workspace$ 
@@ -792,9 +792,9 @@ gerard@aldebaran:~/workspace$
 Archive:  minimal_theme.zip
   Length      Date    Time    Name
 ---------  ---------- -----   ----
-        &lt;span class="m"&gt;6&lt;/span&gt;  2016-09-23 12:41   index.hbs
-       &lt;span class="m"&gt;52&lt;/span&gt;  2016-09-23 12:41   package.json
-        &lt;span class="m"&gt;5&lt;/span&gt;  2016-09-23 12:41   post.hbs
+        &lt;span class="m"&gt;6&lt;/span&gt;  &lt;span class="m"&gt;2016&lt;/span&gt;-09-23 &lt;span class="m"&gt;12&lt;/span&gt;:41   index.hbs
+       &lt;span class="m"&gt;52&lt;/span&gt;  &lt;span class="m"&gt;2016&lt;/span&gt;-09-23 &lt;span class="m"&gt;12&lt;/span&gt;:41   package.json
+        &lt;span class="m"&gt;5&lt;/span&gt;  &lt;span class="m"&gt;2016&lt;/span&gt;-09-23 &lt;span class="m"&gt;12&lt;/span&gt;:41   post.hbs
 ---------                     -------
        &lt;span class="m"&gt;63&lt;/span&gt;                     &lt;span class="m"&gt;3&lt;/span&gt; files
 gerard@aldebaran:~/workspace$ 
@@ -950,7 +950,7 @@ gerard@aldebaran:~/workspace/content/themes/minimal_theme$
 &lt;p&gt;Como detalle final, solo queda decir que podéis generar mas plantillas, que van a ser cargadas en el orden de preferencia, como se indica en &lt;a href="https://themes.ghost.org/docs/context-overview#section-context-table"&gt;la documentación&lt;/a&gt;. Fijaos en las columnas &lt;em&gt;URL&lt;/em&gt; y &lt;em&gt;Template&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Por ejemplo, la plantilla que se usa para la URL &lt;em&gt;/tag/ghost&lt;/em&gt; sería &lt;em&gt;tag-ghost.hbs&lt;/em&gt;; en caso de no haber dicha plantilla, se utilizaría &lt;em&gt;tag.hbs&lt;/em&gt;; en caso de fallar ambas (como es el caso de este tutorial), se utilizaría &lt;em&gt;index.hbs&lt;/em&gt; (que está porque es una de las requeridas).&lt;/p&gt;
 &lt;p&gt;Ya tenéis todas las herramientas necesarias para escribir y para entender temas de &lt;strong&gt;Ghost&lt;/strong&gt;. Con un poco de esfuerzo y ganas, os puede quedar un tema propio genial.&lt;/p&gt;
-&lt;p&gt;En este punto, me voy a la interfaz de administración, y me descargo mi tema, a modo de &lt;em&gt;backup&lt;/em&gt;. Si os interesa, os lo dejo &lt;a href="http://www.linuxsysadmin.tk/downloads/minimal_theme.zip"&gt;aquí&lt;/a&gt;.&lt;/p&gt;</summary><category term="ghost"></category><category term="blog"></category><category term="tema"></category></entry><entry><title>Ghost: Un motor para hacer blogs</title><link href="http://www.linuxsysadmin.tk/2016/11/ghost-un-motor-para-hacer-blogs.html" rel="alternate"></link><published>2016-11-21T08:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-11-21:2016/11/ghost-un-motor-para-hacer-blogs.html</id><summary type="html">&lt;p&gt;Hace tiempo que me recorre la idea de crear un motor genérico de &lt;em&gt;blogs&lt;/em&gt;. Son varias las veces que he empezado alguno aprovechando los &lt;em&gt;frameworks&lt;/em&gt;, especialmente de &lt;strong&gt;python&lt;/strong&gt;. Todas ellas han acabado en la papelera por falta de ganas. Finalmente me di por vencido y decidí utilizar algo ya hecho.&lt;/p&gt;
+&lt;p&gt;En este punto, me voy a la interfaz de administración, y me descargo mi tema, a modo de &lt;em&gt;backup&lt;/em&gt;. Si os interesa, os lo dejo &lt;a href="http://www.linuxsysadmin.tk/downloads/minimal_theme.zip"&gt;aquí&lt;/a&gt;.&lt;/p&gt;</content><category term="ghost"></category><category term="blog"></category><category term="tema"></category></entry><entry><title>Ghost: Un motor para hacer blogs</title><link href="http://www.linuxsysadmin.tk/2016/11/ghost-un-motor-para-hacer-blogs.html" rel="alternate"></link><published>2016-11-21T08:00:00+01:00</published><updated>2016-11-21T08:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-11-21:/2016/11/ghost-un-motor-para-hacer-blogs.html</id><summary type="html">&lt;p&gt;Hace tiempo que me recorre la idea de crear un motor genérico de &lt;em&gt;blogs&lt;/em&gt;. Son varias las veces que he empezado alguno aprovechando los &lt;em&gt;frameworks&lt;/em&gt;, especialmente de &lt;strong&gt;python&lt;/strong&gt;. Todas ellas han acabado en la papelera por falta de ganas. Finalmente me di por vencido y decidí utilizar algo ya hecho …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hace tiempo que me recorre la idea de crear un motor genérico de &lt;em&gt;blogs&lt;/em&gt;. Son varias las veces que he empezado alguno aprovechando los &lt;em&gt;frameworks&lt;/em&gt;, especialmente de &lt;strong&gt;python&lt;/strong&gt;. Todas ellas han acabado en la papelera por falta de ganas. Finalmente me di por vencido y decidí utilizar algo ya hecho.&lt;/p&gt;
 &lt;p&gt;Prueba de mi pereza es este &lt;em&gt;blog&lt;/em&gt;, que está hecho con &lt;strong&gt;Pelican&lt;/strong&gt;, que es un generador de contenido estático, juntando un tema y un contenido. Como control de versiones usa &lt;strong&gt;git&lt;/strong&gt; y está alojado en &lt;strong&gt;Github Pages&lt;/strong&gt;. Para publicar hace falta crear el contenido, invocar algunos comandos para generar el contenido &lt;strong&gt;HTML&lt;/strong&gt; y levantar un servidor local para ver los cambios. Todo muy &lt;em&gt;techie&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;He seguido buscando para encontrar una solución con base de datos, que se rellene fácilmente mediante un formulario y que pueda utilizar cualquiera. Basta con mirar un poco por internet para ver que las soluciones con miles: desde los omnipresentes &lt;strong&gt;Wordpress&lt;/strong&gt; hasta los todopoderosos &lt;strong&gt;Drupal&lt;/strong&gt; y &lt;strong&gt;Joomla&lt;/strong&gt;, pasando por cosas mas esotéricas.&lt;/p&gt;
 &lt;p&gt;La solución la encontré hace un par de meses; era bonita, simple y tenía material de soporte suficiente, sin ser agobiante. Se trata de &lt;a href="https://ghost.org/"&gt;Ghost&lt;/a&gt;, encontrando su repositorio en &lt;a href="https://github.com/TryGhost/Ghost"&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
@@ -965,7 +965,7 @@ gerard@aldebaran:~/workspace/content/themes/minimal_theme$
 &lt;p&gt;El problema de esta aproximación es que la versión de &lt;strong&gt;Ghost&lt;/strong&gt;, de &lt;strong&gt;NPM&lt;/strong&gt; y de &lt;strong&gt;NodeJS&lt;/strong&gt; son demasiado importantes, exigiendo versiones elevadas que no están en los repositorios oficiales de la mayoría de distribuciones. Lo pude instalar en una &lt;em&gt;Ubuntu 16.04&lt;/em&gt; y, aun así, el binario exigido &lt;em&gt;/usr/bin/node&lt;/em&gt; no se llamaba así, sino que estaba en &lt;em&gt;/usr/bin/nodejs&lt;/em&gt;. Esto se puede solucionar con un simple enlace simbólico, pero busca el error...&lt;/p&gt;
 &lt;p&gt;Lo que realmente me llamó a probarlo es la facilidad adicional de tenerlo funcionando sin problemas, mediante una imágen de &lt;strong&gt;Docker&lt;/strong&gt; prefabricada en &lt;strong&gt;DockerHub&lt;/strong&gt;. De hecho la imagen es oficial, y la podéis encontrar en &lt;a href="https://hub.docker.com/_/ghost/"&gt;https://hub.docker.com/_/ghost/&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Levantamos la imagen con el habitual y recomendado &lt;em&gt;docker run&lt;/em&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@janus:~$ docker run -d -p 2368:2368 ghost
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@janus:~$ docker run -d -p &lt;span class="m"&gt;2368&lt;/span&gt;:2368 ghost
 6a0d4ed51f2b7c04b7b0c54cac44256d12fe7fa999f548314858ea5838faae73
 gerard@janus:~$ 
 &lt;/pre&gt;&lt;/div&gt;
@@ -1012,8 +1012,8 @@ gerard@telesto:~/docker/custom_ghost$
 
 
 &lt;p&gt;Apuntamos nuestro navegador a la URL configurada, y ya tenemos un &lt;em&gt;blog&lt;/em&gt; funcional. Queda para el propietario ir a la sección de administración para añadir contenido, cambiar los temas y lo que haga falta, cómodamente desde la web.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Ghost Blog" src="http://www.linuxsysadmin.tk/images/ghost_blog.jpg" /&gt;&lt;/p&gt;
-&lt;p&gt;La parte "mala" es que cada instancia de &lt;strong&gt;Ghost&lt;/strong&gt; es un proceso propio, que usa su propia dirección y su propio puerto. Si se quiere desplegar varios &lt;em&gt;blogs&lt;/em&gt; en el mismo servidor, podemos usar un &lt;strong&gt;nginx&lt;/strong&gt;, que los diferencie por el dominio solicitado mediante &lt;em&gt;virtualhosts&lt;/em&gt;; luego hacemos un &lt;em&gt;proxy_pass&lt;/em&gt; al puerto de verdad, y ya tenemos el servidor montado. Esto queda como material para otro artículo.&lt;/p&gt;</summary><category term="ghost"></category><category term="blog"></category></entry><entry><title>Un escritorio con Archlinux</title><link href="http://www.linuxsysadmin.tk/2016/07/un-escritorio-con-archlinux.html" rel="alternate"></link><published>2016-07-25T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-07-25:2016/07/un-escritorio-con-archlinux.html</id><summary type="html">&lt;p&gt;En &lt;a href="http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html"&gt;otro articulo&lt;/a&gt; vimos como instalar &lt;strong&gt;Archlinux&lt;/strong&gt;. Como tantas otras distribuciones nos vale para servidor y como distribución de escritorio. Sin embargo, debido a su filosofía como &lt;em&gt;rolling release&lt;/em&gt;, puede asustarnos un poco como servidor; aunque tener un escritorio "a la última" es un caramelo que muy pocos podemos rechazar.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Ghost Blog" src="http://www.linuxsysadmin.tk/images/ghost_blog.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;La parte "mala" es que cada instancia de &lt;strong&gt;Ghost&lt;/strong&gt; es un proceso propio, que usa su propia dirección y su propio puerto. Si se quiere desplegar varios &lt;em&gt;blogs&lt;/em&gt; en el mismo servidor, podemos usar un &lt;strong&gt;nginx&lt;/strong&gt;, que los diferencie por el dominio solicitado mediante &lt;em&gt;virtualhosts&lt;/em&gt;; luego hacemos un &lt;em&gt;proxy_pass&lt;/em&gt; al puerto de verdad, y ya tenemos el servidor montado. Esto queda como material para otro artículo.&lt;/p&gt;</content><category term="ghost"></category><category term="blog"></category></entry><entry><title>Un escritorio con Archlinux</title><link href="http://www.linuxsysadmin.tk/2016/07/un-escritorio-con-archlinux.html" rel="alternate"></link><published>2016-07-25T08:00:00+02:00</published><updated>2016-07-25T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-07-25:/2016/07/un-escritorio-con-archlinux.html</id><summary type="html">&lt;p&gt;En &lt;a href="http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html"&gt;otro articulo&lt;/a&gt; vimos como instalar &lt;strong&gt;Archlinux&lt;/strong&gt;. Como tantas otras distribuciones nos vale para servidor y como distribución de escritorio. Sin embargo, debido a su filosofía como &lt;em&gt;rolling release&lt;/em&gt;, puede asustarnos un poco como servidor; aunque tener un escritorio "a la última" es un caramelo que muy pocos podemos rechazar …&lt;/p&gt;</summary><content type="html">&lt;p&gt;En &lt;a href="http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html"&gt;otro articulo&lt;/a&gt; vimos como instalar &lt;strong&gt;Archlinux&lt;/strong&gt;. Como tantas otras distribuciones nos vale para servidor y como distribución de escritorio. Sin embargo, debido a su filosofía como &lt;em&gt;rolling release&lt;/em&gt;, puede asustarnos un poco como servidor; aunque tener un escritorio "a la última" es un caramelo que muy pocos podemos rechazar.&lt;/p&gt;
 &lt;p&gt;Vamos a instalar un escritorio basado en &lt;strong&gt;XFCE&lt;/strong&gt;, que es bueno, bonito y barato. Me encanta personalmente porque no usa muchos recursos, responde rápido y tiene muchas herramientas de configuración, a diferencia de otros, por ejemplo &lt;strong&gt;LXDE&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Empezaremos instalando la capa gráfica. Esto se consigue mediante el paquete &lt;strong&gt;xorg&lt;/strong&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@archlinux ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# pacman -S xorg&lt;/span&gt;
@@ -1027,19 +1027,19 @@ gerard@telesto:~/docker/custom_ghost$
 resolviendo dependencias…
 :: Existen &lt;span class="m"&gt;4&lt;/span&gt; proveedores disponibles para libgl:
 :: Repositorio extra
-   1&lt;span class="o"&gt;)&lt;/span&gt; mesa-libgl  2&lt;span class="o"&gt;)&lt;/span&gt; nvidia-304xx-libgl  3&lt;span class="o"&gt;)&lt;/span&gt; nvidia-340xx-libgl  4&lt;span class="o"&gt;)&lt;/span&gt; nvidia-libgl
+   &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; mesa-libgl  &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; nvidia-304xx-libgl  &lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; nvidia-340xx-libgl  &lt;span class="m"&gt;4&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; nvidia-libgl
 
-Introduzca un número &lt;span class="o"&gt;(&lt;/span&gt;por omisión&lt;span class="o"&gt;=&lt;/span&gt;1&lt;span class="o"&gt;)&lt;/span&gt;:
+Introduzca un número &lt;span class="o"&gt;(&lt;/span&gt;por omisión&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:
 :: Existen &lt;span class="m"&gt;2&lt;/span&gt; proveedores disponibles para xf86-input-driver:
 :: Repositorio extra
-   1&lt;span class="o"&gt;)&lt;/span&gt; xf86-input-evdev  2&lt;span class="o"&gt;)&lt;/span&gt; xf86-input-libinput
+   &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xf86-input-evdev  &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xf86-input-libinput
 
-Introduzca un número &lt;span class="o"&gt;(&lt;/span&gt;por omisión&lt;span class="o"&gt;=&lt;/span&gt;1&lt;span class="o"&gt;)&lt;/span&gt;:
+Introduzca un número &lt;span class="o"&gt;(&lt;/span&gt;por omisión&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:
 buscando conflictos entre paquetes…
 advertencia: bucle de dependencias detectado:
 advertencia: harfbuzz será instalado antes que su dependencia freetype2
 
-Paquetes &lt;span class="o"&gt;(&lt;/span&gt;62&lt;span class="o"&gt;)&lt;/span&gt; damageproto-1.2.1-3  elfutils-0.166-1  fixesproto-5.0-3  fontconfig-2.12.0-1  fontsproto-2.1.3-1  freetype2-2.6.3-1
+Paquetes &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;62&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; damageproto-1.2.1-3  elfutils-0.166-1  fixesproto-5.0-3  fontconfig-2.12.0-1  fontsproto-2.1.3-1  freetype2-2.6.3-1
               graphite-1:1.3.8-1  harfbuzz-1.2.7-1  inputproto-2.3.2-1  kbproto-1.0.7-1  libdrm-2.4.68-1  libepoxy-1.3.1-1
               libevdev-1.5.2-1  libfontenc-1.1.3-1  libomxil-bellagio-0.9.3-1  libpciaccess-0.13.4-1  libpng-1.6.23-1
               libtxc_dxtn-1.0.1-6  libunwind-1.1-3  libx11-1.6.3-1  libxau-1.0.8-2  libxcb-1.12-1  libxdamage-1.1.4-2
@@ -1053,8 +1053,8 @@ Paquetes &lt;span class="o"&gt;(&lt;/span&gt;62&lt;span class="o"&gt;)&lt;/span&
               xf86-input-keyboard-1.8.1-2  xf86-input-mouse-1.9.1-2  xf86-input-synaptics-1.8.99.1-1  xf86-video-vesa-2.3.4-2
               xorg-server-1.18.3-2
 
-Tamaño total de la descarga:     37,78 MiB
-Tamaño total de la instalación:  150,38 MiB
+Tamaño total de la descarga:     &lt;span class="m"&gt;37&lt;/span&gt;,78 MiB
+Tamaño total de la instalación:  &lt;span class="m"&gt;150&lt;/span&gt;,38 MiB
 
 :: ¿Continuar con la instalación? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
 ...
@@ -1073,15 +1073,15 @@ Tamaño total de la instalación:  150,38 MiB
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;root@archlinux ~&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;# pacman -S xfce4&lt;/span&gt;
 :: Hay &lt;span class="m"&gt;17&lt;/span&gt; miembros en el grupo xfce4:
 :: Repositorio extra
-   1&lt;span class="o"&gt;)&lt;/span&gt; exo  2&lt;span class="o"&gt;)&lt;/span&gt; garcon  3&lt;span class="o"&gt;)&lt;/span&gt; gtk-xfce-engine  4&lt;span class="o"&gt;)&lt;/span&gt; thunar  5&lt;span class="o"&gt;)&lt;/span&gt; thunar-volman  6&lt;span class="o"&gt;)&lt;/span&gt; tumbler  7&lt;span class="o"&gt;)&lt;/span&gt; xfce4-appfinder  8&lt;span class="o"&gt;)&lt;/span&gt; xfce4-mixer
-   9&lt;span class="o"&gt;)&lt;/span&gt; xfce4-panel  10&lt;span class="o"&gt;)&lt;/span&gt; xfce4-power-manager  11&lt;span class="o"&gt;)&lt;/span&gt; xfce4-session  12&lt;span class="o"&gt;)&lt;/span&gt; xfce4-settings  13&lt;span class="o"&gt;)&lt;/span&gt; xfce4-terminal  14&lt;span class="o"&gt;)&lt;/span&gt; xfconf  15&lt;span class="o"&gt;)&lt;/span&gt; xfdesktop
-   16&lt;span class="o"&gt;)&lt;/span&gt; xfwm4  17&lt;span class="o"&gt;)&lt;/span&gt; xfwm4-themes
+   &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; exo  &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; garcon  &lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; gtk-xfce-engine  &lt;span class="m"&gt;4&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; thunar  &lt;span class="m"&gt;5&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; thunar-volman  &lt;span class="m"&gt;6&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; tumbler  &lt;span class="m"&gt;7&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfce4-appfinder  &lt;span class="m"&gt;8&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfce4-mixer
+   &lt;span class="m"&gt;9&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfce4-panel  &lt;span class="m"&gt;10&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfce4-power-manager  &lt;span class="m"&gt;11&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfce4-session  &lt;span class="m"&gt;12&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfce4-settings  &lt;span class="m"&gt;13&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfce4-terminal  &lt;span class="m"&gt;14&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfconf  &lt;span class="m"&gt;15&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfdesktop
+   &lt;span class="m"&gt;16&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfwm4  &lt;span class="m"&gt;17&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfwm4-themes
 
 Introduzca una selección &lt;span class="o"&gt;(&lt;/span&gt;por omisión&lt;span class="o"&gt;=&lt;/span&gt;todos&lt;span class="o"&gt;)&lt;/span&gt;:
 resolviendo dependencias…
 buscando conflictos entre paquetes…
 
-Paquetes &lt;span class="o"&gt;(&lt;/span&gt;113&lt;span class="o"&gt;)&lt;/span&gt; adwaita-icon-theme-3.20-2  alsa-lib-1.1.1-1  at-spi2-atk-2.20.1-2  at-spi2-core-2.20.2-1  atk-2.20.0-1
+Paquetes &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;113&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; adwaita-icon-theme-3.20-2  alsa-lib-1.1.1-1  at-spi2-atk-2.20.1-2  at-spi2-core-2.20.2-1  atk-2.20.0-1
                avahi-0.6.32-2  cairo-1.14.6-1  cantarell-fonts-1:0.0.24-1  cdparanoia-10.2-5  colord-1.3.2-2
                compositeproto-0.4.2-3  dbus-glib-0.106-1  dconf-0.26.0-1  desktop-file-utils-0.22-2  gdk-pixbuf2-2.34.0-2
                glib-networking-2.48.2-1  gnome-icon-theme-3.12.0-3  gnome-icon-theme-symbolic-3.12.0-4
@@ -1105,8 +1105,8 @@ Paquetes &lt;span class="o"&gt;(&lt;/span&gt;113&lt;span class="o"&gt;)&lt;/span
                xfce4-settings-4.12.0-4  xfce4-terminal-0.6.3-3  xfconf-4.12.0-4  xfdesktop-4.12.3-2  xfwm4-4.12.3-2
                xfwm4-themes-4.10.0-2
 
-Tamaño total de la descarga:     65,79 MiB
-Tamaño total de la instalación:  298,53 MiB
+Tamaño total de la descarga:     &lt;span class="m"&gt;65&lt;/span&gt;,79 MiB
+Tamaño total de la instalación:  &lt;span class="m"&gt;298&lt;/span&gt;,53 MiB
 
 :: ¿Continuar con la instalación? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
 ...
@@ -1120,11 +1120,11 @@ Tamaño total de la instalación:  298,53 MiB
 resolviendo dependencias…
 buscando conflictos entre paquetes…
 
-Paquetes &lt;span class="o"&gt;(&lt;/span&gt;10&lt;span class="o"&gt;)&lt;/span&gt; fuse-2.9.6-1  gcr-3.20.0-1  libatasmart-0.19-3  libbluray-0.9.2-2  libcddb-1.3.2-4  libcdio-0.93-3
+Paquetes &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; fuse-2.9.6-1  gcr-3.20.0-1  libatasmart-0.19-3  libbluray-0.9.2-2  libcddb-1.3.2-4  libcdio-0.93-3
               libcdio-paranoia-10.2+0.93+1-2  libsecret-0.18.5-1  udisks2-2.1.7-1  gvfs-1.28.2-1
 
-Tamaño total de la descarga:     3,84 MiB
-Tamaño total de la instalación:  23,45 MiB
+Tamaño total de la descarga:     &lt;span class="m"&gt;3&lt;/span&gt;,84 MiB
+Tamaño total de la instalación:  &lt;span class="m"&gt;23&lt;/span&gt;,45 MiB
 
 :: ¿Continuar con la instalación? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
 ...
@@ -1137,10 +1137,10 @@ Tamaño total de la instalación:  23,45 MiB
 resolviendo dependencias…
 buscando conflictos entre paquetes…
 
-Paquetes &lt;span class="o"&gt;(&lt;/span&gt;2&lt;span class="o"&gt;)&lt;/span&gt; lightdm-1:1.18.1-2  lightdm-gtk-greeter-1:2.0.1-3
+Paquetes &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; lightdm-1:1.18.1-2  lightdm-gtk-greeter-1:2.0.1-3
 
-Tamaño total de la descarga:    0,27 MiB
-Tamaño total de la instalación:  2,68 MiB
+Tamaño total de la descarga:    &lt;span class="m"&gt;0&lt;/span&gt;,27 MiB
+Tamaño total de la instalación:  &lt;span class="m"&gt;2&lt;/span&gt;,68 MiB
 
 :: ¿Continuar con la instalación? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
 ...
@@ -1160,14 +1160,14 @@ Created symlink /etc/systemd/system/display-manager.service → /usr/lib/systemd
 resolviendo dependencias…
 buscando conflictos entre paquetes…
 
-Paquetes &lt;span class="o"&gt;(&lt;/span&gt;22&lt;span class="o"&gt;)&lt;/span&gt; ethtool-1:4.5-1  fftw-3.3.4-2  flac-1.3.1-3  libglade-2.6.4-5  libnl-3.2.27-1  libsamplerate-0.1.8-3
+Paquetes &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;22&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; ethtool-1:4.5-1  fftw-3.3.4-2  flac-1.3.1-3  libglade-2.6.4-5  libnl-3.2.27-1  libsamplerate-0.1.8-3
               libsndfile-1.0.26-1  net-tools-1.60.20130531git-1  pygobject2-devel-2.28.6-12  pygtk-2.24.0-6
               python-dbus-common-1.2.4-1  python2-2.7.11-3  python2-cairo-1.10.0-2  python2-dbus-1.2.4-1
               python2-gobject2-2.28.6-12  python2-urwid-1.3.1-2  rfkill-0.5-1  wireless_tools-30.pre9-1  wpa_supplicant-1:2.5-3
               alsa-utils-1.1.1-1  wicd-1.7.4-1  wicd-gtk-1.7.4-1
 
-Tamaño total de la descarga:     19,58 MiB
-Tamaño total de la instalación:  110,79 MiB
+Tamaño total de la descarga:     &lt;span class="m"&gt;19&lt;/span&gt;,58 MiB
+Tamaño total de la instalación:  &lt;span class="m"&gt;110&lt;/span&gt;,79 MiB
 
 :: ¿Continuar con la instalación? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
 ...
@@ -1211,34 +1211,34 @@ passwd: contraseña actualizada correctamente
 
 
 &lt;p&gt;Si todo ha salido bien, nos queda un escritorio de esta apariencia, que tendremos que personalizar a nuestro gusto.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Escritorio XFCE" src="http://www.linuxsysadmin.tk/images/escritorio-xfce-archlinux.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Escritorio XFCE" src="http://www.linuxsysadmin.tk/images/escritorio-xfce-archlinux.jpg"&gt;&lt;/p&gt;
 &lt;p&gt;Y todo esto, con un consumo de recursos bastante escaso...&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;gerard@archlinux ~&lt;span class="o"&gt;]&lt;/span&gt;$ free -m
               total        used        free      shared  buff/cache   
 available
 Mem:            &lt;span class="m"&gt;498&lt;/span&gt;          &lt;span class="m"&gt;97&lt;/span&gt;         &lt;span class="m"&gt;310&lt;/span&gt;           &lt;span class="m"&gt;1&lt;/span&gt;          &lt;span class="m"&gt;89&lt;/span&gt;         
-379
-Swap:           &lt;span class="m"&gt;522&lt;/span&gt;           &lt;span class="m"&gt;0&lt;/span&gt;         522
+&lt;span class="m"&gt;379&lt;/span&gt;
+Swap:           &lt;span class="m"&gt;522&lt;/span&gt;           &lt;span class="m"&gt;0&lt;/span&gt;         &lt;span class="m"&gt;522&lt;/span&gt;
 &lt;span class="o"&gt;[&lt;/span&gt;gerard@archlinux ~&lt;span class="o"&gt;]&lt;/span&gt;$ 
-&lt;/pre&gt;&lt;/div&gt;</summary><category term="linux"></category><category term="archlinux"></category><category term="escritorio"></category><category term="xfce"></category></entry><entry><title>Un escritorio mínimo con Debian</title><link href="http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html" rel="alternate"></link><published>2016-04-25T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-04-25:2016/04/un-escritorio-minimo-con-debian.html</id><summary type="html">&lt;p&gt;Harto de distribuciones para escritorio cargados con aplicaciones que no se usan, decidí que esta vez iba a instalar un escritorio de trabajo partiendo de una &lt;em&gt;Debian netinstall&lt;/em&gt;. El resto va a ser instalar las aplicaciones justas y necesarias para nuestro trabajo diario. En este artículo describo como lo hice.&lt;/p&gt;
+&lt;/pre&gt;&lt;/div&gt;</content><category term="linux"></category><category term="archlinux"></category><category term="escritorio"></category><category term="xfce"></category></entry><entry><title>Un escritorio mínimo con Debian</title><link href="http://www.linuxsysadmin.tk/2016/04/un-escritorio-minimo-con-debian.html" rel="alternate"></link><published>2016-04-25T08:00:00+02:00</published><updated>2016-04-25T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-04-25:/2016/04/un-escritorio-minimo-con-debian.html</id><summary type="html">&lt;p&gt;Harto de distribuciones para escritorio cargados con aplicaciones que no se usan, decidí que esta vez iba a instalar un escritorio de trabajo partiendo de una &lt;em&gt;Debian netinstall&lt;/em&gt;. El resto va a ser instalar las aplicaciones justas y necesarias para nuestro trabajo diario. En este artículo describo como lo hice …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Harto de distribuciones para escritorio cargados con aplicaciones que no se usan, decidí que esta vez iba a instalar un escritorio de trabajo partiendo de una &lt;em&gt;Debian netinstall&lt;/em&gt;. El resto va a ser instalar las aplicaciones justas y necesarias para nuestro trabajo diario. En este artículo describo como lo hice.&lt;/p&gt;
 &lt;p&gt;Este tutorial se asume que ya tenemos la distribución instalada de una forma mínima, sin nada que sea innecesario. Vamos a instalar los paquetes que se necesiten para nuestro escritorio.&lt;/p&gt;
 &lt;p&gt;Para practicar la instalación y probar variaciones, es recomendable hacerlo en una máquina virtual, por ejemplo, usando &lt;strong&gt;VirtualBox&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;En cuanto a los requisitos, vamos a partir de una distribución &lt;em&gt;Debian Jessie&lt;/em&gt; normal, con una cantidad de memoria tirando a poca, y con un disco también bastante escaso. El resultado es bastante ligero.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@kobayashi-maru:~# cat /etc/debian_version
-8.4
+&lt;span class="m"&gt;8&lt;/span&gt;.4
 root@kobayashi-maru:~# free -m
              total       used       free     shared    buffers     cached
-Mem:           &lt;span class="m"&gt;500&lt;/span&gt;         &lt;span class="m"&gt;65&lt;/span&gt;        &lt;span class="m"&gt;435&lt;/span&gt;          &lt;span class="m"&gt;4&lt;/span&gt;          &lt;span class="m"&gt;6&lt;/span&gt;         34
--/+ buffers/cache:         &lt;span class="m"&gt;23&lt;/span&gt;        476
-Swap:            &lt;span class="m"&gt;0&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;          0
+Mem:           &lt;span class="m"&gt;500&lt;/span&gt;         &lt;span class="m"&gt;65&lt;/span&gt;        &lt;span class="m"&gt;435&lt;/span&gt;          &lt;span class="m"&gt;4&lt;/span&gt;          &lt;span class="m"&gt;6&lt;/span&gt;         &lt;span class="m"&gt;34&lt;/span&gt;
+-/+ buffers/cache:         &lt;span class="m"&gt;23&lt;/span&gt;        &lt;span class="m"&gt;476&lt;/span&gt;
+Swap:            &lt;span class="m"&gt;0&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;
 root@kobayashi-maru:~# df -h
 S.ficheros     Tamaño Usados  Disp Uso% Montado en
-/dev/sda1        4,0G   600M  3,2G  16% /
-udev              10M      &lt;span class="m"&gt;0&lt;/span&gt;   10M   0% /dev
-tmpfs            101M   4,4M   96M   5% /run
-tmpfs            251M      &lt;span class="m"&gt;0&lt;/span&gt;  251M   0% /dev/shm
-tmpfs            5,0M      &lt;span class="m"&gt;0&lt;/span&gt;  5,0M   0% /run/lock
-tmpfs            251M      &lt;span class="m"&gt;0&lt;/span&gt;  251M   0% /sys/fs/cgroup
+/dev/sda1        &lt;span class="m"&gt;4&lt;/span&gt;,0G   600M  &lt;span class="m"&gt;3&lt;/span&gt;,2G  &lt;span class="m"&gt;16&lt;/span&gt;% /
+udev              10M      &lt;span class="m"&gt;0&lt;/span&gt;   10M   &lt;span class="m"&gt;0&lt;/span&gt;% /dev
+tmpfs            101M   &lt;span class="m"&gt;4&lt;/span&gt;,4M   96M   &lt;span class="m"&gt;5&lt;/span&gt;% /run
+tmpfs            251M      &lt;span class="m"&gt;0&lt;/span&gt;  251M   &lt;span class="m"&gt;0&lt;/span&gt;% /dev/shm
+tmpfs            &lt;span class="m"&gt;5&lt;/span&gt;,0M      &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;5&lt;/span&gt;,0M   &lt;span class="m"&gt;0&lt;/span&gt;% /run/lock
+tmpfs            251M      &lt;span class="m"&gt;0&lt;/span&gt;  251M   &lt;span class="m"&gt;0&lt;/span&gt;% /sys/fs/cgroup
 root@kobayashi-maru:~#
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -1348,29 +1348,29 @@ root@kobayashi-maru:~#
 
 
 &lt;p&gt;Iremos a parar a la pantalla de &lt;em&gt;login&lt;/em&gt;, y con un usuario adecuado deberíamos ver nuestro escritorio, tal como se muestra.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Escritorio XFCE" src="http://www.linuxsysadmin.tk/images/escritorio-xfce.jpg" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Escritorio XFCE" src="http://www.linuxsysadmin.tk/images/escritorio-xfce.jpg"&gt;&lt;/p&gt;
 &lt;p&gt;Ahora es tarea del usuario tunear el escritorio a su gusto, con paneles, &lt;em&gt;plugins&lt;/em&gt; y &lt;em&gt;wallpapers&lt;/em&gt;.&lt;/p&gt;
 &lt;h2&gt;Un apunte sobre los recursos&lt;/h2&gt;
 &lt;p&gt;Tras instalar todos los componentes, vemos que los recursos apenas han subido; lo que nos da una idea del tipo de &lt;em&gt;hardware&lt;/em&gt; que podemos usar.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@kobayashi-maru:~$ df -h
 S.ficheros     Tamaño Usados  Disp Uso% Montado en
-/dev/sda1        4,0G   1,4G  2,5G  36% /
-udev              10M      &lt;span class="m"&gt;0&lt;/span&gt;   10M   0% /dev
-tmpfs            101M   4,4M   96M   5% /run
-tmpfs            251M      &lt;span class="m"&gt;0&lt;/span&gt;  251M   0% /dev/shm
-tmpfs            5,0M   4,0K  5,0M   1% /run/lock
-tmpfs            251M      &lt;span class="m"&gt;0&lt;/span&gt;  251M   0% /sys/fs/cgroup
-tmpfs             51M   4,0K   51M   1% /run/user/110
-tmpfs             51M   4,0K   51M   1% /run/user/1000
+/dev/sda1        &lt;span class="m"&gt;4&lt;/span&gt;,0G   &lt;span class="m"&gt;1&lt;/span&gt;,4G  &lt;span class="m"&gt;2&lt;/span&gt;,5G  &lt;span class="m"&gt;36&lt;/span&gt;% /
+udev              10M      &lt;span class="m"&gt;0&lt;/span&gt;   10M   &lt;span class="m"&gt;0&lt;/span&gt;% /dev
+tmpfs            101M   &lt;span class="m"&gt;4&lt;/span&gt;,4M   96M   &lt;span class="m"&gt;5&lt;/span&gt;% /run
+tmpfs            251M      &lt;span class="m"&gt;0&lt;/span&gt;  251M   &lt;span class="m"&gt;0&lt;/span&gt;% /dev/shm
+tmpfs            &lt;span class="m"&gt;5&lt;/span&gt;,0M   &lt;span class="m"&gt;4&lt;/span&gt;,0K  &lt;span class="m"&gt;5&lt;/span&gt;,0M   &lt;span class="m"&gt;1&lt;/span&gt;% /run/lock
+tmpfs            251M      &lt;span class="m"&gt;0&lt;/span&gt;  251M   &lt;span class="m"&gt;0&lt;/span&gt;% /sys/fs/cgroup
+tmpfs             51M   &lt;span class="m"&gt;4&lt;/span&gt;,0K   51M   &lt;span class="m"&gt;1&lt;/span&gt;% /run/user/110
+tmpfs             51M   &lt;span class="m"&gt;4&lt;/span&gt;,0K   51M   &lt;span class="m"&gt;1&lt;/span&gt;% /run/user/1000
 gerard@kobayashi-maru:~$ free -m
              total       used       free     shared    buffers     cached
-Mem:           &lt;span class="m"&gt;500&lt;/span&gt;        &lt;span class="m"&gt;238&lt;/span&gt;        &lt;span class="m"&gt;262&lt;/span&gt;          &lt;span class="m"&gt;5&lt;/span&gt;         &lt;span class="m"&gt;15&lt;/span&gt;        125
--/+ buffers/cache:         &lt;span class="m"&gt;96&lt;/span&gt;        404
-Swap:            &lt;span class="m"&gt;0&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;          0
+Mem:           &lt;span class="m"&gt;500&lt;/span&gt;        &lt;span class="m"&gt;238&lt;/span&gt;        &lt;span class="m"&gt;262&lt;/span&gt;          &lt;span class="m"&gt;5&lt;/span&gt;         &lt;span class="m"&gt;15&lt;/span&gt;        &lt;span class="m"&gt;125&lt;/span&gt;
+-/+ buffers/cache:         &lt;span class="m"&gt;96&lt;/span&gt;        &lt;span class="m"&gt;404&lt;/span&gt;
+Swap:            &lt;span class="m"&gt;0&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;
 gerard@kobayashi-maru:~$
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;El disco ha aumentado en unos 900 mb y la memoria ha pasado de 23 a 96 mb, sin tener ninguna aplicación abierta.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;CUIDADO&lt;/strong&gt;: Algunas aplicaciones necesitan mucho disco y también memoria. Depende de lo que se ponga, podemos pasar de unos requerimientos &lt;em&gt;hardware&lt;/em&gt; austeros, a una máquina que dejaría de juguete a un supercomputador...&lt;/p&gt;
-&lt;p&gt;Para el uso que doy de mi &lt;em&gt;netbook&lt;/em&gt; (navegar, redacción de artículos, programación de &lt;em&gt;scripts&lt;/em&gt; y alguna sesión de &lt;em&gt;SSH&lt;/em&gt;), los 2gb de memoria me sobran; con 128 mb tendría suficiente.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="escritorio"></category><category term="xfce"></category></entry></feed>
+&lt;p&gt;Para el uso que doy de mi &lt;em&gt;netbook&lt;/em&gt; (navegar, redacción de artículos, programación de &lt;em&gt;scripts&lt;/em&gt; y alguna sesión de &lt;em&gt;SSH&lt;/em&gt;), los 2gb de memoria me sobran; con 128 mb tendría suficiente.&lt;/p&gt;</content><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="escritorio"></category><category term="xfce"></category></entry></feed>

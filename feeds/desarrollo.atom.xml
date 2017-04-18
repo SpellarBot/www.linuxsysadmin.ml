@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-02-13T00:00:00+01:00</updated><entry><title>Escribiendo un servidor DNS en python con twisted</title><link href="http://www.linuxsysadmin.tk/2017/02/escribiendo-un-servidor-dns-en-python-con-twisted.html" rel="alternate"></link><published>2017-02-13T00:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-02-13:2017/02/escribiendo-un-servidor-dns-en-python-con-twisted.html</id><summary type="html">&lt;p&gt;El otro día tuvimos una caída del centro de datos de desarrollo. Inmediatamente después vimos que teníamos afectación en el entorno de producción, ya que lanzaba peticiones al &lt;strong&gt;DNS&lt;/strong&gt; de desarrollo. Sin saber claramente porque pasaba, hice un servidor &lt;strong&gt;DNS&lt;/strong&gt; en &lt;strong&gt;python&lt;/strong&gt;, para ver que tipos de peticiones se lanzaban.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Desarrollo</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-02-13T00:00:00+01:00</updated><entry><title>Escribiendo un servidor DNS en python con twisted</title><link href="http://www.linuxsysadmin.tk/2017/02/escribiendo-un-servidor-dns-en-python-con-twisted.html" rel="alternate"></link><published>2017-02-13T00:00:00+01:00</published><updated>2017-02-13T00:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-02-13:/2017/02/escribiendo-un-servidor-dns-en-python-con-twisted.html</id><summary type="html">&lt;p&gt;El otro día tuvimos una caída del centro de datos de desarrollo. Inmediatamente después vimos que teníamos afectación en el entorno de producción, ya que lanzaba peticiones al &lt;strong&gt;DNS&lt;/strong&gt; de desarrollo. Sin saber claramente porque pasaba, hice un servidor &lt;strong&gt;DNS&lt;/strong&gt; en &lt;strong&gt;python&lt;/strong&gt;, para ver que tipos de peticiones se lanzaban …&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día tuvimos una caída del centro de datos de desarrollo. Inmediatamente después vimos que teníamos afectación en el entorno de producción, ya que lanzaba peticiones al &lt;strong&gt;DNS&lt;/strong&gt; de desarrollo. Sin saber claramente porque pasaba, hice un servidor &lt;strong&gt;DNS&lt;/strong&gt; en &lt;strong&gt;python&lt;/strong&gt;, para ver que tipos de peticiones se lanzaban.&lt;/p&gt;
 &lt;p&gt;Para hacerlo, utilicé una librería magnífica llamada &lt;strong&gt;twisted&lt;/strong&gt;, que hace la mayoría del trabajo. Aunque su documentación es bastante escasa, tirando de ejemplos pude sacar algo interesante en poco tiempo.&lt;/p&gt;
 &lt;h2&gt;Un servidor chivato&lt;/h2&gt;
 &lt;p&gt;Cambiamos el fichero &lt;em&gt;/etc/resolv&lt;/em&gt; de nuestro servidor de producción, para añadirle su propia dirección IP, en la que ejecutamos el siguiente &lt;em&gt;script&lt;/em&gt;:&lt;/p&gt;
@@ -26,15 +26,15 @@
     &lt;span class="n"&gt;reactor&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;listenTCP&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10053&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;factory&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;reactor&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 
-&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="ne"&gt;SystemExit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;main&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Si os interesa trabajar con &lt;em&gt;virtualenv&lt;/em&gt;, aquí os dejo el &lt;em&gt;requirements.txt&lt;/em&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/projects/dns$ cat requirements.txt 
-&lt;span class="nv"&gt;Twisted&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;16.3.2
-zope.interface&lt;span class="o"&gt;==&lt;/span&gt;4.2.0
+&lt;span class="nv"&gt;Twisted&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;16&lt;/span&gt;.3.2
+zope.interface&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;.2.0
 gerard@sirius:~/projects/dns$ 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -43,20 +43,20 @@ gerard@sirius:~/projects/dns$
 &lt;p&gt;Comprobamos lo que pasa cuando el servidor recibe peticiones:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; nowhere.com
 
-&lt;span class="p"&gt;;&lt;/span&gt; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.9.5-9+deb8u6-Debian &amp;lt;&amp;lt;&amp;gt;&amp;gt; @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; nowhere.com
+&lt;span class="p"&gt;;&lt;/span&gt; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG &lt;span class="m"&gt;9&lt;/span&gt;.9.5-9+deb8u6-Debian &amp;lt;&amp;lt;&amp;gt;&amp;gt; @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; nowhere.com
 &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; servers found&lt;span class="o"&gt;)&lt;/span&gt;
 &lt;span class="p"&gt;;;&lt;/span&gt; global options: +cmd
 &lt;span class="p"&gt;;;&lt;/span&gt; Got answer:
-&lt;span class="p"&gt;;;&lt;/span&gt; -&amp;gt;&amp;gt;HEADER&lt;span class="s"&gt;&amp;lt;&amp;lt;- opco&lt;/span&gt;de: QUERY, status: NXDOMAIN, id: 42644
-&lt;span class="p"&gt;;;&lt;/span&gt; flags: qr ra&lt;span class="p"&gt;;&lt;/span&gt; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 0
+&lt;span class="p"&gt;;;&lt;/span&gt; -&amp;gt;&amp;gt;HEADER&lt;span class="s"&gt;&amp;lt;&amp;lt;- opco&lt;/span&gt;de: QUERY, status: NXDOMAIN, id: &lt;span class="m"&gt;42644&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; flags: qr ra&lt;span class="p"&gt;;&lt;/span&gt; QUERY: &lt;span class="m"&gt;1&lt;/span&gt;, ANSWER: &lt;span class="m"&gt;0&lt;/span&gt;, AUTHORITY: &lt;span class="m"&gt;0&lt;/span&gt;, ADDITIONAL: &lt;span class="m"&gt;0&lt;/span&gt;
 
 &lt;span class="p"&gt;;;&lt;/span&gt; QUESTION SECTION:
 &lt;span class="p"&gt;;&lt;/span&gt;nowhere.com.           IN  A
 
 &lt;span class="p"&gt;;;&lt;/span&gt; Query time: &lt;span class="m"&gt;1&lt;/span&gt; msec
-&lt;span class="p"&gt;;;&lt;/span&gt; SERVER: 127.0.0.1#10053&lt;span class="o"&gt;(&lt;/span&gt;127.0.0.1&lt;span class="o"&gt;)&lt;/span&gt;
-&lt;span class="p"&gt;;;&lt;/span&gt; WHEN: Wed Aug &lt;span class="m"&gt;24&lt;/span&gt; 15:29:38 CEST 2016
-&lt;span class="p"&gt;;;&lt;/span&gt; MSG SIZE  rcvd: 29
+&lt;span class="p"&gt;;;&lt;/span&gt; SERVER: &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1#10053&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;127&lt;/span&gt;.0.0.1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; WHEN: Wed Aug &lt;span class="m"&gt;24&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;:29:38 CEST &lt;span class="m"&gt;2016&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; MSG SIZE  rcvd: &lt;span class="m"&gt;29&lt;/span&gt;
 
 gerard@sirius:~$ 
 &lt;/pre&gt;&lt;/div&gt;
@@ -124,29 +124,29 @@ gerard@sirius:~$
     &lt;span class="n"&gt;reactor&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;listenTCP&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10053&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;factory&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;reactor&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 
-&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="ne"&gt;SystemExit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;main&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Y si ejecutamos este nuevo &lt;em&gt;script&lt;/em&gt; y le lanzamos peticiones, vemos que funciona.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short example.com
-1.2.3.4
-1.2.3.5
+&lt;span class="m"&gt;1&lt;/span&gt;.2.3.4
+&lt;span class="m"&gt;1&lt;/span&gt;.2.3.5
 gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short example.my
-1.2.3.5
+&lt;span class="m"&gt;1&lt;/span&gt;.2.3.5
 gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short nowhere.com
-gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short -x 1.2.3.4
+gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short -x &lt;span class="m"&gt;1&lt;/span&gt;.2.3.4
 example.com.
-gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short -x 1.2.3.5
+gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short -x &lt;span class="m"&gt;1&lt;/span&gt;.2.3.5
 example.com.
 example.my.
-gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short -x 1.2.3.6
+gerard@sirius:~$ dig @localhost -p &lt;span class="m"&gt;10053&lt;/span&gt; +short -x &lt;span class="m"&gt;1&lt;/span&gt;.2.3.6
 gerard@sirius:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Aunque ya hay servidores &lt;strong&gt;DNS&lt;/strong&gt; magníficos, podemos levantar uno con &lt;strong&gt;python&lt;/strong&gt; de forma fácil, rápida y sencilla.&lt;/p&gt;</summary><category term="python"></category><category term="dns"></category><category term="twisted"></category></entry><entry><title>Usando SSH en nuestros scripts python mediante paramiko</title><link href="http://www.linuxsysadmin.tk/2017/01/usando-ssh-en-nuestros-scripts-python-mediante-paramiko.html" rel="alternate"></link><published>2017-01-23T10:00:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-01-23:2017/01/usando-ssh-en-nuestros-scripts-python-mediante-paramiko.html</id><summary type="html">&lt;p&gt;Es muy útil lanzar comandos &lt;strong&gt;SSH&lt;/strong&gt; desde un &lt;em&gt;script&lt;/em&gt; de &lt;strong&gt;bash&lt;/strong&gt;. Sin embargo, los &lt;em&gt;scripts&lt;/em&gt; en &lt;strong&gt;bash&lt;/strong&gt; se vuelve ilegibles rápidamente, y no nos ofrece el poderío de la librería &lt;strong&gt;python&lt;/strong&gt;. No es de extrañar que herramientas como &lt;strong&gt;ansible&lt;/strong&gt; o &lt;strong&gt;fabric&lt;/strong&gt; estén escritas en &lt;strong&gt;python&lt;/strong&gt;, usando una librería llamada &lt;strong&gt;paramiko&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Aunque ya hay servidores &lt;strong&gt;DNS&lt;/strong&gt; magníficos, podemos levantar uno con &lt;strong&gt;python&lt;/strong&gt; de forma fácil, rápida y sencilla.&lt;/p&gt;</content><category term="python"></category><category term="dns"></category><category term="twisted"></category></entry><entry><title>Usando SSH en nuestros scripts python mediante paramiko</title><link href="http://www.linuxsysadmin.tk/2017/01/usando-ssh-en-nuestros-scripts-python-mediante-paramiko.html" rel="alternate"></link><published>2017-01-23T10:00:00+01:00</published><updated>2017-01-23T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-01-23:/2017/01/usando-ssh-en-nuestros-scripts-python-mediante-paramiko.html</id><summary type="html">&lt;p&gt;Es muy útil lanzar comandos &lt;strong&gt;SSH&lt;/strong&gt; desde un &lt;em&gt;script&lt;/em&gt; de &lt;strong&gt;bash&lt;/strong&gt;. Sin embargo, los &lt;em&gt;scripts&lt;/em&gt; en &lt;strong&gt;bash&lt;/strong&gt; se vuelve ilegibles rápidamente, y no nos ofrece el poderío de la librería &lt;strong&gt;python&lt;/strong&gt;. No es de extrañar que herramientas como &lt;strong&gt;ansible&lt;/strong&gt; o &lt;strong&gt;fabric&lt;/strong&gt; estén escritas en &lt;strong&gt;python&lt;/strong&gt;, usando una librería llamada &lt;strong&gt;paramiko …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Es muy útil lanzar comandos &lt;strong&gt;SSH&lt;/strong&gt; desde un &lt;em&gt;script&lt;/em&gt; de &lt;strong&gt;bash&lt;/strong&gt;. Sin embargo, los &lt;em&gt;scripts&lt;/em&gt; en &lt;strong&gt;bash&lt;/strong&gt; se vuelve ilegibles rápidamente, y no nos ofrece el poderío de la librería &lt;strong&gt;python&lt;/strong&gt;. No es de extrañar que herramientas como &lt;strong&gt;ansible&lt;/strong&gt; o &lt;strong&gt;fabric&lt;/strong&gt; estén escritas en &lt;strong&gt;python&lt;/strong&gt;, usando una librería llamada &lt;strong&gt;paramiko&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Una vez en el terreno de &lt;strong&gt;python&lt;/strong&gt;, disponemos de todas las opciones que tenemos habitualmente en el lenguaje, como por ejemplo, el módulo de expresiones regulares para &lt;em&gt;parsear&lt;/em&gt; la salida. Estos &lt;em&gt;scripts&lt;/em&gt; quedan muy pequeños, legibles y limpios.&lt;/p&gt;
 &lt;p&gt;En este artículo vamos a explicar como instalar y usar &lt;strong&gt;paramiko&lt;/strong&gt;, con un ejemplo simple. El resto quedará a la imaginación de los lectores.&lt;/p&gt;
 &lt;h2&gt;Instalando la librería en un virtualenv&lt;/h2&gt;
@@ -201,7 +201,7 @@ import paramiko
 def execute_command&lt;span class="o"&gt;(&lt;/span&gt;command, host, user, password, &lt;span class="nv"&gt;sudo&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;False&lt;span class="o"&gt;)&lt;/span&gt;:
     &lt;span class="nv"&gt;client&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; paramiko.SSHClient&lt;span class="o"&gt;()&lt;/span&gt;
     client.set_missing_host_key_policy&lt;span class="o"&gt;(&lt;/span&gt;paramiko.AutoAddPolicy&lt;span class="o"&gt;())&lt;/span&gt;
-    client.connect&lt;span class="o"&gt;(&lt;/span&gt;host, &lt;span class="nv"&gt;username&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;user, &lt;span class="nv"&gt;password&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;password, &lt;span class="nv"&gt;timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;2&lt;span class="o"&gt;)&lt;/span&gt;
+    client.connect&lt;span class="o"&gt;(&lt;/span&gt;host, &lt;span class="nv"&gt;username&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;user, &lt;span class="nv"&gt;password&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;password, &lt;span class="nv"&gt;timeout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
     &lt;span class="k"&gt;if&lt;/span&gt; sudo:
         stdin, stdout, &lt;span class="nv"&gt;stderr&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; client.exec_command&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;sudo -S &amp;#39;&lt;/span&gt; + &lt;span class="nb"&gt;command&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
         stdin.write&lt;span class="o"&gt;(&lt;/span&gt;password + &lt;span class="s1"&gt;&amp;#39;\n&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
@@ -231,7 +231,7 @@ Remote user after sudo: root
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;En un &lt;em&gt;script&lt;/em&gt; real, posiblemente habríamos sacado información mas útil, y habríamos &lt;em&gt;parseado&lt;/em&gt; la salida para no mostrar nada que no nos aporte valor. De momento, nos basta con obtener la salida y mostrarla.&lt;/p&gt;</summary><category term="ssh"></category><category term="python"></category><category term="paramiko"></category><category term="script"></category></entry><entry><title>Python como una calculadora estadística</title><link href="http://www.linuxsysadmin.tk/2016/10/python-como-una-calculadora-estadistica.html" rel="alternate"></link><published>2016-10-17T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-10-17:2016/10/python-como-una-calculadora-estadistica.html</id><summary type="html">&lt;p&gt;El otro día me encontraba en mi trabajo con otra petición muy especial: se necesitaba un &lt;em&gt;check&lt;/em&gt; para &lt;strong&gt;Nagios&lt;/strong&gt; que contara las apariciones de cierto tipo de errores en un fichero de &lt;em&gt;log&lt;/em&gt;. Ese &lt;em&gt;check&lt;/em&gt; debía saltar en función de cuán alejado estaba el valor de las últimas 100 muestras.&lt;/p&gt;
+&lt;p&gt;En un &lt;em&gt;script&lt;/em&gt; real, posiblemente habríamos sacado información mas útil, y habríamos &lt;em&gt;parseado&lt;/em&gt; la salida para no mostrar nada que no nos aporte valor. De momento, nos basta con obtener la salida y mostrarla.&lt;/p&gt;</content><category term="ssh"></category><category term="python"></category><category term="paramiko"></category><category term="script"></category></entry><entry><title>Python como una calculadora estadística</title><link href="http://www.linuxsysadmin.tk/2016/10/python-como-una-calculadora-estadistica.html" rel="alternate"></link><published>2016-10-17T08:00:00+02:00</published><updated>2016-10-17T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-10-17:/2016/10/python-como-una-calculadora-estadistica.html</id><summary type="html">&lt;p&gt;El otro día me encontraba en mi trabajo con otra petición muy especial: se necesitaba un &lt;em&gt;check&lt;/em&gt; para &lt;strong&gt;Nagios&lt;/strong&gt; que contara las apariciones de cierto tipo de errores en un fichero de &lt;em&gt;log&lt;/em&gt;. Ese &lt;em&gt;check&lt;/em&gt; debía saltar en función de cuán alejado estaba el valor de las últimas 100 muestras …&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día me encontraba en mi trabajo con otra petición muy especial: se necesitaba un &lt;em&gt;check&lt;/em&gt; para &lt;strong&gt;Nagios&lt;/strong&gt; que contara las apariciones de cierto tipo de errores en un fichero de &lt;em&gt;log&lt;/em&gt;. Ese &lt;em&gt;check&lt;/em&gt; debía saltar en función de cuán alejado estaba el valor de las últimas 100 muestras.&lt;/p&gt;
 &lt;p&gt;Guardar una muestra de valores en un fichero no supone ningún problema en &lt;strong&gt;Linux&lt;/strong&gt;. Sin embargo, hacer cálculos estadísticos en &lt;strong&gt;bash&lt;/strong&gt; es un suicidio. Eso nos obligaba a utilizar un lenguaje mas elaborado, pero existente en todas las máquinas: &lt;strong&gt;python&lt;/strong&gt;. Sin embargo, el módulo &lt;strong&gt;numpy&lt;/strong&gt; no estaba en todas las máquinas interesadas; instalarlo no era una opción. Así que me tocó programarlo a mí.&lt;/p&gt;
 &lt;p&gt;Desempolvando mis apuntes de estadística en forma de &lt;a href="https://en.wikipedia.org/wiki/Standard_deviation"&gt;Wikipedia&lt;/a&gt;, tenemos lo siguiente:&lt;/p&gt;
 &lt;blockquote&gt;
@@ -279,7 +279,7 @@ gerard@aldebaran:~$
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Elegante y efectivo...&lt;/p&gt;</summary><category term="linux"></category><category term="python"></category><category term="media"></category><category term="desviación estándar"></category></entry><entry><title>Escribiendo bots para Telegram</title><link href="http://www.linuxsysadmin.tk/2016/08/escribiendo-bots-para-telegram.html" rel="alternate"></link><published>2016-08-08T10:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-08-08:2016/08/escribiendo-bots-para-telegram.html</id><summary type="html">&lt;p&gt;Aunque no está muy extendido, &lt;strong&gt;Telegram&lt;/strong&gt; es un magnífico cliente de mensajería instantánea. Tiene varios puntos a favor, como por ejemplo seguridad, rapidez y su condición de &lt;em&gt;libre&lt;/em&gt;. Lo que no se conoce tanto es que dispone de una &lt;em&gt;API&lt;/em&gt; para crear &lt;em&gt;bots&lt;/em&gt; que pueden responder automáticamente a sus usuarios.&lt;/p&gt;
+&lt;p&gt;Elegante y efectivo...&lt;/p&gt;</content><category term="linux"></category><category term="python"></category><category term="media"></category><category term="desviación estándar"></category></entry><entry><title>Escribiendo bots para Telegram</title><link href="http://www.linuxsysadmin.tk/2016/08/escribiendo-bots-para-telegram.html" rel="alternate"></link><published>2016-08-08T10:00:00+02:00</published><updated>2016-08-08T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-08-08:/2016/08/escribiendo-bots-para-telegram.html</id><summary type="html">&lt;p&gt;Aunque no está muy extendido, &lt;strong&gt;Telegram&lt;/strong&gt; es un magnífico cliente de mensajería instantánea. Tiene varios puntos a favor, como por ejemplo seguridad, rapidez y su condición de &lt;em&gt;libre&lt;/em&gt;. Lo que no se conoce tanto es que dispone de una &lt;em&gt;API&lt;/em&gt; para crear &lt;em&gt;bots&lt;/em&gt; que pueden responder automáticamente a sus usuarios …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Aunque no está muy extendido, &lt;strong&gt;Telegram&lt;/strong&gt; es un magnífico cliente de mensajería instantánea. Tiene varios puntos a favor, como por ejemplo seguridad, rapidez y su condición de &lt;em&gt;libre&lt;/em&gt;. Lo que no se conoce tanto es que dispone de una &lt;em&gt;API&lt;/em&gt; para crear &lt;em&gt;bots&lt;/em&gt; que pueden responder automáticamente a sus usuarios.&lt;/p&gt;
 &lt;p&gt;La variedad de usos que se dan mediante estos &lt;em&gt;bots&lt;/em&gt; es muy variada. Personalmente he visto juegos, asistentes virtuales e incluso lo he usado para tener a mano las alarmas de un entorno de producción.&lt;/p&gt;
 &lt;h2&gt;El token&lt;/h2&gt;
 &lt;p&gt;Nuestro &lt;em&gt;bot&lt;/em&gt; es un ente propio, que tiene un &lt;em&gt;token&lt;/em&gt; de autenticación, de forma que solamente el que posea el &lt;em&gt;token&lt;/em&gt; pude responder como si fuera el &lt;em&gt;bot&lt;/em&gt;.&lt;/p&gt;
@@ -307,14 +307,14 @@ gerard@sirius:~/projects/telebot$ . env/bin/activate
 &lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/telebot$ pip install python-telegram-bot
 Collecting python-telegram-bot
   Downloading python_telegram_bot-4.3.3-py2.py3-none-any.whl &lt;span class="o"&gt;(&lt;/span&gt;122kB&lt;span class="o"&gt;)&lt;/span&gt;
-    100% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 122kB 471kB/s 
+    &lt;span class="m"&gt;100&lt;/span&gt;% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 122kB 471kB/s 
 Collecting certifi &lt;span class="o"&gt;(&lt;/span&gt;from python-telegram-bot&lt;span class="o"&gt;)&lt;/span&gt;
   Downloading certifi-2016.2.28-py2.py3-none-any.whl &lt;span class="o"&gt;(&lt;/span&gt;366kB&lt;span class="o"&gt;)&lt;/span&gt;
-    100% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 368kB 514kB/s 
-Collecting urllib3&amp;gt;&lt;span class="o"&gt;=&lt;/span&gt;1.10 &lt;span class="o"&gt;(&lt;/span&gt;from python-telegram-bot&lt;span class="o"&gt;)&lt;/span&gt;
+    &lt;span class="m"&gt;100&lt;/span&gt;% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 368kB 514kB/s 
+Collecting urllib3&amp;gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.10 &lt;span class="o"&gt;(&lt;/span&gt;from python-telegram-bot&lt;span class="o"&gt;)&lt;/span&gt;
   Downloading urllib3-1.16-py2.py3-none-any.whl &lt;span class="o"&gt;(&lt;/span&gt;98kB&lt;span class="o"&gt;)&lt;/span&gt;
-    100% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 102kB 901kB/s 
-Collecting future&amp;gt;&lt;span class="o"&gt;=&lt;/span&gt;0.15.2 &lt;span class="o"&gt;(&lt;/span&gt;from python-telegram-bot&lt;span class="o"&gt;)&lt;/span&gt;
+    &lt;span class="m"&gt;100&lt;/span&gt;% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 102kB 901kB/s 
+Collecting future&amp;gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.15.2 &lt;span class="o"&gt;(&lt;/span&gt;from python-telegram-bot&lt;span class="o"&gt;)&lt;/span&gt;
 Installing collected packages: certifi, urllib3, future, python-telegram-bot
 Successfully installed certifi-2016.2.28 future-0.15.2 python-telegram-bot-4.3.3 urllib3-1.16
 &lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/telebot$ 
@@ -361,7 +361,7 @@ Successfully installed certifi-2016.2.28 future-0.15.2 python-telegram-bot-4.3.3
 &lt;li&gt;Las respuestas pueden contener lenguaje &lt;em&gt;wiki&lt;/em&gt;, en este caso, &lt;strong&gt;markdown&lt;/strong&gt;; pueden también definir teclados a medida con las respuestas posibles.&lt;/li&gt;
 &lt;li&gt;Las respuestas conocen a su receptor mediante el campo &lt;em&gt;chat_id&lt;/em&gt;. Este campo se puede ver como un indicador de sesión, si vuestro &lt;em&gt;bot&lt;/em&gt; mantiene el estado de un "jugador" concreto.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;La verdad es que es bastante simple la interfaz de la &lt;em&gt;API&lt;/em&gt;.  Con un poco de imaginación y una base de datos, es muy posible hacer un juego conversacional, sea con campos en la base de datos, o mediante una máquina de estados simple. Me quedo con esa idea para el futuro.&lt;/p&gt;</summary><category term="telegram"></category><category term="bots"></category><category term="python"></category></entry><entry><title>Consultando una base de datos Oracle en python</title><link href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html" rel="alternate"></link><published>2016-04-18T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-04-18:2016/04/consultando-una-base-de-datos-oracle-en-python.html</id><summary type="html">&lt;p&gt;El otro día estuve optimizando unos &lt;em&gt;scripts&lt;/em&gt; hechos en &lt;em&gt;bash&lt;/em&gt; que había hecho otro. Como resultado del lenguaje usado era un caos de comandos, muchos de ellos para limpiar la salida y darle la forma adecuada. Los reescribí en &lt;em&gt;python&lt;/em&gt; usando la librería &lt;strong&gt;cx_Oracle&lt;/strong&gt;, que compilé en un fichero &lt;em&gt;wheel&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;La verdad es que es bastante simple la interfaz de la &lt;em&gt;API&lt;/em&gt;.  Con un poco de imaginación y una base de datos, es muy posible hacer un juego conversacional, sea con campos en la base de datos, o mediante una máquina de estados simple. Me quedo con esa idea para el futuro.&lt;/p&gt;</content><category term="telegram"></category><category term="bots"></category><category term="python"></category></entry><entry><title>Consultando una base de datos Oracle en python</title><link href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html" rel="alternate"></link><published>2016-04-18T08:00:00+02:00</published><updated>2016-04-18T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-04-18:/2016/04/consultando-una-base-de-datos-oracle-en-python.html</id><summary type="html">&lt;p&gt;El otro día estuve optimizando unos &lt;em&gt;scripts&lt;/em&gt; hechos en &lt;em&gt;bash&lt;/em&gt; que había hecho otro. Como resultado del lenguaje usado era un caos de comandos, muchos de ellos para limpiar la salida y darle la forma adecuada. Los reescribí en &lt;em&gt;python&lt;/em&gt; usando la librería &lt;strong&gt;cx_Oracle&lt;/strong&gt;, que compilé en un fichero &lt;em&gt;wheel …&lt;/em&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día estuve optimizando unos &lt;em&gt;scripts&lt;/em&gt; hechos en &lt;em&gt;bash&lt;/em&gt; que había hecho otro. Como resultado del lenguaje usado era un caos de comandos, muchos de ellos para limpiar la salida y darle la forma adecuada. Los reescribí en &lt;em&gt;python&lt;/em&gt; usando la librería &lt;strong&gt;cx_Oracle&lt;/strong&gt;, que compilé en un fichero &lt;em&gt;wheel&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;El mayor problema al que te enfrentas si intentas instalar una librería &lt;em&gt;python&lt;/em&gt; que no está en la librería estándar, es que debes usar el gestor de paquetes, previo uso del usuario &lt;strong&gt;root&lt;/strong&gt;. Y eso no siempre es posible.&lt;/p&gt;
 &lt;p&gt;Así que para hacer una instalación en mi carpeta personal, me decanté por crear un &lt;strong&gt;virtualenv&lt;/strong&gt; en donde se iba a instalar una &lt;em&gt;wheel&lt;/em&gt; precompilada en una máquina similar. Lo documento para tenerlo a mano.&lt;/p&gt;
 &lt;p&gt;Voy a explicar dos procedimientos: el primero es como instalar el &lt;em&gt;package&lt;/em&gt; en una máquina que tenga herramientas de compilación y como empaquetarlo en un fichero &lt;em&gt;wheel&lt;/em&gt;; el segundo consiste en instalar la &lt;em&gt;wheel&lt;/em&gt; localmente en la máquina que la va a usar, a modo de &lt;em&gt;runtime&lt;/em&gt;.&lt;/p&gt;
@@ -495,7 +495,7 @@ Successfully installed cx-Oracle-5.2.1
 &lt;p&gt;Podemos verificar si funciona cargando el módulo, y por ejemplo, preguntando la versión del mismo.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@oracle:~# python -c &lt;span class="s2"&gt;&amp;quot;import cx_Oracle; print cx_Oracle.version&amp;quot;&lt;/span&gt;
 Traceback &lt;span class="o"&gt;(&lt;/span&gt;most recent call last&lt;span class="o"&gt;)&lt;/span&gt;:
-  File &lt;span class="s2"&gt;&amp;quot;&amp;lt;string&amp;gt;&amp;quot;&lt;/span&gt;, line 1, in &amp;lt;module&amp;gt;
+  File &lt;span class="s2"&gt;&amp;quot;&amp;lt;string&amp;gt;&amp;quot;&lt;/span&gt;, line &lt;span class="m"&gt;1&lt;/span&gt;, in &amp;lt;module&amp;gt;
 ImportError: libclntsh.so.12.1: cannot open shared object file: No such file or directory
 &lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@oracle:~#
 &lt;/pre&gt;&lt;/div&gt;
@@ -510,7 +510,7 @@ ImportError: libclntsh.so.12.1: cannot open shared object file: No such file or 
 &lt;p&gt;Otro error es que se queje de que no encuentra &lt;em&gt;libaio.so&lt;/em&gt;. Esto indica que os habéis saltado los requisitos y necesitáis instalarlos.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@oracle:~# python -c &lt;span class="s2"&gt;&amp;quot;import cx_Oracle; print cx_Oracle.version&amp;quot;&lt;/span&gt;
 Traceback &lt;span class="o"&gt;(&lt;/span&gt;most recent call last&lt;span class="o"&gt;)&lt;/span&gt;:
-  File &lt;span class="s2"&gt;&amp;quot;&amp;lt;string&amp;gt;&amp;quot;&lt;/span&gt;, line 1, in &amp;lt;module&amp;gt;
+  File &lt;span class="s2"&gt;&amp;quot;&amp;lt;string&amp;gt;&amp;quot;&lt;/span&gt;, line &lt;span class="m"&gt;1&lt;/span&gt;, in &amp;lt;module&amp;gt;
 ImportError: libaio.so.1: cannot open shared object file: No such file or directory
 &lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@oracle:~# apt-get install libaio1
 Leyendo lista de paquetes... Hecho
@@ -519,8 +519,8 @@ Leyendo la información de estado... Hecho
 Se instalarán los siguientes paquetes NUEVOS:
   libaio1
 &lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;1&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
-Se necesita descargar 9.634 B de archivos.
-Se utilizarán 13,3 kB de espacio de disco adicional después de esta operación.
+Se necesita descargar &lt;span class="m"&gt;9&lt;/span&gt;.634 B de archivos.
+Se utilizarán &lt;span class="m"&gt;13&lt;/span&gt;,3 kB de espacio de disco adicional después de esta operación.
 ...
 &lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@oracle:~#
 &lt;/pre&gt;&lt;/div&gt;
@@ -528,7 +528,7 @@ Se utilizarán 13,3 kB de espacio de disco adicional después de esta operación
 
 &lt;p&gt;Finalmente obtenemos un resultado correcto, que nos indica que tenemos instalada la librería en nuestro entorno virtual.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@oracle:~# python -c &lt;span class="s2"&gt;&amp;quot;import cx_Oracle; print cx_Oracle.version&amp;quot;&lt;/span&gt;
-5.2.1
+&lt;span class="m"&gt;5&lt;/span&gt;.2.1
 &lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@oracle:~#
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -581,8 +581,8 @@ Se instalarán los siguientes paquetes NUEVOS:
   file libaio1 libexpat1 libffi6 libmagic1 libpython-stdlib libpython2.7-minimal libpython2.7-stdlib libsqlite3-0 mime-support
   python python-minimal python2.7 python2.7-minimal
 &lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;14&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
-Se necesita descargar 5.020 kB de archivos.
-Se utilizarán 21,3 MB de espacio de disco adicional después de esta operación.
+Se necesita descargar &lt;span class="m"&gt;5&lt;/span&gt;.020 kB de archivos.
+Se utilizarán &lt;span class="m"&gt;21&lt;/span&gt;,3 MB de espacio de disco adicional después de esta operación.
 ¿Desea continuar? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
 ...  
 root@oracle2:/opt#
@@ -612,7 +612,7 @@ Successfully installed cx-Oracle-5.2.1
 &lt;p&gt;Probamos que funcione; es importante definir la variable de entorno &lt;strong&gt;LD_LIBRARY_PATH&lt;/strong&gt; para que encuentre el &lt;em&gt;runtime&lt;/em&gt; de Oracle. Es muy útil ponerlo en el fichero &lt;em&gt;~/.bashrc&lt;/em&gt; para que se cargue solo al abrir el &lt;em&gt;shell&lt;/em&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@oracle2:/opt/scripts# &lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;LD_LIBRARY_PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/opt/instantclient_12_1/
 &lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@oracle2:/opt/scripts# python -c &lt;span class="s2"&gt;&amp;quot;import cx_Oracle; print cx_Oracle.version&amp;quot;&lt;/span&gt;
-5.2.1
+&lt;span class="m"&gt;5&lt;/span&gt;.2.1
 &lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@oracle2:/opt/scripts#
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -663,7 +663,7 @@ env/lib/python2.7/site-packages/cx_Oracle.so
 
 &lt;p&gt;No está nada mal; hemos pasado de 169mb a 55mb. Comprobamos que sigue funcionando:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@oracle2:/opt/scripts# python -c &lt;span class="s2"&gt;&amp;quot;import cx_Oracle; print cx_Oracle.version&amp;quot;&lt;/span&gt;
-5.2.1
+&lt;span class="m"&gt;5&lt;/span&gt;.2.1
 &lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@oracle2:/opt/scripts#
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -701,11 +701,11 @@ connection.close&lt;span class="o"&gt;()&lt;/span&gt;
 
 &lt;p&gt;Ejecutamos como cualquier otro &lt;em&gt;script&lt;/em&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@oracle2:/opt/scripts# ./list_fruits.py
-Apple&lt;span class="p"&gt;;&lt;/span&gt;0.99
-Orange&lt;span class="p"&gt;;&lt;/span&gt;0.89
-Pear&lt;span class="p"&gt;;&lt;/span&gt;1.19
+Apple&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.99
+Orange&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.89
+Pear&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.19
 &lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; root@oracle2:/opt/scripts#
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y obtenemos los datos deseados, con la facilidad que nos aporta &lt;strong&gt;python&lt;/strong&gt; para dar formato fácil a la salida de nuestros &lt;em&gt;scripts&lt;/em&gt;.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="python"></category><category term="oracle"></category><category term="script"></category><category term="virtualenv"></category><category term="wheel"></category></entry></feed>
+&lt;p&gt;Y obtenemos los datos deseados, con la facilidad que nos aporta &lt;strong&gt;python&lt;/strong&gt; para dar formato fácil a la salida de nuestros &lt;em&gt;scripts&lt;/em&gt;.&lt;/p&gt;</content><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="python"></category><category term="oracle"></category><category term="script"></category><category term="virtualenv"></category><category term="wheel"></category></entry></feed>

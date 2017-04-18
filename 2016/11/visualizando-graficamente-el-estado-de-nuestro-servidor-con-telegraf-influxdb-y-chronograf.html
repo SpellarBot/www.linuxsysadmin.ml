@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="chronograf,telegraf,influxdb,docker" />
-        <meta name="description" content="No hay nada mas visualmente atractivo que ver nuestros servidores en tiempo real mediante gráficos temporales, y existen algunas buenas herramientas ya hechas. Necesitaremos un agente que recolecte los datos del servidor y los envíe a una base de datos temporales, para que se pueden dibujar en una página web ..." />
+        <meta name="description" content="No hay nada mas visualmente atractivo que ver nuestros servidores en tiempo real mediante gráficos temporales, y existen algunas buenas herramientas ya hechas. Necesitaremos un agente que recolecte los datos del servidor y los envíe a una base de datos temporales, para que se pueden dibujar en una página web …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Visualizando gráficamente el estado de nuestro servidor con Telegraf, InfluxDB y Chronograf"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/11/visualizando-graficamente-el-estado-de-nuestro-servidor-con-telegraf-influxdb-y-chronograf.html"/>
-        <meta property="og:description" content="No hay nada mas visualmente atractivo que ver nuestros servidores en tiempo real mediante gráficos temporales, y existen algunas buenas herramientas ya hechas. Necesitaremos un agente que recolecte los datos del servidor y los envíe a una base de datos temporales, para que se pueden dibujar en una página web ..."/>
+        <meta property="og:description" content="No hay nada mas visualmente atractivo que ver nuestros servidores en tiempo real mediante gráficos temporales, y existen algunas buenas herramientas ya hechas. Necesitaremos un agente que recolecte los datos del servidor y los envíe a una base de datos temporales, para que se pueden dibujar en una página web …"/>
         <meta property="article:published_time" content="2016-11-07" />
             <meta property="article:section" content="Operaciones" />
             <meta property="article:tag" content="chronograf" />
@@ -69,9 +69,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -181,7 +178,7 @@ gerard@sodium:~/docker$
 
 <h3>El panel web</h3>
 <p>Hay muchas herramientas para visualizar datos, pero nos vamos a limitar a la herramienta de la misma <em>suite</em>, que es <strong>Chronograf</strong>. Para eso tenemos que levantar su contenedor. Es especialmente importante exponer el puerto, para poder ver la web desde fuera del contenedor.</p>
-<div class="highlight"><pre><span></span>gerard@sodium:~/docker$ docker run -p 10000:10000 -d chronograf
+<div class="highlight"><pre><span></span>gerard@sodium:~/docker$ docker run -p <span class="m">10000</span>:10000 -d chronograf
 b3fb6777bac2ad5c061ff5ea6603305c0c43d6103c552a47fafb1414a7434c34
 gerard@sodium:~/docker$ 
 </pre></div>
@@ -197,16 +194,16 @@ gerard@sodium:~/docker$
 <p>SELECT used_percent FROM telegraf..mem WHERE tmpltime()</p>
 </blockquote>
 <p>Insuficiente con este valor, creamos un <em>dashboard</em> llamado "Server". Le añadimos la visualización ya existente llamada "Memory" y porque no, creamos una visualización nueva "CPU" con dos valores en el campo "Extract by". Así de fácil.</p>
-<p><img alt="Chronograf dashboard" src="http://www.linuxsysadmin.tk/images/chronograf.jpg" /></p>
+<p><img alt="Chronograf dashboard" src="http://www.linuxsysadmin.tk/images/chronograf.jpg"></p>
 <p>Y con eso acabamos. Solo falta poner esto en un sitio visible y sacar nuestras conclusiones.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html">Separando el build y el runtime con contenedores Docker</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/07/tipos-de-volumenes-en-docker.html">Tipos de volúmenes en Docker</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html">Un entorno web estático con nginx, rsync y docker</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html">Balanceando peticiones con HAProxy</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2017/04/una-toolbox-empaquetada-en-contenedores.html">Una toolbox empaquetada en contenedores</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2017/01/un-registro-local-de-docker.html">Un registro local de Docker</a></li>
     </ul>
 </section>
     <hr/>
@@ -358,6 +355,11 @@ gerard@sodium:~/docker$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -471,11 +473,6 @@ gerard@sodium:~/docker$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

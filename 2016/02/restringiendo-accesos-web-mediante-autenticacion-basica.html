@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,debian,jessie,nginx,autenticacion basica,htpasswd,ssl,https,certificado" />
-        <meta name="description" content="Algunas veces nos encontramos con la necesidad de restringir el acceso a algunos recursos web. Normalmente se suele implementar algún sistema de login, cookies o sesiones; no obstante, esta opción no siempre nos es posible, y tenemos que proteger esos recursos usando los mecanismos que nos ofrezca el servidor web ..." />
+        <meta name="description" content="Algunas veces nos encontramos con la necesidad de restringir el acceso a algunos recursos web. Normalmente se suele implementar algún sistema de login, cookies o sesiones; no obstante, esta opción no siempre nos es posible, y tenemos que proteger esos recursos usando los mecanismos que nos ofrezca el servidor web …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Restringiendo accesos web mediante autenticación básica"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html"/>
-        <meta property="og:description" content="Algunas veces nos encontramos con la necesidad de restringir el acceso a algunos recursos web. Normalmente se suele implementar algún sistema de login, cookies o sesiones; no obstante, esta opción no siempre nos es posible, y tenemos que proteger esos recursos usando los mecanismos que nos ofrezca el servidor web ..."/>
+        <meta property="og:description" content="Algunas veces nos encontramos con la necesidad de restringir el acceso a algunos recursos web. Normalmente se suele implementar algún sistema de login, cookies o sesiones; no obstante, esta opción no siempre nos es posible, y tenemos que proteger esos recursos usando los mecanismos que nos ofrezca el servidor web …"/>
         <meta property="article:published_time" content="2016-02-08" />
             <meta property="article:section" content="Sistemas" />
             <meta property="article:tag" content="linux" />
@@ -74,9 +74,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -171,8 +168,8 @@ Paquetes sugeridos:
 Se instalarán los siguientes paquetes NUEVOS:
   nginx-common nginx-light openssl
 <span class="m">0</span> actualizados, <span class="m">3</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
-Se necesita descargar 1.126 kB de archivos.
-Se utilizarán 2.148 kB de espacio de disco adicional después de esta operación.
+Se necesita descargar <span class="m">1</span>.126 kB de archivos.
+Se utilizarán <span class="m">2</span>.148 kB de espacio de disco adicional después de esta operación.
 ¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
 ...
 root@server:~#
@@ -181,7 +178,7 @@ root@server:~#
 
 <h2>Generar el certificado y la clave de la CA</h2>
 <p>Empezaremos por generar la clave de la CA, que va a servir para firmar el certificado que pondremos en el servidor.</p>
-<div class="highlight"><pre><span></span>root@server:~# openssl genrsa -des3 -out ca.key 4096
+<div class="highlight"><pre><span></span>root@server:~# openssl genrsa -des3 -out ca.key <span class="m">4096</span>
 Generating RSA private key, <span class="m">4096</span> bit long modulus
 ..................................++
 .....................................................................++
@@ -201,7 +198,7 @@ root@server:~#
 
 <h2>Generar el certificado para el servidor web</h2>
 <p>Generamos la clave para el certificado del servidor web.</p>
-<div class="highlight"><pre><span></span>root@server:~# openssl genrsa -des3 -out server.key 4096
+<div class="highlight"><pre><span></span>root@server:~# openssl genrsa -des3 -out server.key <span class="m">4096</span>
 Generating RSA private key, <span class="m">4096</span> bit long modulus
 .....................................................................++
 ......................................................................................................................................................................++
@@ -306,7 +303,7 @@ root@server:~#
 
 
 <p>Si apuntamos un navegador al dominio configurado, y tras aceptar nuestro certificado autofirmado como excepción, deberíamos ver que se nos piden las credenciales en una ventana emergente.</p>
-<p><img alt="Autenticación básica: credenciales" src="http://www.linuxsysadmin.tk/images/autenticacion-basica-credenciales.png" /></p>
+<p><img alt="Autenticación básica: credenciales" src="http://www.linuxsysadmin.tk/images/autenticacion-basica-credenciales.png"></p>
 <p>Y con eso tenemos nuestro contenido protegido de los curiosos.</p>
             </div>
             <!-- /.entry-content -->
@@ -467,6 +464,11 @@ root@server:~#
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -580,11 +582,6 @@ root@server:~#
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="ghost,blog,virtual hosts" />
-        <meta name="description" content="Como ya vimos en un artículo anterior cada instancia de Ghost necesita una combinación de dirección y puerto distinta. Esto supone un problema porque la pesadez de indicar el puerto en el navegador. Podemos poner un único servidor Nginx que redirija las peticiones de forma transparente según el dominio pedido ..." />
+        <meta name="description" content="Como ya vimos en un artículo anterior cada instancia de Ghost necesita una combinación de dirección y puerto distinta. Esto supone un problema porque la pesadez de indicar el puerto en el navegador. Podemos poner un único servidor Nginx que redirija las peticiones de forma transparente según el dominio pedido …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Varios blogs de Ghost en el mismo servidor con Docker y Nginx"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/12/varios-blogs-de-ghost-en-el-mismo-servidor-con-docker-y-nginx.html"/>
-        <meta property="og:description" content="Como ya vimos en un artículo anterior cada instancia de Ghost necesita una combinación de dirección y puerto distinta. Esto supone un problema porque la pesadez de indicar el puerto en el navegador. Podemos poner un único servidor Nginx que redirija las peticiones de forma transparente según el dominio pedido ..."/>
+        <meta property="og:description" content="Como ya vimos en un artículo anterior cada instancia de Ghost necesita una combinación de dirección y puerto distinta. Esto supone un problema porque la pesadez de indicar el puerto en el navegador. Podemos poner un único servidor Nginx que redirija las peticiones de forma transparente según el dominio pedido …"/>
         <meta property="article:published_time" content="2016-12-26" />
             <meta property="article:section" content="Miscelánea" />
             <meta property="article:tag" content="ghost" />
@@ -68,9 +68,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -222,15 +219,15 @@ gerard@sirius:~/docker/multighost$
 
 <p>Solo falta poner la configuración general, el punto de acceso al contenedor y el generador de configuraciones específicas según las variables de entorno.</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/docker/multighost$ cat proxy/nginx.conf 
-worker_processes  1<span class="p">;</span>
+worker_processes  <span class="m">1</span><span class="p">;</span>
 events <span class="o">{</span>
-    worker_connections  1024<span class="p">;</span>
+    worker_connections  <span class="m">1024</span><span class="p">;</span>
 <span class="o">}</span>
 http <span class="o">{</span>
     include mime.types<span class="p">;</span>
     default_type application/octet-stream<span class="p">;</span>
     sendfile on<span class="p">;</span>
-    keepalive_timeout 65<span class="p">;</span>
+    keepalive_timeout <span class="m">65</span><span class="p">;</span>
     include conf.d/*<span class="p">;</span>
 <span class="o">}</span>
 gerard@sirius:~/docker/multighost$ cat proxy/generate_configs.sh 
@@ -283,14 +280,14 @@ services:
   ghost1:
     build: ghost_blog
     expose:
-      - 2368
+      - <span class="m">2368</span>
     environment:
       - <span class="nv">NODE_ENV</span><span class="o">=</span>production
       - <span class="nv">GHOST_URL</span><span class="o">=</span>http://ghost1.my
   ghost2:
     build: ghost_blog
     expose:
-      - 2368
+      - <span class="m">2368</span>
     environment:
       - <span class="nv">NODE_ENV</span><span class="o">=</span>production
       - <span class="nv">GHOST_URL</span><span class="o">=</span>http://ghost2.my
@@ -325,10 +322,10 @@ Step <span class="m">2</span> : RUN apk add --no-cache nginx <span class="o">&am
  ---&gt; Running in aa6bdbca5088
 fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/main/x86_64/APKINDEX.tar.gz
 fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/community/x86_64/APKINDEX.tar.gz
-<span class="o">(</span>1/3<span class="o">)</span> Installing nginx-common <span class="o">(</span>1.10.1-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">1</span>/3<span class="o">)</span> Installing nginx-common <span class="o">(</span><span class="m">1</span>.10.1-r1<span class="o">)</span>
 Executing nginx-common-1.10.1-r1.pre-install
-<span class="o">(</span>2/3<span class="o">)</span> Installing pcre <span class="o">(</span>8.38-r1<span class="o">)</span>
-<span class="o">(</span>3/3<span class="o">)</span> Installing nginx <span class="o">(</span>1.10.1-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">2</span>/3<span class="o">)</span> Installing pcre <span class="o">(</span><span class="m">8</span>.38-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">3</span>/3<span class="o">)</span> Installing nginx <span class="o">(</span><span class="m">1</span>.10.1-r1<span class="o">)</span>
 Executing busybox-1.24.2-r11.trigger
 OK: <span class="m">6</span> MiB in <span class="m">14</span> packages
  ---&gt; 6cb42f2e3eb3
@@ -353,9 +350,9 @@ gerard@sirius:~/docker/multighost$
 <div class="highlight"><pre><span></span>gerard@sirius:~/docker/multighost$ docker-compose ps
        Name                   Command            State         Ports        
 ---------------------------------------------------------------------------
-multighost_ghost1_1   /entrypoint.sh npm start   Up      2368/tcp           
-multighost_ghost2_1   /entrypoint.sh npm start   Up      2368/tcp           
-multighost_proxy_1    /entrypoint.sh             Up      0.0.0.0:80-&gt;80/tcp 
+multighost_ghost1_1   /entrypoint.sh npm start   Up      <span class="m">2368</span>/tcp           
+multighost_ghost2_1   /entrypoint.sh npm start   Up      <span class="m">2368</span>/tcp           
+multighost_proxy_1    /entrypoint.sh             Up      <span class="m">0</span>.0.0.0:80-&gt;80/tcp 
 gerard@sirius:~/docker/multighost$ 
 </pre></div>
 
@@ -528,6 +525,11 @@ gerard@sirius:~/docker/multighost$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -641,11 +643,6 @@ gerard@sirius:~/docker/multighost$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

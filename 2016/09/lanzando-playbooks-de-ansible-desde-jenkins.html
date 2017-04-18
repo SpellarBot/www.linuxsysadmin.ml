@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="ansible,playbook,jenkins,docker,git" />
-        <meta name="description" content="Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con Ansible o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto Ansible Tower, su precio es prohibitivo para muchos ..." />
+        <meta name="description" content="Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con Ansible o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto Ansible Tower, su precio es prohibitivo para muchos …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Lanzando playbooks de Ansible desde Jenkins"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html"/>
-        <meta property="og:description" content="Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con Ansible o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto Ansible Tower, su precio es prohibitivo para muchos ..."/>
+        <meta property="og:description" content="Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con Ansible o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto Ansible Tower, su precio es prohibitivo para muchos …"/>
         <meta property="article:published_time" content="2016-09-26" />
             <meta property="article:section" content="Operaciones" />
             <meta property="article:tag" content="ansible" />
@@ -70,9 +70,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -182,7 +179,7 @@ gerard@seginus:~/docker/jenkins_ansible$
 
 <p>Construimos nuestra nueva imagen con las herramientas necesarias, con el comando habitual.</p>
 <div class="highlight"><pre><span></span>gerard@seginus:~/docker/jenkins_ansible$ docker build -t jenkins_ansible .
-Sending build context to Docker daemon 4.096 kB
+Sending build context to Docker daemon <span class="m">4</span>.096 kB
 Step <span class="m">1</span> : FROM jenkins
  ---&gt; 2da1d8d90b7e
 Step <span class="m">2</span> : USER root
@@ -191,7 +188,7 @@ Step <span class="m">2</span> : USER root
 Removing intermediate container f994443d27bd
 Step <span class="m">3</span> : RUN <span class="nb">echo</span> <span class="s2">&quot;deb http://ftp.debian.org/debian jessie-backports main&quot;</span> &gt; /etc/apt/sources.list.d/backports.list <span class="o">&amp;&amp;</span>     apt-get update <span class="o">&amp;&amp;</span>     apt-get install -y openssh-client sshpass <span class="o">&amp;&amp;</span>     apt-get install -y -t jessie-backports ansible <span class="o">&amp;&amp;</span>     apt-get clean <span class="o">&amp;&amp;</span>     rm -rf /var/lib/apt/lists/*
  ---&gt; Running in 2c3371ad61b0
-Get:1 http://security.debian.org jessie/updates InRelease <span class="o">[</span>63.1 kB<span class="o">]</span>
+Get:1 http://security.debian.org jessie/updates InRelease <span class="o">[</span><span class="m">63</span>.1 kB<span class="o">]</span>
 Get:2 http://ftp.debian.org jessie-backports InRelease <span class="o">[</span><span class="m">166</span> kB<span class="o">]</span>
 Get:3 http://security.debian.org jessie/updates/main amd64 Packages <span class="o">[</span><span class="m">389</span> kB<span class="o">]</span>
 Get:4 http://ftp.debian.org jessie-backports/main amd64 Packages <span class="o">[</span><span class="m">879</span> kB<span class="o">]</span>
@@ -200,10 +197,10 @@ Get:5 http://httpredir.debian.org jessie-updates InRelease <span class="o">[</sp
 Get:6 http://httpredir.debian.org jessie-backports InRelease <span class="o">[</span><span class="m">166</span> kB<span class="o">]</span>
 Get:7 http://httpredir.debian.org jessie Release.gpg <span class="o">[</span><span class="m">2373</span> B<span class="o">]</span>
 Get:8 http://httpredir.debian.org jessie Release <span class="o">[</span><span class="m">148</span> kB<span class="o">]</span>
-Get:9 http://httpredir.debian.org jessie-updates/main amd64 Packages <span class="o">[</span>17.6 kB<span class="o">]</span>
+Get:9 http://httpredir.debian.org jessie-updates/main amd64 Packages <span class="o">[</span><span class="m">17</span>.6 kB<span class="o">]</span>
 Get:10 http://httpredir.debian.org jessie/main amd64 Packages <span class="o">[</span><span class="m">9032</span> kB<span class="o">]</span>
 Get:11 http://httpredir.debian.org jessie-backports/main amd64 Packages <span class="o">[</span><span class="m">879</span> kB<span class="o">]</span>
-Fetched 11.9 MB in 19s <span class="o">(</span><span class="m">606</span> kB/s<span class="o">)</span>
+Fetched <span class="m">11</span>.9 MB in 19s <span class="o">(</span><span class="m">606</span> kB/s<span class="o">)</span>
 Reading package lists...
 Reading package lists...
 Building dependency tree...
@@ -212,16 +209,16 @@ openssh-client is already the newest version.
 The following NEW packages will be installed:
   sshpass
 <span class="m">0</span> upgraded, <span class="m">1</span> newly installed, <span class="m">0</span> to remove and <span class="m">1</span> not upgraded.
-Need to get 11.2 kB of archives.
-After this operation, 65.5 kB of additional disk space will be used.
-Get:1 http://httpredir.debian.org/debian/ jessie/main sshpass amd64 1.05-1 <span class="o">[</span>11.2 kB<span class="o">]</span>
+Need to get <span class="m">11</span>.2 kB of archives.
+After this operation, <span class="m">65</span>.5 kB of additional disk space will be used.
+Get:1 http://httpredir.debian.org/debian/ jessie/main sshpass amd64 <span class="m">1</span>.05-1 <span class="o">[</span><span class="m">11</span>.2 kB<span class="o">]</span>
 debconf: delaying package configuration, since apt-utils is not installed
-Fetched 11.2 kB in 0s <span class="o">(</span>35.3 kB/s<span class="o">)</span>
+Fetched <span class="m">11</span>.2 kB in 0s <span class="o">(</span><span class="m">35</span>.3 kB/s<span class="o">)</span>
 Selecting previously unselected package sshpass.
 <span class="o">(</span>Reading database ... <span class="m">17572</span> files and directories currently installed.<span class="o">)</span>
 Preparing to unpack .../sshpass_1.05-1_amd64.deb ...
-Unpacking sshpass <span class="o">(</span>1.05-1<span class="o">)</span> ...
-Setting up sshpass <span class="o">(</span>1.05-1<span class="o">)</span> ...
+Unpacking sshpass <span class="o">(</span><span class="m">1</span>.05-1<span class="o">)</span> ...
+Setting up sshpass <span class="o">(</span><span class="m">1</span>.05-1<span class="o">)</span> ...
 Reading package lists...
 Building dependency tree...
 Reading state information...
@@ -238,7 +235,7 @@ The following NEW packages will be installed:
   python-pkg-resources python-selinux python-yaml
 <span class="m">0</span> upgraded, <span class="m">13</span> newly installed, <span class="m">0</span> to remove and <span class="m">27</span> not upgraded.
 Need to get <span class="m">3359</span> kB of archives.
-After this operation, 19.5 MB of additional disk space will be used.
+After this operation, <span class="m">19</span>.5 MB of additional disk space will be used.
 ...  
  ---&gt; d8ed3d7ffdb3
 Removing intermediate container 2c3371ad61b0
@@ -258,7 +255,7 @@ gerard@seginus:~/docker/jenkins_ansible$
 
 
 <p>Levantamos un contenedor para la nueva imagen creada, de la misma forma que levantaríamos la imagen de <strong>Jenkins</strong> oficial. Mas información en <a href="https://hub.docker.com/_/jenkins/">Docker Hub</a>.</p>
-<div class="highlight"><pre><span></span>gerard@seginus:~/docker/jenkins_ansible$ docker run -p 8080:8080 -d jenkins_ansible
+<div class="highlight"><pre><span></span>gerard@seginus:~/docker/jenkins_ansible$ docker run -p <span class="m">8080</span>:8080 -d jenkins_ansible
 f9b6a9d23fde25411cd2086d13b7a171633eb2cf0b18295fde89c4466c08ef54
 gerard@seginus:~/docker/jenkins_ansible$ 
 </pre></div>
@@ -281,7 +278,7 @@ gerard@seginus:~/docker/jenkins_ansible$
 <p>Ya podemos abrir la página de nuestro contenedor, de forma que se puedan efectuar las configuraciones iniciales. Nos vamos a dirigir a <a href="http://localhost:8080/">http://localhost:8080/</a>, que es desde donde se va a controlar nuestro servidor de ahora en adelante.</p>
 <p>La parte mas importante de nuestro despliegue de <strong>Jenkins</strong> son los <em>plugins</em>. En nuestro caso, solo queremos clonar nuestros <em>playbooks</em> desde <strong>git</strong> y lanzarlos mediante <strong>Ansible</strong>. Para ello necesitamos estos dos <em>plugins</em>: <em>git plugin</em> y <em>ansible plugin</em>. Se pueden instalar en la primera visita a nuestro contenedor o a <em>posteriori</em>. Los instalamos.</p>
 <p>Y finalmente tenemos un <strong>Jenkins</strong> funcional aunque si ninguna tarea configurada.</p>
-<p><img alt="Ansible desde Jenkins 01" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_01.jpg" /></p>
+<p><img alt="Ansible desde Jenkins 01" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_01.jpg"></p>
 <h2>El repositorio de playbooks</h2>
 <p>Necesitamos algún lugar desde donde obtener nuestros <em>playbooks</em>. De acuerdo con la decisión del flujo de trabajo van a estar alojados en un servidor <strong>git</strong>, y en este caso, voy a usar un repositorio de usar y tirar en <a href="https://github.com/">GitHub</a>.</p>
 <p>Por poner a nuestro repositorio alguna estructura, he usado dos carpetas: una para contener los <em>playbooks</em> y otra para el inventario. La carpeta del inventario es similar a la de <a href="http://www.linuxsysadmin.tk/2016/08/encriptando-datos-sensibles-con-ansible.html">este otro artículo</a>.</p>
@@ -302,12 +299,12 @@ gerard@seginus:~/docker/ansible$
 <p>En <em>inventory/vault</em> tenemos los datos de conexión a las máquinas, como indica el artículo antes citado. El resto de ficheros son los <em>playbooks</em> que vamos a usar, y los <em>hosts</em> que tenemos en sus grupos correspondientes. Hay que tirar de imaginación para imaginar un <em>playbook</em> un poco mas útil.</p>
 <div class="highlight"><pre><span></span>gerard@seginus:~/docker/ansible$ cat inventory/hosts 
 <span class="o">[</span>group1<span class="o">]</span>
-172.17.0.3
-172.17.0.4
+<span class="m">172</span>.17.0.3
+<span class="m">172</span>.17.0.4
 
 <span class="o">[</span>group2<span class="o">]</span>
-172.17.0.5
-172.17.0.6
+<span class="m">172</span>.17.0.5
+<span class="m">172</span>.17.0.6
 gerard@seginus:~/docker/ansible$ cat playbooks/ping_all.yml 
 - hosts: all
   tasks:
@@ -323,29 +320,29 @@ gerard@seginus:~/docker/ansible$
 <h2>Creando una tarea básica</h2>
 <p>Vamos a crear una tarea que consista en lanzar el fichero <em>playbooks/ping_all.yml</em>. Para ello pinchamos en el enlace "create new job", le damos un nombre (por ejemplo "Ping All") y lo creamos de tipo "Freestyle project".</p>
 <p>El primer paso consiste en obtener los <em>playbooks</em> del repositorio. Para ello rellenaremos el apartado "Source code management", eligiendo "Git" e indicando la <em>URL</em> del repositorio.</p>
-<p><img alt="Ansible desde Jenkins 02" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_02.jpg" /></p>
+<p><img alt="Ansible desde Jenkins 02" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_02.jpg"></p>
 <p>Lo siguiente es indicar un "Build step" que se "Invoke Ansible Playbook". Hay que indicar el <em>playbook</em> desde la carpeta pertinente, de forma relativa. Eso significa que en nuestro caso es <em>playbooks/ping_all.yml</em>. Adicionalmente vamos a indicar que el fichero de inventario es la carpeta <em>inventory</em>, que es lo que se le va a pasar a <strong>Ansible</strong>.</p>
-<p><img alt="Ansible desde Jenkins 03" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_03.jpg" /></p>
+<p><img alt="Ansible desde Jenkins 03" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_03.jpg"></p>
 <p>Le damos a guardar y ya tenemos nuestra tarea. Bastará con lanzar la tarea con "Build now" y esperar resultados, en "Console Output" de la ejecución en curso.</p>
-<p><img alt="Ansible desde Jenkins 04" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_04.jpg" /></p>
+<p><img alt="Ansible desde Jenkins 04" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_04.jpg"></p>
 <h2>Creando una tarea con parámetros</h2>
 <p>Muchas de las tareas que hacemos son repetitivas. Cambian las versiones de código a desplegar, los entornos, los proyectos y poco mas. ¿No sería maravilloso tener un solo <em>playbook</em> que admita parámetros? <strong>Jenkins</strong> nos ofrece la posibilidad de añadir parámetros, que luego pueden ser usados en los "Build steps", por ejemplo, para pasárselas a los <em>playbooks</em>.</p>
 <p>Vamos a crear otra tarea, esta vez llamada "Ping Some". Va a ser idéntica a la otra, pero con el <em>playbook</em> llamado <em>ping_some.yml</em>. Vamos a marcar la casilla "This project is parameterized" en la casilla general y le añadiremos un parámetro, al que llamaremos "target" y va a ser un "Choice Parameter" con los valores "all", "group1" y "group2".</p>
-<p><img alt="Ansible desde Jenkins 05" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_05.jpg" /></p>
+<p><img alt="Ansible desde Jenkins 05" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_05.jpg"></p>
 <p>Vamos a los "Build steps" a poner ese parámetro al comando <em>ansible</em>. Tras dar al botón "Advanced..." podemos poner mas parámetros para <strong>Ansible</strong>. Esto nos permite poner "-e target=$target" para que el <em>playbook</em> reciba un parámetro <em>target</em> que contenga el valor del mismo parámetro en <strong>Jenkins</strong>.</p>
-<p><img alt="Ansible desde Jenkins 06" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_06.jpg" /></p>
+<p><img alt="Ansible desde Jenkins 06" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_06.jpg"></p>
 <p>Tras salvar la tarea, vemos que la opción de "Build" se ha convertido en "Build with Parameters", y podemos elegir entre los valores específicos.</p>
-<p><img alt="Ansible desde Jenkins 07" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_07.jpg" /></p>
+<p><img alt="Ansible desde Jenkins 07" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_07.jpg"></p>
 <p>Y con esto conseguimos pasar parámetros al <em>playbook</em>, que pueden ser texto libre, elecciones simples o valores fijos. Con un poco de imaginación, estos parámetros nos pueden ayudar mucho, en el sentido de no repetirnos.</p>
-<p><img alt="Ansible desde Jenkins 08" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_08.jpg" /></p>
+<p><img alt="Ansible desde Jenkins 08" src="http://www.linuxsysadmin.tk/images/ansible_jenkins_08.jpg"></p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/05/mongodb-sharding-con-ansible.html">MongoDB sharding con ansible</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html">Algunas ideas sueltas sobre Ansible</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html">Balanceando peticiones con HAProxy</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/08/creando-roles-con-ansible.html">Creando roles con ansible</a></li>
     </ul>
 </section>
     <hr/>
@@ -497,6 +494,11 @@ gerard@seginus:~/docker/ansible$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -610,11 +612,6 @@ gerard@seginus:~/docker/ansible$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,debian,jessie,apt-cacher-ng,cache" />
-        <meta name="description" content="Hace tiempo veo que tras usar muchas maquinas virtuales Debian para el uso diario y para las demostraciones de este blog, el ancho de banda usado para bajar los paquetes se dispara. La mayoría de veces se trata de los mismos paquetes, para instalar las mismas aplicaciones, servicios o actualizaciones ..." />
+        <meta name="description" content="Hace tiempo veo que tras usar muchas maquinas virtuales Debian para el uso diario y para las demostraciones de este blog, el ancho de banda usado para bajar los paquetes se dispara. La mayoría de veces se trata de los mismos paquetes, para instalar las mismas aplicaciones, servicios o actualizaciones …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Utilizando apt-cacher-ng para agilizar la instalación de paquetes"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html"/>
-        <meta property="og:description" content="Hace tiempo veo que tras usar muchas maquinas virtuales Debian para el uso diario y para las demostraciones de este blog, el ancho de banda usado para bajar los paquetes se dispara. La mayoría de veces se trata de los mismos paquetes, para instalar las mismas aplicaciones, servicios o actualizaciones ..."/>
+        <meta property="og:description" content="Hace tiempo veo que tras usar muchas maquinas virtuales Debian para el uso diario y para las demostraciones de este blog, el ancho de banda usado para bajar los paquetes se dispara. La mayoría de veces se trata de los mismos paquetes, para instalar las mismas aplicaciones, servicios o actualizaciones …"/>
         <meta property="article:published_time" content="2015-12-21" />
             <meta property="article:section" content="Sistemas" />
             <meta property="article:tag" content="linux" />
@@ -70,9 +70,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -153,9 +150,9 @@ Linux Sysadmin            </a>
 <div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
 NAME       STATE    IPV4      IPV6  AUTOSTART  
 ---------------------------------------------
-aptcacher  RUNNING  10.0.0.2  -     YES        
-client1    RUNNING  10.0.0.3  -     YES        
-client2    RUNNING  10.0.0.4  -     YES        
+aptcacher  RUNNING  <span class="m">10</span>.0.0.2  -     YES        
+client1    RUNNING  <span class="m">10</span>.0.0.3  -     YES        
+client2    RUNNING  <span class="m">10</span>.0.0.4  -     YES        
 root@lxc:~# 
 </pre></div>
 
@@ -169,7 +166,7 @@ Se instalarán los siguientes paquetes NUEVOS:
   apt-cacher-ng ed
 <span class="m">0</span> actualizados, <span class="m">2</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
 Se necesita descargar <span class="m">500</span> kB de archivos.
-Se utilizarán 1.168 kB de espacio de disco adicional después de esta operación.
+Se utilizarán <span class="m">1</span>.168 kB de espacio de disco adicional después de esta operación.
 ¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
 ...
 root@aptcacher:~# 
@@ -204,11 +201,11 @@ Se instalarán los siguientes paquetes NUEVOS:
   libpython2.7-stdlib libsqlite3-0 mime-support python python-minimal
   python2.7 python2.7-minimal
 <span class="m">0</span> actualizados, <span class="m">13</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
-Se necesita descargar 5.010 kB de archivos.
-Se utilizarán 21,3 MB de espacio de disco adicional después de esta operación.
+Se necesita descargar <span class="m">5</span>.010 kB de archivos.
+Se utilizarán <span class="m">21</span>,3 MB de espacio de disco adicional después de esta operación.
 ¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
 ...
-Descargados 5.010 kB en 15s <span class="o">(</span><span class="m">327</span> kB/s<span class="o">)</span>                                        
+Descargados <span class="m">5</span>.010 kB en 15s <span class="o">(</span><span class="m">327</span> kB/s<span class="o">)</span>                                        
 ...
 root@client1:~# 
 </pre></div>
@@ -216,7 +213,7 @@ root@client1:~#
 
 <p>Como estos paquetes no están en la <em>caché</em> del servidor, se han descargado de internet en 15 segundos, de acuerdo a la velocidad de mi conexión de internet y de la velocidad de respuesta de los repositorios elegidos.</p>
 <p>Si revisamos la página de estadísticas de <strong>apt-cacher-ng</strong>, disponible en <em>http://aptcacher:3142/acng-report.html</em> podemos ver que se han descargado 4,78mb en 13 paquetes; todos son <strong>miss</strong> de la cache, es decir, se han ido a buscar al repositorio oficial.</p>
-<p><img alt="Estadísticas web de apt-cacher" src="http://www.linuxsysadmin.tk/images/apt-cacher-ng-1.jpg" /></p>
+<p><img alt="Estadísticas web de apt-cacher" src="http://www.linuxsysadmin.tk/images/apt-cacher-ng-1.jpg"></p>
 <p>Ahora vamos a instalar <em>python</em> en otro de los clientes:</p>
 <div class="highlight"><pre><span></span>root@client2:~# apt-get install python
 Leyendo lista de paquetes... Hecho
@@ -227,18 +224,18 @@ Se instalarán los siguientes paquetes NUEVOS:
   libpython2.7-stdlib libsqlite3-0 mime-support python python-minimal
   python2.7 python2.7-minimal
 <span class="m">0</span> actualizados, <span class="m">13</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
-Se necesita descargar 5.010 kB de archivos.
-Se utilizarán 21,3 MB de espacio de disco adicional después de esta operación.
+Se necesita descargar <span class="m">5</span>.010 kB de archivos.
+Se utilizarán <span class="m">21</span>,3 MB de espacio de disco adicional después de esta operación.
 ¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
 ...
-Descargados 5.010 kB en 1s <span class="o">(</span>3.902 kB/s<span class="o">)</span>
+Descargados <span class="m">5</span>.010 kB en 1s <span class="o">(</span><span class="m">3</span>.902 kB/s<span class="o">)</span>
 root@client2:~# 
 </pre></div>
 
 
 <p>Hemos elegido el paquete <em>python</em> para asegurar que ambas máquinas instalan lo mismo; como se puede ver, se ha descargado la misma cantidad de datos, pero en vez de los 15 segundos anteriores, ahora se ha tardado 1 segundo. Eso es porque los paquetes solicitados estaban en el <em>proxy</em>, es decir, en el servidor <strong>aptcacher</strong>.</p>
 <p>Podemos ver en la misma página de administración el resultado: ahora hay 13 <strong>hits</strong> adicionales, ya que los paquetes solicitados estaban en local.</p>
-<p><img alt="Estadísticas web de apt-cacher" src="http://www.linuxsysadmin.tk/images/apt-cacher-ng-2.jpg" /></p>
+<p><img alt="Estadísticas web de apt-cacher" src="http://www.linuxsysadmin.tk/images/apt-cacher-ng-2.jpg"></p>
 <p>De esta forma, si tenemos un elevado número de máquinas del mismo tipo, solo consumiremos el ancho de banda necesario para traerlos de internet <strong>una sola vez</strong>.</p>
             </div>
             <!-- /.entry-content -->
@@ -246,8 +243,8 @@ root@client2:~#
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/02/un-proxy-dns-con-dnsmasq.html">Un proxy DNS con dnsmasq</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">Restringiendo accesos mediante certificados de cliente</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
     </ul>
 </section>
     <hr/>
@@ -399,6 +396,11 @@ root@client2:~#
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -512,11 +514,6 @@ root@client2:~#
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,debian,jessie,mongodb,replica set,sharding,ansible,playbook,systemd" />
-        <meta name="description" content="Como ya vimos en un artículo anterior, los replica sets nos ofrecen alta disponibilidad para nuestros despliegues de mongodb. Sin embargo, algunas veces, necesitamos que nuestro cluster ofrezca alto rendimiento, y esto se consigue mediante sharding. Como no queremos renunciar a la alta disponibilidad, podemos aplicar ambas; hoy explicamos como ..." />
+        <meta name="description" content="Como ya vimos en un artículo anterior, los replica sets nos ofrecen alta disponibilidad para nuestros despliegues de mongodb. Sin embargo, algunas veces, necesitamos que nuestro cluster ofrezca alto rendimiento, y esto se consigue mediante sharding. Como no queremos renunciar a la alta disponibilidad, podemos aplicar ambas; hoy explicamos como …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="MongoDB sharding con ansible"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/05/mongodb-sharding-con-ansible.html"/>
-        <meta property="og:description" content="Como ya vimos en un artículo anterior, los replica sets nos ofrecen alta disponibilidad para nuestros despliegues de mongodb. Sin embargo, algunas veces, necesitamos que nuestro cluster ofrezca alto rendimiento, y esto se consigue mediante sharding. Como no queremos renunciar a la alta disponibilidad, podemos aplicar ambas; hoy explicamos como ..."/>
+        <meta property="og:description" content="Como ya vimos en un artículo anterior, los replica sets nos ofrecen alta disponibilidad para nuestros despliegues de mongodb. Sin embargo, algunas veces, necesitamos que nuestro cluster ofrezca alto rendimiento, y esto se consigue mediante sharding. Como no queremos renunciar a la alta disponibilidad, podemos aplicar ambas; hoy explicamos como …"/>
         <meta property="article:published_time" content="2016-05-02" />
             <meta property="article:section" content="Sistemas" />
             <meta property="article:tag" content="linux" />
@@ -74,9 +74,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -163,14 +160,14 @@ Linux Sysadmin            </a>
 <p>Hay que decir que el mecanismo de <em>sharding</em> permite poner y quitar <em>shards</em> a <em>posteriori</em>, igual que con los procesos <em>mongos</em>, pero para empezar vamos a necesitar una arquitectura inicial que es lo que vamos a montar.</p>
 <p>Para empezar se ha decidido por un <em>cluster</em> de 3 <em>shards</em>, siendo cada uno de ellos un <em>replica set</em> de dos nodos de datos y un árbitro cada uno. Usaremos la cantidad de <em>config servers</em> que se recomienda en la documentación oficial.</p>
 <p>Así pues, y tras elegir nombres para los <em>shards</em>, podemos pintar un esquema de nuestro <em>cluster</em>.</p>
-<p><img alt="Arquitectura lógica" src="http://www.linuxsysadmin.tk/images/sharding_arquitectura_logica.jpg" /></p>
+<p><img alt="Arquitectura lógica" src="http://www.linuxsysadmin.tk/images/sharding_arquitectura_logica.jpg"></p>
 <p>Para repartir los procesos entre las máquinas, hay dos reglas que hay que respetar a rajatabla:</p>
 <ul>
 <li>Los procesos de datos necesitan una máquina propia, para que no se disputen los recursos de disco y memoria.</li>
 <li>No hay que poner nunca dos o mas procesos de cada <em>shard</em>, ya que la no disponibilidad de la máquina supondría la pérdida de la mayoría de las <em>replica sets</em>.</li>
 </ul>
 <p>El resto de procesos pueden compartir servidor con los de datos. Hay muchas formas de cumplir con las dos reglas, por ejemplo, la que vamos a montar:</p>
-<p><img alt="Arquitectura física" src="http://www.linuxsysadmin.tk/images/sharding_arquitectura_fisica.jpg" /></p>
+<p><img alt="Arquitectura física" src="http://www.linuxsysadmin.tk/images/sharding_arquitectura_fisica.jpg"></p>
 <h2>Ansible al rescate</h2>
 <p>Debido a la gran cantidad de procesos que hay que levantar, se ha decidido por automatizar su despliegue mediante <strong>ansible</strong>. El proceso es bastante similar a <a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">otro de nuestros artículos</a>.</p>
 <p>Se ha utilizado el mecanismo de <strong>roles</strong> de <strong>ansible</strong>, para poder desplegar todos los procesos del mismo tipo; el detalle es que se han usado los parámetros en los <strong>roles</strong> para los cambios menores. Si queréis intentarlo o entender como funcionan los despliegues, podéis encontrar los <strong>playbooks</strong> <a href="http://www.linuxsysadmin.tk/downloads/sharding_playbooks.tar.gz">aquí</a>.</p>
@@ -230,13 +227,13 @@ root@ansible:~#
 <div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
 NAME     STATE    IPV4        IPV6  AUTOSTART
 ---------------------------------------------
-ansible  RUNNING  10.0.0.254  -     NO
-mongo01  RUNNING  10.0.0.2    -     NO
-mongo02  RUNNING  10.0.0.3    -     NO
-mongo03  RUNNING  10.0.0.4    -     NO
-mongo04  RUNNING  10.0.0.5    -     NO
-mongo05  RUNNING  10.0.0.6    -     NO
-mongo06  RUNNING  10.0.0.7    -     NO
+ansible  RUNNING  <span class="m">10</span>.0.0.254  -     NO
+mongo01  RUNNING  <span class="m">10</span>.0.0.2    -     NO
+mongo02  RUNNING  <span class="m">10</span>.0.0.3    -     NO
+mongo03  RUNNING  <span class="m">10</span>.0.0.4    -     NO
+mongo04  RUNNING  <span class="m">10</span>.0.0.5    -     NO
+mongo05  RUNNING  <span class="m">10</span>.0.0.6    -     NO
+mongo06  RUNNING  <span class="m">10</span>.0.0.7    -     NO
 root@lxc:~#
 </pre></div>
 
@@ -244,44 +241,44 @@ root@lxc:~#
 <p>Vamos a declarar todas las máquina usadas en el fichero <em>hosts</em> de <strong>ansible</strong>. Ya de paso, los vamos a catalogar en grupos, para que los <strong>playbooks</strong> se puedan lanzar a los grupos, indistintamente de los servidores que los formen.</p>
 <div class="highlight"><pre><span></span>root@ansible:~# cat ansible/etc/hosts
 <span class="o">[</span>mongo_servers<span class="o">]</span>
-10.0.0.2
-10.0.0.3
-10.0.0.4
-10.0.0.5
-10.0.0.6
-10.0.0.7
+<span class="m">10</span>.0.0.2
+<span class="m">10</span>.0.0.3
+<span class="m">10</span>.0.0.4
+<span class="m">10</span>.0.0.5
+<span class="m">10</span>.0.0.6
+<span class="m">10</span>.0.0.7
 
 <span class="o">[</span>config_servers<span class="o">]</span>
-10.0.0.2
-10.0.0.3
-10.0.0.4
+<span class="m">10</span>.0.0.2
+<span class="m">10</span>.0.0.3
+<span class="m">10</span>.0.0.4
 
 <span class="o">[</span>aquila_shard_data<span class="o">]</span>
-10.0.0.2
-10.0.0.5
+<span class="m">10</span>.0.0.2
+<span class="m">10</span>.0.0.5
 
 <span class="o">[</span>aquila_shard_arbiters<span class="o">]</span>
-10.0.0.6
+<span class="m">10</span>.0.0.6
 
 <span class="o">[</span>lyra_shard_data<span class="o">]</span>
-10.0.0.3
-10.0.0.6
+<span class="m">10</span>.0.0.3
+<span class="m">10</span>.0.0.6
 
 <span class="o">[</span>lyra_shard_arbiters<span class="o">]</span>
-10.0.0.7
+<span class="m">10</span>.0.0.7
 
 <span class="o">[</span>cygnus_shard_data<span class="o">]</span>
-10.0.0.4
-10.0.0.7
+<span class="m">10</span>.0.0.4
+<span class="m">10</span>.0.0.7
 
 <span class="o">[</span>cygnus_shard_arbiters<span class="o">]</span>
-10.0.0.5
+<span class="m">10</span>.0.0.5
 
 <span class="o">[</span>mongos_servers<span class="o">]</span>
-10.0.0.2
+<span class="m">10</span>.0.0.2
 
 <span class="o">[</span>clients<span class="o">]</span>
-10.0.0.2
+<span class="m">10</span>.0.0.2
 root@ansible:~#
 </pre></div>
 
@@ -292,12 +289,12 @@ root@ansible:~#
 ...
 
 PLAY RECAP *********************************************************************
-10.0.0.2                   : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">6</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
-10.0.0.3                   : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">6</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
-10.0.0.4                   : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">6</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
-10.0.0.5                   : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">6</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
-10.0.0.6                   : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">6</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
-10.0.0.7                   : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">6</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
+<span class="m">10</span>.0.0.2                   : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">6</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
+<span class="m">10</span>.0.0.3                   : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">6</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
+<span class="m">10</span>.0.0.4                   : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">6</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
+<span class="m">10</span>.0.0.5                   : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">6</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
+<span class="m">10</span>.0.0.6                   : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">6</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
+<span class="m">10</span>.0.0.7                   : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">6</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
 
 root@ansible:~#
 </pre></div>
@@ -310,9 +307,9 @@ root@ansible:~#
 ...
 
 PLAY RECAP *********************************************************************
-10.0.0.2                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">7</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
-10.0.0.3                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">7</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
-10.0.0.4                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">7</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
+<span class="m">10</span>.0.0.2                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">7</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
+<span class="m">10</span>.0.0.3                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">7</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
+<span class="m">10</span>.0.0.4                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">7</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
 
 root@ansible:~#
 </pre></div>
@@ -327,7 +324,7 @@ root@ansible:~#
 ...
 
 PLAY RECAP *********************************************************************
-10.0.0.2                   : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">4</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
+<span class="m">10</span>.0.0.2                   : <span class="nv">ok</span><span class="o">=</span><span class="m">6</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">4</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
 
 root@ansible:~#
 </pre></div>
@@ -339,7 +336,7 @@ root@ansible:~#
 ...
 
 PLAY RECAP *********************************************************************
-10.0.0.2                   : <span class="nv">ok</span><span class="o">=</span><span class="m">3</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">1</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
+<span class="m">10</span>.0.0.2                   : <span class="nv">ok</span><span class="o">=</span><span class="m">3</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">1</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
 
 root@ansible:~#
 </pre></div>
@@ -353,9 +350,9 @@ root@ansible:~#
 ...
 
 PLAY RECAP *********************************************************************
-10.0.0.2                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">4</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
-10.0.0.5                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">7</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
-10.0.0.6                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">7</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
+<span class="m">10</span>.0.0.2                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">4</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
+<span class="m">10</span>.0.0.5                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">7</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
+<span class="m">10</span>.0.0.6                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">7</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
 
 root@ansible:~#
 </pre></div>
@@ -367,9 +364,9 @@ root@ansible:~#
 ...
 
 PLAY RECAP *********************************************************************
-10.0.0.3                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">4</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
-10.0.0.6                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">4</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
-10.0.0.7                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">7</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
+<span class="m">10</span>.0.0.3                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">4</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
+<span class="m">10</span>.0.0.6                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">4</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
+<span class="m">10</span>.0.0.7                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">7</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
 
 root@ansible:~#
 </pre></div>
@@ -381,9 +378,9 @@ root@ansible:~#
 ...
 
 PLAY RECAP *********************************************************************
-10.0.0.4                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">4</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
-10.0.0.5                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">4</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
-10.0.0.7                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">4</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span>0
+<span class="m">10</span>.0.0.4                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">4</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
+<span class="m">10</span>.0.0.5                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">4</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
+<span class="m">10</span>.0.0.7                   : <span class="nv">ok</span><span class="o">=</span><span class="m">7</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">4</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
 
 root@ansible:~#
 </pre></div>
@@ -392,16 +389,16 @@ root@ansible:~#
 <h2>Atando los replica sets</h2>
 <p>El paso anterior nos ha dejado todos los procesos en funcionamiento, pero no hemos iniciado los <em>replica sets</em>. Para que funcionen como tal, tenemos que configurarlos uno por uno como ya sabemos hacer, usando <em>rs.status()</em> para verificar que ha quedado todo como debe.</p>
 <p>Empezaremos con una máquina cualquiera del primer <em>shard</em>; la configuración se propagará al resto sin nuestra intervención.</p>
-<div class="highlight"><pre><span></span>root@mongo01:~# /opt/mongodb/bin/mongo --host 10.0.0.5 --port 27018
-MongoDB shell version: 3.2.5
-connecting to: 10.0.0.5:27018/test
+<div class="highlight"><pre><span></span>root@mongo01:~# /opt/mongodb/bin/mongo --host <span class="m">10</span>.0.0.5 --port <span class="m">27018</span>
+MongoDB shell version: <span class="m">3</span>.2.5
+connecting to: <span class="m">10</span>.0.0.5:27018/test
 ...
 &gt; <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span>
 ...     _id : <span class="s2">&quot;aquila&quot;</span>,
 ...      members : <span class="o">[</span>
-...          <span class="o">{</span>_id : 0, host : <span class="s2">&quot;mongo01:27018&quot;</span><span class="o">}</span>,
-...          <span class="o">{</span>_id : 1, host : <span class="s2">&quot;mongo04:27018&quot;</span><span class="o">}</span>,
-...          <span class="o">{</span>_id : 2, host : <span class="s2">&quot;mongo05:27020&quot;</span>, arbiterOnly: true<span class="o">}</span>,
+...          <span class="o">{</span>_id : <span class="m">0</span>, host : <span class="s2">&quot;mongo01:27018&quot;</span><span class="o">}</span>,
+...          <span class="o">{</span>_id : <span class="m">1</span>, host : <span class="s2">&quot;mongo04:27018&quot;</span><span class="o">}</span>,
+...          <span class="o">{</span>_id : <span class="m">2</span>, host : <span class="s2">&quot;mongo05:27020&quot;</span>, arbiterOnly: true<span class="o">}</span>,
 ...      <span class="o">]</span>
 ... <span class="o">}</span>
 ...
@@ -416,16 +413,16 @@ root@mongo01:~#
 
 
 <p>Seguimos con el segundo <em>shard</em>, entrando en una de sus máquinas y lanzando el comando de configuración.</p>
-<div class="highlight"><pre><span></span>root@mongo01:~# /opt/mongodb/bin/mongo --host 10.0.0.6 --port 27018
-MongoDB shell version: 3.2.5
-connecting to: 10.0.0.6:27018/test
+<div class="highlight"><pre><span></span>root@mongo01:~# /opt/mongodb/bin/mongo --host <span class="m">10</span>.0.0.6 --port <span class="m">27018</span>
+MongoDB shell version: <span class="m">3</span>.2.5
+connecting to: <span class="m">10</span>.0.0.6:27018/test
 ...
 &gt; <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span>
 ...     _id : <span class="s2">&quot;lyra&quot;</span>,
 ...      members : <span class="o">[</span>
-...          <span class="o">{</span>_id : 0, host : <span class="s2">&quot;mongo02:27018&quot;</span><span class="o">}</span>,
-...          <span class="o">{</span>_id : 1, host : <span class="s2">&quot;mongo05:27018&quot;</span><span class="o">}</span>,
-...          <span class="o">{</span>_id : 2, host : <span class="s2">&quot;mongo06:27020&quot;</span>, arbiterOnly: true<span class="o">}</span>,
+...          <span class="o">{</span>_id : <span class="m">0</span>, host : <span class="s2">&quot;mongo02:27018&quot;</span><span class="o">}</span>,
+...          <span class="o">{</span>_id : <span class="m">1</span>, host : <span class="s2">&quot;mongo05:27018&quot;</span><span class="o">}</span>,
+...          <span class="o">{</span>_id : <span class="m">2</span>, host : <span class="s2">&quot;mongo06:27020&quot;</span>, arbiterOnly: true<span class="o">}</span>,
 ...      <span class="o">]</span>
 ... <span class="o">}</span>
 ...
@@ -440,16 +437,16 @@ root@mongo01:~#
 
 
 <p>Y montamos el tercer <em>shard</em> desde una cualquiera de sus <em>replicas</em>.</p>
-<div class="highlight"><pre><span></span>root@mongo01:~# /opt/mongodb/bin/mongo --host 10.0.0.7 --port 27018
-MongoDB shell version: 3.2.5
-connecting to: 10.0.0.7:27018/test
+<div class="highlight"><pre><span></span>root@mongo01:~# /opt/mongodb/bin/mongo --host <span class="m">10</span>.0.0.7 --port <span class="m">27018</span>
+MongoDB shell version: <span class="m">3</span>.2.5
+connecting to: <span class="m">10</span>.0.0.7:27018/test
 ...
 &gt; <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span>
 ...     _id : <span class="s2">&quot;cygnus&quot;</span>,
 ...      members : <span class="o">[</span>
-...          <span class="o">{</span>_id : 0, host : <span class="s2">&quot;mongo03:27018&quot;</span><span class="o">}</span>,
-...          <span class="o">{</span>_id : 1, host : <span class="s2">&quot;mongo06:27018&quot;</span><span class="o">}</span>,
-...          <span class="o">{</span>_id : 2, host : <span class="s2">&quot;mongo04:27020&quot;</span>, arbiterOnly: true<span class="o">}</span>,
+...          <span class="o">{</span>_id : <span class="m">0</span>, host : <span class="s2">&quot;mongo03:27018&quot;</span><span class="o">}</span>,
+...          <span class="o">{</span>_id : <span class="m">1</span>, host : <span class="s2">&quot;mongo06:27018&quot;</span><span class="o">}</span>,
+...          <span class="o">{</span>_id : <span class="m">2</span>, host : <span class="s2">&quot;mongo04:27020&quot;</span>, arbiterOnly: true<span class="o">}</span>,
 ...      <span class="o">]</span>
 ... <span class="o">}</span>
 ...
@@ -467,7 +464,7 @@ root@mongo01:~#
 <p>Ahora tenemos un grupo de <em>config servers</em>, que forman un <em>cluster</em> de 0 <em>shards</em> (válido pero inútil, ya que no tenemos donde guardar los datos). También disponemos de 3 <em>replica sets</em> independientes, que se convertirán en los futuros <em>shards</em>. Solo falta asociar los <em>shards</em> al resto del <em>cluster</em>, mediante el comando <em>sh.addShard()</em>.</p>
 <p>Para ello entramos en un <strong>mongos</strong> desde donde lanzaremos los comandos. De hecho, solo tenemos uno, en <em>mongo01</em>. Puesto que está en la misma máquina que el cliente <strong>mongo</strong> y corre en el puerto estándar 27017, no hace falta especificar ni el <em>host</em> ni el puerto.</p>
 <div class="highlight"><pre><span></span>root@mongo01:~# /opt/mongodb/bin/mongo
-MongoDB shell version: 3.2.5
+MongoDB shell version: <span class="m">3</span>.2.5
 connecting to: <span class="nb">test</span>
 ...
 mongos&gt;
@@ -478,18 +475,18 @@ mongos&gt;
 <div class="highlight"><pre><span></span>mongos&gt; printShardingStatus<span class="o">()</span>
 --- Sharding Status ---
   sharding version: <span class="o">{</span>
-        <span class="s2">&quot;_id&quot;</span> : 1,
-        <span class="s2">&quot;minCompatibleVersion&quot;</span> : 5,
-        <span class="s2">&quot;currentVersion&quot;</span> : 6,
+        <span class="s2">&quot;_id&quot;</span> : <span class="m">1</span>,
+        <span class="s2">&quot;minCompatibleVersion&quot;</span> : <span class="m">5</span>,
+        <span class="s2">&quot;currentVersion&quot;</span> : <span class="m">6</span>,
         <span class="s2">&quot;clusterId&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;571dd47adbda7a5a80047a5d&quot;</span><span class="o">)</span>
 <span class="o">}</span>
   shards:
   active mongoses:
-        <span class="s2">&quot;3.2.5&quot;</span> : 1
+        <span class="s2">&quot;3.2.5&quot;</span> : <span class="m">1</span>
   balancer:
         Currently enabled:  yes
         Currently running:  no
-        Failed balancer rounds in last <span class="m">5</span> attempts:  0
+        Failed balancer rounds in last <span class="m">5</span> attempts:  <span class="m">0</span>
         Migration Results <span class="k">for</span> the last <span class="m">24</span> hours:
                 No recent migrations
   databases:
@@ -513,9 +510,9 @@ mongos&gt;
 <div class="highlight"><pre><span></span>mongos&gt; printShardingStatus<span class="o">()</span>
 --- Sharding Status ---
   sharding version: <span class="o">{</span>
-        <span class="s2">&quot;_id&quot;</span> : 1,
-        <span class="s2">&quot;minCompatibleVersion&quot;</span> : 5,
-        <span class="s2">&quot;currentVersion&quot;</span> : 6,
+        <span class="s2">&quot;_id&quot;</span> : <span class="m">1</span>,
+        <span class="s2">&quot;minCompatibleVersion&quot;</span> : <span class="m">5</span>,
+        <span class="s2">&quot;currentVersion&quot;</span> : <span class="m">6</span>,
         <span class="s2">&quot;clusterId&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;571dd47adbda7a5a80047a5d&quot;</span><span class="o">)</span>
 <span class="o">}</span>
   shards:
@@ -523,11 +520,11 @@ mongos&gt;
         <span class="o">{</span>  <span class="s2">&quot;_id&quot;</span> : <span class="s2">&quot;cygnus&quot;</span>,  <span class="s2">&quot;host&quot;</span> : <span class="s2">&quot;cygnus/mongo03:27018,mongo06:27018&quot;</span> <span class="o">}</span>
         <span class="o">{</span>  <span class="s2">&quot;_id&quot;</span> : <span class="s2">&quot;lyra&quot;</span>,  <span class="s2">&quot;host&quot;</span> : <span class="s2">&quot;lyra/mongo02:27018,mongo05:27018&quot;</span> <span class="o">}</span>
   active mongoses:
-        <span class="s2">&quot;3.2.5&quot;</span> : 1
+        <span class="s2">&quot;3.2.5&quot;</span> : <span class="m">1</span>
   balancer:
         Currently enabled:  yes
         Currently running:  no
-        Failed balancer rounds in last <span class="m">5</span> attempts:  0
+        Failed balancer rounds in last <span class="m">5</span> attempts:  <span class="m">0</span>
         Migration Results <span class="k">for</span> the last <span class="m">24</span> hours:
                 No recent migrations
   databases:
@@ -549,8 +546,8 @@ root@mongo01:~#
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-una-replica-set-en-mongodb.html">Construyendo una replica set en mongodb</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2015/11/escribiendo-units-en-systemd.html">Escribiendo units en systemd</a></li>
     </ul>
 </section>
@@ -703,6 +700,11 @@ root@mongo01:~#
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -816,11 +818,6 @@ root@mongo01:~#
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

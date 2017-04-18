@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/virtualizacion.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-23T08:00:00+02:00</updated><entry><title>Evolucionando los contenedores: Docker</title><link href="http://www.linuxsysadmin.tk/2016/05/evolucionando-los-contenedores-docker.html" rel="alternate"></link><published>2016-05-23T08:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-23:2016/05/evolucionando-los-contenedores-docker.html</id><summary type="html">&lt;p&gt;Los contenedores tienen su caso de uso y son muy útiles. Sin embargo, ir copiando la imagen es una pérdida de tiempo. Aunque podemos solventar el problema con un sistema de ficheros &lt;em&gt;copy-on-write&lt;/em&gt; o un sistema de ficheros tipo &lt;em&gt;union&lt;/em&gt;, &lt;strong&gt;Docker&lt;/strong&gt; ya nos lo ofrece todo preparado para su uso.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Virtualización</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/virtualizacion.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2016-05-23T08:00:00+02:00</updated><entry><title>Evolucionando los contenedores: Docker</title><link href="http://www.linuxsysadmin.tk/2016/05/evolucionando-los-contenedores-docker.html" rel="alternate"></link><published>2016-05-23T08:00:00+02:00</published><updated>2016-05-23T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-05-23:/2016/05/evolucionando-los-contenedores-docker.html</id><summary type="html">&lt;p&gt;Los contenedores tienen su caso de uso y son muy útiles. Sin embargo, ir copiando la imagen es una pérdida de tiempo. Aunque podemos solventar el problema con un sistema de ficheros &lt;em&gt;copy-on-write&lt;/em&gt; o un sistema de ficheros tipo &lt;em&gt;union&lt;/em&gt;, &lt;strong&gt;Docker&lt;/strong&gt; ya nos lo ofrece todo preparado para su uso …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Los contenedores tienen su caso de uso y son muy útiles. Sin embargo, ir copiando la imagen es una pérdida de tiempo. Aunque podemos solventar el problema con un sistema de ficheros &lt;em&gt;copy-on-write&lt;/em&gt; o un sistema de ficheros tipo &lt;em&gt;union&lt;/em&gt;, &lt;strong&gt;Docker&lt;/strong&gt; ya nos lo ofrece todo preparado para su uso.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Docker&lt;/strong&gt; trabaja con imágenes, que no son otra cosa que jaulas en donde tienen todo lo que necesitan para ejecutar su contenido. Estas imágenes se forman a partir de capas que se muestran como una sola mediante &lt;strong&gt;aufs&lt;/strong&gt;. Esto nos permite construir jaulas a partir de otras, ahorrando duplicidad de ficheros en disco y aligerando sus instancias.&lt;/p&gt;
 &lt;p&gt;Nuestro contenedor no es otra cosa que una capa de cambios (inicialmente vacía) montada encima de la imagen mediante &lt;strong&gt;aufs&lt;/strong&gt;. Esta capa se elimina cuando el contenedor se destruye. El coste de crear el contenedor es prácticamente nulo, y no se modifica nunca la imagen base.&lt;/p&gt;
 &lt;p&gt;La gran diferencia con otras tecnologías, por ejemplo &lt;strong&gt;LXC&lt;/strong&gt;, es su filosofía: un contenedor &lt;strong&gt;Docker&lt;/strong&gt; ejecuta un solo comando, acabando la ejecución cuando este acaba.&lt;/p&gt;
@@ -27,7 +27,7 @@ gerard@sirius:~$
 &lt;p&gt;Podemos ver en la salida del comando que no teníamos una imagen local de la imagen &lt;em&gt;debian&lt;/em&gt;, con lo que la ha descargado. Podemos ver que ya la tenemos en local, y que si volvemos a lanzar el comando, no se descarga de nuevo.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-debian              latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago          125.1 MB
+debian              latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago          &lt;span class="m"&gt;125&lt;/span&gt;.1 MB
 gerard@sirius:~$ docker run -ti --rm debian &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Hello world&amp;#39;&lt;/span&gt;
 Hello world
 gerard@sirius:~$ 
@@ -69,20 +69,20 @@ gerard@sirius:~$
 sha256:f73b2072ab7404b83749fd098411a1c6392631668363c46fc7203d1a0d39782f
 gerard@sirius:~$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-&amp;lt;none&amp;gt;              &amp;lt;none&amp;gt;              f73b2072ab74        &lt;span class="m"&gt;9&lt;/span&gt; seconds ago       167.4 MB
-debian              latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago          125.1 MB
+&amp;lt;none&amp;gt;              &amp;lt;none&amp;gt;              f73b2072ab74        &lt;span class="m"&gt;9&lt;/span&gt; seconds ago       &lt;span class="m"&gt;167&lt;/span&gt;.4 MB
+debian              latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago          &lt;span class="m"&gt;125&lt;/span&gt;.1 MB
 gerard@sirius:~$ docker tag f73b2072ab74 python-debian-manual
 gerard@sirius:~$ docker images
 REPOSITORY             TAG                 IMAGE ID            CREATED              SIZE
-python-debian-manual   latest              f73b2072ab74        About a minute ago   167.4 MB
-debian                 latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago           125.1 MB
+python-debian-manual   latest              f73b2072ab74        About a minute ago   &lt;span class="m"&gt;167&lt;/span&gt;.4 MB
+debian                 latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago           &lt;span class="m"&gt;125&lt;/span&gt;.1 MB
 gerard@sirius:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;Y comprobamos que funciona como debe:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ docker run -ti --rm python-debian-manual python -V
-Python 2.7.9
+Python &lt;span class="m"&gt;2&lt;/span&gt;.7.9
 gerard@sirius:~$ 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -101,7 +101,7 @@ gerard@sirius:~/build$
 
 &lt;p&gt;Bastaría crear la imágen en la carpeta actual con el comando mencionado, especificando opcionalmente el &lt;em&gt;tag&lt;/em&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/build$ docker build -t python-debian-auto .
-Sending build context to Docker daemon 2.048 kB
+Sending build context to Docker daemon &lt;span class="m"&gt;2&lt;/span&gt;.048 kB
 Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM debian
  ---&amp;gt; bb5d89f9b6cb
 Step &lt;span class="m"&gt;2&lt;/span&gt; : RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     apt-get install -y python
@@ -122,10 +122,10 @@ gerard@sirius:~/build$
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/build$ docker images
 REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
 python-debian-auto     latest              e52f43de8b80        &lt;span class="m"&gt;6&lt;/span&gt; minutes ago       &lt;span class="m"&gt;176&lt;/span&gt; MB
-python-debian-manual   latest              f73b2072ab74        &lt;span class="m"&gt;22&lt;/span&gt; minutes ago      167.4 MB
-debian                 latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago          125.1 MB
+python-debian-manual   latest              f73b2072ab74        &lt;span class="m"&gt;22&lt;/span&gt; minutes ago      &lt;span class="m"&gt;167&lt;/span&gt;.4 MB
+debian                 latest              bb5d89f9b6cb        &lt;span class="m"&gt;4&lt;/span&gt; days ago          &lt;span class="m"&gt;125&lt;/span&gt;.1 MB
 gerard@sirius:~/build$ docker run -ti --rm python-debian-auto python -V
-Python 2.7.9
+Python &lt;span class="m"&gt;2&lt;/span&gt;.7.9
 gerard@sirius:~/build$ 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -144,7 +144,7 @@ gerard@sirius:~/build$
 
 &lt;p&gt;Construimos la imagen y vemos que ocupa lo mismo que el binario que le hemos puesto.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/build$ docker build -t saluda .
-Sending build context to Docker daemon 20.34 MB
+Sending build context to Docker daemon &lt;span class="m"&gt;20&lt;/span&gt;.34 MB
 Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM scratch
  ---&amp;gt; 
 Step &lt;span class="m"&gt;2&lt;/span&gt; : ADD hello /
@@ -157,8 +157,8 @@ Removing intermediate container 54d7512dd61a
 Successfully built bf6c560144dd
 gerard@sirius:~/build$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-saluda              latest              bf6c560144dd        &lt;span class="m"&gt;25&lt;/span&gt; seconds ago      5.416 kB
-debian              latest              47af6ca8a14a        &lt;span class="m"&gt;3&lt;/span&gt; weeks ago         125.1 MB
+saluda              latest              bf6c560144dd        &lt;span class="m"&gt;25&lt;/span&gt; seconds ago      &lt;span class="m"&gt;5&lt;/span&gt;.416 kB
+debian              latest              47af6ca8a14a        &lt;span class="m"&gt;3&lt;/span&gt; weeks ago         &lt;span class="m"&gt;125&lt;/span&gt;.1 MB
 gerard@sirius:~/build$ 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -167,7 +167,7 @@ gerard@sirius:~/build$
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/build$ docker run --rm -ti saluda
 Hello world!
 gerard@sirius:~/build$ 
-&lt;/pre&gt;&lt;/div&gt;</summary><category term="linux"></category><category term="docker"></category><category term="contenedor"></category><category term="dockerfile"></category><category term="jaula"></category></entry><entry><title>Virtualizando contenedores LXC tras bridge interno</title><link href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html" rel="alternate"></link><published>2015-11-23T23:30:00+01:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-23:2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html</id><summary type="html">&lt;p&gt;En un artículo anterior propusimos virtualizar contenedores en la red de la máquina &lt;em&gt;host&lt;/em&gt;. Sin embargo, puede ser mas interesante esconder los contenedores detrás de una máquina que haga las funciones de &lt;em&gt;host&lt;/em&gt; y de &lt;em&gt;firewall&lt;/em&gt;. Expondremos una serie de puertos tras la misma dirección &lt;em&gt;IP&lt;/em&gt; mediante el protocolo &lt;em&gt;NAT&lt;/em&gt;.&lt;/p&gt;
+&lt;/pre&gt;&lt;/div&gt;</content><category term="linux"></category><category term="docker"></category><category term="contenedor"></category><category term="dockerfile"></category><category term="jaula"></category></entry><entry><title>Virtualizando contenedores LXC tras bridge interno</title><link href="http://www.linuxsysadmin.tk/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html" rel="alternate"></link><published>2015-11-23T23:30:00+01:00</published><updated>2015-11-23T23:30:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-11-23:/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html</id><summary type="html">&lt;p&gt;En un artículo anterior propusimos virtualizar contenedores en la red de la máquina &lt;em&gt;host&lt;/em&gt;. Sin embargo, puede ser mas interesante esconder los contenedores detrás de una máquina que haga las funciones de &lt;em&gt;host&lt;/em&gt; y de &lt;em&gt;firewall&lt;/em&gt;. Expondremos una serie de puertos tras la misma dirección &lt;em&gt;IP&lt;/em&gt; mediante el protocolo &lt;em&gt;NAT …&lt;/em&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;En un artículo anterior propusimos virtualizar contenedores en la red de la máquina &lt;em&gt;host&lt;/em&gt;. Sin embargo, puede ser mas interesante esconder los contenedores detrás de una máquina que haga las funciones de &lt;em&gt;host&lt;/em&gt; y de &lt;em&gt;firewall&lt;/em&gt;. Expondremos una serie de puertos tras la misma dirección &lt;em&gt;IP&lt;/em&gt; mediante el protocolo &lt;em&gt;NAT&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Para conseguir este objetivo, se van a usar las siguientes tecnologías:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Debian jessie&lt;/strong&gt;: Es necesario usar alguna distribución de linux para hacer funcionar LXC&lt;/li&gt;
@@ -190,10 +190,10 @@ Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias       
 Leyendo la información de estado... Hecho
 ...
-Configurando lxc &lt;span class="o"&gt;(&lt;/span&gt;1:1.0.6-6+deb8u2&lt;span class="o"&gt;)&lt;/span&gt; ...
-Configurando dh-python &lt;span class="o"&gt;(&lt;/span&gt;1.20141111-2&lt;span class="o"&gt;)&lt;/span&gt; ...
-Procesando disparadores para libc-bin &lt;span class="o"&gt;(&lt;/span&gt;2.19-18+deb8u1&lt;span class="o"&gt;)&lt;/span&gt; ...
-Procesando disparadores para systemd &lt;span class="o"&gt;(&lt;/span&gt;215-17+deb8u2&lt;span class="o"&gt;)&lt;/span&gt; ...
+Configurando lxc &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;:1.0.6-6+deb8u2&lt;span class="o"&gt;)&lt;/span&gt; ...
+Configurando dh-python &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.20141111-2&lt;span class="o"&gt;)&lt;/span&gt; ...
+Procesando disparadores para libc-bin &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.19-18+deb8u1&lt;span class="o"&gt;)&lt;/span&gt; ...
+Procesando disparadores para systemd &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;215&lt;/span&gt;-17+deb8u2&lt;span class="o"&gt;)&lt;/span&gt; ...
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -208,9 +208,9 @@ iface lo inet loopback
 
 auto eth0
 iface eth0 inet static
-    address 192.168.56.4
-    netmask 255.255.255.0
-    gateway 192.168.56.1
+    address &lt;span class="m"&gt;192&lt;/span&gt;.168.56.4
+    netmask &lt;span class="m"&gt;255&lt;/span&gt;.255.255.0
+    gateway &lt;span class="m"&gt;192&lt;/span&gt;.168.56.1
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -224,15 +224,15 @@ iface lo inet loopback
 
 auto eth0
 iface eth0 inet static
-    address 192.168.56.4
-    netmask 255.255.255.0
-    gateway 192.168.56.1
+    address &lt;span class="m"&gt;192&lt;/span&gt;.168.56.4
+    netmask &lt;span class="m"&gt;255&lt;/span&gt;.255.255.0
+    gateway &lt;span class="m"&gt;192&lt;/span&gt;.168.56.1
 
 auto lxc0
 iface lxc0 inet static
     bridge_ports dummy
-    address 10.0.0.1
-    netmask 255.255.255.0
+    address &lt;span class="m"&gt;10&lt;/span&gt;.0.0.1
+    netmask &lt;span class="m"&gt;255&lt;/span&gt;.255.255.0
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -300,8 +300,8 @@ Download complete.
 Copying rootfs to /var/lib/lxc/webserver/rootfs...
 ...
 Current default &lt;span class="nb"&gt;time&lt;/span&gt; zone: &lt;span class="s1"&gt;&amp;#39;Europe/Madrid&amp;#39;&lt;/span&gt;
-Local &lt;span class="nb"&gt;time&lt;/span&gt; is now:      Mon Nov &lt;span class="m"&gt;23&lt;/span&gt; 16:29:36 CET 2015.
-Universal Time is now:  Mon Nov &lt;span class="m"&gt;23&lt;/span&gt; 15:29:36 UTC 2015.
+Local &lt;span class="nb"&gt;time&lt;/span&gt; is now:      Mon Nov &lt;span class="m"&gt;23&lt;/span&gt; &lt;span class="m"&gt;16&lt;/span&gt;:29:36 CET &lt;span class="m"&gt;2015&lt;/span&gt;.
+Universal Time is now:  Mon Nov &lt;span class="m"&gt;23&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;:29:36 UTC &lt;span class="m"&gt;2015&lt;/span&gt;.
 
 Root password is &lt;span class="s1"&gt;&amp;#39;E3+K9SpU&amp;#39;&lt;/span&gt;, please change !
 root@lxc:~# 
@@ -311,7 +311,7 @@ root@lxc:~#
 &lt;p&gt;Acabada la generación del contenedor, vamos a configurarle algunos parámetros; que tenga una interfaz &lt;em&gt;eth0&lt;/em&gt; activa y enchufada al bridge &lt;em&gt;lxc0&lt;/em&gt;, y que el contenedor se inicie automáticamente en cada reinicio del anfitrión.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /var/lib/lxc/webserver/config 
 ...
-lxc.start.auto &lt;span class="o"&gt;=&lt;/span&gt; 1
+lxc.start.auto &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;
 lxc.network.type &lt;span class="o"&gt;=&lt;/span&gt; veth
 lxc.network.flags &lt;span class="o"&gt;=&lt;/span&gt; up
 lxc.network.link &lt;span class="o"&gt;=&lt;/span&gt; lxc0
@@ -327,9 +327,9 @@ iface lo inet loopback
 
 auto eth0
 iface eth0 inet static
-    address 10.0.0.2
-    netmask 255.255.255.0
-    gateway 10.0.0.1
+    address &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2
+    netmask &lt;span class="m"&gt;255&lt;/span&gt;.255.255.0
+    gateway &lt;span class="m"&gt;10&lt;/span&gt;.0.0.1
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -342,7 +342,7 @@ root@lxc:~#
 
 &lt;p&gt;Supongamos que este nuevo contenedor tiene un servidor web y queremos hacerlo disponible en puerto 80 del &lt;em&gt;host&lt;/em&gt;, mediante el protocolo &lt;em&gt;NAT&lt;/em&gt;. También se necesita definir una regla de &lt;em&gt;forward&lt;/em&gt; para permitir ese tráfico. Se reinicia el servicio &lt;em&gt;firehol&lt;/em&gt; para aplicar las nuevas reglas.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
-dnat 10.0.0.2:80 proto tcp dst 192.168.56.4 dport 80
+dnat &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2:80 proto tcp dst &lt;span class="m"&gt;192&lt;/span&gt;.168.56.4 dport &lt;span class="m"&gt;80&lt;/span&gt;
 
 interface eth0 world
     policy drop
@@ -359,7 +359,7 @@ router lan2world inface lxc0 outface eth0
     route all accept
 
 router world2lan inface eth0 outface lxc0
-    route http accept dst 10.0.0.2
+    route http accept dst &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2
 root@lxc:~# service firehol restart
 ...
 root@lxc:~# 
@@ -369,7 +369,7 @@ root@lxc:~#
 &lt;p&gt;Ahora podemos acceder al servidor web instalado en el contenedor &lt;em&gt;webserver&lt;/em&gt; mediante el puerto 80 del &lt;em&gt;host&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Supongamos que tenemos otro contenedor con un servidor de aplicaciones escuchando en el puerto 8080 con dirección 10.0.0.3 y pretendemos que el contenedor original haga de &lt;em&gt;proxy HTTP&lt;/em&gt;. Esta funcionalidad requiere que el contenedor &lt;em&gt;webserver&lt;/em&gt; pueda conectarse al puerto 8080 del nuevo contenedor &lt;em&gt;appserver&lt;/em&gt;. Esta regla de &lt;em&gt;forward&lt;/em&gt; aplica a todas las conexiones que inician y finalizan en el &lt;em&gt;bridge&lt;/em&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /etc/firehol/firehol.conf 
-dnat 10.0.0.2:80 proto tcp dst 192.168.56.4 dport 80
+dnat &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2:80 proto tcp dst &lt;span class="m"&gt;192&lt;/span&gt;.168.56.4 dport &lt;span class="m"&gt;80&lt;/span&gt;
 
 interface eth0 world
     policy drop
@@ -386,15 +386,15 @@ router lan2world inface lxc0 outface eth0
     route all accept
 
 router world2lan inface eth0 outface lxc0
-    route http accept dst 10.0.0.2
+    route http accept dst &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2
 
 router internal inface lxc0 outface lxc0
-    route webcache accept src 10.0.0.2 dst 10.0.0.3
+    route webcache accept src &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2 dst &lt;span class="m"&gt;10&lt;/span&gt;.0.0.3
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y con eso tenemos nuestro &lt;em&gt;proxy HTTP&lt;/em&gt; funcionando.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="lxc"></category><category term="bridge"></category><category term="firehol"></category></entry><entry><title>Virtualizando contenedores LXC con acceso a la red local</title><link href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html" rel="alternate"></link><published>2015-10-15T12:00:00+02:00</published><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-10-15:2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html</id><summary type="html">&lt;p&gt;En este tutorial se propone montar un servidor de contenedores LXC, de forma que todos los contenedores queden expuestos a la misma red que el servidor que los aloja. Para protegerlos de posibles ataques de esta red, pondremos un firewall basado en &lt;em&gt;iptables&lt;/em&gt; mediante una capa de abstracción llamada &lt;em&gt;firehol&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Y con eso tenemos nuestro &lt;em&gt;proxy HTTP&lt;/em&gt; funcionando.&lt;/p&gt;</content><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="lxc"></category><category term="bridge"></category><category term="firehol"></category></entry><entry><title>Virtualizando contenedores LXC con acceso a la red local</title><link href="http://www.linuxsysadmin.tk/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html" rel="alternate"></link><published>2015-10-15T12:00:00+02:00</published><updated>2015-10-15T12:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2015-10-15:/2015/10/virtualizando-contenedores-lxc-con-acceso-red-local.html</id><summary type="html">&lt;p&gt;En este tutorial se propone montar un servidor de contenedores LXC, de forma que todos los contenedores queden expuestos a la misma red que el servidor que los aloja. Para protegerlos de posibles ataques de esta red, pondremos un firewall basado en &lt;em&gt;iptables&lt;/em&gt; mediante una capa de abstracción llamada &lt;em&gt;firehol …&lt;/em&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;En este tutorial se propone montar un servidor de contenedores LXC, de forma que todos los contenedores queden expuestos a la misma red que el servidor que los aloja. Para protegerlos de posibles ataques de esta red, pondremos un firewall basado en &lt;em&gt;iptables&lt;/em&gt; mediante una capa de abstracción llamada &lt;em&gt;firehol&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Para conseguir este objetivo, se van a usar las siguientes tecnologías:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Debian jessie&lt;/strong&gt;: Es necesario usar alguna distribución de linux para hacer funcionar LXC&lt;/li&gt;
@@ -417,10 +417,10 @@ Leyendo lista de paquetes... Hecho
 Creando árbol de dependencias       
 Leyendo la información de estado... Hecho
 ...
-Configurando lxc &lt;span class="o"&gt;(&lt;/span&gt;1:1.0.6-6+deb8u1&lt;span class="o"&gt;)&lt;/span&gt; ...
-Configurando dh-python &lt;span class="o"&gt;(&lt;/span&gt;1.20141111-2&lt;span class="o"&gt;)&lt;/span&gt; ...
-Procesando disparadores para libc-bin &lt;span class="o"&gt;(&lt;/span&gt;2.19-18+deb8u1&lt;span class="o"&gt;)&lt;/span&gt; ...
-Procesando disparadores para systemd &lt;span class="o"&gt;(&lt;/span&gt;215-17+deb8u2&lt;span class="o"&gt;)&lt;/span&gt; ...
+Configurando lxc &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;:1.0.6-6+deb8u1&lt;span class="o"&gt;)&lt;/span&gt; ...
+Configurando dh-python &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.20141111-2&lt;span class="o"&gt;)&lt;/span&gt; ...
+Procesando disparadores para libc-bin &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.19-18+deb8u1&lt;span class="o"&gt;)&lt;/span&gt; ...
+Procesando disparadores para systemd &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;215&lt;/span&gt;-17+deb8u2&lt;span class="o"&gt;)&lt;/span&gt; ...
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -435,9 +435,9 @@ iface lo inet loopback
 
 auto eth0
 iface eth0 inet static
-    address 192.168.56.4
-    netmask 255.255.255.0
-    gateway 192.168.56.1
+    address &lt;span class="m"&gt;192&lt;/span&gt;.168.56.4
+    netmask &lt;span class="m"&gt;255&lt;/span&gt;.255.255.0
+    gateway &lt;span class="m"&gt;192&lt;/span&gt;.168.56.1
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -452,26 +452,26 @@ iface lo inet loopback
 auto lxc0
 iface lxc0 inet static
     bridge_ports eth0
-    address 192.168.56.4
-    netmask 255.255.255.0
-    gateway 192.168.56.1
+    address &lt;span class="m"&gt;192&lt;/span&gt;.168.56.4
+    netmask &lt;span class="m"&gt;255&lt;/span&gt;.255.255.0
+    gateway &lt;span class="m"&gt;192&lt;/span&gt;.168.56.1
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
 &lt;p&gt;En este punto es necesario reconfigurar la red, siendo especialmente importante que &lt;em&gt;eth0&lt;/em&gt; quede sin dirección IP asignada (en mi caso tuve que reiniciar la máquina).&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# ip addr
-1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;65536&lt;/span&gt; qdisc noqueue state UNKNOWN group default 
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    inet 127.0.0.1/8 scope host lo
+&lt;span class="m"&gt;1&lt;/span&gt;: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;65536&lt;/span&gt; qdisc noqueue state UNKNOWN group default 
+    link/loopback &lt;span class="m"&gt;00&lt;/span&gt;:00:00:00:00:00 brd &lt;span class="m"&gt;00&lt;/span&gt;:00:00:00:00:00
+    inet &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1/8 scope host lo
        valid_lft forever preferred_lft forever
     inet6 ::1/128 scope host 
        valid_lft forever preferred_lft forever
-2: eth0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;1500&lt;/span&gt; qdisc pfifo_fast master lxc0 state UP group default qlen 1000
-    link/ether 08:00:27:e4:0a:60 brd ff:ff:ff:ff:ff:ff
-3: lxc0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;1500&lt;/span&gt; qdisc noqueue state UP group default 
-    link/ether 08:00:27:e4:0a:60 brd ff:ff:ff:ff:ff:ff
-    inet 192.168.56.4/24 brd 192.168.56.255 scope global lxc0
+&lt;span class="m"&gt;2&lt;/span&gt;: eth0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;1500&lt;/span&gt; qdisc pfifo_fast master lxc0 state UP group default qlen &lt;span class="m"&gt;1000&lt;/span&gt;
+    link/ether &lt;span class="m"&gt;08&lt;/span&gt;:00:27:e4:0a:60 brd ff:ff:ff:ff:ff:ff
+&lt;span class="m"&gt;3&lt;/span&gt;: lxc0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;1500&lt;/span&gt; qdisc noqueue state UP group default 
+    link/ether &lt;span class="m"&gt;08&lt;/span&gt;:00:27:e4:0a:60 brd ff:ff:ff:ff:ff:ff
+    inet &lt;span class="m"&gt;192&lt;/span&gt;.168.56.4/24 brd &lt;span class="m"&gt;192&lt;/span&gt;.168.56.255 scope global lxc0
        valid_lft forever preferred_lft forever
     inet6 fe80::a00:27ff:fee4:a60/64 scope link 
        valid_lft forever preferred_lft forever
@@ -510,13 +510,13 @@ root@lxc:~#
 &lt;p&gt;Y para acabar, (re)iniciamos el servicio firehol.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# service firehol restart
 
-Broadcast message from systemd-journald@lxc &lt;span class="o"&gt;(&lt;/span&gt;Wed 2015-10-14 16:59:30 CEST&lt;span class="o"&gt;)&lt;/span&gt;:
+Broadcast message from systemd-journald@lxc &lt;span class="o"&gt;(&lt;/span&gt;Wed &lt;span class="m"&gt;2015&lt;/span&gt;-10-14 &lt;span class="m"&gt;16&lt;/span&gt;:59:30 CEST&lt;span class="o"&gt;)&lt;/span&gt;:
 
-FireHOL&lt;span class="o"&gt;[&lt;/span&gt;620&lt;span class="o"&gt;]&lt;/span&gt;: Firewall has been stopped. Policy is ACCEPT EVERYTHING!
+FireHOL&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;620&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;: Firewall has been stopped. Policy is ACCEPT EVERYTHING!
 
 
-Message from syslogd@lxc at Oct &lt;span class="m"&gt;14&lt;/span&gt; 16:59:30 ...
- FireHOL&lt;span class="o"&gt;[&lt;/span&gt;493&lt;span class="o"&gt;]&lt;/span&gt;: Firewall has been stopped. Policy is ACCEPT EVERYTHING!
+Message from syslogd@lxc at Oct &lt;span class="m"&gt;14&lt;/span&gt; &lt;span class="m"&gt;16&lt;/span&gt;:59:30 ...
+ FireHOL&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;493&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;: Firewall has been stopped. Policy is ACCEPT EVERYTHING!
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -534,8 +534,8 @@ Download complete.
 Copying rootfs to /var/lib/lxc/webserver/rootfs...
 ...
 Current default &lt;span class="nb"&gt;time&lt;/span&gt; zone: &lt;span class="s1"&gt;&amp;#39;Europe/Madrid&amp;#39;&lt;/span&gt;
-Local &lt;span class="nb"&gt;time&lt;/span&gt; is now:      Wed Oct &lt;span class="m"&gt;14&lt;/span&gt; 17:26:37 CEST 2015.
-Universal Time is now:  Wed Oct &lt;span class="m"&gt;14&lt;/span&gt; 15:26:37 UTC 2015.
+Local &lt;span class="nb"&gt;time&lt;/span&gt; is now:      Wed Oct &lt;span class="m"&gt;14&lt;/span&gt; &lt;span class="m"&gt;17&lt;/span&gt;:26:37 CEST &lt;span class="m"&gt;2015&lt;/span&gt;.
+Universal Time is now:  Wed Oct &lt;span class="m"&gt;14&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;:26:37 UTC &lt;span class="m"&gt;2015&lt;/span&gt;.
 
 Root password is &lt;span class="s1"&gt;&amp;#39;sFj7Jm9N&amp;#39;&lt;/span&gt;, please change !
 root@lxc:~# 
@@ -545,7 +545,7 @@ root@lxc:~#
 &lt;p&gt;Acabada la generación del contenedor, vamos a configurarle algunos parámetros; que tenga una interfaz &lt;em&gt;eth0&lt;/em&gt; activa y enchufada al bridge &lt;em&gt;lxc0&lt;/em&gt;, y que el contenedor se autoinicie en cada reinicio del anfitrión.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@lxc:~# cat /var/lib/lxc/webserver/config 
 ...
-lxc.start.auto &lt;span class="o"&gt;=&lt;/span&gt; 1
+lxc.start.auto &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;
 lxc.network.type &lt;span class="o"&gt;=&lt;/span&gt; veth
 lxc.network.flags &lt;span class="o"&gt;=&lt;/span&gt; up
 lxc.network.link &lt;span class="o"&gt;=&lt;/span&gt; lxc0
@@ -561,9 +561,9 @@ iface lo inet loopback
 
 auto eth0
 iface eth0 inet static
-    address 192.168.56.10
-    netmask 255.255.255.0
-    gateway 192.168.56.1
+    address &lt;span class="m"&gt;192&lt;/span&gt;.168.56.10
+    netmask &lt;span class="m"&gt;255&lt;/span&gt;.255.255.0
+    gateway &lt;span class="m"&gt;192&lt;/span&gt;.168.56.1
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -590,22 +590,22 @@ router internal inface lxc0 outface lxc0
     group with dst not &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;UNROUTABLE_IPS&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
         route all accept
     group end
-    group with dst 192.168.56.1
+    group with dst &lt;span class="m"&gt;192&lt;/span&gt;.168.56.1
         route dns accept
     group end
-    group with dst 192.168.56.10
+    group with dst &lt;span class="m"&gt;192&lt;/span&gt;.168.56.10
         route ssh accept
         route http accept
     group end
 root@lxc:~# service firehol restart
 
-Broadcast message from systemd-journald@lxc &lt;span class="o"&gt;(&lt;/span&gt;Wed 2015-10-14 17:43:38 CEST&lt;span class="o"&gt;)&lt;/span&gt;:
+Broadcast message from systemd-journald@lxc &lt;span class="o"&gt;(&lt;/span&gt;Wed &lt;span class="m"&gt;2015&lt;/span&gt;-10-14 &lt;span class="m"&gt;17&lt;/span&gt;:43:38 CEST&lt;span class="o"&gt;)&lt;/span&gt;:
 
-FireHOL&lt;span class="o"&gt;[&lt;/span&gt;8690&lt;span class="o"&gt;]&lt;/span&gt;: Firewall has been stopped. Policy is ACCEPT EVERYTHING!
+FireHOL&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;8690&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;: Firewall has been stopped. Policy is ACCEPT EVERYTHING!
 
 
-Message from syslogd@lxc at Oct &lt;span class="m"&gt;14&lt;/span&gt; 17:43:38 ...
- FireHOL&lt;span class="o"&gt;[&lt;/span&gt;8565&lt;span class="o"&gt;]&lt;/span&gt;: Firewall has been stopped. Policy is ACCEPT EVERYTHING!
+Message from syslogd@lxc at Oct &lt;span class="m"&gt;14&lt;/span&gt; &lt;span class="m"&gt;17&lt;/span&gt;:43:38 ...
+ FireHOL&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;8565&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;: Firewall has been stopped. Policy is ACCEPT EVERYTHING!
 root@lxc:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -631,14 +631,14 @@ Se instalarán los siguientes paquetes NUEVOS:
   nginx-common nginx-light
 &lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;2&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
 Se necesita descargar &lt;span class="m"&gt;439&lt;/span&gt; kB de archivos.
-Se utilizarán 1.040 kB de espacio de disco adicional después de esta operación.
+Se utilizarán &lt;span class="m"&gt;1&lt;/span&gt;.040 kB de espacio de disco adicional después de esta operación.
 ¿Desea continuar? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
 ...
-Configurando nginx-common &lt;span class="o"&gt;(&lt;/span&gt;1.6.2-5&lt;span class="o"&gt;)&lt;/span&gt; ...
-Configurando nginx-light &lt;span class="o"&gt;(&lt;/span&gt;1.6.2-5&lt;span class="o"&gt;)&lt;/span&gt; ...
-Procesando disparadores para systemd &lt;span class="o"&gt;(&lt;/span&gt;215-17+deb8u2&lt;span class="o"&gt;)&lt;/span&gt; ...
+Configurando nginx-common &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.6.2-5&lt;span class="o"&gt;)&lt;/span&gt; ...
+Configurando nginx-light &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.6.2-5&lt;span class="o"&gt;)&lt;/span&gt; ...
+Procesando disparadores para systemd &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;215&lt;/span&gt;-17+deb8u2&lt;span class="o"&gt;)&lt;/span&gt; ...
 root@webserver:~# 
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Y con esto ya tenemos nuestro contenedor en marcha y ofreciendo servicios en nuestra red local de forma segura.&lt;/p&gt;</summary><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="lxc"></category><category term="bridge"></category><category term="firehol"></category></entry></feed>
+&lt;p&gt;Y con esto ya tenemos nuestro contenedor en marcha y ofreciendo servicios en nuestra red local de forma segura.&lt;/p&gt;</content><category term="linux"></category><category term="debian"></category><category term="jessie"></category><category term="lxc"></category><category term="bridge"></category><category term="firehol"></category></entry></feed>

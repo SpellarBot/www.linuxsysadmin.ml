@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="ghost,blog,tema" />
-        <meta name="description" content="Ya vimos lo fácil que resulta de empezar un blog con Ghost. El tema que viene por defecto es muy simple y bastante legible, pero nos puede interesar cambiarlo, por ejemplo para poner publicidad. Existen temas de pago y gratuitos ya hechos, pero hoy voy a explicar como hacer uno ..." />
+        <meta name="description" content="Ya vimos lo fácil que resulta de empezar un blog con Ghost. El tema que viene por defecto es muy simple y bastante legible, pero nos puede interesar cambiarlo, por ejemplo para poner publicidad. Existen temas de pago y gratuitos ya hechos, pero hoy voy a explicar como hacer uno …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Creando un tema para Ghost"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/12/creando-un-tema-para-ghost.html"/>
-        <meta property="og:description" content="Ya vimos lo fácil que resulta de empezar un blog con Ghost. El tema que viene por defecto es muy simple y bastante legible, pero nos puede interesar cambiarlo, por ejemplo para poner publicidad. Existen temas de pago y gratuitos ya hechos, pero hoy voy a explicar como hacer uno ..."/>
+        <meta property="og:description" content="Ya vimos lo fácil que resulta de empezar un blog con Ghost. El tema que viene por defecto es muy simple y bastante legible, pero nos puede interesar cambiarlo, por ejemplo para poner publicidad. Existen temas de pago y gratuitos ya hechos, pero hoy voy a explicar como hacer uno …"/>
         <meta property="article:published_time" content="2016-12-05" />
             <meta property="article:section" content="Miscelánea" />
             <meta property="article:tag" content="ghost" />
@@ -68,9 +68,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -142,7 +139,7 @@ Linux Sysadmin            </a>
                 <p>Ya vimos lo fácil que resulta de empezar un <em>blog</em> con <strong>Ghost</strong>. El tema que viene por defecto es muy simple y bastante legible, pero nos puede interesar cambiarlo, por ejemplo para poner publicidad. Existen temas de pago y gratuitos ya hechos, pero hoy voy a explicar como hacer uno.</p>
 <p>Vamos a partir de una instalación limpia de <strong>Ghost</strong>, pero ejemplo como se indica en <a href="http://www.linuxsysadmin.tk/2016/11/ghost-un-motor-para-hacer-blogs.html">otro artículo</a>. Es especialmente importante desarrollar el tema en una instancia que corra en modo <em>development</em>, así no va a <em>cachear</em> las plantillas y nos va a ahorrar reiniciar el proceso.</p>
 <p>Es muy útil mapear la carpeta <em>/usr/lib/ghost/</em> del contenedor a una carpeta local, si estamos usando <strong>Docker</strong>. De esta manera podemos editar el tema cómodamente en nuestro sistema de ficheros y con las herramientas con las que más cómodos nos sintamos.</p>
-<div class="highlight"><pre><span></span>gerard@aldebaran:~/workspace$ docker run -d -p 2368:2368 -v /home/gerard/workspace/content:/var/lib/ghost ghost
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/workspace$ docker run -d -p <span class="m">2368</span>:2368 -v /home/gerard/workspace/content:/var/lib/ghost ghost
 343d065878fb910a9f2b5b51be4a337d2e93db2e66cbff6800c2cb96a758f733
 gerard@aldebaran:~/workspace$ 
 </pre></div>
@@ -183,9 +180,9 @@ gerard@aldebaran:~/workspace$
 <p>Para cargarlo cómodamente desde la interfaz web, lo necesitamos en formato <em>.zip</em>. De hecho, la carpeta contenedora tampoco nos importa, así que la podemos borrar.</p>
 <div class="highlight"><pre><span></span>gerard@aldebaran:~/workspace$ <span class="nb">cd</span> minimal_theme/
 gerard@aldebaran:~/workspace/minimal_theme$ zip -r ../minimal_theme.zip *
-  adding: index.hbs <span class="o">(</span>stored 0%<span class="o">)</span>
-  adding: package.json <span class="o">(</span>deflated 10%<span class="o">)</span>
-  adding: post.hbs <span class="o">(</span>stored 0%<span class="o">)</span>
+  adding: index.hbs <span class="o">(</span>stored <span class="m">0</span>%<span class="o">)</span>
+  adding: package.json <span class="o">(</span>deflated <span class="m">10</span>%<span class="o">)</span>
+  adding: post.hbs <span class="o">(</span>stored <span class="m">0</span>%<span class="o">)</span>
 gerard@aldebaran:~/workspace/minimal_theme$ <span class="nb">cd</span> ..
 gerard@aldebaran:~/workspace$ rm -R minimal_theme/
 gerard@aldebaran:~/workspace$ 
@@ -197,9 +194,9 @@ gerard@aldebaran:~/workspace$
 Archive:  minimal_theme.zip
   Length      Date    Time    Name
 ---------  ---------- -----   ----
-        <span class="m">6</span>  2016-09-23 12:41   index.hbs
-       <span class="m">52</span>  2016-09-23 12:41   package.json
-        <span class="m">5</span>  2016-09-23 12:41   post.hbs
+        <span class="m">6</span>  <span class="m">2016</span>-09-23 <span class="m">12</span>:41   index.hbs
+       <span class="m">52</span>  <span class="m">2016</span>-09-23 <span class="m">12</span>:41   package.json
+        <span class="m">5</span>  <span class="m">2016</span>-09-23 <span class="m">12</span>:41   post.hbs
 ---------                     -------
        <span class="m">63</span>                     <span class="m">3</span> files
 gerard@aldebaran:~/workspace$ 
@@ -514,6 +511,11 @@ gerard@aldebaran:~/workspace/content/themes/minimal_theme$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -627,11 +629,6 @@ gerard@aldebaran:~/workspace/content/themes/minimal_theme$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

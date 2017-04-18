@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,failover,arping" />
-        <meta name="description" content="Cuando hablamos de alta disponibilidad, uno de los métodos mas utilizados es el failover. La idea es que una de las máquinas es la que asume la totalidad del servicio, y el resto están preparadas para ejercer la misma función en el caso de que la primera deje de funcionar ..." />
+        <meta name="description" content="Cuando hablamos de alta disponibilidad, uno de los métodos mas utilizados es el failover. La idea es que una de las máquinas es la que asume la totalidad del servicio, y el resto están preparadas para ejercer la misma función en el caso de que la primera deje de funcionar …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Dirección IP compartida manualmente entre servidores"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html"/>
-        <meta property="og:description" content="Cuando hablamos de alta disponibilidad, uno de los métodos mas utilizados es el failover. La idea es que una de las máquinas es la que asume la totalidad del servicio, y el resto están preparadas para ejercer la misma función en el caso de que la primera deje de funcionar ..."/>
+        <meta property="og:description" content="Cuando hablamos de alta disponibilidad, uno de los métodos mas utilizados es el failover. La idea es que una de las máquinas es la que asume la totalidad del servicio, y el resto están preparadas para ejercer la misma función en el caso de que la primera deje de funcionar …"/>
         <meta property="article:published_time" content="2016-07-11" />
             <meta property="article:section" content="Operaciones" />
             <meta property="article:tag" content="linux" />
@@ -68,9 +68,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -147,8 +144,8 @@ Linux Sysadmin            </a>
 <div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
 NAME     STATE    IPV4      IPV6  AUTOSTART
 -------------------------------------------
-server1  RUNNING  10.0.0.3  -     NO
-server2  RUNNING  10.0.0.4  -     NO
+server1  RUNNING  <span class="m">10</span>.0.0.3  -     NO
+server2  RUNNING  <span class="m">10</span>.0.0.4  -     NO
 root@lxc:~#
 </pre></div>
 
@@ -200,9 +197,9 @@ root@server2:~#
 
 <h3>Promocionando server1 a primario</h3>
 <p>El proceso de <strong>failover</strong> consiste en agenciarse la dirección compartida. Para ello, tenemos que añadir una nueva dirección IP en nuestra interfaz de red. Como es posible que esta IP pertenezca a otro servidor, hay que lanzar el comando <strong>arping</strong>.</p>
-<div class="highlight"><pre><span></span>root@server1:~# ip addr add 10.0.0.2/24 dev eth0
-root@server1:~# arping -U -c1 10.0.0.2
-ARPING 10.0.0.2 from 10.0.0.2 eth0
+<div class="highlight"><pre><span></span>root@server1:~# ip addr add <span class="m">10</span>.0.0.2/24 dev eth0
+root@server1:~# arping -U -c1 <span class="m">10</span>.0.0.2
+ARPING <span class="m">10</span>.0.0.2 from <span class="m">10</span>.0.0.2 eth0
 Sent <span class="m">1</span> probes <span class="o">(</span><span class="m">1</span> broadcast<span class="o">(</span>s<span class="o">))</span>
 Received <span class="m">0</span> response<span class="o">(</span>s<span class="o">)</span>
 root@server1:~#
@@ -210,7 +207,7 @@ root@server1:~#
 
 
 <p>El siguiente paso, aunque opcional, es educado; el servidor desplazado de primario a reserva, no necesita tener esa dirección asignada, en caso de que la tuviera (que no es el caso, pero no importa y lo ignoramos).</p>
-<div class="highlight"><pre><span></span>root@server2:~# ip addr del 10.0.0.2/24 dev eth0
+<div class="highlight"><pre><span></span>root@server2:~# ip addr del <span class="m">10</span>.0.0.2/24 dev eth0
 RTNETLINK answers: Cannot assign requested address
 root@server2:~#
 </pre></div>
@@ -220,8 +217,8 @@ root@server2:~#
 <div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
 NAME     STATE    IPV4                IPV6  AUTOSTART
 -----------------------------------------------------
-server1  RUNNING  10.0.0.2, 10.0.0.3  -     NO
-server2  RUNNING  10.0.0.4            -     NO
+server1  RUNNING  <span class="m">10</span>.0.0.2, <span class="m">10</span>.0.0.3  -     NO
+server2  RUNNING  <span class="m">10</span>.0.0.4            -     NO
 root@lxc:~#
 </pre></div>
 
@@ -235,14 +232,14 @@ root@lxc:~#
 
 <h3>Cambiando el primario de server1 a server2</h3>
 <p>El proceso es el mismo, pero al revés: <em>server2</em> reclama la dirección compartida y <em>server1</em> se deshace de ella por cortesía.</p>
-<div class="highlight"><pre><span></span>root@server2:~# ip addr add 10.0.0.2/24 dev eth0
-root@server2:~# arping -U -c1 10.0.0.2
-ARPING 10.0.0.2 from 10.0.0.2 eth0
+<div class="highlight"><pre><span></span>root@server2:~# ip addr add <span class="m">10</span>.0.0.2/24 dev eth0
+root@server2:~# arping -U -c1 <span class="m">10</span>.0.0.2
+ARPING <span class="m">10</span>.0.0.2 from <span class="m">10</span>.0.0.2 eth0
 Sent <span class="m">1</span> probes <span class="o">(</span><span class="m">1</span> broadcast<span class="o">(</span>s<span class="o">))</span>
 Received <span class="m">0</span> response<span class="o">(</span>s<span class="o">)</span>
 root@server2:~#
 
-root@server1:~# ip addr del 10.0.0.2/24 dev eth0
+root@server1:~# ip addr del <span class="m">10</span>.0.0.2/24 dev eth0
 root@server1:~#
 </pre></div>
 
@@ -251,8 +248,8 @@ root@server1:~#
 <div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
 NAME     STATE    IPV4                IPV6  AUTOSTART
 -----------------------------------------------------
-server1  RUNNING  10.0.0.3            -     NO
-server2  RUNNING  10.0.0.2, 10.0.0.4  -     NO
+server1  RUNNING  <span class="m">10</span>.0.0.3            -     NO
+server2  RUNNING  <span class="m">10</span>.0.0.2, <span class="m">10</span>.0.0.4  -     NO
 root@lxc:~#
 
 root@lxc:~# wget -qO- http://10.0.0.2/
@@ -269,9 +266,9 @@ root@lxc:~#
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/11/semaforos-en-linux.html">Semáforos en linux</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Enjaulado de usuarios para uso de rsync</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2015/11/liberando-memoria-cache.html">Liberando memoria caché</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html">Creando sistemas de ficheros temporales con tmpfs</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/un-proxy-dns-con-dnsmasq.html">Un proxy DNS con dnsmasq</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">Restringiendo accesos mediante certificados de cliente</a></li>
     </ul>
 </section>
     <hr/>
@@ -423,6 +420,11 @@ root@lxc:~#
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -536,11 +538,6 @@ root@lxc:~#
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

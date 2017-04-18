@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="balanceador,haproxy,ansible,docker" />
-        <meta name="description" content="Cuando tenemos un entorno grande o con previsiones de crecimiento, nos interesa poder poner a trabajar varios servidores similares. En casos así nos hace falta un balanceador de carga, que actúa como un agente de tráfico, dirigiendo las peticiones que él mismo recibe a los diferentes servidores, por ejemplo, haproxy ..." />
+        <meta name="description" content="Cuando tenemos un entorno grande o con previsiones de crecimiento, nos interesa poder poner a trabajar varios servidores similares. En casos así nos hace falta un balanceador de carga, que actúa como un agente de tráfico, dirigiendo las peticiones que él mismo recibe a los diferentes servidores, por ejemplo, haproxy …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Balanceando peticiones con HAProxy"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html"/>
-        <meta property="og:description" content="Cuando tenemos un entorno grande o con previsiones de crecimiento, nos interesa poder poner a trabajar varios servidores similares. En casos así nos hace falta un balanceador de carga, que actúa como un agente de tráfico, dirigiendo las peticiones que él mismo recibe a los diferentes servidores, por ejemplo, haproxy ..."/>
+        <meta property="og:description" content="Cuando tenemos un entorno grande o con previsiones de crecimiento, nos interesa poder poner a trabajar varios servidores similares. En casos así nos hace falta un balanceador de carga, que actúa como un agente de tráfico, dirigiendo las peticiones que él mismo recibe a los diferentes servidores, por ejemplo, haproxy …"/>
         <meta property="article:published_time" content="2016-06-27" />
             <meta property="article:section" content="Sistemas" />
             <meta property="article:tag" content="balanceador" />
@@ -69,9 +69,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -147,22 +144,22 @@ Linux Sysadmin            </a>
 <div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 slave               latest              22a9312a1315        About an hour ago   <span class="m">186</span> MB
-ansible             latest              225b431d2133        About an hour ago   245.5 MB
-debian              latest              bb5d89f9b6cb        <span class="m">2</span> weeks ago         125.1 MB
+ansible             latest              225b431d2133        About an hour ago   <span class="m">245</span>.5 MB
+debian              latest              bb5d89f9b6cb        <span class="m">2</span> weeks ago         <span class="m">125</span>.1 MB
 gerard@sirius:~/build$ 
 </pre></div>
 
 
 <h2>Preparando el entorno</h2>
 <p>El primer paso es disponer de una red para que todos los servidores implicados se puedan comunicar entre ellos. La red que viene por defecto nos permite eso, pero vamos a crear una red <em>user defined</em> que nos va a permitir que los contenedores <strong>docker</strong> se conozcan entre ellos por su nombre.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker network create --subnet<span class="o">=</span>172.20.0.0/16 balancing
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker network create --subnet<span class="o">=</span><span class="m">172</span>.20.0.0/16 balancing
 4585a1abd0ed69bc9d1daf0dd019e1f129a9e7328471da77541f5b4a54c19626
 gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Se trata de levantar 5 servidores: 1 para <strong>haproxy</strong> y otros 4 para representar los servidores de <em>backend</em>, que vamos a trucar para que parezca lo que no son. Es importante <em>publicar</em> los puertos que queramos exponer, para ver que funciona la solución final; si queremos balancear los puertos 8080 (web), 8081 (api) y 1936 (haproxy stats), pondríamos algo como esto:</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~$ docker run -d -h balancer --name balancer --net balancing -p 8080:8080 -p 8081:8081 -p 1936:1936 slave
+<div class="highlight"><pre><span></span>gerard@sirius:~$ docker run -d -h balancer --name balancer --net balancing -p <span class="m">8080</span>:8080 -p <span class="m">8081</span>:8081 -p <span class="m">1936</span>:1936 slave
 70e4811e6a498c7ecdec11ed91609d43749c327e33bd3b06b1532b507f3f2141
 gerard@sirius:~/build$ <span class="k">for</span> host in web1 web2 api1 api2<span class="p">;</span> <span class="k">do</span> docker run -d -h <span class="nv">$host</span> --name <span class="nv">$host</span> --net balancing slave<span class="p">;</span> <span class="k">done</span>
 82be4f7788f0186834311fe625f4ae24908a59a25df8b246aeb18d13cdff7b3d
@@ -398,7 +395,7 @@ gerard@sirius:~$
 
 
 <p>Y solo nos queda ver que la página de estadísticas funciona y nos resulta útil. Puesto que devuelve una página web completa, lo vamos a ver en un navegador cualquiera.</p>
-<p><img alt="HAProxy Stats" src="http://www.linuxsysadmin.tk/images/haproxy-stats.jpg" /></p>
+<p><img alt="HAProxy Stats" src="http://www.linuxsysadmin.tk/images/haproxy-stats.jpg"></p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
@@ -406,7 +403,7 @@ gerard@sirius:~$
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html">Lanzando playbooks de Ansible desde Jenkins</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/08/encriptando-datos-sensibles-con-ansible.html">Encriptando datos sensibles con Ansible</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2017/04/una-toolbox-empaquetada-en-contenedores.html">Una toolbox empaquetada en contenedores</a></li>
     </ul>
 </section>
     <hr/>
@@ -558,6 +555,11 @@ gerard@sirius:~$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -671,11 +673,6 @@ gerard@sirius:~$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

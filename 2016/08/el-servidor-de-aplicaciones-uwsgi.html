@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="uWSGI,plugins,PHP,ruby,python" />
-        <meta name="description" content="Estaba yo el otro día buscando un servidor de aplicaciones para aplicaciones python, y entre todas las opciones encontré uno que es una auténtica joya: uWSGI. Se trata de un servidor modular, que permite servir un amplio abanico de posibilidades en cuanto a lenguajes se refiere, usando un plugin adecuado ..." />
+        <meta name="description" content="Estaba yo el otro día buscando un servidor de aplicaciones para aplicaciones python, y entre todas las opciones encontré uno que es una auténtica joya: uWSGI. Se trata de un servidor modular, que permite servir un amplio abanico de posibilidades en cuanto a lenguajes se refiere, usando un plugin adecuado …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="El servidor de aplicaciones uWSGI"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/08/el-servidor-de-aplicaciones-uwsgi.html"/>
-        <meta property="og:description" content="Estaba yo el otro día buscando un servidor de aplicaciones para aplicaciones python, y entre todas las opciones encontré uno que es una auténtica joya: uWSGI. Se trata de un servidor modular, que permite servir un amplio abanico de posibilidades en cuanto a lenguajes se refiere, usando un plugin adecuado ..."/>
+        <meta property="og:description" content="Estaba yo el otro día buscando un servidor de aplicaciones para aplicaciones python, y entre todas las opciones encontré uno que es una auténtica joya: uWSGI. Se trata de un servidor modular, que permite servir un amplio abanico de posibilidades en cuanto a lenguajes se refiere, usando un plugin adecuado …"/>
         <meta property="article:published_time" content="2016-08-01" />
             <meta property="article:section" content="Sistemas" />
             <meta property="article:tag" content="uWSGI" />
@@ -70,9 +70,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -155,8 +152,8 @@ Creando árbol de dependencias
 Leyendo la información de estado... Hecho
 ...  
 <span class="m">0</span> actualizados, <span class="m">11</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
-Se necesita descargar 2.258 kB de archivos.
-Se utilizarán 5.724 kB de espacio de disco adicional después de esta operación.
+Se necesita descargar <span class="m">2</span>.258 kB de archivos.
+Se utilizarán <span class="m">5</span>.724 kB de espacio de disco adicional después de esta operación.
 ..  
 root@server:~#
 </pre></div>
@@ -169,8 +166,8 @@ Creando árbol de dependencias
 Leyendo la información de estado... Hecho
 ...  
 <span class="m">0</span> actualizados, <span class="m">22</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
-Se necesita descargar 12,0 MB de archivos.
-Se utilizarán 49,9 MB de espacio de disco adicional después de esta operación.
+Se necesita descargar <span class="m">12</span>,0 MB de archivos.
+Se utilizarán <span class="m">49</span>,9 MB de espacio de disco adicional después de esta operación.
 ...  
 root@server:~#
 </pre></div>
@@ -183,8 +180,8 @@ Creando árbol de dependencias
 Leyendo la información de estado... Hecho
 ...  
 <span class="m">0</span> actualizados, <span class="m">8</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
-Se necesita descargar 1.354 kB de archivos.
-Se utilizarán 2.687 kB de espacio de disco adicional después de esta operación.
+Se necesita descargar <span class="m">1</span>.354 kB de archivos.
+Se utilizarán <span class="m">2</span>.687 kB de espacio de disco adicional después de esta operación.
 ...  
 root@server:~#
 </pre></div>
@@ -208,10 +205,10 @@ root@server:~#
 <p>Vamos a poner un fichero de configuración que sirva <strong>PHP</strong>, prácticamente copiado de la documentación.</p>
 <div class="highlight"><pre><span></span>root@server:~# cat /etc/uwsgi-emperor/vassals/php.ini
 <span class="o">[</span>uwsgi<span class="o">]</span>
-<span class="nv">plugins</span> <span class="o">=</span> 0:php
+<span class="nv">plugins</span> <span class="o">=</span> <span class="m">0</span>:php
 http-socket <span class="o">=</span> :8080
 <span class="nv">master</span> <span class="o">=</span> <span class="nb">true</span>
-<span class="nv">workers</span> <span class="o">=</span> 2
+<span class="nv">workers</span> <span class="o">=</span> <span class="m">2</span>
 <span class="nv">project_dir</span> <span class="o">=</span> /opt/php/
 check-static <span class="o">=</span> %<span class="o">(</span>project_dir<span class="o">)</span>
 static-skip-ext <span class="o">=</span> .php
@@ -225,7 +222,7 @@ root@server:~#
 
 <p>Y el <em>emperor</em> se dedicará a levantar un proceso para servir esta aplicación. No hay que reiniciar nada. Lo comprobamos con una petición desde una máquina que vea a nuestro servidor:</p>
 <div class="highlight"><pre><span></span>root@lxc:~# wget -qO- http://10.0.0.2:8080/<span class="p">;</span> <span class="nb">echo</span> <span class="s1">&#39;&#39;</span>
-Hello from PHP, version 5.6.20-0+deb8u1
+Hello from PHP, version <span class="m">5</span>.6.20-0+deb8u1
 root@lxc:~#
 </pre></div>
 
@@ -241,7 +238,7 @@ root@server:~#
 <div class="highlight"><pre><span></span>root@server:~# cat /opt/ruby/ruby.ru
 <span class="nv">app</span> <span class="o">=</span> lambda <span class="k">do</span> <span class="p">|</span>env<span class="p">|</span>
   <span class="nv">body</span> <span class="o">=</span> <span class="s2">&quot;Hello, World!&quot;</span>
-  <span class="o">[</span>200, <span class="o">{</span><span class="s2">&quot;Content-Type&quot;</span> <span class="o">=</span>&gt; <span class="s2">&quot;text/plain&quot;</span>, <span class="s2">&quot;Content-Length&quot;</span> <span class="o">=</span>&gt; body.length.to_s<span class="o">}</span>, <span class="o">[</span>body<span class="o">]]</span> end
+  <span class="o">[</span><span class="m">200</span>, <span class="o">{</span><span class="s2">&quot;Content-Type&quot;</span> <span class="o">=</span>&gt; <span class="s2">&quot;text/plain&quot;</span>, <span class="s2">&quot;Content-Length&quot;</span> <span class="o">=</span>&gt; body.length.to_s<span class="o">}</span>, <span class="o">[</span>body<span class="o">]]</span> end
 run app
 root@server:~#
 </pre></div>
@@ -253,7 +250,7 @@ root@server:~#
 <span class="nv">plugins</span> <span class="o">=</span> rack_ruby21
 http-socket <span class="o">=</span> :3031
 <span class="nv">master</span> <span class="o">=</span> <span class="nb">true</span>
-<span class="nv">workers</span> <span class="o">=</span> 2
+<span class="nv">workers</span> <span class="o">=</span> <span class="m">2</span>
 <span class="nv">rack</span> <span class="o">=</span> /opt/ruby/ruby.ru
 root@server:~#
 </pre></div>
@@ -288,7 +285,7 @@ root@server:~#
 <span class="nv">plugins</span> <span class="o">=</span> python
 http-socket <span class="o">=</span> :5000
 <span class="nv">master</span> <span class="o">=</span> <span class="nb">true</span>
-<span class="nv">workers</span> <span class="o">=</span> 2
+<span class="nv">workers</span> <span class="o">=</span> <span class="m">2</span>
 <span class="nv">chdir</span> <span class="o">=</span> /opt/py/
 <span class="nv">module</span> <span class="o">=</span> app:application
 root@server:~#
@@ -308,9 +305,9 @@ root@lxc:~#
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html">Un servidor pypi local</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2017/01/usando-ssh-en-nuestros-scripts-python-mediante-paramiko.html">Usando SSH en nuestros scripts python mediante paramiko</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html">Un servidor pypi local</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/04/compilando-python-desde-cero.html">Compilando python desde cero</a></li>
     </ul>
 </section>
     <hr/>
@@ -462,6 +459,11 @@ root@lxc:~#
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -575,11 +577,6 @@ root@lxc:~#
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

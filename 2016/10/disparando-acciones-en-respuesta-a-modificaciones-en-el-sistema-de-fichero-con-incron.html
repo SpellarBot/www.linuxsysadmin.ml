@@ -12,13 +12,13 @@
 <link rel="canonical" href="http://www.linuxsysadmin.tk/2016/10/disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="description" content="El otro día recibí una petición diferente en mi trabajo. Se necesitaba monitorizar una carpeta, de forma que cuando alguien dejara ficheros, se lanzara una tarea para procesarlos. Tras buscar un poco por internet, topé con una herramienta tipo cron, que ejecutaba comandos ante eventos en el sistema de ficheros ..." />
+        <meta name="description" content="El otro día recibí una petición diferente en mi trabajo. Se necesitaba monitorizar una carpeta, de forma que cuando alguien dejara ficheros, se lanzara una tarea para procesarlos. Tras buscar un poco por internet, topé con una herramienta tipo cron, que ejecutaba comandos ante eventos en el sistema de ficheros …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Disparando acciones en respuesta a modificaciones en el sistema de fichero con incron"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/10/disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron.html"/>
-        <meta property="og:description" content="El otro día recibí una petición diferente en mi trabajo. Se necesitaba monitorizar una carpeta, de forma que cuando alguien dejara ficheros, se lanzara una tarea para procesarlos. Tras buscar un poco por internet, topé con una herramienta tipo cron, que ejecutaba comandos ante eventos en el sistema de ficheros ..."/>
+        <meta property="og:description" content="El otro día recibí una petición diferente en mi trabajo. Se necesitaba monitorizar una carpeta, de forma que cuando alguien dejara ficheros, se lanzara una tarea para procesarlos. Tras buscar un poco por internet, topé con una herramienta tipo cron, que ejecutaba comandos ante eventos en el sistema de ficheros …"/>
         <meta property="article:published_time" content="2016-10-03" />
             <meta property="article:section" content="Sistemas" />
             <meta property="article:author" content="Gerard" />
@@ -64,9 +64,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -139,10 +136,10 @@ Reading state information... Done
 The following NEW packages will be installed:
   incron
 <span class="m">0</span> upgraded, <span class="m">1</span> newly installed, <span class="m">0</span> to remove and <span class="m">0</span> not upgraded.
-Need to get 68.8 kB of archives.
+Need to get <span class="m">68</span>.8 kB of archives.
 After this operation, <span class="m">321</span> kB of additional disk space will be used.
 ...  
-Processing triggers <span class="k">for</span> systemd <span class="o">(</span>215-17+deb8u4<span class="o">)</span> ...
+Processing triggers <span class="k">for</span> systemd <span class="o">(</span><span class="m">215</span>-17+deb8u4<span class="o">)</span> ...
 root@65b056d5d699:~# 
 </pre></div>
 
@@ -166,9 +163,9 @@ root@65b056d5d699:~#
 <div class="highlight"><pre><span></span>root@65b056d5d699:/etc/nginx/sites-enabled# netstat -lntp
 Active Internet connections <span class="o">(</span>only servers<span class="o">)</span>
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        <span class="m">0</span>      <span class="m">0</span> 0.0.0.0:80              0.0.0.0:*               LISTEN      249/nginx       
-tcp        <span class="m">0</span>      <span class="m">0</span> 0.0.0.0:22              0.0.0.0:*               LISTEN      1/sshd          
-tcp6       <span class="m">0</span>      <span class="m">0</span> :::22                   :::*                    LISTEN      1/sshd          
+tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:80              <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">249</span>/nginx       
+tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:22              <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">1</span>/sshd          
+tcp6       <span class="m">0</span>      <span class="m">0</span> :::22                   :::*                    LISTEN      <span class="m">1</span>/sshd          
 root@65b056d5d699:/etc/nginx/sites-enabled# 
 </pre></div>
 
@@ -227,9 +224,9 @@ root@65b056d5d699:~#
 <div class="highlight"><pre><span></span>root@65b056d5d699:~# netstat -lntp
 Active Internet connections <span class="o">(</span>only servers<span class="o">)</span>
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        <span class="m">0</span>      <span class="m">0</span> 0.0.0.0:8080            0.0.0.0:*               LISTEN      249/nginx       
-tcp        <span class="m">0</span>      <span class="m">0</span> 0.0.0.0:22              0.0.0.0:*               LISTEN      1/sshd          
-tcp6       <span class="m">0</span>      <span class="m">0</span> :::22                   :::*                    LISTEN      1/sshd          
+tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:8080            <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">249</span>/nginx       
+tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:22              <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">1</span>/sshd          
+tcp6       <span class="m">0</span>      <span class="m">0</span> :::22                   :::*                    LISTEN      <span class="m">1</span>/sshd          
 root@65b056d5d699:~# 
 </pre></div>
 
@@ -403,6 +400,11 @@ root@65b056d5d699:~#
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -516,11 +518,6 @@ root@65b056d5d699:~#
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

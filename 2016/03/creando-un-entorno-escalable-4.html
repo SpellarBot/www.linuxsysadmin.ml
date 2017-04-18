@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,debian,jessie,proxy http,balanceador,ssl,nginx,virtual hosts,port forwarding" />
-        <meta name="description" content="Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un proxy HTTP que haga las funciones de terminación SSL y de balanceador, exponiendo todo el sistema en una sola dirección IP ..." />
+        <meta name="description" content="Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un proxy HTTP que haga las funciones de terminación SSL y de balanceador, exponiendo todo el sistema en una sola dirección IP …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Creando un entorno escalable (IV)"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html"/>
-        <meta property="og:description" content="Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un proxy HTTP que haga las funciones de terminación SSL y de balanceador, exponiendo todo el sistema en una sola dirección IP ..."/>
+        <meta property="og:description" content="Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un proxy HTTP que haga las funciones de terminación SSL y de balanceador, exponiendo todo el sistema en una sola dirección IP …"/>
         <meta property="article:published_time" content="2016-03-21" />
             <meta property="article:section" content="Sistemas" />
             <meta property="article:tag" content="linux" />
@@ -74,9 +74,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -176,8 +173,8 @@ Se instalarán los siguientes paquetes NUEVOS:
   ca-certificates curl libcurl3 libffi6 libgmp10 libgnutls-deb0-28 libhogweed2 libidn11 libldap-2.4-2 libnettle4 libp11-kit0
   librtmp1 libsasl2-2 libsasl2-modules libsasl2-modules-db libssh2-1 libtasn1-6 nginx-common nginx-light openssl
 <span class="m">0</span> actualizados, <span class="m">20</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
-Se necesita descargar 4.077 kB de archivos.
-Se utilizarán 8.832 kB de espacio de disco adicional después de esta operación.
+Se necesita descargar <span class="m">4</span>.077 kB de archivos.
+Se utilizarán <span class="m">8</span>.832 kB de espacio de disco adicional después de esta operación.
 ¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
 ...
 root@frontend:~#
@@ -186,8 +183,8 @@ root@frontend:~#
 
 <p>El paquete <strong>nginx</strong> de la distribución <em>Debian</em> viene con una configuración por defecto en <em>/etc/nginx/sites-enabled/</em>, que vamos a eliminar para evitar que se pise con nuestras configuraciones.</p>
 <div class="highlight"><pre><span></span>root@frontend:~# ls -lh /etc/nginx/sites-enabled/
-total 0
-lrwxrwxrwx <span class="m">1</span> root root <span class="m">34</span> feb <span class="m">26</span> 11:28 default -&gt; /etc/nginx/sites-available/default
+total <span class="m">0</span>
+lrwxrwxrwx <span class="m">1</span> root root <span class="m">34</span> feb <span class="m">26</span> <span class="m">11</span>:28 default -&gt; /etc/nginx/sites-available/default
 root@frontend:~# unlink /etc/nginx/sites-enabled/default
 root@frontend:~#
 </pre></div>
@@ -302,9 +299,9 @@ root@frontend:~#
 <div class="highlight"><pre><span></span>root@frontend:~# curl -i http://localhost/products/
 HTTP/1.1 <span class="m">200</span> OK
 Server: nginx/1.6.2
-Date: Fri, <span class="m">26</span> Feb <span class="m">2016</span> 11:04:38 GMT
+Date: Fri, <span class="m">26</span> Feb <span class="m">2016</span> <span class="m">11</span>:04:38 GMT
 Content-Type: application/json
-Content-Length: 3
+Content-Length: <span class="m">3</span>
 Connection: keep-alive
 Backend: backend1
 
@@ -312,9 +309,9 @@ Backend: backend1
 root@frontend:~# curl -i http://localhost/products/
 HTTP/1.1 <span class="m">200</span> OK
 Server: nginx/1.6.2
-Date: Fri, <span class="m">26</span> Feb <span class="m">2016</span> 11:04:40 GMT
+Date: Fri, <span class="m">26</span> Feb <span class="m">2016</span> <span class="m">11</span>:04:40 GMT
 Content-Type: application/json
-Content-Length: 3
+Content-Length: <span class="m">3</span>
 Connection: keep-alive
 Backend: backend2
 
@@ -327,9 +324,9 @@ root@frontend:~#
 <div class="highlight"><pre><span></span>root@frontend:~# curl -i -k https://localhost/products
 HTTP/1.1 <span class="m">401</span> Unauthorized
 Server: nginx/1.6.2
-Date: Fri, <span class="m">26</span> Feb <span class="m">2016</span> 11:05:35 GMT
+Date: Fri, <span class="m">26</span> Feb <span class="m">2016</span> <span class="m">11</span>:05:35 GMT
 Content-Type: text/html
-Content-Length: 194
+Content-Length: <span class="m">194</span>
 Connection: keep-alive
 WWW-Authenticate: Basic <span class="nv">realm</span><span class="o">=</span><span class="s2">&quot;Admin Area&quot;</span>
 
@@ -352,8 +349,8 @@ root@frontend:~#
 ...
 <span class="nv">frontend_server</span><span class="o">=</span><span class="s2">&quot;10.0.0.2&quot;</span>
 ...
-dnat to <span class="s2">&quot;</span><span class="nv">$frontend_server</span><span class="s2">&quot;</span> proto tcp dport 80
-dnat to <span class="s2">&quot;</span><span class="nv">$frontend_server</span><span class="s2">&quot;</span> proto tcp dport 443
+dnat to <span class="s2">&quot;</span><span class="nv">$frontend_server</span><span class="s2">&quot;</span> proto tcp dport <span class="m">80</span>
+dnat to <span class="s2">&quot;</span><span class="nv">$frontend_server</span><span class="s2">&quot;</span> proto tcp dport <span class="m">443</span>
 ...
 router world2lan inface eth0 outface lxc0
     route http accept dst <span class="s2">&quot;</span><span class="nv">$frontend_server</span><span class="s2">&quot;</span>
@@ -373,26 +370,26 @@ root@lxc:~#
 <h2>Accediendo a las aplicaciones en la IP pública</h2>
 <p>Vamos a acceder con un navegador a la parte de administración, para ver que funciona y para rellenar algunos datos, para que se vea una respuesta de la API con fundamento.</p>
 <p>El primer paso consiste en abrir el navegador con la URL adecuada, y nos tropezamos con la autenticación.</p>
-<p><img alt="Auth basic" src="http://www.linuxsysadmin.tk/images/entorno-escalable-auth-basic.jpg" /></p>
+<p><img alt="Auth basic" src="http://www.linuxsysadmin.tk/images/entorno-escalable-auth-basic.jpg"></p>
 <p>Tras pasar la autenticación podemos acceder a los formularios para añadir productos.</p>
-<p><img alt="Admin form" src="http://www.linuxsysadmin.tk/images/entorno-escalable-admin-form.jpg" /></p>
+<p><img alt="Admin form" src="http://www.linuxsysadmin.tk/images/entorno-escalable-admin-form.jpg"></p>
 <p>Tras añadir tres productos, vemos que ya se genera la lista, en formato web.</p>
-<p><img alt="Admin list" src="http://www.linuxsysadmin.tk/images/entorno-escalable-admin-list.jpg" /></p>
+<p><img alt="Admin list" src="http://www.linuxsysadmin.tk/images/entorno-escalable-admin-list.jpg"></p>
 <p>Con los datos introducidos podemos consumir la API, para comprobar que los datos que hemos introducido en la base de datos (mediante la aplicación de administración) están disponibles.</p>
 <div class="highlight"><pre><span></span>gerard@desktop:~$ wget -qO- http://192.168.1.232/products/
 <span class="o">[</span>
     <span class="o">{</span>
-        <span class="s2">&quot;price&quot;</span>: 1.5, 
+        <span class="s2">&quot;price&quot;</span>: <span class="m">1</span>.5, 
         <span class="s2">&quot;_id&quot;</span>: <span class="s2">&quot;123&quot;</span>, 
         <span class="s2">&quot;description&quot;</span>: <span class="s2">&quot;Apples&quot;</span>
     <span class="o">}</span>, 
     <span class="o">{</span>
-        <span class="s2">&quot;price&quot;</span>: 1.0, 
+        <span class="s2">&quot;price&quot;</span>: <span class="m">1</span>.0, 
         <span class="s2">&quot;_id&quot;</span>: <span class="s2">&quot;456&quot;</span>, 
         <span class="s2">&quot;description&quot;</span>: <span class="s2">&quot;Oranges&quot;</span>
     <span class="o">}</span>, 
     <span class="o">{</span>
-        <span class="s2">&quot;price&quot;</span>: 2.0, 
+        <span class="s2">&quot;price&quot;</span>: <span class="m">2</span>.0, 
         <span class="s2">&quot;_id&quot;</span>: <span class="s2">&quot;789&quot;</span>, 
         <span class="s2">&quot;description&quot;</span>: <span class="s2">&quot;Pears&quot;</span>
     <span class="o">}</span>
@@ -404,7 +401,7 @@ gerard@desktop:~$
 <p>Y consultando un producto concreto, también funciona como debe.</p>
 <div class="highlight"><pre><span></span>gerard@desktop:~$ wget -qO- http://192.168.1.232/products/456
 <span class="o">{</span>
-    <span class="s2">&quot;price&quot;</span>: 1.0, 
+    <span class="s2">&quot;price&quot;</span>: <span class="m">1</span>.0, 
     <span class="s2">&quot;_id&quot;</span>: <span class="s2">&quot;456&quot;</span>, 
     <span class="s2">&quot;description&quot;</span>: <span class="s2">&quot;Oranges&quot;</span>
 <span class="o">}</span>
@@ -582,6 +579,11 @@ gerard@desktop:~$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -695,11 +697,6 @@ gerard@desktop:~$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

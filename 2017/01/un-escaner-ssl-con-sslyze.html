@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="sslyze,python,pentest" />
-        <meta name="description" content="El otro día cayó en mis manos un escaneo de la plataforma para uno de los servicios que gestiono. No voy a dar detalles al respecto en virtud del acuerdo de confidencialidad que mantengo con ellos, pero consideré interesante una de las herramientas que usaron para testear el dominio SSL ..." />
+        <meta name="description" content="El otro día cayó en mis manos un escaneo de la plataforma para uno de los servicios que gestiono. No voy a dar detalles al respecto en virtud del acuerdo de confidencialidad que mantengo con ellos, pero consideré interesante una de las herramientas que usaron para testear el dominio SSL …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Un escáner SSL con sslyze"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/01/un-escaner-ssl-con-sslyze.html"/>
-        <meta property="og:description" content="El otro día cayó en mis manos un escaneo de la plataforma para uno de los servicios que gestiono. No voy a dar detalles al respecto en virtud del acuerdo de confidencialidad que mantengo con ellos, pero consideré interesante una de las herramientas que usaron para testear el dominio SSL ..."/>
+        <meta property="og:description" content="El otro día cayó en mis manos un escaneo de la plataforma para uno de los servicios que gestiono. No voy a dar detalles al respecto en virtud del acuerdo de confidencialidad que mantengo con ellos, pero consideré interesante una de las herramientas que usaron para testear el dominio SSL …"/>
         <meta property="article:published_time" content="2017-01-30" />
             <meta property="article:section" content="Seguridad" />
             <meta property="article:tag" content="sslyze" />
@@ -68,9 +68,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -156,73 +153,73 @@ gerard@marcopolo:~$
 <p>De esta manera puedo lanzar la imagen sin especificar los parámetros; por defecto va a ejecutar <code>sslyze --regular -h</code> para darnos una idea de lo que debemos hacer. En caso de especificar uno o más dominios después de la imagen durante el <code>docker run</code>, se lanza su escaneo directamente.</p>
 <p>Construimos la imagen de la forma habitual:</p>
 <div class="highlight"><pre><span></span>gerard@marcopolo:~$ docker build -t sslyze sslyze/
-Sending build context to Docker daemon 2.048 kB
+Sending build context to Docker daemon <span class="m">2</span>.048 kB
 Step <span class="m">1</span> : FROM alpine:3.4
  ---&gt; baa5d63471ea
 Step <span class="m">2</span> : RUN apk add --no-cache py-pip gcc python-dev musl-dev <span class="o">&amp;&amp;</span>     pip install sslyze <span class="o">&amp;&amp;</span>     apk del gcc python-dev musl-dev
  ---&gt; Running in 21a5ddf65843
 fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/main/x86_64/APKINDEX.tar.gz
 fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/community/x86_64/APKINDEX.tar.gz
-<span class="o">(</span>1/29<span class="o">)</span> Upgrading musl <span class="o">(</span>1.1.14-r12 -&gt; 1.1.14-r14<span class="o">)</span>
-<span class="o">(</span>2/29<span class="o">)</span> Installing binutils-libs <span class="o">(</span>2.26-r0<span class="o">)</span>
-<span class="o">(</span>3/29<span class="o">)</span> Installing binutils <span class="o">(</span>2.26-r0<span class="o">)</span>
-<span class="o">(</span>4/29<span class="o">)</span> Installing gmp <span class="o">(</span>6.1.0-r0<span class="o">)</span>
-<span class="o">(</span>5/29<span class="o">)</span> Installing isl <span class="o">(</span>0.14.1-r0<span class="o">)</span>
-<span class="o">(</span>6/29<span class="o">)</span> Installing libgomp <span class="o">(</span>5.3.0-r0<span class="o">)</span>
-<span class="o">(</span>7/29<span class="o">)</span> Installing libatomic <span class="o">(</span>5.3.0-r0<span class="o">)</span>
-<span class="o">(</span>8/29<span class="o">)</span> Installing libgcc <span class="o">(</span>5.3.0-r0<span class="o">)</span>
-<span class="o">(</span>9/29<span class="o">)</span> Installing pkgconf <span class="o">(</span>0.9.12-r0<span class="o">)</span>
-<span class="o">(</span>10/29<span class="o">)</span> Installing pkgconfig <span class="o">(</span>0.25-r1<span class="o">)</span>
-<span class="o">(</span>11/29<span class="o">)</span> Installing mpfr3 <span class="o">(</span>3.1.2-r0<span class="o">)</span>
-<span class="o">(</span>12/29<span class="o">)</span> Installing mpc1 <span class="o">(</span>1.0.3-r0<span class="o">)</span>
-<span class="o">(</span>13/29<span class="o">)</span> Installing libstdc++ <span class="o">(</span>5.3.0-r0<span class="o">)</span>
-<span class="o">(</span>14/29<span class="o">)</span> Installing gcc <span class="o">(</span>5.3.0-r0<span class="o">)</span>
-<span class="o">(</span>15/29<span class="o">)</span> Upgrading musl-utils <span class="o">(</span>1.1.14-r12 -&gt; 1.1.14-r14<span class="o">)</span>
-<span class="o">(</span>16/29<span class="o">)</span> Installing musl-dev <span class="o">(</span>1.1.14-r14<span class="o">)</span>
-<span class="o">(</span>17/29<span class="o">)</span> Installing libbz2 <span class="o">(</span>1.0.6-r5<span class="o">)</span>
-<span class="o">(</span>18/29<span class="o">)</span> Installing expat <span class="o">(</span>2.1.1-r1<span class="o">)</span>
-<span class="o">(</span>19/29<span class="o">)</span> Installing libffi <span class="o">(</span>3.2.1-r2<span class="o">)</span>
-<span class="o">(</span>20/29<span class="o">)</span> Installing gdbm <span class="o">(</span>1.11-r1<span class="o">)</span>
-<span class="o">(</span>21/29<span class="o">)</span> Installing ncurses-terminfo-base <span class="o">(</span>6.0-r7<span class="o">)</span>
-<span class="o">(</span>22/29<span class="o">)</span> Installing ncurses-terminfo <span class="o">(</span>6.0-r7<span class="o">)</span>
-<span class="o">(</span>23/29<span class="o">)</span> Installing ncurses-libs <span class="o">(</span>6.0-r7<span class="o">)</span>
-<span class="o">(</span>24/29<span class="o">)</span> Installing readline <span class="o">(</span>6.3.008-r4<span class="o">)</span>
-<span class="o">(</span>25/29<span class="o">)</span> Installing sqlite-libs <span class="o">(</span>3.13.0-r0<span class="o">)</span>
-<span class="o">(</span>26/29<span class="o">)</span> Installing python <span class="o">(</span>2.7.12-r0<span class="o">)</span>
-<span class="o">(</span>27/29<span class="o">)</span> Installing py-setuptools <span class="o">(</span>20.8.0-r0<span class="o">)</span>
-<span class="o">(</span>28/29<span class="o">)</span> Installing py-pip <span class="o">(</span>8.1.2-r0<span class="o">)</span>
-<span class="o">(</span>29/29<span class="o">)</span> Installing python-dev <span class="o">(</span>2.7.12-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">1</span>/29<span class="o">)</span> Upgrading musl <span class="o">(</span><span class="m">1</span>.1.14-r12 -&gt; <span class="m">1</span>.1.14-r14<span class="o">)</span>
+<span class="o">(</span><span class="m">2</span>/29<span class="o">)</span> Installing binutils-libs <span class="o">(</span><span class="m">2</span>.26-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">3</span>/29<span class="o">)</span> Installing binutils <span class="o">(</span><span class="m">2</span>.26-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">4</span>/29<span class="o">)</span> Installing gmp <span class="o">(</span><span class="m">6</span>.1.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">5</span>/29<span class="o">)</span> Installing isl <span class="o">(</span><span class="m">0</span>.14.1-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">6</span>/29<span class="o">)</span> Installing libgomp <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">7</span>/29<span class="o">)</span> Installing libatomic <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">8</span>/29<span class="o">)</span> Installing libgcc <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">9</span>/29<span class="o">)</span> Installing pkgconf <span class="o">(</span><span class="m">0</span>.9.12-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">10</span>/29<span class="o">)</span> Installing pkgconfig <span class="o">(</span><span class="m">0</span>.25-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">11</span>/29<span class="o">)</span> Installing mpfr3 <span class="o">(</span><span class="m">3</span>.1.2-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">12</span>/29<span class="o">)</span> Installing mpc1 <span class="o">(</span><span class="m">1</span>.0.3-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">13</span>/29<span class="o">)</span> Installing libstdc++ <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">14</span>/29<span class="o">)</span> Installing gcc <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">15</span>/29<span class="o">)</span> Upgrading musl-utils <span class="o">(</span><span class="m">1</span>.1.14-r12 -&gt; <span class="m">1</span>.1.14-r14<span class="o">)</span>
+<span class="o">(</span><span class="m">16</span>/29<span class="o">)</span> Installing musl-dev <span class="o">(</span><span class="m">1</span>.1.14-r14<span class="o">)</span>
+<span class="o">(</span><span class="m">17</span>/29<span class="o">)</span> Installing libbz2 <span class="o">(</span><span class="m">1</span>.0.6-r5<span class="o">)</span>
+<span class="o">(</span><span class="m">18</span>/29<span class="o">)</span> Installing expat <span class="o">(</span><span class="m">2</span>.1.1-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">19</span>/29<span class="o">)</span> Installing libffi <span class="o">(</span><span class="m">3</span>.2.1-r2<span class="o">)</span>
+<span class="o">(</span><span class="m">20</span>/29<span class="o">)</span> Installing gdbm <span class="o">(</span><span class="m">1</span>.11-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">21</span>/29<span class="o">)</span> Installing ncurses-terminfo-base <span class="o">(</span><span class="m">6</span>.0-r7<span class="o">)</span>
+<span class="o">(</span><span class="m">22</span>/29<span class="o">)</span> Installing ncurses-terminfo <span class="o">(</span><span class="m">6</span>.0-r7<span class="o">)</span>
+<span class="o">(</span><span class="m">23</span>/29<span class="o">)</span> Installing ncurses-libs <span class="o">(</span><span class="m">6</span>.0-r7<span class="o">)</span>
+<span class="o">(</span><span class="m">24</span>/29<span class="o">)</span> Installing readline <span class="o">(</span><span class="m">6</span>.3.008-r4<span class="o">)</span>
+<span class="o">(</span><span class="m">25</span>/29<span class="o">)</span> Installing sqlite-libs <span class="o">(</span><span class="m">3</span>.13.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">26</span>/29<span class="o">)</span> Installing python <span class="o">(</span><span class="m">2</span>.7.12-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">27</span>/29<span class="o">)</span> Installing py-setuptools <span class="o">(</span><span class="m">20</span>.8.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">28</span>/29<span class="o">)</span> Installing py-pip <span class="o">(</span><span class="m">8</span>.1.2-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">29</span>/29<span class="o">)</span> Installing python-dev <span class="o">(</span><span class="m">2</span>.7.12-r0<span class="o">)</span>
 Executing busybox-1.24.2-r11.trigger
 OK: <span class="m">150</span> MiB in <span class="m">38</span> packages
 Collecting sslyze
-  Downloading SSLyze-0.14.1.tar.gz <span class="o">(</span>1.1MB<span class="o">)</span>
-Collecting nassl&lt;0.15.0,&gt;<span class="o">=</span>0.14.0 <span class="o">(</span>from sslyze<span class="o">)</span>
-  Downloading nassl-0.14.1.tar.gz <span class="o">(</span>15.2MB<span class="o">)</span>
+  Downloading SSLyze-0.14.1.tar.gz <span class="o">(</span><span class="m">1</span>.1MB<span class="o">)</span>
+Collecting nassl&lt;<span class="m">0</span>.15.0,&gt;<span class="o">=</span><span class="m">0</span>.14.0 <span class="o">(</span>from sslyze<span class="o">)</span>
+  Downloading nassl-0.14.1.tar.gz <span class="o">(</span><span class="m">15</span>.2MB<span class="o">)</span>
 Installing collected packages: nassl, sslyze
   Running setup.py install <span class="k">for</span> nassl: started
     Running setup.py install <span class="k">for</span> nassl: finished with status <span class="s1">&#39;done&#39;</span>
   Running setup.py install <span class="k">for</span> sslyze: started
     Running setup.py install <span class="k">for</span> sslyze: finished with status <span class="s1">&#39;done&#39;</span>
 Successfully installed nassl-0.14.1 sslyze-0.14.1
-You are using pip version 8.1.2, however version 9.0.1 is available.
+You are using pip version <span class="m">8</span>.1.2, however version <span class="m">9</span>.0.1 is available.
 You should consider upgrading via the <span class="s1">&#39;pip install --upgrade pip&#39;</span> command.
 WARNING: Ignoring APKINDEX.167438ca.tar.gz: No such file or directory
 WARNING: Ignoring APKINDEX.a2e6dac0.tar.gz: No such file or directory
-<span class="o">(</span>1/15<span class="o">)</span> Purging gcc <span class="o">(</span>5.3.0-r0<span class="o">)</span>
-<span class="o">(</span>2/15<span class="o">)</span> Purging binutils <span class="o">(</span>2.26-r0<span class="o">)</span>
-<span class="o">(</span>3/15<span class="o">)</span> Purging isl <span class="o">(</span>0.14.1-r0<span class="o">)</span>
-<span class="o">(</span>4/15<span class="o">)</span> Purging libatomic <span class="o">(</span>5.3.0-r0<span class="o">)</span>
-<span class="o">(</span>5/15<span class="o">)</span> Purging musl-dev <span class="o">(</span>1.1.14-r14<span class="o">)</span>
-<span class="o">(</span>6/15<span class="o">)</span> Purging python-dev <span class="o">(</span>2.7.12-r0<span class="o">)</span>
-<span class="o">(</span>7/15<span class="o">)</span> Purging pkgconfig <span class="o">(</span>0.25-r1<span class="o">)</span>
-<span class="o">(</span>8/15<span class="o">)</span> Purging pkgconf <span class="o">(</span>0.9.12-r0<span class="o">)</span>
-<span class="o">(</span>9/15<span class="o">)</span> Purging binutils-libs <span class="o">(</span>2.26-r0<span class="o">)</span>
-<span class="o">(</span>10/15<span class="o">)</span> Purging mpc1 <span class="o">(</span>1.0.3-r0<span class="o">)</span>
-<span class="o">(</span>11/15<span class="o">)</span> Purging mpfr3 <span class="o">(</span>3.1.2-r0<span class="o">)</span>
-<span class="o">(</span>12/15<span class="o">)</span> Purging gmp <span class="o">(</span>6.1.0-r0<span class="o">)</span>
-<span class="o">(</span>13/15<span class="o">)</span> Purging libgomp <span class="o">(</span>5.3.0-r0<span class="o">)</span>
-<span class="o">(</span>14/15<span class="o">)</span> Purging libstdc++ <span class="o">(</span>5.3.0-r0<span class="o">)</span>
-<span class="o">(</span>15/15<span class="o">)</span> Purging libgcc <span class="o">(</span>5.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">1</span>/15<span class="o">)</span> Purging gcc <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">2</span>/15<span class="o">)</span> Purging binutils <span class="o">(</span><span class="m">2</span>.26-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">3</span>/15<span class="o">)</span> Purging isl <span class="o">(</span><span class="m">0</span>.14.1-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">4</span>/15<span class="o">)</span> Purging libatomic <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">5</span>/15<span class="o">)</span> Purging musl-dev <span class="o">(</span><span class="m">1</span>.1.14-r14<span class="o">)</span>
+<span class="o">(</span><span class="m">6</span>/15<span class="o">)</span> Purging python-dev <span class="o">(</span><span class="m">2</span>.7.12-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">7</span>/15<span class="o">)</span> Purging pkgconfig <span class="o">(</span><span class="m">0</span>.25-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">8</span>/15<span class="o">)</span> Purging pkgconf <span class="o">(</span><span class="m">0</span>.9.12-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">9</span>/15<span class="o">)</span> Purging binutils-libs <span class="o">(</span><span class="m">2</span>.26-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">10</span>/15<span class="o">)</span> Purging mpc1 <span class="o">(</span><span class="m">1</span>.0.3-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">11</span>/15<span class="o">)</span> Purging mpfr3 <span class="o">(</span><span class="m">3</span>.1.2-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">12</span>/15<span class="o">)</span> Purging gmp <span class="o">(</span><span class="m">6</span>.1.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">13</span>/15<span class="o">)</span> Purging libgomp <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">14</span>/15<span class="o">)</span> Purging libstdc++ <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">15</span>/15<span class="o">)</span> Purging libgcc <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
 Executing busybox-1.24.2-r11.trigger
 OK: <span class="m">61</span> MiB in <span class="m">23</span> packages
  ---&gt; 27687d30520b
@@ -263,11 +260,11 @@ gerard@marcopolo:~$
  CHECKING HOST<span class="o">(</span>S<span class="o">)</span> AVAILABILITY
  -----------------------------
 
-   www.google.es:443                       <span class="o">=</span>&gt; 216.58.208.195 
+   www.google.es:443                       <span class="o">=</span>&gt; <span class="m">216</span>.58.208.195 
 
 
 
- SCAN RESULTS FOR WWW.GOOGLE.ES:443 - 216.58.208.195:443
+ SCAN RESULTS FOR WWW.GOOGLE.ES:443 - <span class="m">216</span>.58.208.195:443
  -------------------------------------------------------
 
   * TLSV1_1 Cipher Suites:
@@ -340,21 +337,21 @@ gerard@marcopolo:~$
       Common Name:                       *.google.es
       Issuer:                            Google Internet Authority G2
       Serial Number:                     7B527383A3925A33
-      Not Before:                        Nov <span class="m">10</span> 15:30:00 <span class="m">2016</span> GMT
-      Not After:                         Feb  <span class="m">2</span> 15:30:00 <span class="m">2017</span> GMT
+      Not Before:                        Nov <span class="m">10</span> <span class="m">15</span>:30:00 <span class="m">2016</span> GMT
+      Not After:                         Feb  <span class="m">2</span> <span class="m">15</span>:30:00 <span class="m">2017</span> GMT
       Signature Algorithm:               sha256WithRSAEncryption
       Public Key Algorithm:              rsaEncryption
-      Key Size:                          2048
+      Key Size:                          <span class="m">2048</span>
       Exponent:                          <span class="m">65537</span> <span class="o">(</span>0x10001<span class="o">)</span>
       X509v3 Subject Alternative Name:   <span class="o">{</span><span class="s1">&#39;DNS&#39;</span>: <span class="o">[</span><span class="s1">&#39;*.google.es&#39;</span>, <span class="s1">&#39;google.es&#39;</span><span class="o">]}</span>
 
   * Certificate - Trust:
       Hostname Validation:               OK - Subject Alternative Name matches www.google.es
-      Mozilla NSS CA Store <span class="o">(</span>09/2016<span class="o">)</span>:    OK - Certificate is trusted
-      Microsoft CA Store <span class="o">(</span>09/2016<span class="o">)</span>:      OK - Certificate is trusted
-      Apple CA Store <span class="o">(</span>OS X 10.11.6<span class="o">)</span>:     OK - Certificate is trusted
-      Java <span class="m">7</span> CA Store <span class="o">(</span>Update 79<span class="o">)</span>:       OK - Certificate is trusted
-      AOSP CA Store <span class="o">(</span>7.0.0 r1<span class="o">)</span>:          OK - Certificate is trusted
+      Mozilla NSS CA Store <span class="o">(</span><span class="m">09</span>/2016<span class="o">)</span>:    OK - Certificate is trusted
+      Microsoft CA Store <span class="o">(</span><span class="m">09</span>/2016<span class="o">)</span>:      OK - Certificate is trusted
+      Apple CA Store <span class="o">(</span>OS X <span class="m">10</span>.11.6<span class="o">)</span>:     OK - Certificate is trusted
+      Java <span class="m">7</span> CA Store <span class="o">(</span>Update <span class="m">79</span><span class="o">)</span>:       OK - Certificate is trusted
+      AOSP CA Store <span class="o">(</span><span class="m">7</span>.0.0 r1<span class="o">)</span>:          OK - Certificate is trusted
       Received Chain:                    *.google.es --&gt; Google Internet Authority G2 --&gt; GeoTrust Global CA
       Verified Chain w/ Mozilla Store:   *.google.es --&gt; Google Internet Authority G2 --&gt; GeoTrust Global CA
       Received Chain Contains Anchor:    OK - Anchor certificate not sent
@@ -366,7 +363,7 @@ gerard@marcopolo:~$
 
 
 
- SCAN COMPLETED IN 1.09 S
+ SCAN COMPLETED IN <span class="m">1</span>.09 S
  ------------------------
 
 gerard@marcopolo:~$ 
@@ -396,11 +393,11 @@ gerard@marcopolo:~$
  CHECKING HOST<span class="o">(</span>S<span class="o">)</span> AVAILABILITY
  -----------------------------
 
-   www.telefonica.es:443                       <span class="o">=</span>&gt; 212.170.36.79 
+   www.telefonica.es:443                       <span class="o">=</span>&gt; <span class="m">212</span>.170.36.79 
 
 
 
- SCAN RESULTS FOR WWW.TELEFONICA.ES:443 - 212.170.36.79:443
+ SCAN RESULTS FOR WWW.TELEFONICA.ES:443 - <span class="m">212</span>.170.36.79:443
  ----------------------------------------------------------
 
   * TLSV1 Cipher Suites:
@@ -474,21 +471,21 @@ gerard@marcopolo:~$
       Common Name:                       www.telefonica.es
       Issuer:                            GlobalSign Organization Validation CA - SHA256 - G2
       Serial Number:                     5865A61D377E8CD08D536C1B
-      Not Before:                        Jul <span class="m">11</span> 14:36:02 <span class="m">2016</span> GMT
-      Not After:                         Jul <span class="m">12</span> 14:36:02 <span class="m">2018</span> GMT
+      Not Before:                        Jul <span class="m">11</span> <span class="m">14</span>:36:02 <span class="m">2016</span> GMT
+      Not After:                         Jul <span class="m">12</span> <span class="m">14</span>:36:02 <span class="m">2018</span> GMT
       Signature Algorithm:               sha256WithRSAEncryption
       Public Key Algorithm:              rsaEncryption
-      Key Size:                          2048
+      Key Size:                          <span class="m">2048</span>
       Exponent:                          <span class="m">65537</span> <span class="o">(</span>0x10001<span class="o">)</span>
       X509v3 Subject Alternative Name:   <span class="o">{</span><span class="s1">&#39;DNS&#39;</span>: <span class="o">[</span><span class="s1">&#39;www.telefonica.es&#39;</span>, <span class="s1">&#39;telefonica.es&#39;</span><span class="o">]}</span>
 
   * Certificate - Trust:
       Hostname Validation:               OK - Subject Alternative Name matches www.telefonica.es
-      Mozilla NSS CA Store <span class="o">(</span>09/2016<span class="o">)</span>:    OK - Certificate is trusted
-      Microsoft CA Store <span class="o">(</span>09/2016<span class="o">)</span>:      OK - Certificate is trusted
-      Java <span class="m">7</span> CA Store <span class="o">(</span>Update 79<span class="o">)</span>:       OK - Certificate is trusted
-      Apple CA Store <span class="o">(</span>OS X 10.11.6<span class="o">)</span>:     OK - Certificate is trusted
-      AOSP CA Store <span class="o">(</span>7.0.0 r1<span class="o">)</span>:          OK - Certificate is trusted
+      Mozilla NSS CA Store <span class="o">(</span><span class="m">09</span>/2016<span class="o">)</span>:    OK - Certificate is trusted
+      Microsoft CA Store <span class="o">(</span><span class="m">09</span>/2016<span class="o">)</span>:      OK - Certificate is trusted
+      Java <span class="m">7</span> CA Store <span class="o">(</span>Update <span class="m">79</span><span class="o">)</span>:       OK - Certificate is trusted
+      Apple CA Store <span class="o">(</span>OS X <span class="m">10</span>.11.6<span class="o">)</span>:     OK - Certificate is trusted
+      AOSP CA Store <span class="o">(</span><span class="m">7</span>.0.0 r1<span class="o">)</span>:          OK - Certificate is trusted
       Received Chain:                    www.telefonica.es --&gt; GlobalSign Organization Validation CA - SHA256 - G2
       Verified Chain w/ Mozilla Store:   www.telefonica.es --&gt; GlobalSign Organization Validation CA - SHA256 - G2 --&gt; GlobalSign
       Received Chain Contains Anchor:    OK - Anchor certificate not sent
@@ -500,7 +497,7 @@ gerard@marcopolo:~$
 
 
 
- SCAN COMPLETED IN 2.42 S
+ SCAN COMPLETED IN <span class="m">2</span>.42 S
  ------------------------
 
 gerard@marcopolo:~$ 
@@ -514,9 +511,9 @@ gerard@marcopolo:~$
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2017/01/usando-ssh-en-nuestros-scripts-python-mediante-paramiko.html">Usando SSH en nuestros scripts python mediante paramiko</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html">Separando el build y el runtime con contenedores Docker</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/08/el-servidor-de-aplicaciones-uwsgi.html">El servidor de aplicaciones uWSGI</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/08/generando-passwords-complejas-con-python.html">Generando passwords complejas con python</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
     </ul>
 </section>
     <hr/>
@@ -668,6 +665,11 @@ gerard@marcopolo:~$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -781,11 +783,6 @@ gerard@marcopolo:~$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,archlinux,distribución" />
-        <meta name="description" content="Hoy quiero presentar una distribución de linux que es una maravilla; es rápida, altamente actualizada, y lo último en innovación. Se trata de una distribución tipo rolling, con una filosofía de última tendencia que es especialmente útil en un entorno no tan crítico, como puede ser una máquina tipo escritorio ..." />
+        <meta name="description" content="Hoy quiero presentar una distribución de linux que es una maravilla; es rápida, altamente actualizada, y lo último en innovación. Se trata de una distribución tipo rolling, con una filosofía de última tendencia que es especialmente útil en un entorno no tan crítico, como puede ser una máquina tipo escritorio …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Instalando una máquina con Archlinux"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/07/instalando-una-maquina-con-archlinux.html"/>
-        <meta property="og:description" content="Hoy quiero presentar una distribución de linux que es una maravilla; es rápida, altamente actualizada, y lo último en innovación. Se trata de una distribución tipo rolling, con una filosofía de última tendencia que es especialmente útil en un entorno no tan crítico, como puede ser una máquina tipo escritorio ..."/>
+        <meta property="og:description" content="Hoy quiero presentar una distribución de linux que es una maravilla; es rápida, altamente actualizada, y lo último en innovación. Se trata de una distribución tipo rolling, con una filosofía de última tendencia que es especialmente útil en un entorno no tan crítico, como puede ser una máquina tipo escritorio …"/>
         <meta property="article:published_time" content="2016-07-04" />
             <meta property="article:section" content="Sistemas" />
             <meta property="article:tag" content="linux" />
@@ -68,9 +68,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -173,11 +170,11 @@ Disklabel type: gpt
 Disk identifier: A45FE619-7FFC-4EA2-8253-628FD2138198
 
 Device       Start     End Sectors  Size Type
-/dev/sda1     <span class="m">2048</span> <span class="m">7317503</span> <span class="m">7315456</span>  3.5G Linux filesystem
+/dev/sda1     <span class="m">2048</span> <span class="m">7317503</span> <span class="m">7315456</span>  <span class="m">3</span>.5G Linux filesystem
 /dev/sda2  <span class="m">7317504</span> <span class="m">8388574</span> <span class="m">1071071</span>  523M Linux swap
 
 
-Disk /dev/loop0: 318.9 MiB, <span class="m">334385152</span> bytes, <span class="m">653096</span> sectors
+Disk /dev/loop0: <span class="m">318</span>.9 MiB, <span class="m">334385152</span> bytes, <span class="m">653096</span> sectors
 Units: sectors of <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
 Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
 I/O size <span class="o">(</span>minimum/optimal<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
@@ -187,11 +184,11 @@ root@archiso ~ <span class="c1">#</span>
 
 <p>Siguiendo el manual, necesitamos formatear las particiones según las funciones que van a desempeñar, montando los discos en <em>/mnt/</em> y sus subcarpetas. Como no tenemos particiones para <em>/home/</em>, <em>/var/</em> y <em>/tmp/</em>, con montar la primera nos basta.</p>
 <div class="highlight"><pre><span></span>root@archiso ~ <span class="c1"># mkfs.ext4 /dev/sda1</span>
-mke2fs 1.42.13 <span class="o">(</span>17-May-2015<span class="o">)</span>
+mke2fs <span class="m">1</span>.42.13 <span class="o">(</span><span class="m">17</span>-May-2015<span class="o">)</span>
 Creating filesystem with <span class="m">914432</span> 4k blocks and <span class="m">228928</span> inodes
 Filesystem UUID: 295665be-7b09-4cad-9689-7fed5471bf25
 Superblock backups stored on blocks:
-        32768, 98304, 163840, 229376, 294912, 819200, 884736
+        <span class="m">32768</span>, <span class="m">98304</span>, <span class="m">163840</span>, <span class="m">229376</span>, <span class="m">294912</span>, <span class="m">819200</span>, <span class="m">884736</span>
 
 Allocating group tables: <span class="k">done</span>
 Writing inode tables: <span class="k">done</span>
@@ -205,7 +202,7 @@ root@archiso ~ <span class="c1">#</span>
 
 <p>Preparamos la partición de <em>swap</em> y la dejamos activada. Eso nos permitirá utilizarla durante la instalación, y que esta la detecte automáticamente para crear el fichero <em>/etc/fstab</em>.</p>
 <div class="highlight"><pre><span></span>root@archiso ~ <span class="c1"># mkswap /dev/sda2</span>
-Setting up swapspace version 1, <span class="nv">size</span> <span class="o">=</span> <span class="m">523</span> MiB <span class="o">(</span><span class="m">548380672</span> bytes<span class="o">)</span>
+Setting up swapspace version <span class="m">1</span>, <span class="nv">size</span> <span class="o">=</span> <span class="m">523</span> MiB <span class="o">(</span><span class="m">548380672</span> bytes<span class="o">)</span>
 no label, <span class="nv">UUID</span><span class="o">=</span>85cf7f55-cd3c-4002-9729-2d89ebadf942
 root@archiso ~ <span class="c1"># swapon /dev/sda2</span>
 root@archiso ~ <span class="c1">#</span>
@@ -215,8 +212,8 @@ root@archiso ~ <span class="c1">#</span>
 <p>Podemos verificar que está activada con un comando <strong>free</strong>, por ejemplo.</p>
 <div class="highlight"><pre><span></span>root@archiso ~ <span class="c1"># free -m</span>
               total        used        free      shared  buff/cache   available
-Mem:            <span class="m">498</span>          <span class="m">20</span>         <span class="m">252</span>          <span class="m">44</span>         <span class="m">224</span>         413
-Swap:           <span class="m">522</span>           <span class="m">0</span>         522
+Mem:            <span class="m">498</span>          <span class="m">20</span>         <span class="m">252</span>          <span class="m">44</span>         <span class="m">224</span>         <span class="m">413</span>
+Swap:           <span class="m">522</span>           <span class="m">0</span>         <span class="m">522</span>
 root@archiso ~ <span class="c1">#</span>
 </pre></div>
 
@@ -228,26 +225,26 @@ root@archiso ~ <span class="c1">#</span>
 <span class="o">==</span>&gt; Creating install root at /mnt
 <span class="o">==</span>&gt; Installing packages to /mnt
 :: Synchronizing package databases...
- core                                                 119.7 KiB   783K/s 00:00 <span class="o">[</span><span class="c1">############################################] 100%</span>
- extra                                               1755.7 KiB   810K/s 00:02 <span class="o">[</span><span class="c1">############################################] 100%</span>
- community                                              3.5 MiB   851K/s 00:04 <span class="o">[</span><span class="c1">############################################] 100%</span>
+ core                                                 <span class="m">119</span>.7 KiB   783K/s <span class="m">00</span>:00 <span class="o">[</span><span class="c1">############################################] 100%</span>
+ extra                                               <span class="m">1755</span>.7 KiB   810K/s <span class="m">00</span>:02 <span class="o">[</span><span class="c1">############################################] 100%</span>
+ community                                              <span class="m">3</span>.5 MiB   851K/s <span class="m">00</span>:04 <span class="o">[</span><span class="c1">############################################] 100%</span>
 :: There are <span class="m">50</span> members in group base:
 :: Repository core
-   1<span class="o">)</span> bash  2<span class="o">)</span> bzip2  3<span class="o">)</span> coreutils  4<span class="o">)</span> cryptsetup  5<span class="o">)</span> device-mapper  6<span class="o">)</span> dhcpcd  7<span class="o">)</span> diffutils  8<span class="o">)</span> e2fsprogs  9<span class="o">)</span> file
-   10<span class="o">)</span> filesystem  11<span class="o">)</span> findutils  12<span class="o">)</span> gawk  13<span class="o">)</span> gcc-libs  14<span class="o">)</span> gettext  15<span class="o">)</span> glibc  16<span class="o">)</span> grep  17<span class="o">)</span> gzip  18<span class="o">)</span> inetutils  19<span class="o">)</span> iproute2
-   20<span class="o">)</span> iputils  21<span class="o">)</span> jfsutils  22<span class="o">)</span> less  23<span class="o">)</span> licenses  24<span class="o">)</span> linux  25<span class="o">)</span> logrotate  26<span class="o">)</span> lvm2  27<span class="o">)</span> man-db  28<span class="o">)</span> man-pages  29<span class="o">)</span> mdadm
-   30<span class="o">)</span> nano  31<span class="o">)</span> netctl  32<span class="o">)</span> pacman  33<span class="o">)</span> pciutils  34<span class="o">)</span> pcmciautils  35<span class="o">)</span> perl  36<span class="o">)</span> procps-ng  37<span class="o">)</span> psmisc  38<span class="o">)</span> reiserfsprogs
-   39<span class="o">)</span> s-nail  40<span class="o">)</span> sed  41<span class="o">)</span> shadow  42<span class="o">)</span> sysfsutils  43<span class="o">)</span> systemd-sysvcompat  44<span class="o">)</span> tar  45<span class="o">)</span> texinfo  46<span class="o">)</span> usbutils  47<span class="o">)</span> util-linux
-   48<span class="o">)</span> vi  49<span class="o">)</span> which  50<span class="o">)</span> xfsprogs
+   <span class="m">1</span><span class="o">)</span> bash  <span class="m">2</span><span class="o">)</span> bzip2  <span class="m">3</span><span class="o">)</span> coreutils  <span class="m">4</span><span class="o">)</span> cryptsetup  <span class="m">5</span><span class="o">)</span> device-mapper  <span class="m">6</span><span class="o">)</span> dhcpcd  <span class="m">7</span><span class="o">)</span> diffutils  <span class="m">8</span><span class="o">)</span> e2fsprogs  <span class="m">9</span><span class="o">)</span> file
+   <span class="m">10</span><span class="o">)</span> filesystem  <span class="m">11</span><span class="o">)</span> findutils  <span class="m">12</span><span class="o">)</span> gawk  <span class="m">13</span><span class="o">)</span> gcc-libs  <span class="m">14</span><span class="o">)</span> gettext  <span class="m">15</span><span class="o">)</span> glibc  <span class="m">16</span><span class="o">)</span> grep  <span class="m">17</span><span class="o">)</span> gzip  <span class="m">18</span><span class="o">)</span> inetutils  <span class="m">19</span><span class="o">)</span> iproute2
+   <span class="m">20</span><span class="o">)</span> iputils  <span class="m">21</span><span class="o">)</span> jfsutils  <span class="m">22</span><span class="o">)</span> less  <span class="m">23</span><span class="o">)</span> licenses  <span class="m">24</span><span class="o">)</span> linux  <span class="m">25</span><span class="o">)</span> logrotate  <span class="m">26</span><span class="o">)</span> lvm2  <span class="m">27</span><span class="o">)</span> man-db  <span class="m">28</span><span class="o">)</span> man-pages  <span class="m">29</span><span class="o">)</span> mdadm
+   <span class="m">30</span><span class="o">)</span> nano  <span class="m">31</span><span class="o">)</span> netctl  <span class="m">32</span><span class="o">)</span> pacman  <span class="m">33</span><span class="o">)</span> pciutils  <span class="m">34</span><span class="o">)</span> pcmciautils  <span class="m">35</span><span class="o">)</span> perl  <span class="m">36</span><span class="o">)</span> procps-ng  <span class="m">37</span><span class="o">)</span> psmisc  <span class="m">38</span><span class="o">)</span> reiserfsprogs
+   <span class="m">39</span><span class="o">)</span> s-nail  <span class="m">40</span><span class="o">)</span> sed  <span class="m">41</span><span class="o">)</span> shadow  <span class="m">42</span><span class="o">)</span> sysfsutils  <span class="m">43</span><span class="o">)</span> systemd-sysvcompat  <span class="m">44</span><span class="o">)</span> tar  <span class="m">45</span><span class="o">)</span> texinfo  <span class="m">46</span><span class="o">)</span> usbutils  <span class="m">47</span><span class="o">)</span> util-linux
+   <span class="m">48</span><span class="o">)</span> vi  <span class="m">49</span><span class="o">)</span> which  <span class="m">50</span><span class="o">)</span> xfsprogs
 
 Enter a selection <span class="o">(</span><span class="nv">default</span><span class="o">=</span>all<span class="o">)</span>:
 ...  
-Total Download Size:   185.14 MiB
-Total Installed Size:  572.80 MiB
+Total Download Size:   <span class="m">185</span>.14 MiB
+Total Installed Size:  <span class="m">572</span>.80 MiB
 
 :: Proceed with installation? <span class="o">[</span>Y/n<span class="o">]</span>
 ...
-pacstrap /mnt base  51.53s user 124.01s system 39% cpu 7:25.44 total
+pacstrap /mnt base  <span class="m">51</span>.53s user <span class="m">124</span>.01s system <span class="m">39</span>% cpu <span class="m">7</span>:25.44 total
 root@archiso ~ <span class="c1">#</span>
 </pre></div>
 
@@ -306,7 +303,7 @@ sh-4.3#
 <div class="highlight"><pre><span></span>sh-4.3# mkinitcpio -p <span class="nv">linux</span>
 <span class="o">==</span>&gt; Building image from preset: /etc/mkinitcpio.d/linux.preset: <span class="s1">&#39;default&#39;</span>
   -&gt; -k /boot/vmlinuz-linux -c /etc/mkinitcpio.conf -g /boot/initramfs-linux.img
-<span class="o">==</span>&gt; Starting build: 4.5.4-1-ARCH
+<span class="o">==</span>&gt; Starting build: <span class="m">4</span>.5.4-1-ARCH
   -&gt; Running build hook: <span class="o">[</span>base<span class="o">]</span>
   -&gt; Running build hook: <span class="o">[</span>udev<span class="o">]</span>
   -&gt; Running build hook: <span class="o">[</span>autodetect<span class="o">]</span>
@@ -320,7 +317,7 @@ sh-4.3#
 <span class="o">==</span>&gt; Image generation <span class="nv">successful</span>
 <span class="o">==</span>&gt; Building image from preset: /etc/mkinitcpio.d/linux.preset: <span class="s1">&#39;fallback&#39;</span>
   -&gt; -k /boot/vmlinuz-linux -c /etc/mkinitcpio.conf -g /boot/initramfs-linux-fallback.img -S <span class="nv">autodetect</span>
-<span class="o">==</span>&gt; Starting build: 4.5.4-1-ARCH
+<span class="o">==</span>&gt; Starting build: <span class="m">4</span>.5.4-1-ARCH
   -&gt; Running build hook: <span class="o">[</span>base<span class="o">]</span>
   -&gt; Running build hook: <span class="o">[</span>udev<span class="o">]</span>
   -&gt; Running build hook: <span class="o">[</span>modconf<span class="o">]</span>
@@ -353,10 +350,10 @@ sh-4.3#
 resolving dependencies...
 looking <span class="k">for</span> conflicting packages...
 
-Packages <span class="o">(</span>1<span class="o">)</span> grub-1:2.02.beta2-6
+Packages <span class="o">(</span><span class="m">1</span><span class="o">)</span> grub-1:2.02.beta2-6
 
-Total Download Size:    5.27 MiB
-Total Installed Size:  25.27 MiB
+Total Download Size:    <span class="m">5</span>.27 MiB
+Total Installed Size:  <span class="m">25</span>.27 MiB
 
 :: Proceed with installation? <span class="o">[</span>Y/n<span class="o">]</span> y
 ...
@@ -398,8 +395,8 @@ sh-4.3#
 <p>Y con esto queda una instalación básica. Solo nos queda salir del entorno enjaulado, apagar la máquina, quitar el disco de instalación y encender.</p>
 <div class="highlight"><pre><span></span>sh-4.3# <span class="nb">exit</span>
 <span class="nb">exit</span>
-arch-chroot /mnt  10.17s user 19.71s system 3% cpu 14:10.46 total
-root has logged on pts/1 from 10.0.2.2.
+arch-chroot /mnt  <span class="m">10</span>.17s user <span class="m">19</span>.71s system <span class="m">3</span>% cpu <span class="m">14</span>:10.46 total
+root has logged on pts/1 from <span class="m">10</span>.0.2.2.
 root@archiso ~ <span class="c1"># reboot</span>
 </pre></div>
 
@@ -408,17 +405,17 @@ root@archiso ~ <span class="c1"># reboot</span>
 <p>Tras actualizar y limpiar caché de paquetes, vemos que tenemos una distribución minimalista con 743mb de disco ocupados y 10mb de memoria.</p>
 <div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># df -h</span>
 S.ficheros     Tamaño Usados  Disp Uso% Montado en
-dev              247M      <span class="m">0</span>  247M   0% /dev
-run              250M   292K  249M   1% /run
-/dev/sda1        3,4G   743M  2,5G  23% /
-tmpfs            250M      <span class="m">0</span>  250M   0% /dev/shm
-tmpfs            250M      <span class="m">0</span>  250M   0% /sys/fs/cgroup
-tmpfs            250M      <span class="m">0</span>  250M   0% /tmp
-tmpfs             50M      <span class="m">0</span>   50M   0% /run/user/0
+dev              247M      <span class="m">0</span>  247M   <span class="m">0</span>% /dev
+run              250M   292K  249M   <span class="m">1</span>% /run
+/dev/sda1        <span class="m">3</span>,4G   743M  <span class="m">2</span>,5G  <span class="m">23</span>% /
+tmpfs            250M      <span class="m">0</span>  250M   <span class="m">0</span>% /dev/shm
+tmpfs            250M      <span class="m">0</span>  250M   <span class="m">0</span>% /sys/fs/cgroup
+tmpfs            250M      <span class="m">0</span>  250M   <span class="m">0</span>% /tmp
+tmpfs             50M      <span class="m">0</span>   50M   <span class="m">0</span>% /run/user/0
 <span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># free -m</span>
               total        used        free      shared  buff/cache   available
-Mem:            <span class="m">498</span>          <span class="m">10</span>         <span class="m">441</span>           <span class="m">0</span>          <span class="m">46</span>         470
-Swap:           <span class="m">522</span>           <span class="m">0</span>         522
+Mem:            <span class="m">498</span>          <span class="m">10</span>         <span class="m">441</span>           <span class="m">0</span>          <span class="m">46</span>         <span class="m">470</span>
+Swap:           <span class="m">522</span>           <span class="m">0</span>         <span class="m">522</span>
 <span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
 </pre></div>
 
@@ -430,8 +427,8 @@ Swap:           <span class="m">522</span>           <span class="m">0</span>   
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/07/un-escritorio-con-archlinux.html">Un escritorio con Archlinux</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/11/semaforos-en-linux.html">Semáforos en linux</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Enjaulado de usuarios para uso de rsync</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html">Creando sistemas de ficheros temporales con tmpfs</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/un-proxy-dns-con-dnsmasq.html">Un proxy DNS con dnsmasq</a></li>
     </ul>
 </section>
     <hr/>
@@ -583,6 +580,11 @@ Swap:           <span class="m">522</span>           <span class="m">0</span>   
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -696,11 +698,6 @@ Swap:           <span class="m">522</span>           <span class="m">0</span>   
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

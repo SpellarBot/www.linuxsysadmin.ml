@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,git,ssh,docker" />
-        <meta name="description" content="Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando git y ssh ..." />
+        <meta name="description" content="Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando git y ssh …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Preparando un servidor de repositorios GIT"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/06/preparando-un-servidor-de-repositorios-git.html"/>
-        <meta property="og:description" content="Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando git y ssh ..."/>
+        <meta property="og:description" content="Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando git y ssh …"/>
         <meta property="article:published_time" content="2016-06-20" />
             <meta property="article:section" content="Sistemas" />
             <meta property="article:tag" content="linux" />
@@ -69,9 +69,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -161,7 +158,7 @@ gerard@sirius:~/build$
 
 <p>Construimos la imagen, basándonos en el anterior <em>Dockerfile</em>, y le añadimos el <em>tag</em> "gitserver".</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker build -t gitserver .
-Sending build context to Docker daemon 5.632 kB
+Sending build context to Docker daemon <span class="m">5</span>.632 kB
 Step <span class="m">1</span> : FROM debian:jessie
  ---&gt; bb5d89f9b6cb
 Step <span class="m">2</span> : RUN apt-get update <span class="o">&amp;&amp;</span>     apt-get install -y git openssh-server <span class="o">&amp;&amp;</span>     mkdir /var/run/sshd
@@ -183,14 +180,14 @@ gerard@sirius:~/build$
 
 
 <p>Lanzamos una instancia del contenedor para que podamos utilizarla. La parte importante es el <em>flag</em> <strong>-d</strong> para ejecutar el contenedor en <em>background</em>, y el <em>flag</em> <strong>-p</strong> que nos permite publicar el puerto 22 del contenedor en el puerto 22222 de la máquina <em>host</em>.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker run -d --name gitserver1 -h gitserver1 -p 22222:22 gitserver
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker run -d --name gitserver1 -h gitserver1 -p <span class="m">22222</span>:22 gitserver
 c26f30a94bb75b35c6d6cfe6a6bc5b1ef6929aafe1b5636acd207e019743540b
 gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Vamos a entrar en el servidor <strong>SSH</strong> para crear el repositorio <em>myrepo.git</em> que nos va a servir de ejemplo.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ ssh git@localhost -p 22222
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ ssh git@localhost -p <span class="m">22222</span>
 git@localhost<span class="err">&#39;</span>s password: 
 
 The programs included with the Debian GNU/Linux system are free software<span class="p">;</span>
@@ -220,7 +217,7 @@ gerard@sirius:~/build$
 
 <p>Hacemos un poco de trabajo local, con sus respectivos <em>commits</em>. Finalmente podemos hacer un <em>push</em> a nuestro repositorio remoto, siguiendo el <em>workflow</em> de trabajo que queramos seguir.</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/build$ <span class="nb">cd</span> myrepo/
-gerard@sirius:~/build/myrepo$ <span class="nb">echo</span> 0.0.1 &gt; VERSION
+gerard@sirius:~/build/myrepo$ <span class="nb">echo</span> <span class="m">0</span>.0.1 &gt; VERSION
 gerard@sirius:~/build/myrepo$ git add VERSION 
 gerard@sirius:~/build/myrepo$ git commit -m <span class="s2">&quot;Initial commit&quot;</span>
 <span class="o">[</span>master <span class="o">(</span>root-commit<span class="o">)</span> f30b82a<span class="o">]</span> Initial commit
@@ -228,9 +225,9 @@ gerard@sirius:~/build/myrepo$ git commit -m <span class="s2">&quot;Initial commi
  create mode <span class="m">100644</span> VERSION
 gerard@sirius:~/build/myrepo$ git push -u origin master
 git@localhost<span class="err">&#39;</span>s password: 
-Counting objects: 3, <span class="k">done</span>.
-Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, <span class="m">222</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
-Total <span class="m">3</span> <span class="o">(</span>delta 0<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>
+Counting objects: <span class="m">3</span>, <span class="k">done</span>.
+Writing objects: <span class="m">100</span>% <span class="o">(</span><span class="m">3</span>/3<span class="o">)</span>, <span class="m">222</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
+Total <span class="m">3</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>
 To ssh://git@localhost:22222/home/git/myrepo.git
  * <span class="o">[</span>new branch<span class="o">]</span>      master -&gt; master
 Branch master <span class="nb">set</span> up to track remote branch master from origin.
@@ -260,7 +257,7 @@ gerard@sirius:~/build$
 
 git init --bare <span class="si">${</span><span class="nv">1</span><span class="si">}</span>.git
 <span class="nb">echo</span> <span class="s2">&quot;[OK] Repository </span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2"> created&quot;</span>
-<span class="nb">exit</span> 0
+<span class="nb">exit</span> <span class="m">0</span>
 gerard@sirius:~/build$ cat destroy 
 <span class="c1">#!/bin/bash</span>
 
@@ -272,7 +269,7 @@ gerard@sirius:~/build$ cat destroy
 <span class="k">if</span> <span class="o">[</span> -e <span class="si">${</span><span class="nv">1</span><span class="si">}</span>.git <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
     rm -Rf <span class="si">${</span><span class="nv">1</span><span class="si">}</span>.git
     <span class="nb">echo</span> <span class="s2">&quot;[OK] Repository </span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2"> deleted&quot;</span>
-    <span class="nb">exit</span> 0
+    <span class="nb">exit</span> <span class="m">0</span>
 <span class="k">fi</span>
 
 <span class="nb">echo</span> <span class="s2">&quot;[ERROR] Repository </span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2"> does not exist&quot;</span>
@@ -301,7 +298,7 @@ gerard@sirius:~/build$
 
 <p>Creamos la imagen usando el <em>Dockerfile</em> antes mencionado, siguiendo el mismo procedimiento de la versión básica. Le ponemos un <em>tag</em> distinto para tener ambas imágenes funcionales.</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker build -f Dockerfile.shell -t gitserver:shell .
-Sending build context to Docker daemon 53.25 kB
+Sending build context to Docker daemon <span class="m">53</span>.25 kB
 Step <span class="m">1</span> : FROM debian:jessie
  ---&gt; bb5d89f9b6cb
 Step <span class="m">2</span> : RUN apt-get update <span class="o">&amp;&amp;</span>     apt-get install -y git openssh-server <span class="o">&amp;&amp;</span>     mkdir /var/run/sshd
@@ -328,14 +325,14 @@ gerard@sirius:~/build$
 
 
 <p>Lanzamos una instancia de la imagen creada. Es importante cambiar el puerto; puesto que el 22222 está ocupado por la instancia anterior, usaré el siguiente.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker run -d --name gitserver2 -h gitserver2 -p 22223:22 gitserver:shell
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker run -d --name gitserver2 -h gitserver2 -p <span class="m">22223</span>:22 gitserver:shell
 e732027d11b90657ff109a455f032327f0e24eebe54a7e121d86eff6eab1bc4b
 gerard@sirius:~/build$ 
 </pre></div>
 
 
 <p>Entramos por <strong>SSH</strong>. Nos podemos dar cuenta de que el <em>prompt</em> ha cambiado; estamos en el <strong>git-shell</strong> y tenemos limitados los comandos a los que añadimos en el <em>Dockerfile</em>.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ ssh git@localhost -p 22223
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ ssh git@localhost -p <span class="m">22223</span>
 git@localhost<span class="s1">&#39;s password: </span>
 
 <span class="s1">The programs included with the Debian GNU/Linux system are free software;</span>
@@ -376,7 +373,7 @@ gerard@sirius:~/build$
 
 <p>Hacemos algunos <em>commits</em> locales y finalmente los pasamos al repositorio remoto mediante un <em>push</em>.</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/build$ <span class="nb">cd</span> myrepo2/
-gerard@sirius:~/build/myrepo2$ <span class="nb">echo</span> 0.0.1 &gt; VERSION
+gerard@sirius:~/build/myrepo2$ <span class="nb">echo</span> <span class="m">0</span>.0.1 &gt; VERSION
 gerard@sirius:~/build/myrepo2$ git add VERSION
 gerard@sirius:~/build/myrepo2$ git commit -m <span class="s2">&quot;Initial commit&quot;</span>
 <span class="o">[</span>master <span class="o">(</span>root-commit<span class="o">)</span> fd40f39<span class="o">]</span> Initial commit
@@ -384,9 +381,9 @@ gerard@sirius:~/build/myrepo2$ git commit -m <span class="s2">&quot;Initial comm
  create mode <span class="m">100644</span> VERSION
 gerard@sirius:~/build/myrepo2$ git push -u origin master
 git@localhost<span class="err">&#39;</span>s password: 
-Counting objects: 3, <span class="k">done</span>.
-Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, <span class="m">222</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
-Total <span class="m">3</span> <span class="o">(</span>delta 0<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>
+Counting objects: <span class="m">3</span>, <span class="k">done</span>.
+Writing objects: <span class="m">100</span>% <span class="o">(</span><span class="m">3</span>/3<span class="o">)</span>, <span class="m">222</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
+Total <span class="m">3</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>
 To ssh://git@localhost:22223/home/git/myrepo2.git
  * <span class="o">[</span>new branch<span class="o">]</span>      master -&gt; master
 Branch master <span class="nb">set</span> up to track remote branch master from origin.
@@ -399,8 +396,8 @@ gerard@sirius:~/build$
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Enjaulado de usuarios para uso de rsync</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">Autenticación SSH por claves</a></li>
     </ul>
 </section>
     <hr/>
@@ -552,6 +549,11 @@ gerard@sirius:~/build$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -665,11 +667,6 @@ gerard@sirius:~/build$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

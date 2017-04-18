@@ -61,9 +61,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -95,37 +92,37 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
+                <h2><a href="http://www.linuxsysadmin.tk/2016/08/encriptando-datos-sensibles-con-ansible.html">Encriptando datos sensibles con Ansible</a></h2>
+                <div class="summary"><p>Si usamos <strong>ansible</strong> para configurar otras máquinas tenemos pleno poder para acceder a otras, sea mediante claves SSH o por accesos remotos normales. En este último caso, conviene aplicar un poco de seguridad para evitar que un posible intruso acceda libremente. Para esto podemos encriptar la información sensible con <strong>ansible-vault …</strong></p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/08/encriptando-datos-sensibles-con-ansible.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://www.linuxsysadmin.tk/2016/07/tipos-de-volumenes-en-docker.html">Tipos de volúmenes en Docker</a></h2>
-                <div class="summary"><p>Una de las mas importantes funcionalidades de <strong>Docker</strong> son los volúmenes. Estos no son mas que carpetas en nuestro sistema de ficheros y son capaces de sobrevivir al ciclo de vida normal del contenedor. Eso nos permite, entre otras cosas, compartir varios ficheros con otros contenedores o con el <em>host ...</em></p>
+                <div class="summary"><p>Una de las mas importantes funcionalidades de <strong>Docker</strong> son los volúmenes. Estos no son mas que carpetas en nuestro sistema de ficheros y son capaces de sobrevivir al ciclo de vida normal del contenedor. Eso nos permite, entre otras cosas, compartir varios ficheros con otros contenedores o con el <em>host …</em></p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/07/tipos-de-volumenes-en-docker.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
             <article>
                 <h2><a href="http://www.linuxsysadmin.tk/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html">Dirección IP compartida manualmente entre servidores</a></h2>
-                <div class="summary"><p>Cuando hablamos de alta disponibilidad, uno de los métodos mas utilizados es el <strong>failover</strong>. La idea es que una de las máquinas es la que asume la totalidad del servicio, y el resto están preparadas para ejercer la misma función en el caso de que la primera deje de funcionar ...</p>
+                <div class="summary"><p>Cuando hablamos de alta disponibilidad, uno de los métodos mas utilizados es el <strong>failover</strong>. La idea es que una de las máquinas es la que asume la totalidad del servicio, y el resto están preparadas para ejercer la misma función en el caso de que la primera deje de funcionar …</p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
             <article>
                 <h2><a href="http://www.linuxsysadmin.tk/2016/06/un-root-shell-en-c.html">Un root shell en C</a></h2>
-                <div class="summary"><p>Cuando operamos un servidor de producción es habitual que no tengamos acceso habitual al usuario <em>root</em>, e incluso lo tengan altamente vigilado. Podemos intentar dejar una puerta trasera, por ejemplo poniendo un binario con el <em>setuid</em> bit activado, te pueden pillar. Sin embargo es posible dejar una puerta abierta oculta ...</p>
+                <div class="summary"><p>Cuando operamos un servidor de producción es habitual que no tengamos acceso habitual al usuario <em>root</em>, e incluso lo tengan altamente vigilado. Podemos intentar dejar una puerta trasera, por ejemplo poniendo un binario con el <em>setuid</em> bit activado, te pueden pillar. Sin embargo es posible dejar una puerta abierta oculta …</p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/06/un-root-shell-en-c.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
             <article>
                 <h2><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></h2>
-                <div class="summary"><p>La facilidad de levantar un contenedor <strong>docker</strong> nos lleva a la pregunta del millón: ¿es posible usar <strong>docker</strong> para crear contenedores de usar y tirar para probar otras tecnologías? La respuesta es que sí, y para demostrarlo, vamos a generar un entorno minimalista en contenedores <strong>docker</strong>, desplegados mediante <strong>ansible</strong> <em>playbooks ...</em></p>
+                <div class="summary"><p>La facilidad de levantar un contenedor <strong>docker</strong> nos lleva a la pregunta del millón: ¿es posible usar <strong>docker</strong> para crear contenedores de usar y tirar para probar otras tecnologías? La respuesta es que sí, y para demostrarlo, vamos a generar un entorno minimalista en contenedores <strong>docker</strong>, desplegados mediante <strong>ansible</strong> <em>playbooks …</em></p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">Autenticación SSH por claves</a></h2>
-                <div class="summary"><p>A pesar de que el protocolo <strong>SSH</strong> es lo que mas seguridad ofrece hoy en día, un servidor rápido puede probar gran cantidad de contraseñas generadas mediante un generador por fuerza bruta. Para añadir mas seguridad podemos autenticar mediante claves en vez de usar contraseña, opcionalmente protegidos con una <em>passphrase ...</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
@@ -266,6 +263,11 @@ Linux Sysadmin            </a>
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -379,11 +381,6 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

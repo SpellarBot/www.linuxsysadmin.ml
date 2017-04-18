@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="docker,docker-compose,nginx,volumenes,rsync,rssh" />
-        <meta name="description" content="Hemos hablado de generar nuestro contenido HTML estático con otras herramientas, y finalmente ha llegado la hora de servirlo. Normalmente, los ficheros que cambian tal y como vamos generando páginas son pocos y nos interesa copiarlo de forma remota, pero no podemos hacerlo con docker porque hacen falta dos servicios ..." />
+        <meta name="description" content="Hemos hablado de generar nuestro contenido HTML estático con otras herramientas, y finalmente ha llegado la hora de servirlo. Normalmente, los ficheros que cambian tal y como vamos generando páginas son pocos y nos interesa copiarlo de forma remota, pero no podemos hacerlo con docker porque hacen falta dos servicios …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Un entorno web estático con nginx, rsync y docker"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html"/>
-        <meta property="og:description" content="Hemos hablado de generar nuestro contenido HTML estático con otras herramientas, y finalmente ha llegado la hora de servirlo. Normalmente, los ficheros que cambian tal y como vamos generando páginas son pocos y nos interesa copiarlo de forma remota, pero no podemos hacerlo con docker porque hacen falta dos servicios ..."/>
+        <meta property="og:description" content="Hemos hablado de generar nuestro contenido HTML estático con otras herramientas, y finalmente ha llegado la hora de servirlo. Normalmente, los ficheros que cambian tal y como vamos generando páginas son pocos y nos interesa copiarlo de forma remota, pero no podemos hacerlo con docker porque hacen falta dos servicios …"/>
         <meta property="article:published_time" content="2017-03-27" />
             <meta property="article:section" content="Sistemas" />
             <meta property="article:tag" content="docker" />
@@ -71,9 +71,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -178,21 +175,21 @@ gerard@aldebaran:~/docker/syncweb/web$ cat start.sh
 
 <span class="nb">exec</span> /usr/sbin/nginx -g <span class="s2">&quot;daemon off;&quot;</span>
 gerard@aldebaran:~/docker/syncweb/web$ cat nginx.conf 
-worker_processes 1<span class="p">;</span>
+worker_processes <span class="m">1</span><span class="p">;</span>
 events <span class="o">{</span>
-    worker_connections 1024<span class="p">;</span>
+    worker_connections <span class="m">1024</span><span class="p">;</span>
 <span class="o">}</span>
 http <span class="o">{</span>
     include mime.types<span class="p">;</span>
     default_type application/octet-stream<span class="p">;</span>
     sendfile on<span class="p">;</span>
-    keepalive_timeout 65<span class="p">;</span>
+    keepalive_timeout <span class="m">65</span><span class="p">;</span>
     include conf.d/*<span class="p">;</span>
 <span class="o">}</span>
 gerard@aldebaran:~/docker/syncweb/web$ cat conf.d/web 
 server <span class="o">{</span>
     server_name _<span class="p">;</span>
-    listen 80<span class="p">;</span>
+    listen <span class="m">80</span><span class="p">;</span>
     root /srv/www<span class="p">;</span>
     index index.html<span class="p">;</span>
 <span class="o">}</span>
@@ -253,8 +250,8 @@ gerard@aldebaran:~/docker/syncweb$
 <p>Comprobamos las imágenes que hemos creado, viendo que se han hecho bien y que ocupan una cantidad de espacio razonable.</p>
 <div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/syncweb$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED              SIZE
-rsync               latest              cb33669eb5f6        <span class="m">54</span> seconds ago       8.77 MB
-web                 latest              1ae71f497ae0        About a minute ago   5.75 MB
+rsync               latest              cb33669eb5f6        <span class="m">54</span> seconds ago       <span class="m">8</span>.77 MB
+web                 latest              1ae71f497ae0        About a minute ago   <span class="m">5</span>.75 MB
 data                latest              cc6555822fd9        About a minute ago   <span class="m">180</span> B
 gerard@aldebaran:~/docker/syncweb$ 
 </pre></div>
@@ -322,8 +319,8 @@ Could not chdir to home directory /home/web: No such file or directory
 sending incremental file list
 index.html
 
-sent <span class="m">182</span> bytes  received <span class="m">41</span> bytes  63.71 bytes/sec
-total size is <span class="m">60</span>  speedup is 0.27
+sent <span class="m">182</span> bytes  received <span class="m">41</span> bytes  <span class="m">63</span>.71 bytes/sec
+total size is <span class="m">60</span>  speedup is <span class="m">0</span>.27
 gerard@aldebaran:~/docker/syncweb$ 
 </pre></div>
 
@@ -344,8 +341,8 @@ Could not chdir to home directory /home/web: No such file or directory
 sending incremental file list
 newpage.html
 
-sent <span class="m">179</span> bytes  received <span class="m">35</span> bytes  47.56 bytes/sec
-total size is <span class="m">71</span>  speedup is 0.33
+sent <span class="m">179</span> bytes  received <span class="m">35</span> bytes  <span class="m">47</span>.56 bytes/sec
+total size is <span class="m">71</span>  speedup is <span class="m">0</span>.33
 gerard@aldebaran:~/docker/syncweb$ 
 </pre></div>
 
@@ -357,8 +354,8 @@ web@localhost<span class="err">&#39;</span>s password:
 Could not chdir to home directory /home/web: No such file or directory
 sending incremental file list
 
-sent <span class="m">128</span> bytes  received <span class="m">12</span> bytes  56.00 bytes/sec
-total size is <span class="m">71</span>  speedup is 0.51
+sent <span class="m">128</span> bytes  received <span class="m">12</span> bytes  <span class="m">56</span>.00 bytes/sec
+total size is <span class="m">71</span>  speedup is <span class="m">0</span>.51
 gerard@aldebaran:~/docker/syncweb$ 
 </pre></div>
 
@@ -370,8 +367,8 @@ gerard@aldebaran:~/docker/syncweb$
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/07/tipos-de-volumenes-en-docker.html">Tipos de volúmenes en Docker</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/10/microservicios-con-docker-compose.html">Microservicios con docker-compose</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Enjaulado de usuarios para uso de rsync</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/10/microservicios-con-docker-compose.html">Microservicios con docker-compose</a></li>
     </ul>
 </section>
     <hr/>
@@ -523,6 +520,11 @@ gerard@aldebaran:~/docker/syncweb$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -636,11 +638,6 @@ gerard@aldebaran:~/docker/syncweb$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,lvm,logical volume manager,snapshot,point-in-time,backup" />
-        <meta name="description" content="Una de las funcionalidades mas implementadas en los sistemas de ficheros de nueva generación es la capacidad de hacer snapshots point-in-time. Sin embargo, no tenemos que renunciar a la estabilidad de los sistemas de ficheros tradicionales como ext4; otras veces no es posible por requisitos del servicio que debe usarlo ..." />
+        <meta name="description" content="Una de las funcionalidades mas implementadas en los sistemas de ficheros de nueva generación es la capacidad de hacer snapshots point-in-time. Sin embargo, no tenemos que renunciar a la estabilidad de los sistemas de ficheros tradicionales como ext4; otras veces no es posible por requisitos del servicio que debe usarlo …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Haciendo snapshots con LVM"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/02/haciendo-snapshots-con-lvm.html"/>
-        <meta property="og:description" content="Una de las funcionalidades mas implementadas en los sistemas de ficheros de nueva generación es la capacidad de hacer snapshots point-in-time. Sin embargo, no tenemos que renunciar a la estabilidad de los sistemas de ficheros tradicionales como ext4; otras veces no es posible por requisitos del servicio que debe usarlo ..."/>
+        <meta property="og:description" content="Una de las funcionalidades mas implementadas en los sistemas de ficheros de nueva generación es la capacidad de hacer snapshots point-in-time. Sin embargo, no tenemos que renunciar a la estabilidad de los sistemas de ficheros tradicionales como ext4; otras veces no es posible por requisitos del servicio que debe usarlo …"/>
         <meta property="article:published_time" content="2016-02-15" />
             <meta property="article:section" content="Operaciones" />
             <meta property="article:tag" content="linux" />
@@ -71,9 +71,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -164,8 +161,8 @@ Paquetes sugeridos:
 Se instalarán los siguientes paquetes NUEVOS:
   dmeventd libdevmapper-event1.02.1 liblvm2cmd2.02 libreadline5 lvm2
 <span class="m">0</span> actualizados, <span class="m">5</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
-Se necesita descargar 1.530 kB de archivos.
-Se utilizarán 3.898 kB de espacio de disco adicional después de esta operación.
+Se necesita descargar <span class="m">1</span>.530 kB de archivos.
+Se utilizarán <span class="m">3</span>.898 kB de espacio de disco adicional después de esta operación.
 ¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
 ...
 root@server:~#
@@ -196,12 +193,12 @@ root@server:~#
 
 <p>Lo formateamos como si de un disco mas se tratara.</p>
 <div class="highlight"><pre><span></span>root@server:~# mkfs.ext4 /dev/lvm/datos
-mke2fs 1.42.12 <span class="o">(</span>29-Aug-2014<span class="o">)</span>
+mke2fs <span class="m">1</span>.42.12 <span class="o">(</span><span class="m">29</span>-Aug-2014<span class="o">)</span>
 Se está creando El sistema de ficheros con <span class="m">262144</span> 4k bloques y <span class="m">65536</span> nodos-i
 
 UUID del sistema de ficheros: 1ad4e531-82de-4797-9968-28cb33b3badd
 Respaldo del superbloque guardado en los bloques:
-        32768, 98304, 163840, 229376
+        <span class="m">32768</span>, <span class="m">98304</span>, <span class="m">163840</span>, <span class="m">229376</span>
 
 Reservando las tablas de grupo: hecho
 Escribiendo las tablas de nodos-i: hecho
@@ -276,8 +273,8 @@ root@server:~#
 <p>Verificando los <em>logical volume</em> con el comando <em>lvs</em>, vemos que es un volumen de 100 MB, con una ocupación baja, del 0,08%. El <em>snapshot</em> quedaría inservible si llegara a superar el 100%.</p>
 <div class="highlight"><pre><span></span>root@server:~# lvs
   LV         VG   Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
-  datos      lvm  owi-aos---   1,00g
-  datos-snap lvm  swi-aos--- 100,00m      datos  0,08
+  datos      lvm  owi-aos---   <span class="m">1</span>,00g
+  datos-snap lvm  swi-aos--- <span class="m">100</span>,00m      datos  <span class="m">0</span>,08
 root@server:~#
 </pre></div>
 
@@ -321,8 +318,8 @@ root@server:~#
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/01/lvm-logical-volume-manager.html">LVM: logical volume manager</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/11/semaforos-en-linux.html">Semáforos en linux</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Enjaulado de usuarios para uso de rsync</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html">Creando sistemas de ficheros temporales con tmpfs</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/un-proxy-dns-con-dnsmasq.html">Un proxy DNS con dnsmasq</a></li>
     </ul>
 </section>
     <hr/>
@@ -474,6 +471,11 @@ root@server:~#
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -587,11 +589,6 @@ root@server:~#
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

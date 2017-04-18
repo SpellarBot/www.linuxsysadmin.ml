@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="sftp,ssh,auditoría" />
-        <meta name="description" content="Algunas veces me he encontrado con usuarios de alguno de mis servidores SFTP que se quejan porque &#34;les desaparecen archivos&#34;. Si estamos seguros que esas desapariciones no tienen nada que ver con nosotros, lo mas probable es que lo hayan hecho los mismos usuarios, sea manualmente o de forma automática ..." />
+        <meta name="description" content="Algunas veces me he encontrado con usuarios de alguno de mis servidores SFTP que se quejan porque &#34;les desaparecen archivos&#34;. Si estamos seguros que esas desapariciones no tienen nada que ver con nosotros, lo mas probable es que lo hayan hecho los mismos usuarios, sea manualmente o de forma automática …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Auditando las acciones de los usuarios de nuestro SFTP"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/04/auditando-las-acciones-de-los-usuarios-de-nuestro-sftp.html"/>
-        <meta property="og:description" content="Algunas veces me he encontrado con usuarios de alguno de mis servidores SFTP que se quejan porque &#34;les desaparecen archivos&#34;. Si estamos seguros que esas desapariciones no tienen nada que ver con nosotros, lo mas probable es que lo hayan hecho los mismos usuarios, sea manualmente o de forma automática ..."/>
+        <meta property="og:description" content="Algunas veces me he encontrado con usuarios de alguno de mis servidores SFTP que se quejan porque &#34;les desaparecen archivos&#34;. Si estamos seguros que esas desapariciones no tienen nada que ver con nosotros, lo mas probable es que lo hayan hecho los mismos usuarios, sea manualmente o de forma automática …"/>
         <meta property="article:published_time" content="2017-04-03" />
             <meta property="article:section" content="Operaciones" />
             <meta property="article:tag" content="sftp" />
@@ -68,9 +68,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -169,22 +166,22 @@ admin@sftpserver:~$
 
 <p>Y tras recargar la configuración de los servicios SFTP y <em>rsyslog</em>, habremos acabado y podremos ver el resultado funcionando, asumiendo que haya entrado alguna sesión desde la recarga de los servicios.</p>
 <div class="highlight"><pre><span></span>admin@sftpserver:~$ cat /var/log/sftp.log
-Nov <span class="m">24</span> 11:02:31 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: session opened <span class="k">for</span> <span class="nb">local</span> user guest from <span class="o">[</span>172.17.0.1<span class="o">]</span>
-Nov <span class="m">24</span> 11:02:31 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: received client version 3
-Nov <span class="m">24</span> 11:02:31 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: realpath <span class="s2">&quot;.&quot;</span>
-Nov <span class="m">24</span> 11:02:50 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: opendir <span class="s2">&quot;/&quot;</span>
-Nov <span class="m">24</span> 11:02:50 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: closedir <span class="s2">&quot;/&quot;</span>
-Nov <span class="m">24</span> 11:02:50 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: lstat name <span class="s2">&quot;/archives&quot;</span>
-Nov <span class="m">24</span> 11:02:52 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: realpath <span class="s2">&quot;/archives/&quot;</span>
-Nov <span class="m">24</span> 11:02:52 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: stat name <span class="s2">&quot;/archives&quot;</span>
-Nov <span class="m">24</span> 11:03:00 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: open <span class="s2">&quot;/archives/testfile&quot;</span> flags WRITE,CREATE,TRUNCATE mode 0644
-Nov <span class="m">24</span> 11:03:00 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: close <span class="s2">&quot;/archives/testfile&quot;</span> bytes <span class="nb">read</span> <span class="m">0</span> written 12
-Nov <span class="m">24</span> 11:03:10 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: opendir <span class="s2">&quot;/archives/&quot;</span>
-Nov <span class="m">24</span> 11:03:10 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: closedir <span class="s2">&quot;/archives/&quot;</span>
-Nov <span class="m">24</span> 11:03:10 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: lstat name <span class="s2">&quot;/archives/testfile&quot;</span>
-Nov <span class="m">24</span> 11:03:12 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: lstat name <span class="s2">&quot;/archives/testfile&quot;</span>
-Nov <span class="m">24</span> 11:03:12 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: remove name <span class="s2">&quot;/archives/testfile&quot;</span>
-Nov <span class="m">24</span> 11:03:16 sftpserver internal-sftp<span class="o">[</span>32<span class="o">]</span>: session closed <span class="k">for</span> <span class="nb">local</span> user guest from <span class="o">[</span>172.17.0.1<span class="o">]</span>
+Nov <span class="m">24</span> <span class="m">11</span>:02:31 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: session opened <span class="k">for</span> <span class="nb">local</span> user guest from <span class="o">[</span><span class="m">172</span>.17.0.1<span class="o">]</span>
+Nov <span class="m">24</span> <span class="m">11</span>:02:31 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: received client version <span class="m">3</span>
+Nov <span class="m">24</span> <span class="m">11</span>:02:31 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: realpath <span class="s2">&quot;.&quot;</span>
+Nov <span class="m">24</span> <span class="m">11</span>:02:50 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: opendir <span class="s2">&quot;/&quot;</span>
+Nov <span class="m">24</span> <span class="m">11</span>:02:50 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: closedir <span class="s2">&quot;/&quot;</span>
+Nov <span class="m">24</span> <span class="m">11</span>:02:50 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: lstat name <span class="s2">&quot;/archives&quot;</span>
+Nov <span class="m">24</span> <span class="m">11</span>:02:52 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: realpath <span class="s2">&quot;/archives/&quot;</span>
+Nov <span class="m">24</span> <span class="m">11</span>:02:52 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: stat name <span class="s2">&quot;/archives&quot;</span>
+Nov <span class="m">24</span> <span class="m">11</span>:03:00 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: open <span class="s2">&quot;/archives/testfile&quot;</span> flags WRITE,CREATE,TRUNCATE mode <span class="m">0644</span>
+Nov <span class="m">24</span> <span class="m">11</span>:03:00 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: close <span class="s2">&quot;/archives/testfile&quot;</span> bytes <span class="nb">read</span> <span class="m">0</span> written <span class="m">12</span>
+Nov <span class="m">24</span> <span class="m">11</span>:03:10 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: opendir <span class="s2">&quot;/archives/&quot;</span>
+Nov <span class="m">24</span> <span class="m">11</span>:03:10 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: closedir <span class="s2">&quot;/archives/&quot;</span>
+Nov <span class="m">24</span> <span class="m">11</span>:03:10 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: lstat name <span class="s2">&quot;/archives/testfile&quot;</span>
+Nov <span class="m">24</span> <span class="m">11</span>:03:12 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: lstat name <span class="s2">&quot;/archives/testfile&quot;</span>
+Nov <span class="m">24</span> <span class="m">11</span>:03:12 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: remove name <span class="s2">&quot;/archives/testfile&quot;</span>
+Nov <span class="m">24</span> <span class="m">11</span>:03:16 sftpserver internal-sftp<span class="o">[</span><span class="m">32</span><span class="o">]</span>: session closed <span class="k">for</span> <span class="nb">local</span> user guest from <span class="o">[</span><span class="m">172</span>.17.0.1<span class="o">]</span>
 admin@sftpserver:~$ 
 </pre></div>
 
@@ -196,9 +193,9 @@ admin@sftpserver:~$
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Enjaulado de usuarios para uso de rsync</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2017/01/usando-ssh-en-nuestros-scripts-python-mediante-paramiko.html">Usando SSH en nuestros scripts python mediante paramiko</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/06/preparando-un-servidor-de-repositorios-git.html">Preparando un servidor de repositorios GIT</a></li>
     </ul>
 </section>
     <hr/>
@@ -350,6 +347,11 @@ admin@sftpserver:~$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -463,11 +465,6 @@ admin@sftpserver:~$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

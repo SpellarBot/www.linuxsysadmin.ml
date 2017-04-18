@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="docker,python,build,runtime,release" />
-        <meta name="description" content="Cuando montamos un contenedor Docker para servir una aplicación cualquiera, solemos poner un montón de dependencias necesarias solamente para compilar el paquete o para empaquetar sus librerías. Esto supone un gasto innecesario en espacio y en tiempo de ejecución; usando contenedores desechables podemos agilizar este proceso de forma altamente considerable ..." />
+        <meta name="description" content="Cuando montamos un contenedor Docker para servir una aplicación cualquiera, solemos poner un montón de dependencias necesarias solamente para compilar el paquete o para empaquetar sus librerías. Esto supone un gasto innecesario en espacio y en tiempo de ejecución; usando contenedores desechables podemos agilizar este proceso de forma altamente considerable …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Separando el build y el runtime con contenedores Docker"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html"/>
-        <meta property="og:description" content="Cuando montamos un contenedor Docker para servir una aplicación cualquiera, solemos poner un montón de dependencias necesarias solamente para compilar el paquete o para empaquetar sus librerías. Esto supone un gasto innecesario en espacio y en tiempo de ejecución; usando contenedores desechables podemos agilizar este proceso de forma altamente considerable ..."/>
+        <meta property="og:description" content="Cuando montamos un contenedor Docker para servir una aplicación cualquiera, solemos poner un montón de dependencias necesarias solamente para compilar el paquete o para empaquetar sus librerías. Esto supone un gasto innecesario en espacio y en tiempo de ejecución; usando contenedores desechables podemos agilizar este proceso de forma altamente considerable …"/>
         <meta property="article:published_time" content="2016-10-10" />
             <meta property="article:section" content="Operaciones" />
             <meta property="article:tag" content="docker" />
@@ -70,9 +70,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -198,9 +195,9 @@ gerard@sirius:~/docker/autobuilder$
 <p>La idea es que el producto acabado quede comprimido en la carpeta <em>/shared</em>. Personalmente he utilizado un fichero <em>.tar.gz</em>, pero se podría haber utilizado ficheros <em>.deb</em>, <em>.rpm</em> o lo que hiciera falta.</p>
 <p>Falta construir la imagen a partir de los ficheros dados:</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder/builder$ docker build -t builder .
-Sending build context to Docker daemon 3.072 kB
+Sending build context to Docker daemon <span class="m">3</span>.072 kB
 Step <span class="m">1</span> : FROM alpine:3.4
-3.4: Pulling from library/alpine
+<span class="m">3</span>.4: Pulling from library/alpine
 Digest: sha256:3dcdb92d7432d56604d4545cbd324b14e647b313626d99b889d0626de158f73a
 Status: Downloaded newer image <span class="k">for</span> alpine:3.4
  ---&gt; 4e38e38c8ce0
@@ -208,41 +205,41 @@ Step <span class="m">2</span> : RUN apk add --no-cache py-virtualenv git gcc mus
  ---&gt; Running in 36ab40f2fbc6
 fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/main/x86_64/APKINDEX.tar.gz
 fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/community/x86_64/APKINDEX.tar.gz
-<span class="o">(</span>1/35<span class="o">)</span> Upgrading musl <span class="o">(</span>1.1.14-r10 -&gt; 1.1.14-r11<span class="o">)</span>
-<span class="o">(</span>2/35<span class="o">)</span> Installing binutils-libs <span class="o">(</span>2.26-r0<span class="o">)</span>
-<span class="o">(</span>3/35<span class="o">)</span> Installing binutils <span class="o">(</span>2.26-r0<span class="o">)</span>
-<span class="o">(</span>4/35<span class="o">)</span> Installing gmp <span class="o">(</span>6.1.0-r0<span class="o">)</span>
-<span class="o">(</span>5/35<span class="o">)</span> Installing isl <span class="o">(</span>0.14.1-r0<span class="o">)</span>
-<span class="o">(</span>6/35<span class="o">)</span> Installing libgomp <span class="o">(</span>5.3.0-r0<span class="o">)</span>
-<span class="o">(</span>7/35<span class="o">)</span> Installing libatomic <span class="o">(</span>5.3.0-r0<span class="o">)</span>
-<span class="o">(</span>8/35<span class="o">)</span> Installing libgcc <span class="o">(</span>5.3.0-r0<span class="o">)</span>
-<span class="o">(</span>9/35<span class="o">)</span> Installing pkgconf <span class="o">(</span>0.9.12-r0<span class="o">)</span>
-<span class="o">(</span>10/35<span class="o">)</span> Installing pkgconfig <span class="o">(</span>0.25-r1<span class="o">)</span>
-<span class="o">(</span>11/35<span class="o">)</span> Installing mpfr3 <span class="o">(</span>3.1.2-r0<span class="o">)</span>
-<span class="o">(</span>12/35<span class="o">)</span> Installing mpc1 <span class="o">(</span>1.0.3-r0<span class="o">)</span>
-<span class="o">(</span>13/35<span class="o">)</span> Installing libstdc++ <span class="o">(</span>5.3.0-r0<span class="o">)</span>
-<span class="o">(</span>14/35<span class="o">)</span> Installing gcc <span class="o">(</span>5.3.0-r0<span class="o">)</span>
-<span class="o">(</span>15/35<span class="o">)</span> Installing ca-certificates <span class="o">(</span>20160104-r4<span class="o">)</span>
-<span class="o">(</span>16/35<span class="o">)</span> Installing libssh2 <span class="o">(</span>1.7.0-r0<span class="o">)</span>
-<span class="o">(</span>17/35<span class="o">)</span> Installing libcurl <span class="o">(</span>7.50.1-r0<span class="o">)</span>
-<span class="o">(</span>18/35<span class="o">)</span> Installing expat <span class="o">(</span>2.1.1-r1<span class="o">)</span>
-<span class="o">(</span>19/35<span class="o">)</span> Installing pcre <span class="o">(</span>8.38-r1<span class="o">)</span>
-<span class="o">(</span>20/35<span class="o">)</span> Installing git <span class="o">(</span>2.8.3-r0<span class="o">)</span>
-<span class="o">(</span>21/35<span class="o">)</span> Upgrading musl-utils <span class="o">(</span>1.1.14-r10 -&gt; 1.1.14-r11<span class="o">)</span>
-<span class="o">(</span>22/35<span class="o">)</span> Installing musl-dev <span class="o">(</span>1.1.14-r11<span class="o">)</span>
-<span class="o">(</span>23/35<span class="o">)</span> Installing libbz2 <span class="o">(</span>1.0.6-r4<span class="o">)</span>
-<span class="o">(</span>24/35<span class="o">)</span> Installing libffi <span class="o">(</span>3.2.1-r2<span class="o">)</span>
-<span class="o">(</span>25/35<span class="o">)</span> Installing gdbm <span class="o">(</span>1.11-r1<span class="o">)</span>
-<span class="o">(</span>26/35<span class="o">)</span> Installing ncurses-terminfo-base <span class="o">(</span>6.0-r7<span class="o">)</span>
-<span class="o">(</span>27/35<span class="o">)</span> Installing ncurses-terminfo <span class="o">(</span>6.0-r7<span class="o">)</span>
-<span class="o">(</span>28/35<span class="o">)</span> Installing ncurses-libs <span class="o">(</span>6.0-r7<span class="o">)</span>
-<span class="o">(</span>29/35<span class="o">)</span> Installing readline <span class="o">(</span>6.3.008-r4<span class="o">)</span>
-<span class="o">(</span>30/35<span class="o">)</span> Installing sqlite-libs <span class="o">(</span>3.13.0-r0<span class="o">)</span>
-<span class="o">(</span>31/35<span class="o">)</span> Installing python <span class="o">(</span>2.7.12-r0<span class="o">)</span>
-<span class="o">(</span>32/35<span class="o">)</span> Installing py-setuptools <span class="o">(</span>20.8.0-r0<span class="o">)</span>
-<span class="o">(</span>33/35<span class="o">)</span> Installing py-pip <span class="o">(</span>8.1.2-r0<span class="o">)</span>
-<span class="o">(</span>34/35<span class="o">)</span> Installing py-virtualenv <span class="o">(</span>15.0.1-r0<span class="o">)</span>
-<span class="o">(</span>35/35<span class="o">)</span> Installing python-dev <span class="o">(</span>2.7.12-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">1</span>/35<span class="o">)</span> Upgrading musl <span class="o">(</span><span class="m">1</span>.1.14-r10 -&gt; <span class="m">1</span>.1.14-r11<span class="o">)</span>
+<span class="o">(</span><span class="m">2</span>/35<span class="o">)</span> Installing binutils-libs <span class="o">(</span><span class="m">2</span>.26-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">3</span>/35<span class="o">)</span> Installing binutils <span class="o">(</span><span class="m">2</span>.26-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">4</span>/35<span class="o">)</span> Installing gmp <span class="o">(</span><span class="m">6</span>.1.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">5</span>/35<span class="o">)</span> Installing isl <span class="o">(</span><span class="m">0</span>.14.1-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">6</span>/35<span class="o">)</span> Installing libgomp <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">7</span>/35<span class="o">)</span> Installing libatomic <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">8</span>/35<span class="o">)</span> Installing libgcc <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">9</span>/35<span class="o">)</span> Installing pkgconf <span class="o">(</span><span class="m">0</span>.9.12-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">10</span>/35<span class="o">)</span> Installing pkgconfig <span class="o">(</span><span class="m">0</span>.25-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">11</span>/35<span class="o">)</span> Installing mpfr3 <span class="o">(</span><span class="m">3</span>.1.2-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">12</span>/35<span class="o">)</span> Installing mpc1 <span class="o">(</span><span class="m">1</span>.0.3-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">13</span>/35<span class="o">)</span> Installing libstdc++ <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">14</span>/35<span class="o">)</span> Installing gcc <span class="o">(</span><span class="m">5</span>.3.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">15</span>/35<span class="o">)</span> Installing ca-certificates <span class="o">(</span><span class="m">20160104</span>-r4<span class="o">)</span>
+<span class="o">(</span><span class="m">16</span>/35<span class="o">)</span> Installing libssh2 <span class="o">(</span><span class="m">1</span>.7.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">17</span>/35<span class="o">)</span> Installing libcurl <span class="o">(</span><span class="m">7</span>.50.1-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">18</span>/35<span class="o">)</span> Installing expat <span class="o">(</span><span class="m">2</span>.1.1-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">19</span>/35<span class="o">)</span> Installing pcre <span class="o">(</span><span class="m">8</span>.38-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">20</span>/35<span class="o">)</span> Installing git <span class="o">(</span><span class="m">2</span>.8.3-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">21</span>/35<span class="o">)</span> Upgrading musl-utils <span class="o">(</span><span class="m">1</span>.1.14-r10 -&gt; <span class="m">1</span>.1.14-r11<span class="o">)</span>
+<span class="o">(</span><span class="m">22</span>/35<span class="o">)</span> Installing musl-dev <span class="o">(</span><span class="m">1</span>.1.14-r11<span class="o">)</span>
+<span class="o">(</span><span class="m">23</span>/35<span class="o">)</span> Installing libbz2 <span class="o">(</span><span class="m">1</span>.0.6-r4<span class="o">)</span>
+<span class="o">(</span><span class="m">24</span>/35<span class="o">)</span> Installing libffi <span class="o">(</span><span class="m">3</span>.2.1-r2<span class="o">)</span>
+<span class="o">(</span><span class="m">25</span>/35<span class="o">)</span> Installing gdbm <span class="o">(</span><span class="m">1</span>.11-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">26</span>/35<span class="o">)</span> Installing ncurses-terminfo-base <span class="o">(</span><span class="m">6</span>.0-r7<span class="o">)</span>
+<span class="o">(</span><span class="m">27</span>/35<span class="o">)</span> Installing ncurses-terminfo <span class="o">(</span><span class="m">6</span>.0-r7<span class="o">)</span>
+<span class="o">(</span><span class="m">28</span>/35<span class="o">)</span> Installing ncurses-libs <span class="o">(</span><span class="m">6</span>.0-r7<span class="o">)</span>
+<span class="o">(</span><span class="m">29</span>/35<span class="o">)</span> Installing readline <span class="o">(</span><span class="m">6</span>.3.008-r4<span class="o">)</span>
+<span class="o">(</span><span class="m">30</span>/35<span class="o">)</span> Installing sqlite-libs <span class="o">(</span><span class="m">3</span>.13.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">31</span>/35<span class="o">)</span> Installing python <span class="o">(</span><span class="m">2</span>.7.12-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">32</span>/35<span class="o">)</span> Installing py-setuptools <span class="o">(</span><span class="m">20</span>.8.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">33</span>/35<span class="o">)</span> Installing py-pip <span class="o">(</span><span class="m">8</span>.1.2-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">34</span>/35<span class="o">)</span> Installing py-virtualenv <span class="o">(</span><span class="m">15</span>.0.1-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">35</span>/35<span class="o">)</span> Installing python-dev <span class="o">(</span><span class="m">2</span>.7.12-r0<span class="o">)</span>
 Executing busybox-1.24.2-r9.trigger
 Executing ca-certificates-20160104-r4.trigger
 OK: <span class="m">169</span> MiB in <span class="m">44</span> packages
@@ -290,36 +287,36 @@ gerard@sirius:~/docker/autobuilder/runner$
 <p>Ha llegado el momento de hacer una <em>release</em>; así que vamos a hacer el <em>bundle</em> y la imagen de servicio, para luego poder servirlo. Este paso se va a repetir muy a menudo, dependiendo de la política de <em>releases</em> de vuestra compañía. Para obtener el <em>bundle</em>, necesitamos compilar la referencia del repositorio.</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder/runner$ docker run -ti --rm -e <span class="s2">&quot;REPO=https://github.com/Sirtea/autobuilder.git&quot;</span> -e <span class="s2">&quot;REF=v1.0.0&quot;</span> -v /home/gerard/docker/autobuilder/runner/:/shared/ builder
 Cloning into <span class="s1">&#39;/build&#39;</span>...
-remote: Counting objects: 10, <span class="k">done</span>.
-remote: Compressing objects: 100% <span class="o">(</span>9/9<span class="o">)</span>, <span class="k">done</span>.
-remote: Total <span class="m">10</span> <span class="o">(</span>delta 0<span class="o">)</span>, reused <span class="m">10</span> <span class="o">(</span>delta 0<span class="o">)</span>, pack-reused 0
-Unpacking objects: 100% <span class="o">(</span>10/10<span class="o">)</span>, <span class="k">done</span>.
+remote: Counting objects: <span class="m">10</span>, <span class="k">done</span>.
+remote: Compressing objects: <span class="m">100</span>% <span class="o">(</span><span class="m">9</span>/9<span class="o">)</span>, <span class="k">done</span>.
+remote: Total <span class="m">10</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>, reused <span class="m">10</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>, pack-reused <span class="m">0</span>
+Unpacking objects: <span class="m">100</span>% <span class="o">(</span><span class="m">10</span>/10<span class="o">)</span>, <span class="k">done</span>.
 Checking connectivity... <span class="k">done</span>.
 New python executable in /app/env/bin/python
 Installing setuptools, pip, wheel...done.
-Collecting <span class="nv">click</span><span class="o">==</span>6.6 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 1<span class="o">))</span>
+Collecting <span class="nv">click</span><span class="o">==</span><span class="m">6</span>.6 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line <span class="m">1</span><span class="o">))</span>
   Downloading click-6.6.tar.gz <span class="o">(</span>283kB<span class="o">)</span>
-    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 286kB 536kB/s 
-Collecting <span class="nv">Flask</span><span class="o">==</span>0.11.1 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 2<span class="o">))</span>
+    <span class="m">100</span>% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 286kB 536kB/s 
+Collecting <span class="nv">Flask</span><span class="o">==</span><span class="m">0</span>.11.1 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line <span class="m">2</span><span class="o">))</span>
   Downloading Flask-0.11.1-py2.py3-none-any.whl <span class="o">(</span>80kB<span class="o">)</span>
-    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 81kB 809kB/s 
-Collecting <span class="nv">itsdangerous</span><span class="o">==</span>0.24 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 3<span class="o">))</span>
+    <span class="m">100</span>% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 81kB 809kB/s 
+Collecting <span class="nv">itsdangerous</span><span class="o">==</span><span class="m">0</span>.24 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line <span class="m">3</span><span class="o">))</span>
   Downloading itsdangerous-0.24.tar.gz <span class="o">(</span>46kB<span class="o">)</span>
-    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 51kB 724kB/s 
-Collecting <span class="nv">Jinja2</span><span class="o">==</span>2.8 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 4<span class="o">))</span>
+    <span class="m">100</span>% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 51kB 724kB/s 
+Collecting <span class="nv">Jinja2</span><span class="o">==</span><span class="m">2</span>.8 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line <span class="m">4</span><span class="o">))</span>
   Downloading Jinja2-2.8-py2.py3-none-any.whl <span class="o">(</span>263kB<span class="o">)</span>
-    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 266kB 861kB/s 
-Collecting <span class="nv">MarkupSafe</span><span class="o">==</span>0.23 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 5<span class="o">))</span>
+    <span class="m">100</span>% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 266kB 861kB/s 
+Collecting <span class="nv">MarkupSafe</span><span class="o">==</span><span class="m">0</span>.23 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line <span class="m">5</span><span class="o">))</span>
   Downloading MarkupSafe-0.23.tar.gz
-Collecting <span class="nv">mongoengine</span><span class="o">==</span>0.10.6 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 6<span class="o">))</span>
+Collecting <span class="nv">mongoengine</span><span class="o">==</span><span class="m">0</span>.10.6 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line <span class="m">6</span><span class="o">))</span>
   Downloading mongoengine-0.10.6.tar.gz <span class="o">(</span>346kB<span class="o">)</span>
-    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 348kB 803kB/s 
-Collecting <span class="nv">pymongo</span><span class="o">==</span>3.3.0 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 7<span class="o">))</span>
+    <span class="m">100</span>% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 348kB 803kB/s 
+Collecting <span class="nv">pymongo</span><span class="o">==</span><span class="m">3</span>.3.0 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line <span class="m">7</span><span class="o">))</span>
   Downloading pymongo-3.3.0.tar.gz <span class="o">(</span>494kB<span class="o">)</span>
-    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 501kB 753kB/s 
-Collecting <span class="nv">Werkzeug</span><span class="o">==</span>0.11.10 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line 8<span class="o">))</span>
+    <span class="m">100</span>% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 501kB 753kB/s 
+Collecting <span class="nv">Werkzeug</span><span class="o">==</span><span class="m">0</span>.11.10 <span class="o">(</span>from -r /app/requirements.txt <span class="o">(</span>line <span class="m">8</span><span class="o">))</span>
   Downloading Werkzeug-0.11.10-py2.py3-none-any.whl <span class="o">(</span>306kB<span class="o">)</span>
-    100% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 307kB 1.1MB/s 
+    <span class="m">100</span>% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 307kB <span class="m">1</span>.1MB/s 
 Building wheels <span class="k">for</span> collected packages: click, itsdangerous, MarkupSafe, mongoengine, pymongo
   Running setup.py bdist_wheel <span class="k">for</span> click ... <span class="k">done</span>
   Stored in directory: /root/.cache/pip/wheels/b0/6d/8c/cf5ca1146e48bc7914748bfb1dbf3a40a440b8b4f4f0d952dd
@@ -356,27 +353,27 @@ gerard@sirius:~/docker/autobuilder$
 
 <p>Efectivamente, este <em>bundle</em> contiene la aplicación y el <em>virtualenv</em> en la forma requerida, así que el siguiente paso es construir la imagen de <em>runtime</em> con este <em>bundle</em> incorporado.</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder/runner$ docker build -t runner .
-Sending build context to Docker daemon 5.027 MB
+Sending build context to Docker daemon <span class="m">5</span>.027 MB
 Step <span class="m">1</span> : FROM alpine:3.4
  ---&gt; 4e38e38c8ce0
 Step <span class="m">2</span> : RUN apk add --no-cache uwsgi-python
  ---&gt; Running in 9233d11f6646
 fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/main/x86_64/APKINDEX.tar.gz
 fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/community/x86_64/APKINDEX.tar.gz
-<span class="o">(</span>1/14<span class="o">)</span> Installing mailcap <span class="o">(</span>2.1.44-r0<span class="o">)</span>
-<span class="o">(</span>2/14<span class="o">)</span> Installing pcre <span class="o">(</span>8.38-r1<span class="o">)</span>
-<span class="o">(</span>3/14<span class="o">)</span> Installing uwsgi <span class="o">(</span>2.0.13-r0<span class="o">)</span>
-<span class="o">(</span>4/14<span class="o">)</span> Installing libbz2 <span class="o">(</span>1.0.6-r4<span class="o">)</span>
-<span class="o">(</span>5/14<span class="o">)</span> Installing expat <span class="o">(</span>2.1.1-r1<span class="o">)</span>
-<span class="o">(</span>6/14<span class="o">)</span> Installing libffi <span class="o">(</span>3.2.1-r2<span class="o">)</span>
-<span class="o">(</span>7/14<span class="o">)</span> Installing gdbm <span class="o">(</span>1.11-r1<span class="o">)</span>
-<span class="o">(</span>8/14<span class="o">)</span> Installing ncurses-terminfo-base <span class="o">(</span>6.0-r7<span class="o">)</span>
-<span class="o">(</span>9/14<span class="o">)</span> Installing ncurses-terminfo <span class="o">(</span>6.0-r7<span class="o">)</span>
-<span class="o">(</span>10/14<span class="o">)</span> Installing ncurses-libs <span class="o">(</span>6.0-r7<span class="o">)</span>
-<span class="o">(</span>11/14<span class="o">)</span> Installing readline <span class="o">(</span>6.3.008-r4<span class="o">)</span>
-<span class="o">(</span>12/14<span class="o">)</span> Installing sqlite-libs <span class="o">(</span>3.13.0-r0<span class="o">)</span>
-<span class="o">(</span>13/14<span class="o">)</span> Installing python <span class="o">(</span>2.7.12-r0<span class="o">)</span>
-<span class="o">(</span>14/14<span class="o">)</span> Installing uwsgi-python <span class="o">(</span>2.0.13-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">1</span>/14<span class="o">)</span> Installing mailcap <span class="o">(</span><span class="m">2</span>.1.44-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">2</span>/14<span class="o">)</span> Installing pcre <span class="o">(</span><span class="m">8</span>.38-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">3</span>/14<span class="o">)</span> Installing uwsgi <span class="o">(</span><span class="m">2</span>.0.13-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">4</span>/14<span class="o">)</span> Installing libbz2 <span class="o">(</span><span class="m">1</span>.0.6-r4<span class="o">)</span>
+<span class="o">(</span><span class="m">5</span>/14<span class="o">)</span> Installing expat <span class="o">(</span><span class="m">2</span>.1.1-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">6</span>/14<span class="o">)</span> Installing libffi <span class="o">(</span><span class="m">3</span>.2.1-r2<span class="o">)</span>
+<span class="o">(</span><span class="m">7</span>/14<span class="o">)</span> Installing gdbm <span class="o">(</span><span class="m">1</span>.11-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">8</span>/14<span class="o">)</span> Installing ncurses-terminfo-base <span class="o">(</span><span class="m">6</span>.0-r7<span class="o">)</span>
+<span class="o">(</span><span class="m">9</span>/14<span class="o">)</span> Installing ncurses-terminfo <span class="o">(</span><span class="m">6</span>.0-r7<span class="o">)</span>
+<span class="o">(</span><span class="m">10</span>/14<span class="o">)</span> Installing ncurses-libs <span class="o">(</span><span class="m">6</span>.0-r7<span class="o">)</span>
+<span class="o">(</span><span class="m">11</span>/14<span class="o">)</span> Installing readline <span class="o">(</span><span class="m">6</span>.3.008-r4<span class="o">)</span>
+<span class="o">(</span><span class="m">12</span>/14<span class="o">)</span> Installing sqlite-libs <span class="o">(</span><span class="m">3</span>.13.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">13</span>/14<span class="o">)</span> Installing python <span class="o">(</span><span class="m">2</span>.7.12-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">14</span>/14<span class="o">)</span> Installing uwsgi-python <span class="o">(</span><span class="m">2</span>.0.13-r0<span class="o">)</span>
 Executing busybox-1.24.2-r9.trigger
 OK: <span class="m">53</span> MiB in <span class="m">25</span> packages
  ---&gt; b7c2de7c84d1
@@ -399,7 +396,7 @@ gerard@sirius:~/docker/autobuilder/runner$
 <p>Y con esto tenemos nuestra imagen.</p>
 <h2>Ejecutando la imagen</h2>
 <p>Esta parte no tiene mucho misterio; basta con ejecutar la imagen como lo haríamos normalmente. Esta aplicación en concreto lee las configuraciones desde las variables de entorno, así que se las ponemos. En este caso particular, tenemos la imagen de <strong>Docker Hub</strong> <a href="https://hub.docker.com/_/mongo/">mongo</a> en la dirección <em>IP</em> indicada.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder/runner$ docker run -ti --rm -p 8888:8080 -e <span class="s2">&quot;MONGODB_URI=mongodb://172.17.0.2:27017/shop&quot;</span> runner
+<div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder/runner$ docker run -ti --rm -p <span class="m">8888</span>:8080 -e <span class="s2">&quot;MONGODB_URI=mongodb://172.17.0.2:27017/shop&quot;</span> runner
 ...
 </pre></div>
 
@@ -419,7 +416,7 @@ gerard@sirius:~$
 <p>Y ahora podemos ver que la imagen de <em>runtime</em> queda mucho mas reducida, mas rápida de construir y sin tanto <em>bloat</em>. Supongo que podemos reducir mas lo que ocupa la imagen seleccionando versiones de <strong>python</strong> alternativas; el sistema operativo base son solo 4.8mb...</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/docker/autobuilder/runner$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-runner              latest              e190cce7685a        <span class="m">31</span> seconds ago      60.75 MB
+runner              latest              e190cce7685a        <span class="m">31</span> seconds ago      <span class="m">60</span>.75 MB
 builder             latest              edf62460d187        <span class="m">7</span> minutes ago       <span class="m">164</span> MB
 gerard@sirius:~/docker/autobuilder/runner$ 
 </pre></div>
@@ -431,9 +428,9 @@ gerard@sirius:~/docker/autobuilder/runner$
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html">Un entorno web estático con nginx, rsync y docker</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2017/01/usando-ssh-en-nuestros-scripts-python-mediante-paramiko.html">Usando SSH en nuestros scripts python mediante paramiko</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2017/02/escribiendo-un-servidor-dns-en-python-con-twisted.html">Escribiendo un servidor DNS en python con twisted</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/preparando-un-servidor-de-repositorios-git.html">Preparando un servidor de repositorios GIT</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2017/04/una-toolbox-empaquetada-en-contenedores.html">Una toolbox empaquetada en contenedores</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html">Múltiples servicios en un mismo contenedor Docker</a></li>
     </ul>
 </section>
     <hr/>
@@ -585,6 +582,11 @@ gerard@sirius:~/docker/autobuilder/runner$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -698,11 +700,6 @@ gerard@sirius:~/docker/autobuilder/runner$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

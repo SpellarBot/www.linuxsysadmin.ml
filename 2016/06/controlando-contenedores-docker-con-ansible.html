@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,docker,dockerfile,ansible,playbook" />
-        <meta name="description" content="La facilidad de levantar un contenedor docker nos lleva a la pregunta del millón: ¿es posible usar docker para crear contenedores de usar y tirar para probar otras tecnologías? La respuesta es que sí, y para demostrarlo, vamos a generar un entorno minimalista en contenedores docker, desplegados mediante ansible playbooks ..." />
+        <meta name="description" content="La facilidad de levantar un contenedor docker nos lleva a la pregunta del millón: ¿es posible usar docker para crear contenedores de usar y tirar para probar otras tecnologías? La respuesta es que sí, y para demostrarlo, vamos a generar un entorno minimalista en contenedores docker, desplegados mediante ansible playbooks …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Controlando contenedores docker con ansible"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html"/>
-        <meta property="og:description" content="La facilidad de levantar un contenedor docker nos lleva a la pregunta del millón: ¿es posible usar docker para crear contenedores de usar y tirar para probar otras tecnologías? La respuesta es que sí, y para demostrarlo, vamos a generar un entorno minimalista en contenedores docker, desplegados mediante ansible playbooks ..."/>
+        <meta property="og:description" content="La facilidad de levantar un contenedor docker nos lleva a la pregunta del millón: ¿es posible usar docker para crear contenedores de usar y tirar para probar otras tecnologías? La respuesta es que sí, y para demostrarlo, vamos a generar un entorno minimalista en contenedores docker, desplegados mediante ansible playbooks …"/>
         <meta property="article:published_time" content="2016-06-06" />
             <meta property="article:section" content="Operaciones" />
             <meta property="article:tag" content="linux" />
@@ -70,9 +70,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -166,7 +163,7 @@ gerard@sirius:~/build$
 
 <p>Construimos la imagen mediante el comando <em>build</em> y le ponemos el <em>tag</em> "master".</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker build -f Dockerfile.master -t master .
-Sending build context to Docker daemon 4.096 kB
+Sending build context to Docker daemon <span class="m">4</span>.096 kB
 Step <span class="m">1</span> : FROM debian:jessie-backports
  ---&gt; 99552579b6f6
 Step <span class="m">2</span> : RUN apt-get update <span class="o">&amp;&amp;</span>     apt-get install -y openssh-client sshpass nano
@@ -206,7 +203,7 @@ gerard@sirius:~/build$
 
 <p>Nuevamente lanzamos el <em>build</em> con el <em>tag</em> "slave".</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker build -f Dockerfile.slave -t slave .
-Sending build context to Docker daemon 4.096 kB
+Sending build context to Docker daemon <span class="m">4</span>.096 kB
 Step <span class="m">1</span> : FROM debian:jessie
  ---&gt; bb5d89f9b6cb
 Step <span class="m">2</span> : RUN apt-get update <span class="o">&amp;&amp;</span>     apt-get install -y python openssh-server sudo <span class="o">&amp;&amp;</span>     useradd ansible -G sudo -s /bin/bash -m <span class="o">&amp;&amp;</span>     <span class="nb">echo</span> <span class="s2">&quot;ansible:s3cr3t&quot;</span> <span class="p">|</span> chpasswd <span class="o">&amp;&amp;</span>     mkdir /var/run/sshd
@@ -227,9 +224,9 @@ gerard@sirius:~/build$
 <div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 slave               latest              306389180c9f        <span class="m">5</span> seconds ago       <span class="m">186</span> MB
-master              latest              58689ad42e3e        <span class="m">2</span> minutes ago       245.4 MB
-debian              jessie-backports    99552579b6f6        <span class="m">6</span> days ago          125.1 MB
-debian              jessie              bb5d89f9b6cb        <span class="m">6</span> days ago          125.1 MB
+master              latest              58689ad42e3e        <span class="m">2</span> minutes ago       <span class="m">245</span>.4 MB
+debian              jessie-backports    99552579b6f6        <span class="m">6</span> days ago          <span class="m">125</span>.1 MB
+debian              jessie              bb5d89f9b6cb        <span class="m">6</span> days ago          <span class="m">125</span>.1 MB
 gerard@sirius:~/build$ 
 </pre></div>
 
@@ -237,7 +234,7 @@ gerard@sirius:~/build$
 <h2>Creando los contenedores necesarios</h2>
 <p>La idea es que vamos a crear un micro entorno compuesto por dos servidores y un balanceador, que es la fachada del sistema. La salida de cada petición web va a indicar el nombre de la máquina que la sirvió, para poder comprobar que balancea adecuadamente.</p>
 <p>Los <em>flags</em> de ejecución son <em>--name</em> (el nombre con el que nos referiremos en los comandos <em>docker</em>), el <em>-h</em> (para dar un nombre de sistema operativo a la máquina), el <em>-d</em> (<em>detach</em>, para que no nos bloquee el terminal) y la imagen <em>slave</em> que tiene instalados <strong>ssh</strong>, <strong>python</strong> y <strong>sudo</strong>. Adicionalmente la imagen del balanceador <em>publica</em> su puerto 80 en el puerto 8000 de la máquina <em>host</em>, para poder acceder por <strong>HTTP</strong> desde nuestra máquina.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker run --name balancer -h balancer -d -p 8000:80 slave
+<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker run --name balancer -h balancer -d -p <span class="m">8000</span>:80 slave
 7a80942c69a70e729fc7090983fc59735fd0c10818a5b62b64a26a98e58fc101
 gerard@sirius:~/build$ docker run --name server1 -h server1 -d slave
 745acb30c5c1b7067a15f593dfefce3e769d2a7b5423f001b6a080296c3aeb3f
@@ -299,11 +296,11 @@ root@ansible:~#
 <span class="nv">ansible_become_pass</span> <span class="o">=</span> s3cr3t
 
 <span class="o">[</span>balancer<span class="o">]</span>
-172.17.0.2
+<span class="m">172</span>.17.0.2
 
 <span class="o">[</span>servers<span class="o">]</span>
-172.17.0.3
-172.17.0.4
+<span class="m">172</span>.17.0.3
+<span class="m">172</span>.17.0.4
 root@ansible:~# 
 </pre></div>
 
@@ -315,13 +312,13 @@ import os
 
 def application<span class="o">(</span>environ, start_response<span class="o">)</span>:
     start_response<span class="o">(</span><span class="s1">&#39;200 OK&#39;</span>, <span class="o">[(</span><span class="s1">&#39;Content-Type&#39;</span>, <span class="s1">&#39;text/plain&#39;</span><span class="o">)])</span>
-    yield <span class="s1">&#39;Hello from %s\n&#39;</span> % os.uname<span class="o">()[</span>1<span class="o">]</span>
+    yield <span class="s1">&#39;Hello from %s\n&#39;</span> % os.uname<span class="o">()[</span><span class="m">1</span><span class="o">]</span>
 root@ansible:~# cat files/myapp.ini 
 <span class="o">[</span>uwsgi<span class="o">]</span>
 <span class="nv">plugins</span> <span class="o">=</span> python
 <span class="nv">master</span> <span class="o">=</span> <span class="nb">true</span>
-<span class="nv">workers</span> <span class="o">=</span> 2
-http-socket <span class="o">=</span> 0.0.0.0:8080
+<span class="nv">workers</span> <span class="o">=</span> <span class="m">2</span>
+http-socket <span class="o">=</span> <span class="m">0</span>.0.0.0:8080
 <span class="nv">chdir</span> <span class="o">=</span> /opt/
 <span class="nv">module</span> <span class="o">=</span> myapp:application
 root@ansible:~# cat servers.yml 
@@ -346,28 +343,28 @@ root@ansible:~#
 PLAY ***************************************************************************
 
 TASK <span class="o">[</span>apt<span class="o">]</span> *********************************************************************
-changed: <span class="o">[</span>172.17.0.4<span class="o">]</span> <span class="o">=</span>&gt; <span class="o">(</span><span class="nv">item</span><span class="o">=[</span>u<span class="s1">&#39;uwsgi-emperor&#39;</span>, u<span class="s1">&#39;uwsgi-plugin-python&#39;</span><span class="o">])</span>
-changed: <span class="o">[</span>172.17.0.3<span class="o">]</span> <span class="o">=</span>&gt; <span class="o">(</span><span class="nv">item</span><span class="o">=[</span>u<span class="s1">&#39;uwsgi-emperor&#39;</span>, u<span class="s1">&#39;uwsgi-plugin-python&#39;</span><span class="o">])</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.4<span class="o">]</span> <span class="o">=</span>&gt; <span class="o">(</span><span class="nv">item</span><span class="o">=[</span>u<span class="s1">&#39;uwsgi-emperor&#39;</span>, u<span class="s1">&#39;uwsgi-plugin-python&#39;</span><span class="o">])</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.3<span class="o">]</span> <span class="o">=</span>&gt; <span class="o">(</span><span class="nv">item</span><span class="o">=[</span>u<span class="s1">&#39;uwsgi-emperor&#39;</span>, u<span class="s1">&#39;uwsgi-plugin-python&#39;</span><span class="o">])</span>
 
 TASK <span class="o">[</span>service<span class="o">]</span> *****************************************************************
-changed: <span class="o">[</span>172.17.0.3<span class="o">]</span>
-changed: <span class="o">[</span>172.17.0.4<span class="o">]</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.3<span class="o">]</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.4<span class="o">]</span>
 
 TASK <span class="o">[</span>copy<span class="o">]</span> ********************************************************************
-changed: <span class="o">[</span>172.17.0.3<span class="o">]</span>
-changed: <span class="o">[</span>172.17.0.4<span class="o">]</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.3<span class="o">]</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.4<span class="o">]</span>
 
 TASK <span class="o">[</span>copy<span class="o">]</span> ********************************************************************
-changed: <span class="o">[</span>172.17.0.3<span class="o">]</span>
-changed: <span class="o">[</span>172.17.0.4<span class="o">]</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.3<span class="o">]</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.4<span class="o">]</span>
 
 TASK <span class="o">[</span>file<span class="o">]</span> ********************************************************************
-changed: <span class="o">[</span>172.17.0.3<span class="o">]</span>
-changed: <span class="o">[</span>172.17.0.4<span class="o">]</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.3<span class="o">]</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.4<span class="o">]</span>
 
 PLAY RECAP *********************************************************************
-172.17.0.3                 : <span class="nv">ok</span><span class="o">=</span><span class="m">5</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">5</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>   
-172.17.0.4                 : <span class="nv">ok</span><span class="o">=</span><span class="m">5</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">5</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>   
+<span class="m">172</span>.17.0.3                 : <span class="nv">ok</span><span class="o">=</span><span class="m">5</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">5</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>   
+<span class="m">172</span>.17.0.4                 : <span class="nv">ok</span><span class="o">=</span><span class="m">5</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">5</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>   
 
 root@ansible:~# 
 </pre></div>
@@ -378,8 +375,8 @@ root@ansible:~#
 <p>Vamos a utilizar <strong>nginx</strong> con una configuración propia de balanceador, que también necesitamos:</p>
 <div class="highlight"><pre><span></span>root@ansible:~# cat files/balancer 
 upstream servers <span class="o">{</span>
-    server 172.17.0.3:8080<span class="p">;</span>
-    server 172.17.0.4:8080<span class="p">;</span>
+    server <span class="m">172</span>.17.0.3:8080<span class="p">;</span>
+    server <span class="m">172</span>.17.0.4:8080<span class="p">;</span>
 <span class="o">}</span>
 
 server <span class="o">{</span>
@@ -406,22 +403,22 @@ root@ansible:~#
 PLAY ***************************************************************************
 
 TASK <span class="o">[</span>apt<span class="o">]</span> *********************************************************************
-changed: <span class="o">[</span>172.17.0.2<span class="o">]</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.2<span class="o">]</span>
 
 TASK <span class="o">[</span>service<span class="o">]</span> *****************************************************************
-changed: <span class="o">[</span>172.17.0.2<span class="o">]</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.2<span class="o">]</span>
 
 TASK <span class="o">[</span>file<span class="o">]</span> ********************************************************************
-changed: <span class="o">[</span>172.17.0.2<span class="o">]</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.2<span class="o">]</span>
 
 TASK <span class="o">[</span>copy<span class="o">]</span> ********************************************************************
-changed: <span class="o">[</span>172.17.0.2<span class="o">]</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.2<span class="o">]</span>
 
 TASK <span class="o">[</span>service<span class="o">]</span> *****************************************************************
-changed: <span class="o">[</span>172.17.0.2<span class="o">]</span>
+changed: <span class="o">[</span><span class="m">172</span>.17.0.2<span class="o">]</span>
 
 PLAY RECAP *********************************************************************
-172.17.0.2                 : <span class="nv">ok</span><span class="o">=</span><span class="m">5</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">5</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>   
+<span class="m">172</span>.17.0.2                 : <span class="nv">ok</span><span class="o">=</span><span class="m">5</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">5</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>   
 
 root@ansible:~# 
 </pre></div>
@@ -600,6 +597,11 @@ gerard@sirius:~/build$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -713,11 +715,6 @@ gerard@sirius:~/build$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

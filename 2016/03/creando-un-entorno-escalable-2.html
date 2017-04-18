@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,debian,jessie,mongodb,replica set,systemd,firehol" />
-        <meta name="description" content="Seguimos con la serie de montar un entorno escalable. Tras explicar en el primer artículo lo que vamos a montar, seguimos con ello. En este artículo vamos a montar un cluster de bases de datos; será mongodb porque la aplicación lo requiere y usará la topología de un replica set ..." />
+        <meta name="description" content="Seguimos con la serie de montar un entorno escalable. Tras explicar en el primer artículo lo que vamos a montar, seguimos con ello. En este artículo vamos a montar un cluster de bases de datos; será mongodb porque la aplicación lo requiere y usará la topología de un replica set …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Creando un entorno escalable (II)"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html"/>
-        <meta property="og:description" content="Seguimos con la serie de montar un entorno escalable. Tras explicar en el primer artículo lo que vamos a montar, seguimos con ello. En este artículo vamos a montar un cluster de bases de datos; será mongodb porque la aplicación lo requiere y usará la topología de un replica set ..."/>
+        <meta property="og:description" content="Seguimos con la serie de montar un entorno escalable. Tras explicar en el primer artículo lo que vamos a montar, seguimos con ello. En este artículo vamos a montar un cluster de bases de datos; será mongodb porque la aplicación lo requiere y usará la topología de un replica set …"/>
         <meta property="article:published_time" content="2016-03-07" />
             <meta property="article:section" content="Sistemas" />
             <meta property="article:tag" content="linux" />
@@ -72,9 +72,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -177,8 +174,8 @@ systemLog:
     destination: file
 
 net:
-    port: 27017
-    bindIp: 0.0.0.0
+    port: <span class="m">27017</span>
+    bindIp: <span class="m">0</span>.0.0.0
 
 storage:
     dbPath: /opt/mongodb/data/
@@ -230,8 +227,8 @@ root@mongo1:~#
 <span class="nv">LimitFSIZE</span><span class="o">=</span>infinity
 <span class="nv">LimitCPU</span><span class="o">=</span>infinity
 <span class="nv">LimitAS</span><span class="o">=</span>infinity
-<span class="nv">LimitNOFILE</span><span class="o">=</span>64000
-<span class="nv">LimitNPROC</span><span class="o">=</span>64000
+<span class="nv">LimitNOFILE</span><span class="o">=</span><span class="m">64000</span>
+<span class="nv">LimitNPROC</span><span class="o">=</span><span class="m">64000</span>
 <span class="nv">ExecStartPre</span><span class="o">=</span>/bin/rm -f /opt/mongodb/data/mongod.lock
 <span class="nv">ExecStart</span><span class="o">=</span>/opt/mongodb/bin/mongod -f /opt/mongodb/conf/mongo.conf
 
@@ -269,7 +266,7 @@ root@lxc:~#
 <p>Este paso se ejecuta en una sola máquina, que va a reproducir los cambios a las demás, por efecto de la <strong>replica set</strong>. Por ejemplo, lo hago en <em>mongo1</em>, por hacer alguna.</p>
 <p>Entramos en el <em>mongo shell</em>, desde donde lanzaremos el resto de comandos.</p>
 <div class="highlight"><pre><span></span>root@mongo1:~# ./mongodb-linux-i686-3.2.3/bin/mongo
-MongoDB shell version: 3.2.3
+MongoDB shell version: <span class="m">3</span>.2.3
 connecting to: <span class="nb">test</span>
 Welcome to the MongoDB shell.
 For interactive help, <span class="nb">type</span> <span class="s2">&quot;help&quot;</span>.
@@ -283,7 +280,7 @@ For interactive help, <span class="nb">type</span> <span class="s2">&quot;help&q
 <span class="o">{</span>
         <span class="s2">&quot;info2&quot;</span> : <span class="s2">&quot;no configuration specified. Using a default configuration for the set&quot;</span>,
         <span class="s2">&quot;me&quot;</span> : <span class="s2">&quot;mongo1:27017&quot;</span>,
-        <span class="s2">&quot;ok&quot;</span> : 1
+        <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span>
 <span class="o">}</span>
 rs:SECONDARY&gt; rs.add<span class="o">(</span><span class="s2">&quot;mongo2:27017&quot;</span><span class="o">)</span>
 <span class="o">{</span> <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span> <span class="o">}</span>
@@ -318,7 +315,7 @@ rs:PRIMARY&gt;
 ...  
                 <span class="o">}</span>
         <span class="o">]</span>,
-        <span class="s2">&quot;ok&quot;</span> : 1
+        <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span>
 <span class="o">}</span>
 rs:PRIMARY&gt;
 </pre></div>
@@ -504,6 +501,11 @@ root@mongo1:~#
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -617,11 +619,6 @@ root@mongo1:~#
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="docker,docker-compose,microservicios" />
-        <meta name="description" content="Docker es una gran herramienta para levantar contenedores aislados, pero en el mundo real nos encontramos con despliegues mas complejos, que requieren varias imágenes trabajando en conjunto. En este caso, levantar los contenedores puede ser una auténtica pesadilla. Para automatizar estos casos podemos utilizar un orquestador, como por ejemplo, docker-compose ..." />
+        <meta name="description" content="Docker es una gran herramienta para levantar contenedores aislados, pero en el mundo real nos encontramos con despliegues mas complejos, que requieren varias imágenes trabajando en conjunto. En este caso, levantar los contenedores puede ser una auténtica pesadilla. Para automatizar estos casos podemos utilizar un orquestador, como por ejemplo, docker-compose …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Microservicios con docker-compose"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/10/microservicios-con-docker-compose.html"/>
-        <meta property="og:description" content="Docker es una gran herramienta para levantar contenedores aislados, pero en el mundo real nos encontramos con despliegues mas complejos, que requieren varias imágenes trabajando en conjunto. En este caso, levantar los contenedores puede ser una auténtica pesadilla. Para automatizar estos casos podemos utilizar un orquestador, como por ejemplo, docker-compose ..."/>
+        <meta property="og:description" content="Docker es una gran herramienta para levantar contenedores aislados, pero en el mundo real nos encontramos con despliegues mas complejos, que requieren varias imágenes trabajando en conjunto. En este caso, levantar los contenedores puede ser una auténtica pesadilla. Para automatizar estos casos podemos utilizar un orquestador, como por ejemplo, docker-compose …"/>
         <meta property="article:published_time" content="2016-10-24" />
             <meta property="article:section" content="Operaciones" />
             <meta property="article:tag" content="docker" />
@@ -68,9 +68,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -154,15 +151,15 @@ COPY nginx.conf /etc/nginx/
 COPY config.sh entrypoint.sh /
 ENTRYPOINT <span class="o">[</span><span class="s2">&quot;/entrypoint.sh&quot;</span><span class="o">]</span>
 gerard@sirius:~/docker/composetest$ cat balancer/nginx.conf 
-worker_processes  1<span class="p">;</span>
+worker_processes  <span class="m">1</span><span class="p">;</span>
 events <span class="o">{</span>
-    worker_connections  1024<span class="p">;</span>
+    worker_connections  <span class="m">1024</span><span class="p">;</span>
 <span class="o">}</span>
 http <span class="o">{</span>
     include mime.types<span class="p">;</span>
     default_type application/octet-stream<span class="p">;</span>
     sendfile on<span class="p">;</span>
-    keepalive_timeout 65<span class="p">;</span>
+    keepalive_timeout <span class="m">65</span><span class="p">;</span>
     include conf.d/*<span class="p">;</span>
 <span class="o">}</span>
 gerard@sirius:~/docker/composetest$ cat balancer/config.sh 
@@ -205,7 +202,7 @@ import os
 
 def app<span class="o">(</span>environ, start_response<span class="o">)</span>:
     start_response<span class="o">(</span><span class="s1">&#39;200 OK&#39;</span>, <span class="o">[(</span><span class="s1">&#39;Content-Type&#39;</span>, <span class="s1">&#39;text/plain&#39;</span><span class="o">)])</span>
-    yield os.uname<span class="o">()[</span>1<span class="o">]</span> + <span class="s1">&#39;\n&#39;</span>
+    yield os.uname<span class="o">()[</span><span class="m">1</span><span class="o">]</span> + <span class="s1">&#39;\n&#39;</span>
 gerard@sirius:~/docker/composetest$ cat frontend/app.ini 
 <span class="o">[</span>uwsgi<span class="o">]</span>
 http-socket <span class="o">=</span> :8080
@@ -226,7 +223,7 @@ services:
   frontend:
     build: frontend
     expose:
-      - 8080
+      - <span class="m">8080</span>
   balancer:
     build: balancer
     depends_on:
@@ -251,20 +248,20 @@ Step <span class="m">2</span> : RUN apk add --no-cache uwsgi-python
  ---&gt; Running in a57c36878d96
 fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/main/x86_64/APKINDEX.tar.gz
 fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/community/x86_64/APKINDEX.tar.gz
-<span class="o">(</span>1/14<span class="o">)</span> Installing mailcap <span class="o">(</span>2.1.44-r0<span class="o">)</span>
-<span class="o">(</span>2/14<span class="o">)</span> Installing pcre <span class="o">(</span>8.38-r1<span class="o">)</span>
-<span class="o">(</span>3/14<span class="o">)</span> Installing uwsgi <span class="o">(</span>2.0.13-r0<span class="o">)</span>
-<span class="o">(</span>4/14<span class="o">)</span> Installing libbz2 <span class="o">(</span>1.0.6-r4<span class="o">)</span>
-<span class="o">(</span>5/14<span class="o">)</span> Installing expat <span class="o">(</span>2.1.1-r1<span class="o">)</span>
-<span class="o">(</span>6/14<span class="o">)</span> Installing libffi <span class="o">(</span>3.2.1-r2<span class="o">)</span>
-<span class="o">(</span>7/14<span class="o">)</span> Installing gdbm <span class="o">(</span>1.11-r1<span class="o">)</span>
-<span class="o">(</span>8/14<span class="o">)</span> Installing ncurses-terminfo-base <span class="o">(</span>6.0-r7<span class="o">)</span>
-<span class="o">(</span>9/14<span class="o">)</span> Installing ncurses-terminfo <span class="o">(</span>6.0-r7<span class="o">)</span>
-<span class="o">(</span>10/14<span class="o">)</span> Installing ncurses-libs <span class="o">(</span>6.0-r7<span class="o">)</span>
-<span class="o">(</span>11/14<span class="o">)</span> Installing readline <span class="o">(</span>6.3.008-r4<span class="o">)</span>
-<span class="o">(</span>12/14<span class="o">)</span> Installing sqlite-libs <span class="o">(</span>3.13.0-r0<span class="o">)</span>
-<span class="o">(</span>13/14<span class="o">)</span> Installing python <span class="o">(</span>2.7.12-r0<span class="o">)</span>
-<span class="o">(</span>14/14<span class="o">)</span> Installing uwsgi-python <span class="o">(</span>2.0.13-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">1</span>/14<span class="o">)</span> Installing mailcap <span class="o">(</span><span class="m">2</span>.1.44-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">2</span>/14<span class="o">)</span> Installing pcre <span class="o">(</span><span class="m">8</span>.38-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">3</span>/14<span class="o">)</span> Installing uwsgi <span class="o">(</span><span class="m">2</span>.0.13-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">4</span>/14<span class="o">)</span> Installing libbz2 <span class="o">(</span><span class="m">1</span>.0.6-r4<span class="o">)</span>
+<span class="o">(</span><span class="m">5</span>/14<span class="o">)</span> Installing expat <span class="o">(</span><span class="m">2</span>.1.1-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">6</span>/14<span class="o">)</span> Installing libffi <span class="o">(</span><span class="m">3</span>.2.1-r2<span class="o">)</span>
+<span class="o">(</span><span class="m">7</span>/14<span class="o">)</span> Installing gdbm <span class="o">(</span><span class="m">1</span>.11-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">8</span>/14<span class="o">)</span> Installing ncurses-terminfo-base <span class="o">(</span><span class="m">6</span>.0-r7<span class="o">)</span>
+<span class="o">(</span><span class="m">9</span>/14<span class="o">)</span> Installing ncurses-terminfo <span class="o">(</span><span class="m">6</span>.0-r7<span class="o">)</span>
+<span class="o">(</span><span class="m">10</span>/14<span class="o">)</span> Installing ncurses-libs <span class="o">(</span><span class="m">6</span>.0-r7<span class="o">)</span>
+<span class="o">(</span><span class="m">11</span>/14<span class="o">)</span> Installing readline <span class="o">(</span><span class="m">6</span>.3.008-r4<span class="o">)</span>
+<span class="o">(</span><span class="m">12</span>/14<span class="o">)</span> Installing sqlite-libs <span class="o">(</span><span class="m">3</span>.13.0-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">13</span>/14<span class="o">)</span> Installing python <span class="o">(</span><span class="m">2</span>.7.12-r0<span class="o">)</span>
+<span class="o">(</span><span class="m">14</span>/14<span class="o">)</span> Installing uwsgi-python <span class="o">(</span><span class="m">2</span>.0.13-r0<span class="o">)</span>
 Executing busybox-1.24.2-r9.trigger
 OK: <span class="m">53</span> MiB in <span class="m">25</span> packages
  ---&gt; 9749e8e317a7
@@ -285,10 +282,10 @@ Step <span class="m">2</span> : RUN apk add --no-cache nginx <span class="o">&am
  ---&gt; Running in 5e7a6e24b1ea
 fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/main/x86_64/APKINDEX.tar.gz
 fetch http://dl-cdn.alpinelinux.org/alpine/v3.4/community/x86_64/APKINDEX.tar.gz
-<span class="o">(</span>1/3<span class="o">)</span> Installing nginx-common <span class="o">(</span>1.10.1-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">1</span>/3<span class="o">)</span> Installing nginx-common <span class="o">(</span><span class="m">1</span>.10.1-r1<span class="o">)</span>
 Executing nginx-common-1.10.1-r1.pre-install
-<span class="o">(</span>2/3<span class="o">)</span> Installing pcre <span class="o">(</span>8.38-r1<span class="o">)</span>
-<span class="o">(</span>3/3<span class="o">)</span> Installing nginx <span class="o">(</span>1.10.1-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">2</span>/3<span class="o">)</span> Installing pcre <span class="o">(</span><span class="m">8</span>.38-r1<span class="o">)</span>
+<span class="o">(</span><span class="m">3</span>/3<span class="o">)</span> Installing nginx <span class="o">(</span><span class="m">1</span>.10.1-r1<span class="o">)</span>
 Executing busybox-1.24.2-r9.trigger
 OK: <span class="m">6</span> MiB in <span class="m">14</span> packages
  ---&gt; b413d5ba8f3b
@@ -313,8 +310,8 @@ gerard@sirius:~/docker/composetest$
 <div class="highlight"><pre><span></span>gerard@sirius:~/docker/composetest$ docker-compose ps
          Name                       Command               State          Ports         
 --------------------------------------------------------------------------------------
-composetest_balancer_1   /entrypoint.sh                   Up      0.0.0.0:8888-&gt;80/tcp 
-composetest_frontend_1   uwsgi --plugin<span class="o">=</span>python /opt ...   Up      8080/tcp             
+composetest_balancer_1   /entrypoint.sh                   Up      <span class="m">0</span>.0.0.0:8888-&gt;80/tcp 
+composetest_frontend_1   uwsgi --plugin<span class="o">=</span>python /opt ...   Up      <span class="m">8080</span>/tcp             
 gerard@sirius:~/docker/composetest$ 
 </pre></div>
 
@@ -333,7 +330,7 @@ gerard@sirius:~/docker/composetest$
 <h2>Escalando nuestro servicio</h2>
 <p>Escalar no es fácil; <strong>docker-compose</strong> solo nos permite modificar el número de contenedores de cada tipo que están corriendo en un momento dado. Para que estos nuevos contenedores reciban peticiones, hay que modificar la configuración del balanceador.</p>
 <p>Empezaremos levantando otras 3 instancias de nuestro <em>frontend</em>; indicando que queremos 4, <strong>docker-compose</strong> va a levantar las 3 que faltan.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/docker/composetest$ docker-compose scale <span class="nv">frontend</span><span class="o">=</span>4
+<div class="highlight"><pre><span></span>gerard@sirius:~/docker/composetest$ docker-compose scale <span class="nv">frontend</span><span class="o">=</span><span class="m">4</span>
 Creating and starting <span class="m">2</span> ... <span class="k">done</span>
 Creating and starting <span class="m">3</span> ... <span class="k">done</span>
 Creating and starting <span class="m">4</span> ... <span class="k">done</span>
@@ -349,7 +346,7 @@ services:
   frontend:
     build: frontend
     expose:
-      - 8080
+      - <span class="m">8080</span>
   balancer:
     build: balancer
     depends_on:
@@ -379,11 +376,11 @@ gerard@sirius:~/docker/composetest$
 <div class="highlight"><pre><span></span>gerard@sirius:~/docker/composetest$ docker-compose ps
          Name                       Command               State          Ports         
 --------------------------------------------------------------------------------------
-composetest_balancer_1   /entrypoint.sh                   Up      0.0.0.0:8888-&gt;80/tcp 
-composetest_frontend_1   uwsgi --plugin<span class="o">=</span>python /opt ...   Up      8080/tcp             
-composetest_frontend_2   uwsgi --plugin<span class="o">=</span>python /opt ...   Up      8080/tcp             
-composetest_frontend_3   uwsgi --plugin<span class="o">=</span>python /opt ...   Up      8080/tcp             
-composetest_frontend_4   uwsgi --plugin<span class="o">=</span>python /opt ...   Up      8080/tcp             
+composetest_balancer_1   /entrypoint.sh                   Up      <span class="m">0</span>.0.0.0:8888-&gt;80/tcp 
+composetest_frontend_1   uwsgi --plugin<span class="o">=</span>python /opt ...   Up      <span class="m">8080</span>/tcp             
+composetest_frontend_2   uwsgi --plugin<span class="o">=</span>python /opt ...   Up      <span class="m">8080</span>/tcp             
+composetest_frontend_3   uwsgi --plugin<span class="o">=</span>python /opt ...   Up      <span class="m">8080</span>/tcp             
+composetest_frontend_4   uwsgi --plugin<span class="o">=</span>python /opt ...   Up      <span class="m">8080</span>/tcp             
 gerard@sirius:~/docker/composetest$ 
 </pre></div>
 
@@ -412,9 +409,9 @@ gerard@sirius:~/docker/composetest$
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html">Un entorno web estático con nginx, rsync y docker</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2017/02/sincronizando-ficheros-con-owncloud.html">Sincronizando ficheros con ownCloud</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html">Separando el build y el runtime con contenedores Docker</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html">Un entorno web estático con nginx, rsync y docker</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/balanceando-peticiones-con-haproxy.html">Balanceando peticiones con HAProxy</a></li>
     </ul>
 </section>
     <hr/>
@@ -566,6 +563,11 @@ gerard@sirius:~/docker/composetest$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -679,11 +681,6 @@ gerard@sirius:~/docker/composetest$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

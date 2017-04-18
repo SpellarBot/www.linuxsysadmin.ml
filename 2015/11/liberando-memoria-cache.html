@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,kernel,memory manager,drop caches" />
-        <meta name="description" content="A veces nos encontramos que nuestro sistema linux parece tener la memoria virtual ocupada, cuando no tenemos nada de memoria RSS; esto no es un problema, ya que por la forma de funcionar del memory manager de linux, se conserva &#34;por si acaso&#34; y se libera cuando realmente se necesita ..." />
+        <meta name="description" content="A veces nos encontramos que nuestro sistema linux parece tener la memoria virtual ocupada, cuando no tenemos nada de memoria RSS; esto no es un problema, ya que por la forma de funcionar del memory manager de linux, se conserva &#34;por si acaso&#34; y se libera cuando realmente se necesita …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Liberando memoria caché"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2015/11/liberando-memoria-cache.html"/>
-        <meta property="og:description" content="A veces nos encontramos que nuestro sistema linux parece tener la memoria virtual ocupada, cuando no tenemos nada de memoria RSS; esto no es un problema, ya que por la forma de funcionar del memory manager de linux, se conserva &#34;por si acaso&#34; y se libera cuando realmente se necesita ..."/>
+        <meta property="og:description" content="A veces nos encontramos que nuestro sistema linux parece tener la memoria virtual ocupada, cuando no tenemos nada de memoria RSS; esto no es un problema, ya que por la forma de funcionar del memory manager de linux, se conserva &#34;por si acaso&#34; y se libera cuando realmente se necesita …"/>
         <meta property="article:published_time" content="2015-11-02" />
             <meta property="article:section" content="Operaciones" />
             <meta property="article:tag" content="linux" />
@@ -69,9 +69,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -145,9 +142,9 @@ Linux Sysadmin            </a>
                 <p>A veces nos encontramos que nuestro sistema linux parece tener la memoria <em>virtual</em> ocupada, cuando no tenemos nada de memoria <em>RSS</em>; esto no es un problema, ya que por la forma de funcionar del <em>memory manager</em> de linux, se conserva "por si acaso" y se libera cuando realmente se necesita.</p>
 <div class="highlight"><pre><span></span>gerard@desktop:~$ free -m
              total       used       free     shared    buffers     cached
-Mem:          <span class="m">3858</span>       <span class="m">3226</span>        <span class="m">632</span>          <span class="m">0</span>        <span class="m">114</span>       2545
--/+ buffers/cache:        <span class="m">566</span>       3291
-Swap:         <span class="m">2381</span>          <span class="m">0</span>       2381
+Mem:          <span class="m">3858</span>       <span class="m">3226</span>        <span class="m">632</span>          <span class="m">0</span>        <span class="m">114</span>       <span class="m">2545</span>
+-/+ buffers/cache:        <span class="m">566</span>       <span class="m">3291</span>
+Swap:         <span class="m">2381</span>          <span class="m">0</span>       <span class="m">2381</span>
 gerard@desktop:~$ 
 </pre></div>
 
@@ -183,7 +180,7 @@ gerard@desktop:~$
 
 <p>Alternativamente, podemos utilizar el comando <em>tee</em> para realizar la misma operación, sin el envoltorio de <em>bash</em>:</p>
 <div class="highlight"><pre><span></span>gerard@desktop:~$ <span class="nb">echo</span> <span class="m">3</span> <span class="p">|</span> sudo tee /proc/sys/vm/drop_caches
-3
+<span class="m">3</span>
 gerard@desktop:~$ 
 </pre></div>
 
@@ -191,9 +188,9 @@ gerard@desktop:~$
 <p>Y finalmente nuestra memoria queda vacía de todo aquello que no era indispensable para la ejecución del sistema.</p>
 <div class="highlight"><pre><span></span>gerard@desktop:~$ free -m
              total       used       free     shared    buffers     cached
-Mem:          <span class="m">3858</span>        <span class="m">752</span>       <span class="m">3105</span>          <span class="m">0</span>          <span class="m">2</span>        207
--/+ buffers/cache:        <span class="m">542</span>       3315
-Swap:         <span class="m">2381</span>          <span class="m">0</span>       2381
+Mem:          <span class="m">3858</span>        <span class="m">752</span>       <span class="m">3105</span>          <span class="m">0</span>          <span class="m">2</span>        <span class="m">207</span>
+-/+ buffers/cache:        <span class="m">542</span>       <span class="m">3315</span>
+Swap:         <span class="m">2381</span>          <span class="m">0</span>       <span class="m">2381</span>
 gerard@desktop:~$ 
 </pre></div>
 
@@ -205,9 +202,9 @@ gerard@desktop:~$
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/11/semaforos-en-linux.html">Semáforos en linux</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Enjaulado de usuarios para uso de rsync</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html">Creando un entorno escalable (I)</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/creando-sistemas-de-ficheros-temporales-con-tmpfs.html">Creando sistemas de ficheros temporales con tmpfs</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/un-proxy-dns-con-dnsmasq.html">Un proxy DNS con dnsmasq</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">Restringiendo accesos mediante certificados de cliente</a></li>
     </ul>
 </section>
     <hr/>
@@ -359,6 +356,11 @@ gerard@desktop:~$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -472,11 +474,6 @@ gerard@desktop:~$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

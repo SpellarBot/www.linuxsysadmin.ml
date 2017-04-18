@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="html,generador estático,hugo" />
-        <meta name="description" content="Antes de la masiva invasión de PHP y mysql en todos los proveedores de internet, existían solamente las páginas HTML estáticas. Los servidores eran más simples y tenían menos superficie de ataque, aunque mantener las páginas web era un auténtica pesadilla; para eso se han creado los generadores web estáticos ..." />
+        <meta name="description" content="Antes de la masiva invasión de PHP y mysql en todos los proveedores de internet, existían solamente las páginas HTML estáticas. Los servidores eran más simples y tenían menos superficie de ataque, aunque mantener las páginas web era un auténtica pesadilla; para eso se han creado los generadores web estáticos …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Generadores de contenido web estáticos"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/03/generadores-de-contenido-web-estaticos.html"/>
-        <meta property="og:description" content="Antes de la masiva invasión de PHP y mysql en todos los proveedores de internet, existían solamente las páginas HTML estáticas. Los servidores eran más simples y tenían menos superficie de ataque, aunque mantener las páginas web era un auténtica pesadilla; para eso se han creado los generadores web estáticos ..."/>
+        <meta property="og:description" content="Antes de la masiva invasión de PHP y mysql en todos los proveedores de internet, existían solamente las páginas HTML estáticas. Los servidores eran más simples y tenían menos superficie de ataque, aunque mantener las páginas web era un auténtica pesadilla; para eso se han creado los generadores web estáticos …"/>
         <meta property="article:published_time" content="2017-03-13" />
             <meta property="article:section" content="Miscelánea" />
             <meta property="article:tag" content="html" />
@@ -68,9 +68,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -165,7 +162,7 @@ gerard@aldebaran:~$
 gerard@aldebaran:~$ cp hugo_0.18.1_linux_amd64/hugo_0.18.1_linux_amd64 ~/bin/hugo
 gerard@aldebaran:~$ chmod a+x bin/hugo 
 gerard@aldebaran:~$ hugo version
-Hugo Static Site Generator v0.18.1 BuildDate: 2017-02-14T13:43:15+01:00
+Hugo Static Site Generator v0.18.1 BuildDate: <span class="m">2017</span>-02-14T13:43:15+01:00
 gerard@aldebaran:~$ 
 </pre></div>
 
@@ -177,12 +174,12 @@ Congratulations! Your new Hugo site is created in /home/gerard/workspace/site1.
 
 Just a few more steps and you<span class="err">&#39;</span>re ready to go:
 
-1. Download a theme into the same-named folder.
+<span class="m">1</span>. Download a theme into the same-named folder.
    Choose a theme from https://themes.gohugo.io/, or
    create your own with the <span class="s2">&quot;hugo new theme &lt;THEMENAME&gt;&quot;</span> command.
-2. Perhaps you want to add some content. You can add single files
+<span class="m">2</span>. Perhaps you want to add some content. You can add single files
    with <span class="s2">&quot;hugo new &lt;SECTIONNAME&gt;/&lt;FILENAME&gt;.&lt;FORMAT&gt;&quot;</span>.
-3. Start the built-in live server via <span class="s2">&quot;hugo server&quot;</span>.
+<span class="m">3</span>. Start the built-in live server via <span class="s2">&quot;hugo server&quot;</span>.
 
 Visit https://gohugo.io/ <span class="k">for</span> quickstart guide and full documentation.
 gerard@aldebaran:~/workspace$ 
@@ -197,12 +194,12 @@ Congratulations! Your new Hugo site is created in /home/gerard/workspace/site2.
 
 Just a few more steps and you<span class="err">&#39;</span>re ready to go:
 
-1. Download a theme into the same-named folder.
+<span class="m">1</span>. Download a theme into the same-named folder.
    Choose a theme from https://themes.gohugo.io/, or
    create your own with the <span class="s2">&quot;hugo new theme &lt;THEMENAME&gt;&quot;</span> command.
-2. Perhaps you want to add some content. You can add single files
+<span class="m">2</span>. Perhaps you want to add some content. You can add single files
    with <span class="s2">&quot;hugo new &lt;SECTIONNAME&gt;/&lt;FILENAME&gt;.&lt;FORMAT&gt;&quot;</span>.
-3. Start the built-in live server via <span class="s2">&quot;hugo server&quot;</span>.
+<span class="m">3</span>. Start the built-in live server via <span class="s2">&quot;hugo server&quot;</span>.
 
 Visit https://gohugo.io/ <span class="k">for</span> quickstart guide and full documentation.
 gerard@aldebaran:~/workspace/site2$ <span class="nb">cd</span> ..
@@ -229,10 +226,10 @@ gerard@aldebaran:~/workspace/site1$
 <p>Ahora necesitamos un tema para <em>renderizar</em> nuestra web. Podemos crear un tema propio siguiendo la documentación, si así lo deseamos; para no extendernos, voy a utilizar uno que ya existe y que podemos encontrar en el sitio de <a href="http://themes.gohugo.io/">temas de Hugo</a>. Por defecto no viene ningún tema, así que las páginas saldrían en blanco.</p>
 <div class="highlight"><pre><span></span>gerard@aldebaran:~/workspace/site1$ <span class="o">(</span><span class="nb">cd</span> themes<span class="p">;</span> git clone https://github.com/comfusion/after-dark<span class="o">)</span>
 Cloning into <span class="s1">&#39;after-dark&#39;</span>...
-remote: Counting objects: 542, <span class="k">done</span>.
-remote: Total <span class="m">542</span> <span class="o">(</span>delta 0<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>, pack-reused 542
-Receiving objects: 100% <span class="o">(</span>542/542<span class="o">)</span>, 6.26 MiB <span class="p">|</span> 941.00 KiB/s, <span class="k">done</span>.
-Resolving deltas: 100% <span class="o">(</span>296/296<span class="o">)</span>, <span class="k">done</span>.
+remote: Counting objects: <span class="m">542</span>, <span class="k">done</span>.
+remote: Total <span class="m">542</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>, pack-reused <span class="m">542</span>
+Receiving objects: <span class="m">100</span>% <span class="o">(</span><span class="m">542</span>/542<span class="o">)</span>, <span class="m">6</span>.26 MiB <span class="p">|</span> <span class="m">941</span>.00 KiB/s, <span class="k">done</span>.
+Resolving deltas: <span class="m">100</span>% <span class="o">(</span><span class="m">296</span>/296<span class="o">)</span>, <span class="k">done</span>.
 Checking connectivity... <span class="k">done</span>.
 gerard@aldebaran:~/workspace/site1$ 
 </pre></div>
@@ -280,7 +277,7 @@ Built site <span class="k">for</span> language en:
 total in <span class="m">14</span> ms
 Watching <span class="k">for</span> changes in /home/gerard/workspace/site1/<span class="o">{</span>data,content,layouts,static,themes<span class="o">}</span>
 Serving pages from memory
-Web Server is available at http://localhost:1313/ <span class="o">(</span><span class="nb">bind</span> address 127.0.0.1<span class="o">)</span>
+Web Server is available at http://localhost:1313/ <span class="o">(</span><span class="nb">bind</span> address <span class="m">127</span>.0.0.1<span class="o">)</span>
 Press Ctrl+C to stop
 </pre></div>
 
@@ -310,7 +307,7 @@ Lorem markdownum amoris illis, spicea, daedalus intonsum procul certo dubioque, 
 
     swappableEbookHard.metaSkinNybble<span class="o">(</span>simmApple<span class="o">)</span><span class="p">;</span>
     <span class="nv">desktopWebMouse</span> <span class="o">=</span> page<span class="o">(</span>analog_rt_regular, eSession, menu_oem<span class="o">)</span><span class="p">;</span>
-    var <span class="nv">prompt</span> <span class="o">=</span> dns_megabit<span class="o">(</span>softShell<span class="o">(</span>duplexMediaYoutube, netiquette, fontBrouterPng<span class="o">)</span>, 2<span class="o">)</span><span class="p">;</span>
+    var <span class="nv">prompt</span> <span class="o">=</span> dns_megabit<span class="o">(</span>softShell<span class="o">(</span>duplexMediaYoutube, netiquette, fontBrouterPng<span class="o">)</span>, <span class="m">2</span><span class="o">)</span><span class="p">;</span>
 
 <span class="c1">## Imagine sub nomine occursu</span>
 
@@ -332,7 +329,7 @@ Sine in robora aureus ignavis bella vaga super multa saepe atque tot **scelerati
 <div class="highlight"><pre><span></span>gerard@aldebaran:~/workspace/site1$ hugo server
 ...
 Change detected, rebuilding site
-2017-02-14 15:56 +0100
+<span class="m">2017</span>-02-14 <span class="m">15</span>:56 +0100
 Source changed /home/gerard/workspace/site1/content/post/lorem-ipsum.md
 Built site <span class="k">for</span> language en:
 <span class="m">0</span> draft content
@@ -528,6 +525,11 @@ gerard@aldebaran:~/workspace/site1$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -641,11 +643,6 @@ gerard@aldebaran:~/workspace/site1$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

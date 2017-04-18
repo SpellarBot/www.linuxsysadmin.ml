@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,docker,contenedor,dockerfile,jaula" />
-        <meta name="description" content="Los contenedores tienen su caso de uso y son muy útiles. Sin embargo, ir copiando la imagen es una pérdida de tiempo. Aunque podemos solventar el problema con un sistema de ficheros copy-on-write o un sistema de ficheros tipo union, Docker ya nos lo ofrece todo preparado para su uso ..." />
+        <meta name="description" content="Los contenedores tienen su caso de uso y son muy útiles. Sin embargo, ir copiando la imagen es una pérdida de tiempo. Aunque podemos solventar el problema con un sistema de ficheros copy-on-write o un sistema de ficheros tipo union, Docker ya nos lo ofrece todo preparado para su uso …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Evolucionando los contenedores: Docker"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/05/evolucionando-los-contenedores-docker.html"/>
-        <meta property="og:description" content="Los contenedores tienen su caso de uso y son muy útiles. Sin embargo, ir copiando la imagen es una pérdida de tiempo. Aunque podemos solventar el problema con un sistema de ficheros copy-on-write o un sistema de ficheros tipo union, Docker ya nos lo ofrece todo preparado para su uso ..."/>
+        <meta property="og:description" content="Los contenedores tienen su caso de uso y son muy útiles. Sin embargo, ir copiando la imagen es una pérdida de tiempo. Aunque podemos solventar el problema con un sistema de ficheros copy-on-write o un sistema de ficheros tipo union, Docker ya nos lo ofrece todo preparado para su uso …"/>
         <meta property="article:published_time" content="2016-05-23" />
             <meta property="article:section" content="Virtualización" />
             <meta property="article:tag" content="linux" />
@@ -70,9 +70,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -173,7 +170,7 @@ gerard@sirius:~$
 <p>Podemos ver en la salida del comando que no teníamos una imagen local de la imagen <em>debian</em>, con lo que la ha descargado. Podemos ver que ya la tenemos en local, y que si volvemos a lanzar el comando, no se descarga de nuevo.</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-debian              latest              bb5d89f9b6cb        <span class="m">4</span> days ago          125.1 MB
+debian              latest              bb5d89f9b6cb        <span class="m">4</span> days ago          <span class="m">125</span>.1 MB
 gerard@sirius:~$ docker run -ti --rm debian <span class="nb">echo</span> <span class="s1">&#39;Hello world&#39;</span>
 Hello world
 gerard@sirius:~$ 
@@ -215,20 +212,20 @@ gerard@sirius:~$
 sha256:f73b2072ab7404b83749fd098411a1c6392631668363c46fc7203d1a0d39782f
 gerard@sirius:~$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-&lt;none&gt;              &lt;none&gt;              f73b2072ab74        <span class="m">9</span> seconds ago       167.4 MB
-debian              latest              bb5d89f9b6cb        <span class="m">4</span> days ago          125.1 MB
+&lt;none&gt;              &lt;none&gt;              f73b2072ab74        <span class="m">9</span> seconds ago       <span class="m">167</span>.4 MB
+debian              latest              bb5d89f9b6cb        <span class="m">4</span> days ago          <span class="m">125</span>.1 MB
 gerard@sirius:~$ docker tag f73b2072ab74 python-debian-manual
 gerard@sirius:~$ docker images
 REPOSITORY             TAG                 IMAGE ID            CREATED              SIZE
-python-debian-manual   latest              f73b2072ab74        About a minute ago   167.4 MB
-debian                 latest              bb5d89f9b6cb        <span class="m">4</span> days ago           125.1 MB
+python-debian-manual   latest              f73b2072ab74        About a minute ago   <span class="m">167</span>.4 MB
+debian                 latest              bb5d89f9b6cb        <span class="m">4</span> days ago           <span class="m">125</span>.1 MB
 gerard@sirius:~$ 
 </pre></div>
 
 
 <p>Y comprobamos que funciona como debe:</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~$ docker run -ti --rm python-debian-manual python -V
-Python 2.7.9
+Python <span class="m">2</span>.7.9
 gerard@sirius:~$ 
 </pre></div>
 
@@ -247,7 +244,7 @@ gerard@sirius:~/build$
 
 <p>Bastaría crear la imágen en la carpeta actual con el comando mencionado, especificando opcionalmente el <em>tag</em>:</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker build -t python-debian-auto .
-Sending build context to Docker daemon 2.048 kB
+Sending build context to Docker daemon <span class="m">2</span>.048 kB
 Step <span class="m">1</span> : FROM debian
  ---&gt; bb5d89f9b6cb
 Step <span class="m">2</span> : RUN apt-get update <span class="o">&amp;&amp;</span>     apt-get install -y python
@@ -268,10 +265,10 @@ gerard@sirius:~/build$
 <div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker images
 REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
 python-debian-auto     latest              e52f43de8b80        <span class="m">6</span> minutes ago       <span class="m">176</span> MB
-python-debian-manual   latest              f73b2072ab74        <span class="m">22</span> minutes ago      167.4 MB
-debian                 latest              bb5d89f9b6cb        <span class="m">4</span> days ago          125.1 MB
+python-debian-manual   latest              f73b2072ab74        <span class="m">22</span> minutes ago      <span class="m">167</span>.4 MB
+debian                 latest              bb5d89f9b6cb        <span class="m">4</span> days ago          <span class="m">125</span>.1 MB
 gerard@sirius:~/build$ docker run -ti --rm python-debian-auto python -V
-Python 2.7.9
+Python <span class="m">2</span>.7.9
 gerard@sirius:~/build$ 
 </pre></div>
 
@@ -290,7 +287,7 @@ gerard@sirius:~/build$
 
 <p>Construimos la imagen y vemos que ocupa lo mismo que el binario que le hemos puesto.</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker build -t saluda .
-Sending build context to Docker daemon 20.34 MB
+Sending build context to Docker daemon <span class="m">20</span>.34 MB
 Step <span class="m">1</span> : FROM scratch
  ---&gt; 
 Step <span class="m">2</span> : ADD hello /
@@ -303,8 +300,8 @@ Removing intermediate container 54d7512dd61a
 Successfully built bf6c560144dd
 gerard@sirius:~/build$ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-saluda              latest              bf6c560144dd        <span class="m">25</span> seconds ago      5.416 kB
-debian              latest              47af6ca8a14a        <span class="m">3</span> weeks ago         125.1 MB
+saluda              latest              bf6c560144dd        <span class="m">25</span> seconds ago      <span class="m">5</span>.416 kB
+debian              latest              47af6ca8a14a        <span class="m">3</span> weeks ago         <span class="m">125</span>.1 MB
 gerard@sirius:~/build$ 
 </pre></div>
 
@@ -320,8 +317,8 @@ gerard@sirius:~/build$
     <h4>Posts relacionados:</h4>
     <ul>
         <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Enjaulado de usuarios para uso de rsync</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/01/creando-una-jaula-centos.html">Creando una jaula CentOS</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Enjaulado de usuarios para uso de rsync</a></li>
     </ul>
 </section>
     <hr/>
@@ -473,6 +470,11 @@ gerard@sirius:~/build$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -586,11 +588,6 @@ gerard@sirius:~/build$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

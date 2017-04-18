@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="ELK,elastic search,logstash,kibana,logs" />
-        <meta name="description" content="Buscar en los logs es fácil cuando tenemos una máquina de cada tipo, pero es una actividad muy poco gratificante cuando tenemos un número grande o variable de cada tipo. La mejor manera de tenerlos controlados es hacer que envíen sus logs a un almacén central, para su fácil consulta ..." />
+        <meta name="description" content="Buscar en los logs es fácil cuando tenemos una máquina de cada tipo, pero es una actividad muy poco gratificante cuando tenemos un número grande o variable de cada tipo. La mejor manera de tenerlos controlados es hacer que envíen sus logs a un almacén central, para su fácil consulta …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Acumulando los logs en un servidor centralizado con Kibana"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/01/acumulando-los-logs-en-un-servidor-centralizado-con-kibana.html"/>
-        <meta property="og:description" content="Buscar en los logs es fácil cuando tenemos una máquina de cada tipo, pero es una actividad muy poco gratificante cuando tenemos un número grande o variable de cada tipo. La mejor manera de tenerlos controlados es hacer que envíen sus logs a un almacén central, para su fácil consulta ..."/>
+        <meta property="og:description" content="Buscar en los logs es fácil cuando tenemos una máquina de cada tipo, pero es una actividad muy poco gratificante cuando tenemos un número grande o variable de cada tipo. La mejor manera de tenerlos controlados es hacer que envíen sus logs a un almacén central, para su fácil consulta …"/>
         <meta property="article:published_time" content="2017-01-16" />
             <meta property="article:section" content="Operaciones" />
             <meta property="article:tag" content="ELK" />
@@ -70,9 +70,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -152,14 +149,14 @@ Linux Sysadmin            </a>
 <li><strong>Logstash</strong>: Es un agente que envía los <em>logs</em> de varias fuentes al <strong>elastic search</strong>.</li>
 <li><strong>Kibana</strong>: Es una interfaz gráfica que nos permite buscar <em>logs</em> y dibujar bonitas gráficas, partiendo de los datos del <strong>elastic search</strong>.</li>
 </ul>
-<p><img alt="Esquema de un ELK" src="http://www.linuxsysadmin.tk/images/the-elk-stack.jpg" /></p>
+<p><img alt="Esquema de un ELK" src="http://www.linuxsysadmin.tk/images/the-elk-stack.jpg"></p>
 <p>De esto se puede deducir que vamos a necesitar una instancia de cada tipo, a excepción de <strong>logstash</strong>, que debe ponerse en todos los servidores que recojan <em>logs</em>. Se podría poner, por ejemplo, el <strong>elastic search</strong> y el <strong>kibana</strong> en una misma máquina, dedicada solamente al consumo de los <em>logs</em> de todos los servidores productivos.</p>
 <h2>Un ejemplo rápido</h2>
 <p>Si miramos en <a href="https://hub.docker.com/">DockerHub</a>, podremos comprobar que las 3 piezas disponen de una imagen que las satisface. Eso nos va a ahorrar mucho tiempo, a costa de las particularidades de cada imagen.</p>
 <p>Vamos a poner todas las imágenes en el mismo servidor por economía, pero lo ideal sería un <strong>logstash</strong> por servidor y otro servidor con <strong>elastic search</strong> y <strong>kibana</strong>.</p>
 <p>El primer paso es acondicionar la memoria que pueden usar nuestros procesos. Esto se hace porque el <strong>elastic search</strong> consume mucha memoria y va a fallar iniciándose.</p>
-<div class="highlight"><pre><span></span>gerard@styx:~/docker/elk$ sudo sysctl -w vm.max_map_count<span class="o">=</span>262144
-vm.max_map_count <span class="o">=</span> 262144
+<div class="highlight"><pre><span></span>gerard@styx:~/docker/elk$ sudo sysctl -w vm.max_map_count<span class="o">=</span><span class="m">262144</span>
+vm.max_map_count <span class="o">=</span> <span class="m">262144</span>
 gerard@styx:~/docker/elk$ 
 </pre></div>
 
@@ -220,7 +217,7 @@ gerard@styx:~/docker/elk$
 
 
 <p>Solo nos falta acceder a la interfaz del <strong>Kibana</strong> en <a href="http://localhost:5601/">http://localhost:5601/</a> y disfrutar del resultado.</p>
-<p><img alt="Frontend de Kibana" src="http://www.linuxsysadmin.tk/images/kibana-frontend.jpg" /></p>
+<p><img alt="Frontend de Kibana" src="http://www.linuxsysadmin.tk/images/kibana-frontend.jpg"></p>
             </div>
             <!-- /.entry-content -->
     <hr/>
@@ -372,6 +369,11 @@ gerard@styx:~/docker/elk$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -485,11 +487,6 @@ gerard@styx:~/docker/elk$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

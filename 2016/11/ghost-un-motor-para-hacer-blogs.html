@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="ghost,blog" />
-        <meta name="description" content="Hace tiempo que me recorre la idea de crear un motor genérico de blogs. Son varias las veces que he empezado alguno aprovechando los frameworks, especialmente de python. Todas ellas han acabado en la papelera por falta de ganas. Finalmente me di por vencido y decidí utilizar algo ya hecho ..." />
+        <meta name="description" content="Hace tiempo que me recorre la idea de crear un motor genérico de blogs. Son varias las veces que he empezado alguno aprovechando los frameworks, especialmente de python. Todas ellas han acabado en la papelera por falta de ganas. Finalmente me di por vencido y decidí utilizar algo ya hecho …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Ghost: Un motor para hacer blogs"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/11/ghost-un-motor-para-hacer-blogs.html"/>
-        <meta property="og:description" content="Hace tiempo que me recorre la idea de crear un motor genérico de blogs. Son varias las veces que he empezado alguno aprovechando los frameworks, especialmente de python. Todas ellas han acabado en la papelera por falta de ganas. Finalmente me di por vencido y decidí utilizar algo ya hecho ..."/>
+        <meta property="og:description" content="Hace tiempo que me recorre la idea de crear un motor genérico de blogs. Son varias las veces que he empezado alguno aprovechando los frameworks, especialmente de python. Todas ellas han acabado en la papelera por falta de ganas. Finalmente me di por vencido y decidí utilizar algo ya hecho …"/>
         <meta property="article:published_time" content="2016-11-21" />
             <meta property="article:section" content="Miscelánea" />
             <meta property="article:tag" content="ghost" />
@@ -67,9 +67,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -151,7 +148,7 @@ Linux Sysadmin            </a>
 <p>El problema de esta aproximación es que la versión de <strong>Ghost</strong>, de <strong>NPM</strong> y de <strong>NodeJS</strong> son demasiado importantes, exigiendo versiones elevadas que no están en los repositorios oficiales de la mayoría de distribuciones. Lo pude instalar en una <em>Ubuntu 16.04</em> y, aun así, el binario exigido <em>/usr/bin/node</em> no se llamaba así, sino que estaba en <em>/usr/bin/nodejs</em>. Esto se puede solucionar con un simple enlace simbólico, pero busca el error...</p>
 <p>Lo que realmente me llamó a probarlo es la facilidad adicional de tenerlo funcionando sin problemas, mediante una imágen de <strong>Docker</strong> prefabricada en <strong>DockerHub</strong>. De hecho la imagen es oficial, y la podéis encontrar en <a href="https://hub.docker.com/_/ghost/">https://hub.docker.com/_/ghost/</a>.</p>
 <p>Levantamos la imagen con el habitual y recomendado <em>docker run</em>:</p>
-<div class="highlight"><pre><span></span>gerard@janus:~$ docker run -d -p 2368:2368 ghost
+<div class="highlight"><pre><span></span>gerard@janus:~$ docker run -d -p <span class="m">2368</span>:2368 ghost
 6a0d4ed51f2b7c04b7b0c54cac44256d12fe7fa999f548314858ea5838faae73
 gerard@janus:~$ 
 </pre></div>
@@ -198,7 +195,7 @@ gerard@telesto:~/docker/custom_ghost$
 
 
 <p>Apuntamos nuestro navegador a la URL configurada, y ya tenemos un <em>blog</em> funcional. Queda para el propietario ir a la sección de administración para añadir contenido, cambiar los temas y lo que haga falta, cómodamente desde la web.</p>
-<p><img alt="Ghost Blog" src="http://www.linuxsysadmin.tk/images/ghost_blog.jpg" /></p>
+<p><img alt="Ghost Blog" src="http://www.linuxsysadmin.tk/images/ghost_blog.jpg"></p>
 <p>La parte "mala" es que cada instancia de <strong>Ghost</strong> es un proceso propio, que usa su propia dirección y su propio puerto. Si se quiere desplegar varios <em>blogs</em> en el mismo servidor, podemos usar un <strong>nginx</strong>, que los diferencie por el dominio solicitado mediante <em>virtualhosts</em>; luego hacemos un <em>proxy_pass</em> al puerto de verdad, y ya tenemos el servidor montado. Esto queda como material para otro artículo.</p>
             </div>
             <!-- /.entry-content -->
@@ -358,6 +355,11 @@ gerard@telesto:~/docker/custom_ghost$
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -471,11 +473,6 @@ gerard@telesto:~/docker/custom_ghost$
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

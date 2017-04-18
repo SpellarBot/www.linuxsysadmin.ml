@@ -13,13 +13,13 @@
 
         <meta name="author" content="Gerard" />
         <meta name="keywords" content="linux,debian,repositorio,reprepro,nginx,gpg,apt" />
-        <meta name="description" content="Una de las grandes facilidades que nos ofrece una distribución de Linux es su sistema de gestor de paquetes. Los paquetes oficiales nos simplifican la instalación y mantenimiento de paquetes; sin embargo, podemos sacar provecho del sistema de paquetes para uso personal, para automatizar instalaciones y actualizaciones que queramos hacer ..." />
+        <meta name="description" content="Una de las grandes facilidades que nos ofrece una distribución de Linux es su sistema de gestor de paquetes. Los paquetes oficiales nos simplifican la instalación y mantenimiento de paquetes; sin embargo, podemos sacar provecho del sistema de paquetes para uso personal, para automatizar instalaciones y actualizaciones que queramos hacer …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
         <meta property="og:title" content="Un repositorio de Debian con reprepro"/>
         <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/01/un-repositorio-de-debian-con-reprepro.html"/>
-        <meta property="og:description" content="Una de las grandes facilidades que nos ofrece una distribución de Linux es su sistema de gestor de paquetes. Los paquetes oficiales nos simplifican la instalación y mantenimiento de paquetes; sin embargo, podemos sacar provecho del sistema de paquetes para uso personal, para automatizar instalaciones y actualizaciones que queramos hacer ..."/>
+        <meta property="og:description" content="Una de las grandes facilidades que nos ofrece una distribución de Linux es su sistema de gestor de paquetes. Los paquetes oficiales nos simplifican la instalación y mantenimiento de paquetes; sin embargo, podemos sacar provecho del sistema de paquetes para uso personal, para automatizar instalaciones y actualizaciones que queramos hacer …"/>
         <meta property="article:published_time" content="2016-01-11" />
             <meta property="article:section" content="Sistemas" />
             <meta property="article:tag" content="linux" />
@@ -72,9 +72,6 @@ Linux Sysadmin            </a>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
-                         <li><a href="http://www.linuxsysadmin.tk/about.html">
-                             Sobre mí
-                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -157,8 +154,8 @@ Linux Sysadmin            </a>
 <div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
 NAME        STATE    IPV4      IPV6  AUTOSTART  
 ----------------------------------------------
-client      RUNNING  10.0.0.3  -     YES        
-repository  RUNNING  10.0.0.2  -     YES        
+client      RUNNING  <span class="m">10</span>.0.0.3  -     YES        
+repository  RUNNING  <span class="m">10</span>.0.0.2  -     YES        
 root@lxc:~# 
 </pre></div>
 
@@ -175,8 +172,8 @@ Se instalarán los siguientes paquetes NUEVOS:
   liblzo2-2 libnettle4 libp11-kit0 libpth20 librtmp1 libsasl2-2 libsasl2-modules libsasl2-modules-db libssh2-1 libtasn1-6 libxml2 nginx-common nginx-light openssl
   pinentry-curses reprepro sgml-base xml-core
 <span class="m">0</span> actualizados, <span class="m">32</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
-Se necesita descargar 7.645 kB de archivos.
-Se utilizarán 21,2 MB de espacio de disco adicional después de esta operación.
+Se necesita descargar <span class="m">7</span>.645 kB de archivos.
+Se utilizarán <span class="m">21</span>,2 MB de espacio de disco adicional después de esta operación.
 ¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
 ...
 root@repository:~# 
@@ -185,7 +182,7 @@ root@repository:~#
 
 <p>Un repositorio necesita una clave <strong>gpg</strong> para firmar los paquetes que sirve; aunque de eso se encarga <strong>reprepro</strong>, tenemos que generarla:</p>
 <div class="highlight"><pre><span></span>root@repository:~# gpg --gen-key
-gpg <span class="o">(</span>GnuPG<span class="o">)</span> 1.4.18<span class="p">;</span> Copyright <span class="o">(</span>C<span class="o">)</span> <span class="m">2014</span> Free Software Foundation, Inc.
+gpg <span class="o">(</span>GnuPG<span class="o">)</span> <span class="m">1</span>.4.18<span class="p">;</span> Copyright <span class="o">(</span>C<span class="o">)</span> <span class="m">2014</span> Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 ...
@@ -201,9 +198,9 @@ root@repository:~#
 <div class="highlight"><pre><span></span>root@repository:~# gpg --list-keys
 /root/.gnupg/pubring.gpg
 ------------------------
-pub   2048R/C1B88DF7 2016-01-07
+pub   2048R/C1B88DF7 <span class="m">2016</span>-01-07
 uid                  Gerard Monells &lt;gerard.monells@gmail.com&gt;
-sub   2048R/5C5B84E3 2016-01-07
+sub   2048R/5C5B84E3 <span class="m">2016</span>-01-07
 
 root@repository:~# 
 </pre></div>
@@ -283,11 +280,11 @@ root@client:~#
 
 <p>Y con esto ya tenemos el repositorio habilitado. A partir de aquí su uso es el mismo que el de cualquier otro repositorio. Hacemos un <em>apt-get update</em> para descargar la lista de paquetes del repositorio.</p>
 <div class="highlight"><pre><span></span>root@client:~# apt-get update
-Des:1 http://10.0.0.2 linuxsysadmin InRelease <span class="o">[</span>1.340 B<span class="o">]</span>
+Des:1 http://10.0.0.2 linuxsysadmin InRelease <span class="o">[</span><span class="m">1</span>.340 B<span class="o">]</span>
 ...
 Des:2 http://10.0.0.2 linuxsysadmin/main i386 Packages <span class="o">[</span><span class="m">333</span> B<span class="o">]</span>
 ...
-Descargados 2.040 B en 6s <span class="o">(</span><span class="m">330</span> B/s<span class="o">)</span>                                                                                                                                    
+Descargados <span class="m">2</span>.040 B en 6s <span class="o">(</span><span class="m">330</span> B/s<span class="o">)</span>                                                                                                                                    
 Leyendo lista de paquetes... Hecho
 root@client:~# 
 </pre></div>
@@ -299,13 +296,13 @@ welcome2l - Linux ANSI boot logo
 welcome - A fancy shell script
 root@client:~# apt-cache show welcome
 Package: welcome
-Version: 1.0-1
+Version: <span class="m">1</span>.0-1
 Architecture: all
 Maintainer: Linux Sysadmin
 Priority: optional
 Section: main
 Filename: pool/main/w/welcome/welcome_1.0-1_all.deb
-Size: 786
+Size: <span class="m">786</span>
 SHA256: 2e701f7fbc090230fb7abc06597fbe5b4e9e70dcc553e749e69793a745b032f2
 SHA1: 41351d1d2135bcee09e1fa3bade984ece9f23caf
 MD5sum: 574fab58b3c871184047c40d0e732b35
@@ -328,14 +325,14 @@ Se instalarán los siguientes paquetes NUEVOS:
 <span class="m">0</span> actualizados, <span class="m">1</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
 Se necesita descargar <span class="m">786</span> B de archivos.
 Se utilizarán <span class="m">0</span> B de espacio de disco adicional después de esta operación.
-Des:1 http://10.0.0.2/ linuxsysadmin/main welcome all 1.0-1 <span class="o">[</span><span class="m">786</span> B<span class="o">]</span>
-Descargados <span class="m">786</span> B en 0s <span class="o">(</span>37,4 kB/s<span class="o">)</span>
+Des:1 http://10.0.0.2/ linuxsysadmin/main welcome all <span class="m">1</span>.0-1 <span class="o">[</span><span class="m">786</span> B<span class="o">]</span>
+Descargados <span class="m">786</span> B en 0s <span class="o">(</span><span class="m">37</span>,4 kB/s<span class="o">)</span>
 debconf: se retrasa la configuración de los paquetes, ya que «apt-utils» no está instalado
 Seleccionando el paquete welcome previamente no seleccionado.
 <span class="o">(</span>Leyendo la base de datos ... <span class="m">10434</span> ficheros o directorios instalados actualmente.<span class="o">)</span>
 Preparando para desempaquetar .../archives/welcome_1.0-1_all.deb ...
-Desempaquetando welcome <span class="o">(</span>1.0-1<span class="o">)</span> ...
-Configurando welcome <span class="o">(</span>1.0-1<span class="o">)</span> ...
+Desempaquetando welcome <span class="o">(</span><span class="m">1</span>.0-1<span class="o">)</span> ...
+Configurando welcome <span class="o">(</span><span class="m">1</span>.0-1<span class="o">)</span> ...
 root@client:~# 
 </pre></div>
 
@@ -355,9 +352,9 @@ root@client:~#
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Restart automático de servicios con systemd</a></li>
         <li><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">Restringiendo accesos mediante certificados de cliente</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html">Restringiendo accesos web mediante autenticación básica</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2015/11/restart-automatico-de-servicios-con-systemd.html">Restart automático de servicios con systemd</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html">Creando un entorno escalable (IV)</a></li>
     </ul>
 </section>
     <hr/>
@@ -509,6 +506,11 @@ root@client:~#
                             chronograf
                         </a>
                     </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/debian.html">
                             debian
@@ -622,11 +624,6 @@ root@client:~#
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/https.html">
                             https
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/influxdb.html">
-                            influxdb
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
