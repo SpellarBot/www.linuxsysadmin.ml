@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Artículos de Gerard - Linux Sysadmin</title>
+    <title>portainer - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -10,7 +10,8 @@
 
 
 
-        <meta name="author" content="Gerard" />
+    <meta name="author" content="Gerard" />
+    <meta name="keywords" content="portainer" />
 
     <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
@@ -71,11 +72,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-        <ol class="breadcrumb">
-            <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-            <li><a href="http://www.linuxsysadmin.tk/authors.html" title="Autores de Linux Sysadmin">Autores</a></li>
-            <li class="active">Gerard</li>
-        </ol>
+    <ol class="breadcrumb">
+        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+        <li><a href="http://www.linuxsysadmin.tk/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
+        <li class="active">portainer</li>
+    </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -89,81 +90,13 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html">Lanzando playbooks de Ansible desde Jenkins</a></h2>
-                <div class="summary"><p>Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con <strong>Ansible</strong> o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto <strong>Ansible Tower</strong>, su precio es prohibitivo para muchos …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html">Crear jaulas de forma fácil basadas en Debian y Ubuntu con debootstrap</a></h2>
-                <div class="summary"><p>Cuando creamos jaulas nos enfrentamos siempre al mismo dilema: usar una imagen de dudoso origen o perder nuestro tiempo investigando y buscando librerías que falten. Sin embargo, hay una forma mejor, que es descargar un sistema básico con herramientas oficiales que nos van a dar hasta un gestor de paquetes …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/09/imagenes-docker-reusables-mediante-configuraciones-dinamicas.html">Imágenes docker reusables mediante configuraciones dinámicas</a></h2>
-                <div class="summary"><p>Muchos de los servicios que necesitamos son siempre los mismos, cambiando solamente algunos parámetros. Incluso los mismos servicios pueden sufrir variaciones en su configuración, por ejemplo, un balanceador al que se añaden o quitan <em>hosts</em>. Siguiendo las prácticas de <a href="http://12factor.net/es/">12factor</a> podemos ahorrar trabajo, mediante el uso de variables de entorno …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/09/imagenes-docker-reusables-mediante-configuraciones-dinamicas.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html">Un servidor pypi local</a></h2>
-                <div class="summary"><p>Cuando trabajamos con <strong>python</strong>, muchas veces necesitamos instalar librerías con <em>pip</em> o <em>easy_install</em>. Dependiendo de la naturaleza de nuestros proyectos, las librerías suelen variar, pero siempre solemos utilizar los mismos. En estos casos puede ser útil tenerlos cerca, cacheados en un servidor en nuestra red local, para su rápido acceso …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/08/creando-roles-con-ansible.html">Creando roles con ansible</a></h2>
-                <div class="summary"><p>Ya vimos que es muy fácil crear varias máquinas iguales con <strong>ansible</strong>. A veces nos puede interesar disponer de recetas y decidir en un <em>playbook</em> general cuales de ellas ponemos en cada servidor. Una receta podría añadir un servidor de aplicaciones mientras que otra podría habilitarnos una bases de datos …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/08/creando-roles-con-ansible.html">Seguir leyendo</a>
+                <h2><a href="http://www.linuxsysadmin.tk/2017/04/administrando-docker-via-web-portainer.html">Administrando Docker vía web: Portainer</a></h2>
+                <div class="summary"><p>El otro día me topé con un desarrollador que quiere desplegar sus contenedores <strong>Docker</strong> en el servidor de integración, pero no conoce la sintaxis del comando <em>docker</em> y prefiere una interfaz gráfica. Eso me llevó a investigar, buscando una opción bonita, funcional y ligera; al final, me topé con <strong>Portainer …</strong></p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2017/04/administrando-docker-via-web-portainer.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
 
-        <ul class="pagination">
-                <li class="prev"><a href="http://www.linuxsysadmin.tk/author/gerard6.html">&laquo;</a>
-                </li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard2.html">2</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard3.html">3</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard4.html">4</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard5.html">5</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard6.html">6</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.tk/author/gerard7.html">7</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard8.html">8</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard9.html">9</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard10.html">10</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard11.html">11</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard12.html">12</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard13.html">13</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard14.html">14</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard15.html">15</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard16.html">16</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard17.html">17</a></li>
-                <li class="next"><a
-                        href="http://www.linuxsysadmin.tk/author/gerard8.html">&raquo;</a></li>
-        </ul>
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>

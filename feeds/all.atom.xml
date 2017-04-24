@@ -1,5 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-04-17T00:00:00+02:00</updated><entry><title>Testear dominios sin tener el DNS con curl</title><link href="http://www.linuxsysadmin.tk/2017/04/testear-dominios-sin-tener-el-dns-con-curl.html" rel="alternate"></link><published>2017-04-17T00:00:00+02:00</published><updated>2017-04-17T00:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-04-17:/2017/04/testear-dominios-sin-tener-el-dns-con-curl.html</id><summary type="html">&lt;p&gt;En mi trabajo, los problemas llegan sin previo aviso. De repente, alguien te pone en aviso que su aplicación web está caída y es inaccesible. Se trata de un problema de resolución DNS, pero queremos probarlo para estar seguros de que solo es ese el problema y no es general …&lt;/p&gt;</summary><content type="html">&lt;p&gt;En mi trabajo, los problemas llegan sin previo aviso. De repente, alguien te pone en aviso que su aplicación web está caída y es inaccesible. Se trata de un problema de resolución DNS, pero queremos probarlo para estar seguros de que solo es ese el problema y no es general.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-04-24T10:00:00+02:00</updated><entry><title>Administrando Docker vía web: Portainer</title><link href="http://www.linuxsysadmin.tk/2017/04/administrando-docker-via-web-portainer.html" rel="alternate"></link><published>2017-04-24T10:00:00+02:00</published><updated>2017-04-24T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-04-24:/2017/04/administrando-docker-via-web-portainer.html</id><summary type="html">&lt;p&gt;El otro día me topé con un desarrollador que quiere desplegar sus contenedores &lt;strong&gt;Docker&lt;/strong&gt; en el servidor de integración, pero no conoce la sintaxis del comando &lt;em&gt;docker&lt;/em&gt; y prefiere una interfaz gráfica. Eso me llevó a investigar, buscando una opción bonita, funcional y ligera; al final, me topé con &lt;strong&gt;Portainer …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día me topé con un desarrollador que quiere desplegar sus contenedores &lt;strong&gt;Docker&lt;/strong&gt; en el servidor de integración, pero no conoce la sintaxis del comando &lt;em&gt;docker&lt;/em&gt; y prefiere una interfaz gráfica. Eso me llevó a investigar, buscando una opción bonita, funcional y ligera; al final, me topé con &lt;strong&gt;Portainer&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Podemos encontrar la imagen en &lt;strong&gt;DockerHub&lt;/strong&gt; en &lt;a href="https://hub.docker.com/r/portainer/portainer/"&gt;este link&lt;/a&gt;, así como una ligera descripción.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Portainer is a lightweight management UI which allows you to easily manage your Docker host or Swarm cluster.
+Portainer is meant to be as simple to deploy as it is to use. It consists of a single container that can run on any Docker engine (Docker for Linux and Docker for Windows are supported).
+Portainer allows you to manage your Docker containers, images, volumes, networks and more ! It is compatible with the standalone Docker engine and with Docker Swarm.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt;Instalación de portainer&lt;/h2&gt;
+&lt;p&gt;Levantar el contenedor no tiene ningún misterio; basta con seguir las instrucciones de &lt;strong&gt;DockerHub&lt;/strong&gt; y las que nos pueda ofrecer la aplicación. Empezaremos haciendo un &lt;code&gt;docker pull portainer/portainer&lt;/code&gt;, para tener la imagen en local y maravillarnos de su ligereza: se trata solo de 10mb.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker$ docker images
+REPOSITORY            TAG                 IMAGE ID            CREATED             SIZE
+portainer/portainer   latest              1ad990af4145        &lt;span class="m"&gt;5&lt;/span&gt; hours ago         &lt;span class="m"&gt;9&lt;/span&gt;.96 MB
+gerard@aldebaran:~/docker$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Mirando &lt;a href="http://portainer.io/install.html"&gt;la página web&lt;/a&gt;, vemos que levantar el contenedor no tiene ninguna dificultad; se trata de ejecutar la imagen tal cual, exponiendo el puerto 9000 a nuestra máquina &lt;em&gt;host&lt;/em&gt; de &lt;strong&gt;docker&lt;/strong&gt;, para su fácil acceso vía web. También le voy a dar un nombre de contenedor para su fácil administración.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker$ docker run -d -p &lt;span class="m"&gt;9000&lt;/span&gt;:9000 --name portainer portainer/portainer
+afcc57cfb1d0002d7e43cbdd5e6fcd0c6ada594eeac62132722e25cbb4569270
+gerard@aldebaran:~/docker$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Apuntando el navegador a la dirección IP del &lt;em&gt;host&lt;/em&gt;, con HTTP en el puerto 9000, vemos que ha levantado. La primera vez nos va a pedir una contraseña para el usuario &lt;em&gt;admin&lt;/em&gt;, así que la rellenamos. Lo siguiente es declarar el &lt;strong&gt;Docker Engine&lt;/strong&gt; o el &lt;strong&gt;Docker Swarm&lt;/strong&gt; que queramos controlar. Como yo quiero controlar mi &lt;strong&gt;Docker Engine&lt;/strong&gt; local, lo indico; y me salta una advertencia de que necesita el &lt;em&gt;unix socket&lt;/em&gt; de &lt;strong&gt;docker&lt;/strong&gt; mapeado en el contenedor.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;On Linux and when using Docker for Mac or Docker for Windows or Docker Toolbox, ensure that you have started Portainer container with the following Docker flag -v "/var/run/docker.sock:/var/run/docker.sock"&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Esto significa parar el contenedor y levantarlo de nuevo con el nuevo volumen. También significa que vamos a tener que introducir la contraseña para el usuario &lt;em&gt;admin&lt;/em&gt;. Mirando &lt;a href="https://portainer.readthedocs.io/en/stable/deployment.html#persist-portainer-data"&gt;la documentación&lt;/a&gt;, vemos que nos basta con poner la carpeta &lt;em&gt;/data/&lt;/em&gt; en un volumen del &lt;em&gt;host&lt;/em&gt; para persistir las configuraciones.&lt;/p&gt;
+&lt;p&gt;Esto nos alarga la línea de comandos a ejecutar y empieza a ser tedioso de poner. Como siempre, &lt;strong&gt;docker-compose&lt;/strong&gt; al poder.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/portainer$ cat docker-compose.yml
+version: &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;
+services:
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    hostname: portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./volumes/data:/data
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;9000:9000&amp;quot;&lt;/span&gt;
+gerard@aldebaran:~/docker/portainer$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;portainer_default&amp;quot;&lt;/span&gt; with the default driver
+Creating portainer
+gerard@aldebaran:~/docker/portainer$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Tras poner por última vez la contraseña del usuario &lt;em&gt;admin&lt;/em&gt; e indicar que queremos controlar la instancia local, ya tenemos la interfaz ejecutando.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Portainer dashboard" src="http://www.linuxsysadmin.tk/images/portainer-dashboard.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;En esta interfaz podremos lanzar todas las operaciones habituales cómodamente desde la web. Con ella podemos administrar las imágenes, los contenedores, las redes y los volúmenes.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: &lt;strong&gt;Portainer&lt;/strong&gt; no tiene ningún sistema de persistencia y los comandos son enviados desde el formulario directamente al demonio de &lt;strong&gt;Docker&lt;/strong&gt;; no se puede editar un contenedor creado, solo se puede recrearlo, de cero. Si os equivocáis, por ejemplo en una variable de entorno, no os queda más opción que recrear el contenedor entero.&lt;/p&gt;
+&lt;h2&gt;Plantillas&lt;/h2&gt;
+&lt;p&gt;Las plantillas son formas bonitas de levantar imágenes. Nos permiten elegir las plantillas con botones y luego nos dan un formulario prefabricado para rellenar variables de entorno. Nada más.&lt;/p&gt;
+&lt;p&gt;Si usamos variables de entorno para configurar nuestros contenedores, son de gran ayuda. El conjunto básico de plantillas es muy limitado, pero se puede ampliar; nuevamente la respuesta está en &lt;a href="https://portainer.readthedocs.io/en/stable/templates.html"&gt;la documentación&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Muy a &lt;em&gt;grosso&lt;/em&gt; modo, las plantillas disponibles se declaran en un fichero &lt;em&gt;templates.json&lt;/em&gt;, que se descarga remotamente y se indica su localización con el &lt;em&gt;docker command&lt;/em&gt; &lt;code&gt;--templates http://portainer-templates/templates.json&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Este fichero se puede servir con cualquier servidor web del que dispongamos, o si no tenemos uno, podemos construir una imagen con &lt;strong&gt;nginx&lt;/strong&gt;, por ejemplo. La documentación da detalles de como hacerlo.&lt;/p&gt;
+&lt;p&gt;Yo mismo he creado mi propio contenedor &lt;strong&gt;nginx&lt;/strong&gt; para servir mi fichero de plantillas, con &lt;strong&gt;Alpine Linux&lt;/strong&gt;. No voy a poner como porque no es el &lt;em&gt;scope&lt;/em&gt; de este artículo, pero si voy a actualizar el fichero &lt;em&gt;docker-compose.yml&lt;/em&gt; para ver el resultado final.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/portainer$ cat docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;
+services:
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    hostname: portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./volumes/data:/data
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;9000:9000&amp;quot;&lt;/span&gt;
+    command: --templates http://portainer-templates/templates.json
+  portainer-templates:
+    image: portainer-templates
+    container_name: portainer-templates
+    hostname: portainer-templates
+    volumes:
+      - ./volumes/templates/templates.json:/srv/www/templates.json:ro
+gerard@aldebaran:~/docker/portainer$ docker-compose up -d
+Creating portainer-templates
+Creating portainer
+gerard@aldebaran:~/docker/portainer$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora solo queda crear un fichero con contenido adecuado de acuerdo a la documentación, que iremos actualizando a lo largo de la vida de nuestro proyecto. Solo voy a poner un &lt;em&gt;snippet&lt;/em&gt; del fichero para que os hagáis una idea de como es:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/portainer$ cat volumes/templates/templates.json 
+&lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;title&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Kittens&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;description&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;A beautiful kitten listing&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;logo&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;https://s-media-cache-ak0.pinimg.com/736x/5d/bb/17/5dbb17d702b29b11f46d7a9c7ea53891.jpg&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;image&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;acme/kittens&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;env&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;
+            &lt;span class="o"&gt;{&lt;/span&gt;
+                &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;ENTORNO&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;label&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;ENTORNO&amp;quot;&lt;/span&gt;
+            &lt;span class="o"&gt;}&lt;/span&gt;,
+            &lt;span class="o"&gt;{&lt;/span&gt;
+                &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;MONGO_URL&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;label&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;MONGO_URL&amp;quot;&lt;/span&gt;
+            &lt;span class="o"&gt;}&lt;/span&gt;
+        &lt;span class="o"&gt;]&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;,
+    &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;title&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;MongoDB&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;description&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;MongoDB is a free and open-source cross-platform document-oriented database&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;logo&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;https://media.glassdoor.com/sqll/433703/mongodb-squarelogo-1407269491216.png&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;image&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;acme/mongo&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@aldebaran:~/docker/portainer$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso dispondríamos de dos plantillas. La primera utiliza la imagen &lt;em&gt;acme/kittens&lt;/em&gt; y necesita dos variables de entorno. La segunda utiliza la imagen &lt;em&gt;acme/mongo&lt;/em&gt; y no necesita variables de entorno.&lt;/p&gt;</content><category term="docker"></category><category term="portainer"></category></entry><entry><title>Testear dominios sin tener el DNS con curl</title><link href="http://www.linuxsysadmin.tk/2017/04/testear-dominios-sin-tener-el-dns-con-curl.html" rel="alternate"></link><published>2017-04-17T00:00:00+02:00</published><updated>2017-04-17T00:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-04-17:/2017/04/testear-dominios-sin-tener-el-dns-con-curl.html</id><summary type="html">&lt;p&gt;En mi trabajo, los problemas llegan sin previo aviso. De repente, alguien te pone en aviso que su aplicación web está caída y es inaccesible. Se trata de un problema de resolución DNS, pero queremos probarlo para estar seguros de que solo es ese el problema y no es general …&lt;/p&gt;</summary><content type="html">&lt;p&gt;En mi trabajo, los problemas llegan sin previo aviso. De repente, alguien te pone en aviso que su aplicación web está caída y es inaccesible. Se trata de un problema de resolución DNS, pero queremos probarlo para estar seguros de que solo es ese el problema y no es general.&lt;/p&gt;
 &lt;p&gt;Lo primero que nos viene a la cabeza es montar un servidor DNS local e intentar acceder de nuevo, pero es mucho trabajo. Luego nos acordamos del fichero &lt;em&gt;/etc/hosts&lt;/em&gt;, pero no siempre es posible editarlo. Sin embargo, el comando &lt;strong&gt;curl&lt;/strong&gt; nos ofrece una opción para suplantar un dominio con la dirección IP que queramos.&lt;/p&gt;
 &lt;h2&gt;Preparación&lt;/h2&gt;
 &lt;p&gt;Vamos a crear un servidor web con contenido irrelevante solo para ver una demostración de como funciona esta opción. Para ello empezaremos instalando un servidor web cualquiera. Ya sabéis que me gusta mucho el &lt;strong&gt;nginx&lt;/strong&gt;...&lt;/p&gt;

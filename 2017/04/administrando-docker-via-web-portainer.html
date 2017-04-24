@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Artículos de Gerard - Linux Sysadmin</title>
+    <title>Administrando Docker vía web: Portainer - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,15 +9,22 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2017/04/administrando-docker-via-web-portainer.html">
 
         <meta name="author" content="Gerard" />
+        <meta name="keywords" content="docker,portainer" />
+        <meta name="description" content="El otro día me topé con un desarrollador que quiere desplegar sus contenedores Docker en el servidor de integración, pero no conoce la sintaxis del comando docker y prefiere una interfaz gráfica. Eso me llevó a investigar, buscando una opción bonita, funcional y ligera; al final, me topé con Portainer …" />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Administrando Docker vía web: Portainer"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/04/administrando-docker-via-web-portainer.html"/>
+        <meta property="og:description" content="El otro día me topé con un desarrollador que quiere desplegar sus contenedores Docker en el servidor de integración, pero no conoce la sintaxis del comando docker y prefiere una interfaz gráfica. Eso me llevó a investigar, buscando una opción bonita, funcional y ligera; al final, me topé con Portainer …"/>
+        <meta property="article:published_time" content="2017-04-24" />
+            <meta property="article:section" content="Operaciones" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:tag" content="portainer" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -33,6 +40,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -71,11 +80,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-        <ol class="breadcrumb">
-            <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-            <li><a href="http://www.linuxsysadmin.tk/authors.html" title="Autores de Linux Sysadmin">Autores</a></li>
-            <li class="active">Gerard</li>
-        </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
+                <li class="active">Administrando Docker vía web: Portainer</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -88,82 +97,200 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html">Lanzando playbooks de Ansible desde Jenkins</a></h2>
-                <div class="summary"><p>Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con <strong>Ansible</strong> o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto <strong>Ansible Tower</strong>, su precio es prohibitivo para muchos …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html">Crear jaulas de forma fácil basadas en Debian y Ubuntu con debootstrap</a></h2>
-                <div class="summary"><p>Cuando creamos jaulas nos enfrentamos siempre al mismo dilema: usar una imagen de dudoso origen o perder nuestro tiempo investigando y buscando librerías que falten. Sin embargo, hay una forma mejor, que es descargar un sistema básico con herramientas oficiales que nos van a dar hasta un gestor de paquetes …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/09/imagenes-docker-reusables-mediante-configuraciones-dinamicas.html">Imágenes docker reusables mediante configuraciones dinámicas</a></h2>
-                <div class="summary"><p>Muchos de los servicios que necesitamos son siempre los mismos, cambiando solamente algunos parámetros. Incluso los mismos servicios pueden sufrir variaciones en su configuración, por ejemplo, un balanceador al que se añaden o quitan <em>hosts</em>. Siguiendo las prácticas de <a href="http://12factor.net/es/">12factor</a> podemos ahorrar trabajo, mediante el uso de variables de entorno …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/09/imagenes-docker-reusables-mediante-configuraciones-dinamicas.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html">Un servidor pypi local</a></h2>
-                <div class="summary"><p>Cuando trabajamos con <strong>python</strong>, muchas veces necesitamos instalar librerías con <em>pip</em> o <em>easy_install</em>. Dependiendo de la naturaleza de nuestros proyectos, las librerías suelen variar, pero siempre solemos utilizar los mismos. En estos casos puede ser útil tenerlos cerca, cacheados en un servidor en nuestra red local, para su rápido acceso …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/08/creando-roles-con-ansible.html">Creando roles con ansible</a></h2>
-                <div class="summary"><p>Ya vimos que es muy fácil crear varias máquinas iguales con <strong>ansible</strong>. A veces nos puede interesar disponer de recetas y decidir en un <em>playbook</em> general cuales de ellas ponemos en cada servidor. Una receta podría añadir un servidor de aplicaciones mientras que otra podría habilitarnos una bases de datos …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/08/creando-roles-con-ansible.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2017/04/administrando-docker-via-web-portainer.html"
+                       rel="bookmark"
+                       title="Permalink to Administrando Docker vía web: Portainer">
+                        Administrando Docker vía web: Portainer
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2017-04-24T10:00:00+02:00"> 2017-04-24</time>
+    </span>
 
-        <ul class="pagination">
-                <li class="prev"><a href="http://www.linuxsysadmin.tk/author/gerard6.html">&laquo;</a>
-                </li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard2.html">2</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard3.html">3</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard4.html">4</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard5.html">5</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard6.html">6</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.tk/author/gerard7.html">7</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard8.html">8</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard9.html">9</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard10.html">10</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard11.html">11</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard12.html">12</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard13.html">13</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard14.html">14</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard15.html">15</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard16.html">16</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/author/gerard17.html">17</a></li>
-                <li class="next"><a
-                        href="http://www.linuxsysadmin.tk/author/gerard8.html">&raquo;</a></li>
-        </ul>
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 6 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/docker.html">docker</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/portainer.html">portainer</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>El otro día me topé con un desarrollador que quiere desplegar sus contenedores <strong>Docker</strong> en el servidor de integración, pero no conoce la sintaxis del comando <em>docker</em> y prefiere una interfaz gráfica. Eso me llevó a investigar, buscando una opción bonita, funcional y ligera; al final, me topé con <strong>Portainer</strong>.</p>
+<p>Podemos encontrar la imagen en <strong>DockerHub</strong> en <a href="https://hub.docker.com/r/portainer/portainer/">este link</a>, así como una ligera descripción.</p>
+<blockquote>
+<p>Portainer is a lightweight management UI which allows you to easily manage your Docker host or Swarm cluster.
+Portainer is meant to be as simple to deploy as it is to use. It consists of a single container that can run on any Docker engine (Docker for Linux and Docker for Windows are supported).
+Portainer allows you to manage your Docker containers, images, volumes, networks and more ! It is compatible with the standalone Docker engine and with Docker Swarm.</p>
+</blockquote>
+<h2>Instalación de portainer</h2>
+<p>Levantar el contenedor no tiene ningún misterio; basta con seguir las instrucciones de <strong>DockerHub</strong> y las que nos pueda ofrecer la aplicación. Empezaremos haciendo un <code>docker pull portainer/portainer</code>, para tener la imagen en local y maravillarnos de su ligereza: se trata solo de 10mb.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker$ docker images
+REPOSITORY            TAG                 IMAGE ID            CREATED             SIZE
+portainer/portainer   latest              1ad990af4145        <span class="m">5</span> hours ago         <span class="m">9</span>.96 MB
+gerard@aldebaran:~/docker$ 
+</pre></div>
+
+
+<p>Mirando <a href="http://portainer.io/install.html">la página web</a>, vemos que levantar el contenedor no tiene ninguna dificultad; se trata de ejecutar la imagen tal cual, exponiendo el puerto 9000 a nuestra máquina <em>host</em> de <strong>docker</strong>, para su fácil acceso vía web. También le voy a dar un nombre de contenedor para su fácil administración.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker$ docker run -d -p <span class="m">9000</span>:9000 --name portainer portainer/portainer
+afcc57cfb1d0002d7e43cbdd5e6fcd0c6ada594eeac62132722e25cbb4569270
+gerard@aldebaran:~/docker$ 
+</pre></div>
+
+
+<p>Apuntando el navegador a la dirección IP del <em>host</em>, con HTTP en el puerto 9000, vemos que ha levantado. La primera vez nos va a pedir una contraseña para el usuario <em>admin</em>, así que la rellenamos. Lo siguiente es declarar el <strong>Docker Engine</strong> o el <strong>Docker Swarm</strong> que queramos controlar. Como yo quiero controlar mi <strong>Docker Engine</strong> local, lo indico; y me salta una advertencia de que necesita el <em>unix socket</em> de <strong>docker</strong> mapeado en el contenedor.</p>
+<blockquote>
+<p>On Linux and when using Docker for Mac or Docker for Windows or Docker Toolbox, ensure that you have started Portainer container with the following Docker flag -v "/var/run/docker.sock:/var/run/docker.sock"</p>
+</blockquote>
+<p>Esto significa parar el contenedor y levantarlo de nuevo con el nuevo volumen. También significa que vamos a tener que introducir la contraseña para el usuario <em>admin</em>. Mirando <a href="https://portainer.readthedocs.io/en/stable/deployment.html#persist-portainer-data">la documentación</a>, vemos que nos basta con poner la carpeta <em>/data/</em> en un volumen del <em>host</em> para persistir las configuraciones.</p>
+<p>Esto nos alarga la línea de comandos a ejecutar y empieza a ser tedioso de poner. Como siempre, <strong>docker-compose</strong> al poder.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/portainer$ cat docker-compose.yml
+version: <span class="s1">&#39;2&#39;</span>
+services:
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    hostname: portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./volumes/data:/data
+    ports:
+      - <span class="s2">&quot;9000:9000&quot;</span>
+gerard@aldebaran:~/docker/portainer$ docker-compose up -d
+Creating network <span class="s2">&quot;portainer_default&quot;</span> with the default driver
+Creating portainer
+gerard@aldebaran:~/docker/portainer$ 
+</pre></div>
+
+
+<p>Tras poner por última vez la contraseña del usuario <em>admin</em> e indicar que queremos controlar la instancia local, ya tenemos la interfaz ejecutando.</p>
+<p><img alt="Portainer dashboard" src="http://www.linuxsysadmin.tk/images/portainer-dashboard.jpg"></p>
+<p>En esta interfaz podremos lanzar todas las operaciones habituales cómodamente desde la web. Con ella podemos administrar las imágenes, los contenedores, las redes y los volúmenes.</p>
+<p><strong>AVISO</strong>: <strong>Portainer</strong> no tiene ningún sistema de persistencia y los comandos son enviados desde el formulario directamente al demonio de <strong>Docker</strong>; no se puede editar un contenedor creado, solo se puede recrearlo, de cero. Si os equivocáis, por ejemplo en una variable de entorno, no os queda más opción que recrear el contenedor entero.</p>
+<h2>Plantillas</h2>
+<p>Las plantillas son formas bonitas de levantar imágenes. Nos permiten elegir las plantillas con botones y luego nos dan un formulario prefabricado para rellenar variables de entorno. Nada más.</p>
+<p>Si usamos variables de entorno para configurar nuestros contenedores, son de gran ayuda. El conjunto básico de plantillas es muy limitado, pero se puede ampliar; nuevamente la respuesta está en <a href="https://portainer.readthedocs.io/en/stable/templates.html">la documentación</a>.</p>
+<p>Muy a <em>grosso</em> modo, las plantillas disponibles se declaran en un fichero <em>templates.json</em>, que se descarga remotamente y se indica su localización con el <em>docker command</em> <code>--templates http://portainer-templates/templates.json</code>.</p>
+<p>Este fichero se puede servir con cualquier servidor web del que dispongamos, o si no tenemos uno, podemos construir una imagen con <strong>nginx</strong>, por ejemplo. La documentación da detalles de como hacerlo.</p>
+<p>Yo mismo he creado mi propio contenedor <strong>nginx</strong> para servir mi fichero de plantillas, con <strong>Alpine Linux</strong>. No voy a poner como porque no es el <em>scope</em> de este artículo, pero si voy a actualizar el fichero <em>docker-compose.yml</em> para ver el resultado final.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/portainer$ cat docker-compose.yml 
+version: <span class="s1">&#39;2&#39;</span>
+services:
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    hostname: portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./volumes/data:/data
+    ports:
+      - <span class="s2">&quot;9000:9000&quot;</span>
+    command: --templates http://portainer-templates/templates.json
+  portainer-templates:
+    image: portainer-templates
+    container_name: portainer-templates
+    hostname: portainer-templates
+    volumes:
+      - ./volumes/templates/templates.json:/srv/www/templates.json:ro
+gerard@aldebaran:~/docker/portainer$ docker-compose up -d
+Creating portainer-templates
+Creating portainer
+gerard@aldebaran:~/docker/portainer$ 
+</pre></div>
+
+
+<p>Ahora solo queda crear un fichero con contenido adecuado de acuerdo a la documentación, que iremos actualizando a lo largo de la vida de nuestro proyecto. Solo voy a poner un <em>snippet</em> del fichero para que os hagáis una idea de como es:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/portainer$ cat volumes/templates/templates.json 
+<span class="o">[</span>
+    <span class="o">{</span>
+        <span class="s2">&quot;title&quot;</span>: <span class="s2">&quot;Kittens&quot;</span>,
+        <span class="s2">&quot;description&quot;</span>: <span class="s2">&quot;A beautiful kitten listing&quot;</span>,
+        <span class="s2">&quot;logo&quot;</span>: <span class="s2">&quot;https://s-media-cache-ak0.pinimg.com/736x/5d/bb/17/5dbb17d702b29b11f46d7a9c7ea53891.jpg&quot;</span>,
+        <span class="s2">&quot;image&quot;</span>: <span class="s2">&quot;acme/kittens&quot;</span>,
+        <span class="s2">&quot;env&quot;</span>: <span class="o">[</span>
+            <span class="o">{</span>
+                <span class="s2">&quot;name&quot;</span>: <span class="s2">&quot;ENTORNO&quot;</span>,
+                <span class="s2">&quot;label&quot;</span>: <span class="s2">&quot;ENTORNO&quot;</span>
+            <span class="o">}</span>,
+            <span class="o">{</span>
+                <span class="s2">&quot;name&quot;</span>: <span class="s2">&quot;MONGO_URL&quot;</span>,
+                <span class="s2">&quot;label&quot;</span>: <span class="s2">&quot;MONGO_URL&quot;</span>
+            <span class="o">}</span>
+        <span class="o">]</span>
+    <span class="o">}</span>,
+    <span class="o">{</span>
+        <span class="s2">&quot;title&quot;</span>: <span class="s2">&quot;MongoDB&quot;</span>,
+        <span class="s2">&quot;description&quot;</span>: <span class="s2">&quot;MongoDB is a free and open-source cross-platform document-oriented database&quot;</span>,
+        <span class="s2">&quot;logo&quot;</span>: <span class="s2">&quot;https://media.glassdoor.com/sqll/433703/mongodb-squarelogo-1407269491216.png&quot;</span>,
+        <span class="s2">&quot;image&quot;</span>: <span class="s2">&quot;acme/mongo&quot;</span>
+    <span class="o">}</span>
+<span class="o">]</span>
+gerard@aldebaran:~/docker/portainer$ 
+</pre></div>
+
+
+<p>En este caso dispondríamos de dos plantillas. La primera utiliza la imagen <em>acme/kittens</em> y necesita dos variables de entorno. La segunda utiliza la imagen <em>acme/mongo</em> y no necesita variables de entorno.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/05/evolucionando-los-contenedores-docker.html">Evolucionando los contenedores: Docker</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2017/04/una-toolbox-empaquetada-en-contenedores.html">Una toolbox empaquetada en contenedores</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'administrando-docker-via-web-portainer';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2017/04/administrando-docker-via-web-portainer.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
