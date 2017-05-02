@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>Problemas de log con docker y python - Linux Sysadmin</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2017/05/problemas-de-log-con-docker-y-python.html">
+
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="python,docker,buffering,logs,salida estándar" />
+        <meta name="description" content="El otro día estaba haciendo un script de python que debía ejecutarse en un contenedor docker. A pesar de la cantidad de verbose que le puse, no era capaz de ver ningún texto cuando miraba los logs. Tras mucha búsqueda, finalmente encontré el culpable en la variable de entorno PYTHONUNBUFFERED …" />
+
+        <meta property="og:site_name" content="Linux Sysadmin" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Problemas de log con docker y python"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/05/problemas-de-log-con-docker-y-python.html"/>
+        <meta property="og:description" content="El otro día estaba haciendo un script de python que debía ejecutarse en un contenedor docker. A pesar de la cantidad de verbose que le puse, no era capaz de ver ningún texto cuando miraba los logs. Tras mucha búsqueda, finalmente encontré el culpable en la variable de entorno PYTHONUNBUFFERED …"/>
+        <meta property="article:published_time" content="2017-05-01" />
+            <meta property="article:section" content="Operaciones" />
+            <meta property="article:tag" content="python" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:tag" content="buffering" />
+            <meta property="article:tag" content="logs" />
+            <meta property="article:tag" content="salida estándar" />
+            <meta property="article:author" content="Gerard" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="http://www.linuxsysadmin.tk/theme/css/bootstrap.cosmo.min.css" type="text/css"/>
+    <link href="http://www.linuxsysadmin.tk/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="http://www.linuxsysadmin.tk/theme/css/pygments/vim.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://www.linuxsysadmin.tk/theme/css/style.css" type="text/css"/>
+        <link href="http://www.linuxsysadmin.tk/static/custom.css" rel="stylesheet">
+
+        <link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin ATOM Feed"/>
+
+
+
+        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Operaciones ATOM Feed"/>
+
+    <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
+    <script type="text/javascript">
+        window.cookieconsent_options = {"message":"De acuerdo a la ley vigente, estoy obligado a informarte de la obviedad de que este sitio utiliza cookies.","dismiss":"Acepto","learnMore":"Mas información","link":null,"theme":"dark-bottom"};
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/1.0.9/cookieconsent.min.js"></script>
+    <!-- End Cookie Consent plugin -->
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://www.linuxsysadmin.tk/" class="navbar-brand">
+Linux Sysadmin            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://www.linuxsysadmin.tk/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
+                <li class="active">Problemas de log con docker y python</li>
+            </ol>
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Banner linuxsysadmin -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6984858420847602"
+     data-ad-slot="7977846974"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2017/05/problemas-de-log-con-docker-y-python.html"
+                       rel="bookmark"
+                       title="Permalink to Problemas de log con docker y python">
+                        Problemas de log con docker y python
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2017-05-01T10:00:00+02:00"> 2017-05-01</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 4 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/python.html">python</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/docker.html">docker</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/buffering.html">buffering</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/logs.html">logs</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/salida-estandar.html">salida estándar</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>El otro día estaba haciendo un <em>script</em> de <strong>python</strong> que debía ejecutarse en un contenedor <strong>docker</strong>. A pesar de la cantidad de <em>verbose</em> que le puse, no era capaz de ver ningún texto cuando miraba los <em>logs</em>. Tras mucha búsqueda, finalmente encontré el culpable en la variable de entorno <strong>PYTHONUNBUFFERED</strong>.</p>
+<p>El <em>script</em> en sí mismo solo pretendía comprobar si habían eventos en una cola, para su posterior proceso. La sorpresa es que no podía ver nada cuando ejecutaba <strong>docker</strong> en modo <em>detached</em> o en <strong>docker-compose</strong>.</p>
+<h2>El problema</h2>
+<p>Para reducir mucho el problema, se plantea un <em>script</em> llamado <em>poll.sh</em> que emita un mensaje en la salida estándar cada segundo, como sigue:</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M:%S&#39;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Podemos comprobar que hace lo que se le supone. Sin embargo, el problema aparece al crear una imagen para su ejecución con <strong>docker</strong>. Vamos a usar una imagen base de <em>DockerHub</em> para mantener la dimensión del problema bajo control.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/poller$ cat Dockerfile 
+FROM python:2-slim
+COPY poll.py /
+CMD <span class="o">[</span><span class="s2">&quot;python&quot;</span>, <span class="s2">&quot;poll.py&quot;</span><span class="o">]</span>
+gerard@aldebaran:~/docker/poller$ 
+</pre></div>
+
+
+<p>Tras construir la imagen, vemos que no hay salida durante su ejecución:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/poller$ docker run --name poller -d poller
+314d32b425d1d222527678fc15c73147162d62195c56422fc90729e9b4f6594b
+gerard@aldebaran:~/docker/poller$ sleep <span class="m">10</span>
+gerard@aldebaran:~/docker/poller$ docker logs poller
+gerard@aldebaran:~/docker/poller$ 
+</pre></div>
+
+
+<p>Tras 10 segundos de espera, el <em>script</em> debería haber escrito unas 10 veces en la salida, y sin embargo no muestra nada.</p>
+<h2>La causa</h2>
+<p>Tras mucho esperar, me di cuenta de un factor interesante: tras varios minutos, se añadían muchas líneas en la salida, con sus <em>timestamps</em> diferenciados entre sí por un segundo, más o menos.</p>
+<p>el primer pensamiento que viene en mi cabeza ante este comportamiento, es <em>buffering</em>; no se trata de que la salida no sale, sino que sale en paquetes grandes, que se han ido acumulando en un <em>buffer</em> para optimizar las escrituras a los dispositivos permanentes.</p>
+<p>Como esto no es aceptable para mi aplicación, intenté buscar en <strong>python</strong> una respuesta satisfactoria, encontrándola en <a href="https://docs.python.org/2/using/cmdline.html#cmdoption-u">la documentación</a>.</p>
+<p>Parece ser que <strong>python</strong> acepta una opción <em>-u</em> en la línea de comandos, o una variable de entorno <strong>PYTHONUNBUFFERED</strong> que elimina el comportamiento <em>buffereado</em> de la salida estándar.</p>
+<h2>La solución</h2>
+<p>Sabiendo la causa del problema, la solución es todavía más simple: solo se trata de desactivar este comportamiento.</p>
+<p>Esto se consigue con alguna de las dos opciones siguientes:</p>
+<ul>
+<li>Podemos invocar el intérprete con el <em>flag -u</em></li>
+<li>Podemos hacer que el intérprete se ejecute en un entorno que defina la variable <strong>PYTHONUNBUFFERED</strong></li>
+</ul>
+<p>Así pues, y tras modificar un poco nuestro <em>Dockerfile</em>, el problema deja de existir.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/poller$ cat Dockerfile 
+FROM python:2-slim
+COPY poll.py /
+CMD <span class="o">[</span><span class="s2">&quot;python&quot;</span>, <span class="s2">&quot;-u&quot;</span>, <span class="s2">&quot;poll.py&quot;</span><span class="o">]</span>
+gerard@aldebaran:~/docker/poller$ 
+</pre></div>
+
+
+<p>Y de esta forma podemos repetir el <em>test</em> inicial, para demostrar que ya no nos ocurre de nuevo.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/poller$ docker run --name poller -d poller
+bb3bdaaf5ef92e2f38a70b30163abd335920aa940eb1327716eac3fa656ad651
+gerard@aldebaran:~/docker/poller$ sleep <span class="m">10</span>
+gerard@aldebaran:~/docker/poller$ docker logs poller
+<span class="m">13</span>:24:08
+<span class="m">13</span>:24:09
+<span class="m">13</span>:24:10
+<span class="m">13</span>:24:11
+<span class="m">13</span>:24:12
+<span class="m">13</span>:24:13
+<span class="m">13</span>:24:14
+<span class="m">13</span>:24:15
+<span class="m">13</span>:24:16
+<span class="m">13</span>:24:17
+<span class="m">13</span>:24:18
+<span class="m">13</span>:24:19
+<span class="m">13</span>:24:20
+<span class="m">13</span>:24:21
+<span class="m">13</span>:24:22
+gerard@aldebaran:~/docker/poller$ 
+</pre></div>
+
+
+<p>De hecho, el comportamiento es más evidente si vemos los <em>logs</em> en modo <em>follow</em>, o lo que es lo mismo, usando el <em>flag -f</em>. Con él podemos ver como salta una traza cada segundo, de forma puntual y sin retardos.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html">Separando el build y el runtime con contenedores Docker</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/08/generando-passwords-complejas-con-python.html">Generando passwords complejas con python</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html">Lanzando playbooks de Ansible desde Jenkins</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'problemas-de-log-con-docker-y-python';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2017/05/problemas-de-log-con-docker-y-python.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+              <ul class="list-group" id="social">
+                <li class="list-group-item"><a href="https://github.com/sirtea"><i class="fa fa-github-square fa-lg"></i> GitHub</a></li>
+              </ul>
+            </li>
+
+
+            <li class="list-group-item"><a href="http://www.linuxsysadmin.tk/categories.html"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Categorías</span></h4></a>
+                <ul class="list-group" id="categories">
+                    <li class="list-group-item">
+                        <a href="http://www.linuxsysadmin.tk/category/desarrollo.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Desarrollo
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="http://www.linuxsysadmin.tk/category/miscelanea.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Miscelánea
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Operaciones
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="http://www.linuxsysadmin.tk/category/seguridad.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Seguridad
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="http://www.linuxsysadmin.tk/category/sistemas.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Sistemas
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="http://www.linuxsysadmin.tk/category/virtualizacion.html">
+                            <i class="fa fa-folder-open fa-lg"></i> Virtualización
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Sidebar linuxsysadmin -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-6984858420847602"
+     data-ad-slot="1931313371"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+            <li class="list-group-item"><a href="http://www.linuxsysadmin.tk/tags.html"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                <ul class="list-group list-inline tagcloud" id="tags">
+                    <li class="list-group-item tag-2">
+                        <a href="http://www.linuxsysadmin.tk/tag/ansible.html">
+                            ansible
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/archlinux.html">
+                            archlinux
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/auditoria.html">
+                            auditoría
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/balanceador.html">
+                            balanceador
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/blog.html">
+                            blog
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/bridge.html">
+                            bridge
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/buffering.html">
+                            buffering
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/cache.html">
+                            cache
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/capabilities.html">
+                            capabilities
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/centos.html">
+                            centos
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/certificado.html">
+                            certificado
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/chronograf.html">
+                            chronograf
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/curl.html">
+                            curl
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-1">
+                        <a href="http://www.linuxsysadmin.tk/tag/debian.html">
+                            debian
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/debootstrap.html">
+                            debootstrap
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/desviacion-estandar.html">
+                            desviación estándar
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/dhcp.html">
+                            dhcp
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/distribucion.html">
+                            distribución
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/dns.html">
+                            dns
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/dnsmasq.html">
+                            dnsmasq
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-1">
+                        <a href="http://www.linuxsysadmin.tk/tag/docker.html">
+                            docker
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/docker-compose.html">
+                            docker-compose
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/dockerfile.html">
+                            dockerfile
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/elastic-search.html">
+                            elastic search
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/elk.html">
+                            ELK
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/encriptacion.html">
+                            encriptación
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/escalable.html">
+                            escalable
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/escritorio.html">
+                            escritorio
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/failover.html">
+                            failover
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-2">
+                        <a href="http://www.linuxsysadmin.tk/tag/firehol.html">
+                            firehol
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/genisoimage.html">
+                            genisoimage
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/ghost.html">
+                            ghost
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/git.html">
+                            git
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/github-pages.html">
+                            github pages
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/html.html">
+                            html
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/https.html">
+                            https
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/inventario.html">
+                            inventario
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/isolinux.html">
+                            isolinux
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-2">
+                        <a href="http://www.linuxsysadmin.tk/tag/jaula.html">
+                            jaula
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-1">
+                        <a href="http://www.linuxsysadmin.tk/tag/jessie.html">
+                            jessie
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/keepalived.html">
+                            keepalived
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/kernel.html">
+                            kernel
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/kibana.html">
+                            kibana
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/ldd.html">
+                            ldd
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-1">
+                        <a href="http://www.linuxsysadmin.tk/tag/linux.html">
+                            linux
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/livecd.html">
+                            livecd
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/logical-volume-manager.html">
+                            logical volume manager
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/logs.html">
+                            logs
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/lvm.html">
+                            lvm
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/lxc.html">
+                            lxc
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/maipo.html">
+                            maipo
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/markdown.html">
+                            markdown
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/memory-manager.html">
+                            memory manager
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-2">
+                        <a href="http://www.linuxsysadmin.tk/tag/mongodb.html">
+                            mongodb
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/mysql.html">
+                            mysql
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/nfs.html">
+                            NFS
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-2">
+                        <a href="http://www.linuxsysadmin.tk/tag/nginx.html">
+                            nginx
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/nmap.html">
+                            nmap
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/paquete.html">
+                            paquete
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/passphrase.html">
+                            passphrase
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/password.html">
+                            password
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/pentest.html">
+                            pentest
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/php.html">
+                            php
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-2">
+                        <a href="http://www.linuxsysadmin.tk/tag/playbook.html">
+                            playbook
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/plugins.html">
+                            plugins
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/point-in-time.html">
+                            point-in-time
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/port-knocking.html">
+                            port knocking
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/proxy-http.html">
+                            proxy http
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/pwgen.html">
+                            pwgen
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/pypi.html">
+                            PyPI
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-1">
+                        <a href="http://www.linuxsysadmin.tk/tag/python.html">
+                            python
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/redhat.html">
+                            redhat
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/release.html">
+                            release
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/replica-set.html">
+                            replica set
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/rol.html">
+                            rol
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/root.html">
+                            root
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/rssh.html">
+                            rssh
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/rsync.html">
+                            rsync
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/runit.html">
+                            runit
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/script.html">
+                            script
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/seguridad.html">
+                            seguridad
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/semaforo.html">
+                            semáforo
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/squashfs.html">
+                            squashfs
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-2">
+                        <a href="http://www.linuxsysadmin.tk/tag/ssh.html">
+                            ssh
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/ssl.html">
+                            ssl
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/sysbench.html">
+                            sysbench
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-2">
+                        <a href="http://www.linuxsysadmin.tk/tag/systemd.html">
+                            systemd
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/telegraf.html">
+                            telegraf
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/telegram.html">
+                            telegram
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/tmpfs.html">
+                            tmpfs
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/toolbox.html">
+                            toolbox
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/tunel.html">
+                            túnel
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/ubuntu.html">
+                            ubuntu
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/uwsgi.html">
+                            uWSGI
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/virtual-hosts.html">
+                            virtual hosts
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-2">
+                        <a href="http://www.linuxsysadmin.tk/tag/virtualenv.html">
+                            virtualenv
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/volumenes.html">
+                            volumenes
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/wheel.html">
+                            wheel
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/wsgi.html">
+                            WSGI
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/xfce.html">
+                            xfce
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2017 Gerard
+            &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Volver arriba</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="http://www.linuxsysadmin.tk/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="http://www.linuxsysadmin.tk/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="http://www.linuxsysadmin.tk/theme/js/respond.min.js"></script>
+
+    <!-- Disqus -->
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function () {
+            var s = document.createElement('script');
+            s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+    </script>
+    <!-- End Disqus Code -->
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-68486572-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+    <!-- End Google Analytics Code -->
+
+</body>
+</html>

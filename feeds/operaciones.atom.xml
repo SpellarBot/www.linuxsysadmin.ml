@@ -1,5 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-04-24T10:00:00+02:00</updated><entry><title>Administrando Docker vía web: Portainer</title><link href="http://www.linuxsysadmin.tk/2017/04/administrando-docker-via-web-portainer.html" rel="alternate"></link><published>2017-04-24T10:00:00+02:00</published><updated>2017-04-24T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-04-24:/2017/04/administrando-docker-via-web-portainer.html</id><summary type="html">&lt;p&gt;El otro día me topé con un desarrollador que quiere desplegar sus contenedores &lt;strong&gt;Docker&lt;/strong&gt; en el servidor de integración, pero no conoce la sintaxis del comando &lt;em&gt;docker&lt;/em&gt; y prefiere una interfaz gráfica. Eso me llevó a investigar, buscando una opción bonita, funcional y ligera; al final, me topé con &lt;strong&gt;Portainer …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día me topé con un desarrollador que quiere desplegar sus contenedores &lt;strong&gt;Docker&lt;/strong&gt; en el servidor de integración, pero no conoce la sintaxis del comando &lt;em&gt;docker&lt;/em&gt; y prefiere una interfaz gráfica. Eso me llevó a investigar, buscando una opción bonita, funcional y ligera; al final, me topé con &lt;strong&gt;Portainer&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-05-01T10:00:00+02:00</updated><entry><title>Problemas de log con docker y python</title><link href="http://www.linuxsysadmin.tk/2017/05/problemas-de-log-con-docker-y-python.html" rel="alternate"></link><published>2017-05-01T10:00:00+02:00</published><updated>2017-05-01T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-05-01:/2017/05/problemas-de-log-con-docker-y-python.html</id><summary type="html">&lt;p&gt;El otro día estaba haciendo un &lt;em&gt;script&lt;/em&gt; de &lt;strong&gt;python&lt;/strong&gt; que debía ejecutarse en un contenedor &lt;strong&gt;docker&lt;/strong&gt;. A pesar de la cantidad de &lt;em&gt;verbose&lt;/em&gt; que le puse, no era capaz de ver ningún texto cuando miraba los &lt;em&gt;logs&lt;/em&gt;. Tras mucha búsqueda, finalmente encontré el culpable en la variable de entorno &lt;strong&gt;PYTHONUNBUFFERED …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día estaba haciendo un &lt;em&gt;script&lt;/em&gt; de &lt;strong&gt;python&lt;/strong&gt; que debía ejecutarse en un contenedor &lt;strong&gt;docker&lt;/strong&gt;. A pesar de la cantidad de &lt;em&gt;verbose&lt;/em&gt; que le puse, no era capaz de ver ningún texto cuando miraba los &lt;em&gt;logs&lt;/em&gt;. Tras mucha búsqueda, finalmente encontré el culpable en la variable de entorno &lt;strong&gt;PYTHONUNBUFFERED&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;El &lt;em&gt;script&lt;/em&gt; en sí mismo solo pretendía comprobar si habían eventos en una cola, para su posterior proceso. La sorpresa es que no podía ver nada cuando ejecutaba &lt;strong&gt;docker&lt;/strong&gt; en modo &lt;em&gt;detached&lt;/em&gt; o en &lt;strong&gt;docker-compose&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;El problema&lt;/h2&gt;
+&lt;p&gt;Para reducir mucho el problema, se plantea un &lt;em&gt;script&lt;/em&gt; llamado &lt;em&gt;poll.sh&lt;/em&gt; que emita un mensaje en la salida estándar cada segundo, como sigue:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;datetime&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;datetime&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;time&lt;/span&gt;
+
+&lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;datetime&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;utcnow&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;strftime&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;%H:%M:%S&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sleep&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos comprobar que hace lo que se le supone. Sin embargo, el problema aparece al crear una imagen para su ejecución con &lt;strong&gt;docker&lt;/strong&gt;. Vamos a usar una imagen base de &lt;em&gt;DockerHub&lt;/em&gt; para mantener la dimensión del problema bajo control.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/poller$ cat Dockerfile 
+FROM python:2-slim
+COPY poll.py /
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;python&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;poll.py&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@aldebaran:~/docker/poller$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Tras construir la imagen, vemos que no hay salida durante su ejecución:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/poller$ docker run --name poller -d poller
+314d32b425d1d222527678fc15c73147162d62195c56422fc90729e9b4f6594b
+gerard@aldebaran:~/docker/poller$ sleep &lt;span class="m"&gt;10&lt;/span&gt;
+gerard@aldebaran:~/docker/poller$ docker logs poller
+gerard@aldebaran:~/docker/poller$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Tras 10 segundos de espera, el &lt;em&gt;script&lt;/em&gt; debería haber escrito unas 10 veces en la salida, y sin embargo no muestra nada.&lt;/p&gt;
+&lt;h2&gt;La causa&lt;/h2&gt;
+&lt;p&gt;Tras mucho esperar, me di cuenta de un factor interesante: tras varios minutos, se añadían muchas líneas en la salida, con sus &lt;em&gt;timestamps&lt;/em&gt; diferenciados entre sí por un segundo, más o menos.&lt;/p&gt;
+&lt;p&gt;el primer pensamiento que viene en mi cabeza ante este comportamiento, es &lt;em&gt;buffering&lt;/em&gt;; no se trata de que la salida no sale, sino que sale en paquetes grandes, que se han ido acumulando en un &lt;em&gt;buffer&lt;/em&gt; para optimizar las escrituras a los dispositivos permanentes.&lt;/p&gt;
+&lt;p&gt;Como esto no es aceptable para mi aplicación, intenté buscar en &lt;strong&gt;python&lt;/strong&gt; una respuesta satisfactoria, encontrándola en &lt;a href="https://docs.python.org/2/using/cmdline.html#cmdoption-u"&gt;la documentación&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Parece ser que &lt;strong&gt;python&lt;/strong&gt; acepta una opción &lt;em&gt;-u&lt;/em&gt; en la línea de comandos, o una variable de entorno &lt;strong&gt;PYTHONUNBUFFERED&lt;/strong&gt; que elimina el comportamiento &lt;em&gt;buffereado&lt;/em&gt; de la salida estándar.&lt;/p&gt;
+&lt;h2&gt;La solución&lt;/h2&gt;
+&lt;p&gt;Sabiendo la causa del problema, la solución es todavía más simple: solo se trata de desactivar este comportamiento.&lt;/p&gt;
+&lt;p&gt;Esto se consigue con alguna de las dos opciones siguientes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Podemos invocar el intérprete con el &lt;em&gt;flag -u&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Podemos hacer que el intérprete se ejecute en un entorno que defina la variable &lt;strong&gt;PYTHONUNBUFFERED&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Así pues, y tras modificar un poco nuestro &lt;em&gt;Dockerfile&lt;/em&gt;, el problema deja de existir.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/poller$ cat Dockerfile 
+FROM python:2-slim
+COPY poll.py /
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;python&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-u&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;poll.py&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@aldebaran:~/docker/poller$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y de esta forma podemos repetir el &lt;em&gt;test&lt;/em&gt; inicial, para demostrar que ya no nos ocurre de nuevo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/poller$ docker run --name poller -d poller
+bb3bdaaf5ef92e2f38a70b30163abd335920aa940eb1327716eac3fa656ad651
+gerard@aldebaran:~/docker/poller$ sleep &lt;span class="m"&gt;10&lt;/span&gt;
+gerard@aldebaran:~/docker/poller$ docker logs poller
+&lt;span class="m"&gt;13&lt;/span&gt;:24:08
+&lt;span class="m"&gt;13&lt;/span&gt;:24:09
+&lt;span class="m"&gt;13&lt;/span&gt;:24:10
+&lt;span class="m"&gt;13&lt;/span&gt;:24:11
+&lt;span class="m"&gt;13&lt;/span&gt;:24:12
+&lt;span class="m"&gt;13&lt;/span&gt;:24:13
+&lt;span class="m"&gt;13&lt;/span&gt;:24:14
+&lt;span class="m"&gt;13&lt;/span&gt;:24:15
+&lt;span class="m"&gt;13&lt;/span&gt;:24:16
+&lt;span class="m"&gt;13&lt;/span&gt;:24:17
+&lt;span class="m"&gt;13&lt;/span&gt;:24:18
+&lt;span class="m"&gt;13&lt;/span&gt;:24:19
+&lt;span class="m"&gt;13&lt;/span&gt;:24:20
+&lt;span class="m"&gt;13&lt;/span&gt;:24:21
+&lt;span class="m"&gt;13&lt;/span&gt;:24:22
+gerard@aldebaran:~/docker/poller$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De hecho, el comportamiento es más evidente si vemos los &lt;em&gt;logs&lt;/em&gt; en modo &lt;em&gt;follow&lt;/em&gt;, o lo que es lo mismo, usando el &lt;em&gt;flag -f&lt;/em&gt;. Con él podemos ver como salta una traza cada segundo, de forma puntual y sin retardos.&lt;/p&gt;</content><category term="python"></category><category term="docker"></category><category term="buffering"></category><category term="logs"></category><category term="salida estándar"></category></entry><entry><title>Administrando Docker vía web: Portainer</title><link href="http://www.linuxsysadmin.tk/2017/04/administrando-docker-via-web-portainer.html" rel="alternate"></link><published>2017-04-24T10:00:00+02:00</published><updated>2017-04-24T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-04-24:/2017/04/administrando-docker-via-web-portainer.html</id><summary type="html">&lt;p&gt;El otro día me topé con un desarrollador que quiere desplegar sus contenedores &lt;strong&gt;Docker&lt;/strong&gt; en el servidor de integración, pero no conoce la sintaxis del comando &lt;em&gt;docker&lt;/em&gt; y prefiere una interfaz gráfica. Eso me llevó a investigar, buscando una opción bonita, funcional y ligera; al final, me topé con &lt;strong&gt;Portainer …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día me topé con un desarrollador que quiere desplegar sus contenedores &lt;strong&gt;Docker&lt;/strong&gt; en el servidor de integración, pero no conoce la sintaxis del comando &lt;em&gt;docker&lt;/em&gt; y prefiere una interfaz gráfica. Eso me llevó a investigar, buscando una opción bonita, funcional y ligera; al final, me topé con &lt;strong&gt;Portainer&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Podemos encontrar la imagen en &lt;strong&gt;DockerHub&lt;/strong&gt; en &lt;a href="https://hub.docker.com/r/portainer/portainer/"&gt;este link&lt;/a&gt;, así como una ligera descripción.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Portainer is a lightweight management UI which allows you to easily manage your Docker host or Swarm cluster.
