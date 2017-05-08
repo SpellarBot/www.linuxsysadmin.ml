@@ -1,5 +1,208 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-05-01T10:00:00+02:00</updated><entry><title>Problemas de log con docker y python</title><link href="http://www.linuxsysadmin.tk/2017/05/problemas-de-log-con-docker-y-python.html" rel="alternate"></link><published>2017-05-01T10:00:00+02:00</published><updated>2017-05-01T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-05-01:/2017/05/problemas-de-log-con-docker-y-python.html</id><summary type="html">&lt;p&gt;El otro día estaba haciendo un &lt;em&gt;script&lt;/em&gt; de &lt;strong&gt;python&lt;/strong&gt; que debía ejecutarse en un contenedor &lt;strong&gt;docker&lt;/strong&gt;. A pesar de la cantidad de &lt;em&gt;verbose&lt;/em&gt; que le puse, no era capaz de ver ningún texto cuando miraba los &lt;em&gt;logs&lt;/em&gt;. Tras mucha búsqueda, finalmente encontré el culpable en la variable de entorno &lt;strong&gt;PYTHONUNBUFFERED …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día estaba haciendo un &lt;em&gt;script&lt;/em&gt; de &lt;strong&gt;python&lt;/strong&gt; que debía ejecutarse en un contenedor &lt;strong&gt;docker&lt;/strong&gt;. A pesar de la cantidad de &lt;em&gt;verbose&lt;/em&gt; que le puse, no era capaz de ver ningún texto cuando miraba los &lt;em&gt;logs&lt;/em&gt;. Tras mucha búsqueda, finalmente encontré el culpable en la variable de entorno &lt;strong&gt;PYTHONUNBUFFERED&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-05-08T10:00:00+02:00</updated><entry><title>Reduciendo el tiempo de build con Docker y su caché</title><link href="http://www.linuxsysadmin.tk/2017/05/reduciendo-el-tiempo-de-build-con-docker-y-su-cache.html" rel="alternate"></link><published>2017-05-08T10:00:00+02:00</published><updated>2017-05-08T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-05-08:/2017/05/reduciendo-el-tiempo-de-build-con-docker-y-su-cache.html</id><summary type="html">&lt;p&gt;Cuando construimos imágenes &lt;strong&gt;docker&lt;/strong&gt;, muchas veces no somos conscientes del poder de la caché integrada. Si reordenamos algunas instrucciones y aplicamos algún truco, podemos evitarnos el hecho de reconstruir muchas de esas capas, llegando a reducir el tiempo de &lt;em&gt;rebuild&lt;/em&gt; a prácticamente cero, siempre y cuando no hayan grandes cambios …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando construimos imágenes &lt;strong&gt;docker&lt;/strong&gt;, muchas veces no somos conscientes del poder de la caché integrada. Si reordenamos algunas instrucciones y aplicamos algún truco, podemos evitarnos el hecho de reconstruir muchas de esas capas, llegando a reducir el tiempo de &lt;em&gt;rebuild&lt;/em&gt; a prácticamente cero, siempre y cuando no hayan grandes cambios.&lt;/p&gt;
+&lt;p&gt;Esa es una reflexión que me hice el otro día. Es verdad que con la caché integrada me ahorro de descargar la imagen base y de instalar algunas dependencias habituales, pero usando la cabeza descubrí que puedo conseguir mucho más.&lt;/p&gt;
+&lt;p&gt;Es muy habitual que tenga que construir proyectos que usen &lt;strong&gt;python&lt;/strong&gt;, pero me molesta un poco tener que perder el tiempo en el comando &lt;strong&gt;pip&lt;/strong&gt; instalando dependencias; hay que tener en cuenta que casi nunca cambian entre diferentes versiones y es un tiempo que no sería necesario.&lt;/p&gt;
+&lt;p&gt;Así que hice el ejercicio de reordenar las instrucciones en mi &lt;em&gt;Dockerfile&lt;/em&gt;, moviendo al principio aquellas instrucciones que raramente provocarán cambios, y dejando al final aquellas que es más frecuente que cambien, y por lo tanto, que necesiten ser reconstruidas.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo práctico&lt;/h2&gt;
+&lt;p&gt;Para empezar, vamos a usar un aplicación simple, concretamente un &lt;em&gt;hello world&lt;/em&gt; estándar con un &lt;em&gt;microframework&lt;/em&gt; llamado &lt;strong&gt;bottle&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/myapp$ tree
+.
+├── app
+│   ├── app.py
+│   └── requirements.txt
+└── Dockerfile
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;3&lt;/span&gt; files
+gerard@aldebaran:~/docker/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Realmente la aplicación es lo de menos, siendo este ejemplo extrapolable a cada &lt;em&gt;framework&lt;/em&gt; o librería que se necesite; se incluyen por tener el ejemplo completo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/myapp$ cat app/app.py 
+from bottle import Bottle
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Bottle&lt;span class="o"&gt;()&lt;/span&gt;
+
+@app.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def hello&lt;span class="o"&gt;()&lt;/span&gt;:
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Hello world!&amp;#39;&lt;/span&gt;
+gerard@aldebaran:~/docker/myapp$ cat app/requirements.txt 
+&lt;span class="nv"&gt;bottle&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.12.13
+gerard@aldebaran:~/docker/myapp$ cat app/app.py 
+from bottle import Bottle
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Bottle&lt;span class="o"&gt;()&lt;/span&gt;
+
+@app.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def hello&lt;span class="o"&gt;()&lt;/span&gt;:
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Hello world!&amp;#39;&lt;/span&gt;
+gerard@aldebaran:~/docker/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para construir la imagen, usamos un &lt;em&gt;Dockerfile&lt;/em&gt; muy estándar y nada complejo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/myapp$ cat Dockerfile
+FROM alpine:3.5
+RUN apk add --no-cache py-gunicorn py2-pip
+COPY app/ /srv/app/
+RUN pip install -r /srv/app/requirements.txt
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;gunicorn&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--bind=0.0.0.0:8080&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--user=nobody&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--group=nobody&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--workers=2&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--chdir=/srv/app&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;app:app&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@aldebaran:~/docker/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Así que construimos nuestra imagen, con el comando habitual:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/myapp$ docker build -t myapp:1.0 .
+Sending build context to Docker daemon  &lt;span class="m"&gt;5&lt;/span&gt;.632kB
+...  
+Successfully built 46611b6a730f
+gerard@aldebaran:~/docker/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;No es difícil comprobar lo que pasa cuando modificamos un poco nuestra aplicación, que en este caso se localiza entera en &lt;em&gt;app.py&lt;/em&gt;: se reconstruyen todos los pasos a partir del tercero (el COPY).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/myapp$ docker build -t myapp:1.1 .
+Sending build context to Docker daemon  &lt;span class="m"&gt;5&lt;/span&gt;.632kB
+Step &lt;span class="m"&gt;1&lt;/span&gt;/5 : FROM alpine:3.5
+ ---&amp;gt; 4a415e366388
+Step &lt;span class="m"&gt;2&lt;/span&gt;/5 : RUN apk add --no-cache py-gunicorn py2-pip
+ ---&amp;gt; Using cache
+ ---&amp;gt; fa57ea0220f9
+Step &lt;span class="m"&gt;3&lt;/span&gt;/5 : COPY app/ /srv/app/
+ ---&amp;gt; dcaa218d663e
+Removing intermediate container 800e88f3a533
+Step &lt;span class="m"&gt;4&lt;/span&gt;/5 : RUN pip install -r /srv/app/requirements.txt
+ ---&amp;gt; Running in 29914cddfb3d
+Collecting &lt;span class="nv"&gt;bottle&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.12.13 &lt;span class="o"&gt;(&lt;/span&gt;from -r /srv/app/requirements.txt &lt;span class="o"&gt;(&lt;/span&gt;line &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;))&lt;/span&gt;
+  Downloading bottle-0.12.13.tar.gz &lt;span class="o"&gt;(&lt;/span&gt;70kB&lt;span class="o"&gt;)&lt;/span&gt;
+Installing collected packages: bottle
+  Running setup.py install &lt;span class="k"&gt;for&lt;/span&gt; bottle: started
+    Running setup.py install &lt;span class="k"&gt;for&lt;/span&gt; bottle: finished with status &lt;span class="s1"&gt;&amp;#39;done&amp;#39;&lt;/span&gt;
+Successfully installed bottle-0.12.13
+You are using pip version &lt;span class="m"&gt;9&lt;/span&gt;.0.0, however version &lt;span class="m"&gt;9&lt;/span&gt;.0.1 is available.
+You should consider upgrading via the &lt;span class="s1"&gt;&amp;#39;pip install --upgrade pip&amp;#39;&lt;/span&gt; command.
+ ---&amp;gt; 4e294d8038a8
+Removing intermediate container 29914cddfb3d
+Step &lt;span class="m"&gt;5&lt;/span&gt;/5 : CMD gunicorn --bind&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.0.0.0:8080 --user&lt;span class="o"&gt;=&lt;/span&gt;nobody --group&lt;span class="o"&gt;=&lt;/span&gt;nobody --workers&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; --chdir&lt;span class="o"&gt;=&lt;/span&gt;/srv/app app:app
+ ---&amp;gt; Running in 6021cfceff96
+ ---&amp;gt; b781e46aec9c
+Removing intermediate container 6021cfceff96
+Successfully built b781e46aec9c
+gerard@aldebaran:~/docker/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A partir de aquí, vamos a intentar mejorar eso.&lt;/p&gt;
+&lt;h3&gt;Reordenamos las capas: las menos probables de cambio, antes&lt;/h3&gt;
+&lt;p&gt;En este ejemplo, no hay mucho que cambiar; solo hay una instrucción que es siempre la misma (el CMD), pero que se reconstruye porque las anteriores también lo hacen. En este caso, solo le indica el comando de &lt;em&gt;runtime&lt;/em&gt;, y para esto no se depende ni del COPY, ni del &lt;em&gt;pip install&lt;/em&gt;, así que puede ir antes de ambas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/myapp$ cat Dockerfile
+FROM alpine:3.5
+RUN apk add --no-cache py-gunicorn py2-pip
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;gunicorn&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--bind=0.0.0.0:8080&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--user=nobody&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--group=nobody&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--workers=2&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--chdir=/srv/app&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;app:app&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+COPY app/ /srv/app/
+RUN pip install -r /srv/app/requirements.txt
+gerard@aldebaran:~/docker/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este punto no nos queda más remedio que reconstruir las 3 capas de nuevo, pero vemos que los &lt;em&gt;builds&lt;/em&gt; sucesivos (con la aplicación modificada) no van a provocar cambio en esa capa.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/myapp$ docker build -t myapp:1.2 .
+Sending build context to Docker daemon  &lt;span class="m"&gt;5&lt;/span&gt;.632kB
+...  
+Successfully built b9ca6021019e
+gerard@aldebaran:~/docker/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Cambiamos nuestra aplicación, y vemos que el paso CMD no se reconstruye:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/myapp$ docker build -t myapp:1.3 .
+Sending build context to Docker daemon  &lt;span class="m"&gt;5&lt;/span&gt;.632kB
+...  
+Step &lt;span class="m"&gt;3&lt;/span&gt;/5 : CMD gunicorn --bind&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.0.0.0:8080 --user&lt;span class="o"&gt;=&lt;/span&gt;nobody --group&lt;span class="o"&gt;=&lt;/span&gt;nobody --workers&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; --chdir&lt;span class="o"&gt;=&lt;/span&gt;/srv/app app:app
+ ---&amp;gt; Using cache
+ ---&amp;gt; 0e99aa9dd9cf
+...  
+Successfully built b4289c56e7cb
+gerard@aldebaran:~/docker/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto nos ahorramos reconstruir capas que realmente no cambian, pero ven forzada su reconstrucción porque las capas anteriores sí lo hacen. En un caso más complejo, el beneficio se notaría más que en este pequeño ejemplo.&lt;/p&gt;
+&lt;h3&gt;Copias parciales para ahorrarnos capas&lt;/h3&gt;
+&lt;p&gt;El ejemplo anterior ha supuesto una mejora, pero vemos un hecho curioso: el &lt;em&gt;pip install&lt;/em&gt; es el paso más lento en una reconstrucción y no sería necesario en caso de no cambiar las dependencias de nuestra aplicación, que es la mayoría de veces. Entonces, ¿Porqué se tiene que rehacer cada vez, para obtener exactamente el mismo resultado?&lt;/p&gt;
+&lt;p&gt;Simplemente se hace porque al copiar la carpeta, &lt;strong&gt;docker&lt;/strong&gt; detecta un cambio &lt;em&gt;en alguno&lt;/em&gt; de los ficheros, y por diseño, invalida la capa equivalente. Esto causa una invalidación de caché en cascada y obliga a las siguientes instrucciones a rehacerse.&lt;/p&gt;
+&lt;p&gt;El truco consiste en copiar solamente el fichero de requisitos, con la esperanza de que no haya cambiado, lo que nos ahorraría el &lt;em&gt;pip install&lt;/em&gt;, ya que no invalidaría las capas de caché. El resto de la aplicación se puede copiar después.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/myapp$ cat Dockerfile
+FROM alpine:3.5
+RUN apk add --no-cache py-gunicorn py2-pip
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;gunicorn&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--bind=0.0.0.0:8080&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--user=nobody&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--group=nobody&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--workers=2&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--chdir=/srv/app&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;app:app&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+COPY app/requirements.txt /srv/app/
+RUN pip install -r /srv/app/requirements.txt
+COPY app/ /srv/app/
+gerard@aldebaran:~/docker/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Construimos la imagen dos veces, una para crear la nueva estructura de capas (el precio de la primera construcción), y la otra para ver el beneficio de la nueva aproximación.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/myapp$ docker build -t myapp:1.4 .
+Sending build context to Docker daemon  &lt;span class="m"&gt;5&lt;/span&gt;.632kB
+...  
+Successfully built c64016c758a4
+gerard@aldebaran:~/docker/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y a partir de ahora, cada cambio de código que no implique un cambio en el &lt;em&gt;requirements.txt&lt;/em&gt;, solo implicará copiar ese código sobre la capa que ya contiene nuestras dependencias, ahorrándonos el &lt;em&gt;pip install&lt;/em&gt;, y convirtiendo el proceso de &lt;em&gt;build&lt;/em&gt; en algo casi instantáneo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/myapp$ &lt;span class="nb"&gt;time&lt;/span&gt; docker build -t myapp:1.5 .
+Sending build context to Docker daemon  &lt;span class="m"&gt;5&lt;/span&gt;.632kB
+Step &lt;span class="m"&gt;1&lt;/span&gt;/6 : FROM alpine:3.5
+ ---&amp;gt; 4a415e366388
+Step &lt;span class="m"&gt;2&lt;/span&gt;/6 : RUN apk add --no-cache py-gunicorn py2-pip
+ ---&amp;gt; Using cache
+ ---&amp;gt; fa57ea0220f9
+Step &lt;span class="m"&gt;3&lt;/span&gt;/6 : CMD gunicorn --bind&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.0.0.0:8080 --user&lt;span class="o"&gt;=&lt;/span&gt;nobody --group&lt;span class="o"&gt;=&lt;/span&gt;nobody --workers&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; --chdir&lt;span class="o"&gt;=&lt;/span&gt;/srv/app app:app
+ ---&amp;gt; Using cache
+ ---&amp;gt; 0e99aa9dd9cf
+Step &lt;span class="m"&gt;4&lt;/span&gt;/6 : COPY app/requirements.txt /srv/app/
+ ---&amp;gt; Using cache
+ ---&amp;gt; 32595afecfc4
+Step &lt;span class="m"&gt;5&lt;/span&gt;/6 : RUN pip install -r /srv/app/requirements.txt
+ ---&amp;gt; Using cache
+ ---&amp;gt; e37068fe5c99
+Step &lt;span class="m"&gt;6&lt;/span&gt;/6 : COPY app/ /srv/app/
+ ---&amp;gt; d31b7abdbfb2
+Removing intermediate container 01e78f27475d
+Successfully built d31b7abdbfb2
+
+real    0m0.330s
+user    0m0.004s
+sys 0m0.004s
+gerard@aldebaran:~/docker/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De hecho, podemos ver que las capas compartidas entre las versiones con este nuevo truco se comparten casi todas. Esto hace que las nuevas versiones apenas ocupen espacio en disco (117 bytes en el ejemplo), siendo una capa con solamente nuestro código.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/myapp$ docker &lt;span class="nb"&gt;history&lt;/span&gt; myapp:1.4
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+c64016c758a4        &lt;span class="m"&gt;7&lt;/span&gt; minutes ago       /bin/sh -c &lt;span class="c1"&gt;#(nop) COPY dir:244f5d5a6f7ec84...   117B                &lt;/span&gt;
+e37068fe5c99        &lt;span class="m"&gt;7&lt;/span&gt; minutes ago       /bin/sh -c pip install -r /srv/app/require...   573kB               
+32595afecfc4        &lt;span class="m"&gt;7&lt;/span&gt; minutes ago       /bin/sh -c &lt;span class="c1"&gt;#(nop) COPY file:2f968d5854b929...   16B                 &lt;/span&gt;
+0e99aa9dd9cf        &lt;span class="m"&gt;21&lt;/span&gt; minutes ago      /bin/sh -c &lt;span class="c1"&gt;#(nop)  CMD [&amp;quot;gunicorn&amp;quot; &amp;quot;--bind...   0B                  &lt;/span&gt;
+fa57ea0220f9        &lt;span class="m"&gt;31&lt;/span&gt; minutes ago      /bin/sh -c apk add --no-cache py-gunicorn ...   &lt;span class="m"&gt;48&lt;/span&gt;.4MB              
+4a415e366388        &lt;span class="m"&gt;6&lt;/span&gt; weeks ago         /bin/sh -c &lt;span class="c1"&gt;#(nop) ADD file:730030a984f5f0c...   3.99MB              &lt;/span&gt;
+gerard@aldebaran:~/docker/myapp$ docker &lt;span class="nb"&gt;history&lt;/span&gt; myapp:1.5
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+d31b7abdbfb2        &lt;span class="m"&gt;3&lt;/span&gt; minutes ago       /bin/sh -c &lt;span class="c1"&gt;#(nop) COPY dir:36a1b0f6acdabc2...   117B                &lt;/span&gt;
+e37068fe5c99        &lt;span class="m"&gt;7&lt;/span&gt; minutes ago       /bin/sh -c pip install -r /srv/app/require...   573kB               
+32595afecfc4        &lt;span class="m"&gt;7&lt;/span&gt; minutes ago       /bin/sh -c &lt;span class="c1"&gt;#(nop) COPY file:2f968d5854b929...   16B                 &lt;/span&gt;
+0e99aa9dd9cf        &lt;span class="m"&gt;21&lt;/span&gt; minutes ago      /bin/sh -c &lt;span class="c1"&gt;#(nop)  CMD [&amp;quot;gunicorn&amp;quot; &amp;quot;--bind...   0B                  &lt;/span&gt;
+fa57ea0220f9        &lt;span class="m"&gt;31&lt;/span&gt; minutes ago      /bin/sh -c apk add --no-cache py-gunicorn ...   &lt;span class="m"&gt;48&lt;/span&gt;.4MB              
+4a415e366388        &lt;span class="m"&gt;6&lt;/span&gt; weeks ago         /bin/sh -c &lt;span class="c1"&gt;#(nop) ADD file:730030a984f5f0c...   3.99MB              &lt;/span&gt;
+gerard@aldebaran:~/docker/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La parte mala, es que el fichero &lt;em&gt;requirements.txt&lt;/em&gt; se copia dos veces en nuestra imagen, en ambos COPY. Con un poco de trabajo podría evitarse eso pero, puesto que ocupa relativamente poco, es un precio que estoy dispuesto a pagar para tener &lt;em&gt;builds&lt;/em&gt; instantáneos.&lt;/p&gt;</content><category term="docker"></category><category term="dockerfile"></category><category term="cache"></category></entry><entry><title>Problemas de log con docker y python</title><link href="http://www.linuxsysadmin.tk/2017/05/problemas-de-log-con-docker-y-python.html" rel="alternate"></link><published>2017-05-01T10:00:00+02:00</published><updated>2017-05-01T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-05-01:/2017/05/problemas-de-log-con-docker-y-python.html</id><summary type="html">&lt;p&gt;El otro día estaba haciendo un &lt;em&gt;script&lt;/em&gt; de &lt;strong&gt;python&lt;/strong&gt; que debía ejecutarse en un contenedor &lt;strong&gt;docker&lt;/strong&gt;. A pesar de la cantidad de &lt;em&gt;verbose&lt;/em&gt; que le puse, no era capaz de ver ningún texto cuando miraba los &lt;em&gt;logs&lt;/em&gt;. Tras mucha búsqueda, finalmente encontré el culpable en la variable de entorno &lt;strong&gt;PYTHONUNBUFFERED …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día estaba haciendo un &lt;em&gt;script&lt;/em&gt; de &lt;strong&gt;python&lt;/strong&gt; que debía ejecutarse en un contenedor &lt;strong&gt;docker&lt;/strong&gt;. A pesar de la cantidad de &lt;em&gt;verbose&lt;/em&gt; que le puse, no era capaz de ver ningún texto cuando miraba los &lt;em&gt;logs&lt;/em&gt;. Tras mucha búsqueda, finalmente encontré el culpable en la variable de entorno &lt;strong&gt;PYTHONUNBUFFERED&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;El &lt;em&gt;script&lt;/em&gt; en sí mismo solo pretendía comprobar si habían eventos en una cola, para su posterior proceso. La sorpresa es que no podía ver nada cuando ejecutaba &lt;strong&gt;docker&lt;/strong&gt; en modo &lt;em&gt;detached&lt;/em&gt; o en &lt;strong&gt;docker-compose&lt;/strong&gt;.&lt;/p&gt;
 &lt;h2&gt;El problema&lt;/h2&gt;
 &lt;p&gt;Para reducir mucho el problema, se plantea un &lt;em&gt;script&lt;/em&gt; llamado &lt;em&gt;poll.sh&lt;/em&gt; que emita un mensaje en la salida estándar cada segundo, como sigue:&lt;/p&gt;
