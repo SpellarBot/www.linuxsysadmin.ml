@@ -1,5 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Desarrollo</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-02-13T00:00:00+01:00</updated><entry><title>Escribiendo un servidor DNS en python con twisted</title><link href="http://www.linuxsysadmin.tk/2017/02/escribiendo-un-servidor-dns-en-python-con-twisted.html" rel="alternate"></link><published>2017-02-13T00:00:00+01:00</published><updated>2017-02-13T00:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-02-13:/2017/02/escribiendo-un-servidor-dns-en-python-con-twisted.html</id><summary type="html">&lt;p&gt;El otro día tuvimos una caída del centro de datos de desarrollo. Inmediatamente después vimos que teníamos afectación en el entorno de producción, ya que lanzaba peticiones al &lt;strong&gt;DNS&lt;/strong&gt; de desarrollo. Sin saber claramente porque pasaba, hice un servidor &lt;strong&gt;DNS&lt;/strong&gt; en &lt;strong&gt;python&lt;/strong&gt;, para ver que tipos de peticiones se lanzaban …&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día tuvimos una caída del centro de datos de desarrollo. Inmediatamente después vimos que teníamos afectación en el entorno de producción, ya que lanzaba peticiones al &lt;strong&gt;DNS&lt;/strong&gt; de desarrollo. Sin saber claramente porque pasaba, hice un servidor &lt;strong&gt;DNS&lt;/strong&gt; en &lt;strong&gt;python&lt;/strong&gt;, para ver que tipos de peticiones se lanzaban.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Desarrollo</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-05-15T10:00:00+02:00</updated><entry><title>Desarrollando aplicaciones web con python y bottle</title><link href="http://www.linuxsysadmin.tk/2017/05/desarrollando-aplicaciones-web-con-python-y-bottle.html" rel="alternate"></link><published>2017-05-15T10:00:00+02:00</published><updated>2017-05-15T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-05-15:/2017/05/desarrollando-aplicaciones-web-con-python-y-bottle.html</id><summary type="html">&lt;p&gt;Ya sabéis que me gusta mucho el lenguaje &lt;strong&gt;python&lt;/strong&gt;. Muchos de mis ejemplos y algunas aplicaciones simples no merecen el uso de un &lt;em&gt;framework&lt;/em&gt; tan grande como pueda ser &lt;strong&gt;django&lt;/strong&gt;. Para estos casos me encantan los &lt;em&gt;microframeworks&lt;/em&gt;, y aunque hay varias alternativas disponibles, me gusta especialmente un &lt;em&gt;microframework&lt;/em&gt; llamado &lt;strong&gt;bottle …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ya sabéis que me gusta mucho el lenguaje &lt;strong&gt;python&lt;/strong&gt;. Muchos de mis ejemplos y algunas aplicaciones simples no merecen el uso de un &lt;em&gt;framework&lt;/em&gt; tan grande como pueda ser &lt;strong&gt;django&lt;/strong&gt;. Para estos casos me encantan los &lt;em&gt;microframeworks&lt;/em&gt;, y aunque hay varias alternativas disponibles, me gusta especialmente un &lt;em&gt;microframework&lt;/em&gt; llamado &lt;strong&gt;bottle&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Una de las mejores características de este &lt;em&gt;framework&lt;/em&gt; es que no es complejo. Ponerse a hacer algo cuesta un tiempo de aprendizaje tendiendo a cero, y &lt;a href="https://bottlepy.org/docs/dev/"&gt;la documentación&lt;/a&gt; es excelente. Solamente nos oculta la complejidad del protocolo &lt;strong&gt;WSGI&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Otro punto a favor es la sencillez y simplicidad. No tiene dependencias con ninguna base de datos, motor de plantillas (aunque lleva un motor de plantillas mínimo) o &lt;em&gt;middleware&lt;/em&gt; externo. No añade nada que no tenga una especificación formal, y evita protocolos propios (por ejemplo, sesiones), en favor de especificaciones aceptadas (por ejemplo, &lt;em&gt;cookies&lt;/em&gt;).&lt;/p&gt;
+&lt;h2&gt;Objetos y métodos básicos&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Bottle&lt;/strong&gt;: Objeto principal del &lt;em&gt;framework&lt;/em&gt;, es una forma de aglutinar el &lt;em&gt;callable wsgi&lt;/em&gt; con un conjunto de rutas. Nuestra aplicación va a ser una instancia de este objeto.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;request&lt;/strong&gt;: Objeto nos permite acceder a los datos referentes a la petición que nos han hecho. Incluye los parámetros GET, las &lt;em&gt;cookies&lt;/em&gt; y cabeceras, entre otras cosas.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;response&lt;/strong&gt;: Objeto que nos permite modificar nuestras repuestas, añadiendo cabeceras, códigos de estado, &lt;em&gt;cookies&lt;/em&gt; y otros conceptos.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;template&lt;/strong&gt;: Método que inyecta nuestro contexto a una plantilla y nos devuelve la respuesta ya formada, lista para devolverla.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;view&lt;/strong&gt;: Lo mismo que el método &lt;strong&gt;template&lt;/strong&gt;, pero en versión decorador.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;redirect&lt;/strong&gt;: &lt;em&gt;Helper&lt;/em&gt; que nos permite devolver una redirección a otra URL en nuestro código.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;abort&lt;/strong&gt;: &lt;em&gt;Helper&lt;/em&gt; que nos permite devolver estado de error desde nuestro controlador.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Una aplicación vacía&lt;/h2&gt;
+&lt;p&gt;Vamos a crear una carpeta para contener nuestro proyecto:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/projects$ mkdir myapp
+gerard@aldebaran:~/projects$ &lt;span class="nb"&gt;cd&lt;/span&gt; myapp/
+gerard@aldebaran:~/projects/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Siguiendo las buenas prácticas, vamos a trabajar con &lt;strong&gt;virtualenv&lt;/strong&gt;, que nos servirá para poner nuestras librerías, que de momento se limitan al &lt;em&gt;framework&lt;/em&gt;. En adelante, es posible poner librerías para acceder a una base de datos, nuevos motores de plantillas y librerías más específicas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/projects/myapp$ virtualenv .venv
+New python executable in /home/gerard/projects/myapp/.venv/bin/python
+Installing setuptools, pip, wheel...done.
+gerard@aldebaran:~/projects/myapp$ . .venv/bin/activate
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ pip install bottle
+Collecting bottle
+Installing collected packages: bottle
+Successfully installed bottle-0.12.13
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como queremos poder reproducir nuestro entorno usaremos &lt;em&gt;pip freeze&lt;/em&gt; para guardar las dependencias, en vista a poderlas instalar en un futuro entorno real.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ pip freeze &amp;gt; requirements.txt
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lo mínimo para ejecutar una aplicación &lt;em&gt;WSGI compilant&lt;/em&gt; es un servidor &lt;em&gt;WSGI&lt;/em&gt; y la aplicación misma. Una aplicación construida con &lt;strong&gt;bottle&lt;/strong&gt; es básicamente una instancia del objeto &lt;em&gt;Bottle&lt;/em&gt;, a la que iremos registrando rutas. De momento la dejamos vacía, lo que nos va a responder siempre un error 404.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ cat app.py 
+from bottle import Bottle
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Bottle&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En un entorno real, el servidor a usar sería otro, por ejemplo &lt;strong&gt;apache&lt;/strong&gt;, &lt;strong&gt;uwsgi&lt;/strong&gt; o &lt;strong&gt;gunicorn&lt;/strong&gt;, pero para desarrollar, podemos aprovecharnos del servidor integrado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ python -m bottle --debug --reload app:app
+Bottle v0.12.13 server starting up &lt;span class="o"&gt;(&lt;/span&gt;using WSGIRefServer&lt;span class="o"&gt;())&lt;/span&gt;...
+Listening on http://localhost:8080/
+Hit Ctrl-C to quit.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para nuestra comodidad futura, vamos a poner el comando en un &lt;em&gt;script&lt;/em&gt;, en el que podemos definir nuestras propias variables de entorno o aquellas que queramos aplicar estando en nuestro entorno de desarrollo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ cat server.sh 
+&lt;span class="c1"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="nv"&gt;PYTHONDONTWRITEBYTECODE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot; &amp;quot;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+python -m bottle --debug --reload app:app
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ chmod a+x server.sh 
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ ./server.sh 
+Bottle v0.12.13 server starting up &lt;span class="o"&gt;(&lt;/span&gt;using WSGIRefServer&lt;span class="o"&gt;())&lt;/span&gt;...
+Listening on http://localhost:8080/
+Hit Ctrl-C to quit.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y ya podemos dirigirnos a &lt;a href="http://localhost:8080/"&gt;http://localhost:8080/&lt;/a&gt; para comprobar un bonito error 404.&lt;/p&gt;
+&lt;h2&gt;Registrando rutas a controladores&lt;/h2&gt;
+&lt;p&gt;La idea es muy simple: se registran rutas a funciones que devuelven la respuesta resultado. Hay varias formas de añadir rutas a nuestra aplicación, pero la que más me gusta es el decorador.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ cat app.py 
+from bottle import Bottle
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Bottle&lt;span class="o"&gt;()&lt;/span&gt;
+
+@app.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def home&lt;span class="o"&gt;()&lt;/span&gt;:
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;h1&amp;gt;Home page&amp;lt;/h1&amp;gt;&amp;#39;&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De esta forma, todas las peticiones GET a / van a devolver una página HTML con el contenido retornado. El código de retorno es un 200 y el &lt;em&gt;content-type&lt;/em&gt; es &lt;em&gt;text/html&lt;/em&gt; por defecto, aunque se puede cambiar con el objeto &lt;em&gt;response&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Usando plantillas y segmentos de URL&lt;/h2&gt;
+&lt;p&gt;No es una buena práctica poner en el controlador la respuesta HTML. Para eso, &lt;strong&gt;bottle&lt;/strong&gt; nos ofrece un motor de plantillas propio, y la facilidad de trabajar con otros. También nos permite capturar parte de la URL como parámetros; veamos un ejemplo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ cat app.py 
+from bottle import Bottle, view
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Bottle&lt;span class="o"&gt;()&lt;/span&gt;
+
+@app.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def home&lt;span class="o"&gt;()&lt;/span&gt;:
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;h1&amp;gt;Home page&amp;lt;/h1&amp;gt;&amp;#39;&lt;/span&gt;
+
+@app.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/hello/&amp;lt;name&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+@view&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;hello&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def hello&lt;span class="o"&gt;(&lt;/span&gt;name&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;nombre&amp;#39;&lt;/span&gt;: name,
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ cat views/hello.tpl 
+&amp;lt;p&amp;gt;Hola &lt;span class="o"&gt;{{&lt;/span&gt; nombre &lt;span class="o"&gt;}}&lt;/span&gt;&amp;lt;/p&amp;gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso, todo lo que siga a &lt;em&gt;/hello/&lt;/em&gt; en la URL se pasará a la función controlador, como una variable local &lt;em&gt;name&lt;/em&gt;. Nuestra función devuelve un contexto, para que el decorador &lt;em&gt;view&lt;/em&gt; pueda pintar la plantilla &lt;em&gt;hello&lt;/em&gt;, que se encuentra en &lt;em&gt;views/hello.tpl&lt;/em&gt;. Las variables disponibles para la plantilla son las claves del diccionario, que van a valer lo que pongamos como valores en el mismo diccionario.&lt;/p&gt;
+&lt;p&gt;En el caso de hacer una petición a &lt;em&gt;/hello/gerard&lt;/em&gt;, la variable local &lt;em&gt;name&lt;/em&gt; va a valer "gerard" y la plantilla va a disponer de una variable &lt;em&gt;nombre&lt;/em&gt; que vale también "gerard".&lt;/p&gt;
+&lt;p&gt;Algunas aplicaciones no necesitan plantillas HTML. Por ejemplo una API solo necesitaría convertir una expresión &lt;em&gt;python&lt;/em&gt; en su equivalente JSON, mediante una función adecuada, que podemos ver como un motor de plantillas.&lt;/p&gt;
+&lt;h2&gt;Modelos y respuestas distintas&lt;/h2&gt;
+&lt;p&gt;No hay ninguna capa de acceso a datos en &lt;strong&gt;bottle&lt;/strong&gt;. Si se necesita acceder a datos, se debe usar alguna librería auxiliar; personalmente me encanta &lt;a href="http://mongoengine.org/"&gt;mongoengine&lt;/a&gt; y &lt;a href="http://docs.peewee-orm.com/en/latest/"&gt;peewee&lt;/a&gt;. Otra opción es implementar un patrón &lt;a href="https://es.wikipedia.org/wiki/Data_Access_Object"&gt;Data Access Object&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Aún así, las buenas prácticas incitan a separar el modelo de los controladores, y eso lo podéis hacer fácilmente relegando las funciones u objetos de datos en un módulo aparte.&lt;/p&gt;
+&lt;p&gt;Vamos a hacer una ruta para devolver objetos en forma de API con JSON (REST, por supuesto). Así también podemos ver como indicar un &lt;em&gt;content-type&lt;/em&gt; distinto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ cat app.py 
+from bottle import Bottle, view, abort, response
+from json import dumps
+from models import get_product
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Bottle&lt;span class="o"&gt;()&lt;/span&gt;
+
+@app.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def home&lt;span class="o"&gt;()&lt;/span&gt;:
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;h1&amp;gt;Home page&amp;lt;/h1&amp;gt;&amp;#39;&lt;/span&gt;
+
+@app.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/hello/&amp;lt;name&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+@view&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;hello&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def hello&lt;span class="o"&gt;(&lt;/span&gt;name&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;nombre&amp;#39;&lt;/span&gt;: name,
+    &lt;span class="o"&gt;}&lt;/span&gt;
+
+@app.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/products/&amp;lt;id&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def api_get_product&lt;span class="o"&gt;(&lt;/span&gt;id&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="nv"&gt;product&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; get_product&lt;span class="o"&gt;(&lt;/span&gt;id&lt;span class="o"&gt;)&lt;/span&gt;
+    response.content_type &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;application/json&amp;#39;&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; product is not None:
+        &lt;span class="k"&gt;return&lt;/span&gt; dumps&lt;span class="o"&gt;(&lt;/span&gt;product&lt;span class="o"&gt;)&lt;/span&gt;
+    response.status &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;404&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ cat models.py 
+&lt;span class="nv"&gt;products&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;1&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;name&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;Apple&amp;#39;&lt;/span&gt;,
+        &lt;span class="s1"&gt;&amp;#39;price&amp;#39;&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&gt;.0,
+    &lt;span class="o"&gt;}&lt;/span&gt;,
+    &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;name&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;Orange&amp;#39;&lt;/span&gt;,
+        &lt;span class="s1"&gt;&amp;#39;price&amp;#39;&lt;/span&gt;: &lt;span class="m"&gt;0&lt;/span&gt;.8,
+    &lt;span class="o"&gt;}&lt;/span&gt;,
+    &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;name&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;Pear&amp;#39;&lt;/span&gt;,
+        &lt;span class="s1"&gt;&amp;#39;price&amp;#39;&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&gt;.2,
+    &lt;span class="o"&gt;}&lt;/span&gt;,
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+def get_product&lt;span class="o"&gt;(&lt;/span&gt;id&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="nv"&gt;product&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; products.get&lt;span class="o"&gt;(&lt;/span&gt;id&lt;span class="o"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; product is not None:
+        &lt;span class="k"&gt;return&lt;/span&gt; product.copy&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; None
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/myapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto solo nos queda probar las respuestas:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ curl -i http://localhost:8080/products/1
+HTTP/1.0 &lt;span class="m"&gt;200&lt;/span&gt; OK
+...  
+Content-Type: application/json
+
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;price&amp;quot;&lt;/span&gt;: &lt;span class="m"&gt;1&lt;/span&gt;.0, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Apple&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~$ curl -i http://localhost:8080/products/2
+HTTP/1.0 &lt;span class="m"&gt;200&lt;/span&gt; OK
+...  
+Content-Type: application/json
+
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;price&amp;quot;&lt;/span&gt;: &lt;span class="m"&gt;0&lt;/span&gt;.8, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Orange&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~$ curl -i http://localhost:8080/products/22
+HTTP/1.0 &lt;span class="m"&gt;404&lt;/span&gt; Not Found
+...  
+Content-Type: application/json
+
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Siguiendo la documentación y usando librerías varias, se puede tener algo simple en muy poco tiempo. Dada la naturaleza del desarrollo web, los controladores se pueden ir añadiendo a medida que se necesiten. Eso nos da tiempo a descubrir las infinitas posibilidades de este &lt;em&gt;microframework&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Algunas de las operaciones habituales (sesiones, capa de acceso a datos, autenticaciones varias, conectores a terceros, ...) no vienen. Aquellos con más vista de futuro probablemente vais a hacer código para evitar estos pequeños inconvenientes, pero si no lo queréis, &lt;em&gt;python&lt;/em&gt; os ofrece muchas más soluciones para vuestro uso y disfrute. Los que disfrutáis con la belleza de lo simple, sed bienvenidos.&lt;/p&gt;</content><category term="python"></category><category term="microframework"></category><category term="framework"></category><category term="bottle"></category></entry><entry><title>Escribiendo un servidor DNS en python con twisted</title><link href="http://www.linuxsysadmin.tk/2017/02/escribiendo-un-servidor-dns-en-python-con-twisted.html" rel="alternate"></link><published>2017-02-13T00:00:00+01:00</published><updated>2017-02-13T00:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-02-13:/2017/02/escribiendo-un-servidor-dns-en-python-con-twisted.html</id><summary type="html">&lt;p&gt;El otro día tuvimos una caída del centro de datos de desarrollo. Inmediatamente después vimos que teníamos afectación en el entorno de producción, ya que lanzaba peticiones al &lt;strong&gt;DNS&lt;/strong&gt; de desarrollo. Sin saber claramente porque pasaba, hice un servidor &lt;strong&gt;DNS&lt;/strong&gt; en &lt;strong&gt;python&lt;/strong&gt;, para ver que tipos de peticiones se lanzaban …&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día tuvimos una caída del centro de datos de desarrollo. Inmediatamente después vimos que teníamos afectación en el entorno de producción, ya que lanzaba peticiones al &lt;strong&gt;DNS&lt;/strong&gt; de desarrollo. Sin saber claramente porque pasaba, hice un servidor &lt;strong&gt;DNS&lt;/strong&gt; en &lt;strong&gt;python&lt;/strong&gt;, para ver que tipos de peticiones se lanzaban.&lt;/p&gt;
 &lt;p&gt;Para hacerlo, utilicé una librería magnífica llamada &lt;strong&gt;twisted&lt;/strong&gt;, que hace la mayoría del trabajo. Aunque su documentación es bastante escasa, tirando de ejemplos pude sacar algo interesante en poco tiempo.&lt;/p&gt;
 &lt;h2&gt;Un servidor chivato&lt;/h2&gt;
 &lt;p&gt;Cambiamos el fichero &lt;em&gt;/etc/resolv&lt;/em&gt; de nuestro servidor de producción, para añadirle su propia dirección IP, en la que ejecutamos el siguiente &lt;em&gt;script&lt;/em&gt;:&lt;/p&gt;
