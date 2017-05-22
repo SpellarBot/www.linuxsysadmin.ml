@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2017-05-15T07:26:57-00:00</lastmod>
+<lastmod>2017-05-22T07:56:21-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2017-05-15T07:26:57-00:00</lastmod>
+<lastmod>2017-05-22T07:56:21-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2017-05-15T07:26:57-00:00</lastmod>
+<lastmod>2017-05-22T07:56:21-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2017-05-15T07:26:57-00:00</lastmod>
+<lastmod>2017-05-22T07:56:21-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2017-05-15T07:26:57-00:00</lastmod>
+<lastmod>2017-05-22T07:56:21-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2017/05/docker-1705-con-multi-stage-build.html</loc>
+<lastmod>2017-05-22T10:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -642,7 +649,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/operaciones.html</loc>
-<lastmod>2017-05-08T10:00:00-00:15</lastmod>
+<lastmod>2017-05-22T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -753,8 +760,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/virtual-hosts.html</loc>
-<lastmod>2016-12-26T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/systemd.html</loc>
+<lastmod>2016-11-14T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -831,7 +838,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/dockerfile.html</loc>
-<lastmod>2017-05-08T10:00:00-00:15</lastmod>
+<lastmod>2017-05-22T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1166,8 +1173,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/systemd.html</loc>
-<lastmod>2016-11-14T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/virtual-hosts.html</loc>
+<lastmod>2016-12-26T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1643,7 +1650,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/build.html</loc>
-<lastmod>2016-10-10T08:00:00-00:15</lastmod>
+<lastmod>2017-05-22T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1803,6 +1810,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/multistage.html</loc>
+<lastmod>2017-05-22T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/bottle.html</loc>
 <lastmod>2017-05-15T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1825,7 +1839,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/docker.html</loc>
-<lastmod>2017-05-08T10:00:00-00:15</lastmod>
+<lastmod>2017-05-22T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1839,7 +1853,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2017-05-15T10:00:00-00:15</lastmod>
+<lastmod>2017-05-22T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

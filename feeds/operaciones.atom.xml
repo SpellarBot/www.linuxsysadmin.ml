@@ -1,5 +1,259 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-05-08T10:00:00+02:00</updated><entry><title>Reduciendo el tiempo de build con Docker y su caché</title><link href="http://www.linuxsysadmin.tk/2017/05/reduciendo-el-tiempo-de-build-con-docker-y-su-cache.html" rel="alternate"></link><published>2017-05-08T10:00:00+02:00</published><updated>2017-05-08T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-05-08:/2017/05/reduciendo-el-tiempo-de-build-con-docker-y-su-cache.html</id><summary type="html">&lt;p&gt;Cuando construimos imágenes &lt;strong&gt;docker&lt;/strong&gt;, muchas veces no somos conscientes del poder de la caché integrada. Si reordenamos algunas instrucciones y aplicamos algún truco, podemos evitarnos el hecho de reconstruir muchas de esas capas, llegando a reducir el tiempo de &lt;em&gt;rebuild&lt;/em&gt; a prácticamente cero, siempre y cuando no hayan grandes cambios …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando construimos imágenes &lt;strong&gt;docker&lt;/strong&gt;, muchas veces no somos conscientes del poder de la caché integrada. Si reordenamos algunas instrucciones y aplicamos algún truco, podemos evitarnos el hecho de reconstruir muchas de esas capas, llegando a reducir el tiempo de &lt;em&gt;rebuild&lt;/em&gt; a prácticamente cero, siempre y cuando no hayan grandes cambios.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-05-22T10:00:00+02:00</updated><entry><title>Docker 17.05 con multi-stage build</title><link href="http://www.linuxsysadmin.tk/2017/05/docker-1705-con-multi-stage-build.html" rel="alternate"></link><published>2017-05-22T10:00:00+02:00</published><updated>2017-05-22T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-05-22:/2017/05/docker-1705-con-multi-stage-build.html</id><summary type="html">&lt;p&gt;Hacía tiempo que esperaba ansiosamente la nueva versión de &lt;strong&gt;docker&lt;/strong&gt;. La raíz de tanta expectación son las mejoras que la versión candidata anunciaba, especialmente el nuevo modelo de &lt;em&gt;build&lt;/em&gt;. Se ha modificado los &lt;em&gt;Dockerfile&lt;/em&gt; para que puedan generar varias imágenes en un solo fichero, algunas de ellas partiendo de otras …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hacía tiempo que esperaba ansiosamente la nueva versión de &lt;strong&gt;docker&lt;/strong&gt;. La raíz de tanta expectación son las mejoras que la versión candidata anunciaba, especialmente el nuevo modelo de &lt;em&gt;build&lt;/em&gt;. Se ha modificado los &lt;em&gt;Dockerfile&lt;/em&gt; para que puedan generar varias imágenes en un solo fichero, algunas de ellas partiendo de otras.&lt;/p&gt;
+&lt;p&gt;La gran mejora de la versión consiste en poder especificar varias veces el &lt;em&gt;keyword&lt;/em&gt; &lt;strong&gt;FROM&lt;/strong&gt;, para poder crear imágenes varias en el mismo fichero. Para ello, hay dos mejoras sustanciales en la sintaxis de los &lt;em&gt;keywords&lt;/em&gt; &lt;strong&gt;FROM&lt;/strong&gt; y &lt;strong&gt;COPY&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;La idea es que puedes crear imágenes intermedias, para que luego algunas otras hereden de ella e incluso se puedan pasar ficheros entre sí. Eso se consigue con dos cambios nuevos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;El &lt;em&gt;keyword&lt;/em&gt; &lt;strong&gt;FROM&lt;/strong&gt; puede incluir un &lt;em&gt;keywork&lt;/em&gt; &lt;strong&gt;AS&lt;/strong&gt;, que va a permitir heredar a las demás imágenes a partir de este &lt;em&gt;keyword&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;El &lt;em&gt;keyword&lt;/em&gt; &lt;strong&gt;COPY&lt;/strong&gt; puede llevar un &lt;em&gt;flag&lt;/em&gt; &lt;strong&gt;--from&lt;/strong&gt; que permite copiar ficheros entre las imágenes creadas por el mismo &lt;em&gt;Dockerfile&lt;/em&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Un ejemplo rápido:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/ejemplo$ cat Dockerfile 
+FROM alpine:3.5 AS base
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;cat&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;/greeting&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+
+FROM base AS victim
+RUN &lt;span class="nb"&gt;echo&lt;/span&gt; gold &amp;gt; /stealme
+RUN &lt;span class="nb"&gt;echo&lt;/span&gt; hello &amp;gt; /greeting
+
+FROM base
+COPY --from&lt;span class="o"&gt;=&lt;/span&gt;victim /stealme /
+RUN &lt;span class="nb"&gt;echo&lt;/span&gt; bye &amp;gt; /greeting
+gerard@aldebaran:~/docker/ejemplo$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Construimos la imagen como de costumbre:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/ejemplo$ docker build -t ejemplo .
+Sending build context to Docker daemon  &lt;span class="m"&gt;2&lt;/span&gt;.048kB
+Step &lt;span class="m"&gt;1&lt;/span&gt;/8 : FROM alpine:3.5 AS base
+ ---&amp;gt; 4a415e366388
+Step &lt;span class="m"&gt;2&lt;/span&gt;/8 : CMD cat /greeting
+ ---&amp;gt; Running in c27e95810829
+ ---&amp;gt; 36e7f6d769bd
+Removing intermediate container c27e95810829
+Step &lt;span class="m"&gt;3&lt;/span&gt;/8 : FROM base AS victim
+ ---&amp;gt; 36e7f6d769bd
+Step &lt;span class="m"&gt;4&lt;/span&gt;/8 : RUN &lt;span class="nb"&gt;echo&lt;/span&gt; gold &amp;gt; /stealme
+ ---&amp;gt; Running in 1ea9e0668bb7
+ ---&amp;gt; e0dc8c579221
+Removing intermediate container 1ea9e0668bb7
+Step &lt;span class="m"&gt;5&lt;/span&gt;/8 : RUN &lt;span class="nb"&gt;echo&lt;/span&gt; hello &amp;gt; /greeting
+ ---&amp;gt; Running in e0da2940311e
+ ---&amp;gt; b2f3845ad8ff
+Removing intermediate container e0da2940311e
+Step &lt;span class="m"&gt;6&lt;/span&gt;/8 : FROM base
+ ---&amp;gt; 36e7f6d769bd
+Step &lt;span class="m"&gt;7&lt;/span&gt;/8 : COPY --from&lt;span class="o"&gt;=&lt;/span&gt;victim /stealme /
+ ---&amp;gt; 918c21e97a6b
+Removing intermediate container 4846e3cc50a7
+Step &lt;span class="m"&gt;8&lt;/span&gt;/8 : RUN &lt;span class="nb"&gt;echo&lt;/span&gt; bye &amp;gt; /greeting
+ ---&amp;gt; Running in e3ad8598d14d
+ ---&amp;gt; e451f40afe17
+Removing intermediate container e3ad8598d14d
+Successfully built e451f40afe17
+Successfully tagged ejemplo:latest
+gerard@aldebaran:~/docker/ejemplo$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver que los pasos 3 y 6 parten ambos de la imagen &lt;em&gt;base&lt;/em&gt;, mientras que la imagen final, copia un fichero de la imagen &lt;em&gt;victim&lt;/em&gt;, de la que no hereda siquiera.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/ejemplo$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED              SIZE
+ejemplo             latest              e451f40afe17        About a minute ago   &lt;span class="m"&gt;3&lt;/span&gt;.99MB
+&amp;lt;none&amp;gt;              &amp;lt;none&amp;gt;              b2f3845ad8ff        About a minute ago   &lt;span class="m"&gt;3&lt;/span&gt;.99MB
+alpine              &lt;span class="m"&gt;3&lt;/span&gt;.5                 4a415e366388        &lt;span class="m"&gt;2&lt;/span&gt; months ago         &lt;span class="m"&gt;3&lt;/span&gt;.99MB
+gerard@aldebaran:~/docker/ejemplo$ docker run --rm b2f3845ad8ff
+hello
+gerard@aldebaran:~/docker/ejemplo$ docker run --rm ejemplo
+bye
+gerard@aldebaran:~/docker/ejemplo$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Otro detalle curioso es que el &lt;em&gt;tag&lt;/em&gt; solo se puede dar a la imagen del último &lt;strong&gt;FROM&lt;/strong&gt; del &lt;em&gt;Dockerfile&lt;/em&gt;. Hay que tener en cuenta que si una imagen falla al construir, no se sigue con las demás.&lt;/p&gt;
+&lt;h2&gt;Posibles usos&lt;/h2&gt;
+&lt;h3&gt;Pipelines de test&lt;/h3&gt;
+&lt;p&gt;Cuando una imagen falla, el resto de imágenes no se construyen. Podemos aprovechar este punto para crear la imagen de test, ejecutando los tests necesarios. De esta forma, si los tests fallan, el &lt;em&gt;build&lt;/em&gt; falla y no se genera la imagen posterior de &lt;em&gt;runtime&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Supongamos este &lt;em&gt;Dockerfile&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/pipeline$ cat Dockerfile 
+FROM alpine:3.5 AS base
+RUN apk add --no-cache python2
+COPY script.py /
+
+FROM base
+COPY tests.py /
+RUN python tests.py
+
+FROM base
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;python&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;script.py&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@aldebaran:~/docker/pipeline$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Supongamos el el &lt;em&gt;script&lt;/em&gt; de test falla; para ello he puesto un &lt;em&gt;script&lt;/em&gt; que devuelve siempre un código de retorno "1".&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/pipeline$ docker build -t release .
+Sending build context to Docker daemon  &lt;span class="m"&gt;4&lt;/span&gt;.096kB
+...  
+Step &lt;span class="m"&gt;6&lt;/span&gt;/8 : RUN python tests.py
+ ---&amp;gt; Running in 4572bed9ffb5
+Tests FAILED
+The &lt;span class="nb"&gt;command&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/bin/sh -c python tests.py&amp;#39;&lt;/span&gt; returned a non-zero code: &lt;span class="m"&gt;1&lt;/span&gt;
+gerard@aldebaran:~/docker/pipeline$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;No se genera ningún &lt;em&gt;tag&lt;/em&gt;, porque uno de los pasos ha fallado. De esta forma, no tenemos &lt;em&gt;release&lt;/em&gt; porque tenerla no sirve de nada: está rota.&lt;/p&gt;
+&lt;p&gt;Veamos ahora lo que pasa si el test tiene éxito:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/pipeline$ docker build -t release .
+Sending build context to Docker daemon  &lt;span class="m"&gt;4&lt;/span&gt;.096kB
+...  
+Step &lt;span class="m"&gt;6&lt;/span&gt;/8 : RUN python tests.py
+ ---&amp;gt; Running in 5a8908410927
+Tests OK
+ ---&amp;gt; 2cd640cc2122
+Removing intermediate container 5a8908410927
+Step &lt;span class="m"&gt;7&lt;/span&gt;/8 : FROM base
+ ---&amp;gt; 9a6cafb2fd49
+Step &lt;span class="m"&gt;8&lt;/span&gt;/8 : CMD python script.py
+ ---&amp;gt; Running in bad18c8f4f27
+ ---&amp;gt; 6221630d5ac3
+Removing intermediate container bad18c8f4f27
+Successfully built 6221630d5ac3
+Successfully tagged release:latest
+gerard@aldebaran:~/docker/pipeline$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y en este caso tenemos una release, con una imagen de &lt;em&gt;runtime&lt;/em&gt;, sin los tests, y con la directiva &lt;strong&gt;CMD&lt;/strong&gt; lista para ser usada.&lt;/p&gt;
+&lt;h3&gt;Reducción de capas&lt;/h3&gt;
+&lt;p&gt;A todos nos ha pasado que copiamos unos ficheros en nuestras imágenes, y tras aplicarles modificaciones de permisos y de usuarios, esos ficheros ocupan el doble o más. Es inevitable. La idea es poder utilizar una imagen grande para adecuar nuestros fichero y luego copiarlos a una imagen en su forma final.&lt;/p&gt;
+&lt;p&gt;Supongamos el siguiente ejemplo, donde &lt;em&gt;bigfile&lt;/em&gt; es un fichero de 100mb con permisos 644 y que pertenece a mi usuario:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/bigfiles$ cat Dockerfile 
+FROM busybox AS builder
+COPY bigfile /
+RUN chmod &lt;span class="m"&gt;777&lt;/span&gt; /bigfile &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    chown nobody:nogroup /bigfile
+
+FROM busybox
+COPY --from&lt;span class="o"&gt;=&lt;/span&gt;builder /bigfile /
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;ls&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-lh&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;/&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@aldebaran:~/docker/bigfiles$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Construimos la imagen:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/bigfiles$ docker build -t final .
+Sending build context to Docker daemon  &lt;span class="m"&gt;104&lt;/span&gt;.9MB
+Step &lt;span class="m"&gt;1&lt;/span&gt;/6 : FROM busybox AS builder
+latest: Pulling from library/busybox
+7520415ce762: Pull &lt;span class="nb"&gt;complete&lt;/span&gt; 
+Digest: sha256:32f093055929dbc23dec4d03e09dfe971f5973a9ca5cf059cbfb644c206aa83f
+Status: Downloaded newer image &lt;span class="k"&gt;for&lt;/span&gt; busybox:latest
+ ---&amp;gt; 00f017a8c2a6
+Step &lt;span class="m"&gt;2&lt;/span&gt;/6 : COPY bigfile /
+ ---&amp;gt; 0a27ff02824b
+Removing intermediate container 56007f1c8e9d
+Step &lt;span class="m"&gt;3&lt;/span&gt;/6 : RUN chmod &lt;span class="m"&gt;777&lt;/span&gt; /bigfile &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     chown nobody:nogroup /bigfile
+ ---&amp;gt; Running in b8ff92d84014
+ ---&amp;gt; bf3600cb8967
+Removing intermediate container b8ff92d84014
+Step &lt;span class="m"&gt;4&lt;/span&gt;/6 : FROM busybox
+ ---&amp;gt; 00f017a8c2a6
+Step &lt;span class="m"&gt;5&lt;/span&gt;/6 : COPY --from&lt;span class="o"&gt;=&lt;/span&gt;builder /bigfile /
+ ---&amp;gt; 57b8aa7c2aeb
+Removing intermediate container e2ec30bfd912
+Step &lt;span class="m"&gt;6&lt;/span&gt;/6 : CMD ls -lh /
+ ---&amp;gt; Running in a212d95bb65f
+ ---&amp;gt; c672e1ad3fcb
+Removing intermediate container a212d95bb65f
+Successfully built c672e1ad3fcb
+Successfully tagged final:latest
+gerard@aldebaran:~/docker/bigfiles$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El resultado es sorprendente: Nos ahorramos el duplicado del fichero &lt;em&gt;bigfile&lt;/em&gt;, y este conserva los permisos que le habíamos indicado, pero &lt;strong&gt;el usuario sigue siendo root&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/bigfiles$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+final               latest              c672e1ad3fcb        &lt;span class="m"&gt;2&lt;/span&gt; minutes ago       106MB
+&amp;lt;none&amp;gt;              &amp;lt;none&amp;gt;              bf3600cb8967        &lt;span class="m"&gt;2&lt;/span&gt; minutes ago       211MB
+busybox             latest              00f017a8c2a6        &lt;span class="m"&gt;2&lt;/span&gt; months ago        &lt;span class="m"&gt;1&lt;/span&gt;.11MB
+gerard@aldebaran:~/docker/bigfiles$ docker &lt;span class="nb"&gt;history&lt;/span&gt; bf3600cb8967
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+bf3600cb8967        &lt;span class="m"&gt;4&lt;/span&gt; minutes ago       &lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; /bin/sh -c chmod &lt;span class="m"&gt;777&lt;/span&gt; /bigfile &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     ch...   105MB               
+0a27ff02824b        &lt;span class="m"&gt;4&lt;/span&gt; minutes ago       /bin/sh -c &lt;span class="c1"&gt;#(nop) COPY file:777847f3f03c68...   105MB               &lt;/span&gt;
+00f017a8c2a6        &lt;span class="m"&gt;2&lt;/span&gt; months ago        /bin/sh -c &lt;span class="c1"&gt;#(nop)  CMD [&amp;quot;sh&amp;quot;]                   0B                  &lt;/span&gt;
+&amp;lt;missing&amp;gt;           &lt;span class="m"&gt;2&lt;/span&gt; months ago        /bin/sh -c &lt;span class="c1"&gt;#(nop) ADD file:c9ecd8ff00c653f...   1.11MB              &lt;/span&gt;
+gerard@aldebaran:~/docker/bigfiles$ docker &lt;span class="nb"&gt;history&lt;/span&gt; final
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+c672e1ad3fcb        &lt;span class="m"&gt;4&lt;/span&gt; minutes ago       /bin/sh -c &lt;span class="c1"&gt;#(nop)  CMD [&amp;quot;ls&amp;quot; &amp;quot;-lh&amp;quot; &amp;quot;/&amp;quot;]         0B                  &lt;/span&gt;
+57b8aa7c2aeb        &lt;span class="m"&gt;4&lt;/span&gt; minutes ago       /bin/sh -c &lt;span class="c1"&gt;#(nop) COPY file:5e392ba9fe1d0a...   105MB               &lt;/span&gt;
+00f017a8c2a6        &lt;span class="m"&gt;2&lt;/span&gt; months ago        /bin/sh -c &lt;span class="c1"&gt;#(nop)  CMD [&amp;quot;sh&amp;quot;]                   0B                  &lt;/span&gt;
+&amp;lt;missing&amp;gt;           &lt;span class="m"&gt;2&lt;/span&gt; months ago        /bin/sh -c &lt;span class="c1"&gt;#(nop) ADD file:c9ecd8ff00c653f...   1.11MB              &lt;/span&gt;
+gerard@aldebaran:~/docker/bigfiles$ docker run --rm final &lt;span class="p"&gt;|&lt;/span&gt; grep bigfile
+-rwxrwxrwx    &lt;span class="m"&gt;1&lt;/span&gt; root     root      &lt;span class="m"&gt;100&lt;/span&gt;.0M May  &lt;span class="m"&gt;9&lt;/span&gt; &lt;span class="m"&gt;13&lt;/span&gt;:53 bigfile
+gerard@aldebaran:~/docker/bigfiles$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esto limita mucho el uso de esta solución.&lt;/p&gt;
+&lt;h3&gt;Build container pattern&lt;/h3&gt;
+&lt;p&gt;Construir nuestros artefactos en la misma imagen que los va a ejecutar es una guarrada. El truco era tener una imagen para construir el artefacto, y se pasaba a una imagen de &lt;em&gt;runtime&lt;/em&gt; mediante un uso inteligente de volúmenes. Con el nuevo &lt;strong&gt;COPY --from&lt;/strong&gt; no necesitamos el paso intermedio de volúmenes, y se puede hacer todo con un solo paso.&lt;/p&gt;
+&lt;p&gt;Supongamos que queremos crear un programa en C, compilarlo y tener una imagen que se limite a ejecutarlo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/test$ cat hello.c 
+&lt;span class="c1"&gt;#include &amp;lt;stdio.h&amp;gt;&lt;/span&gt;
+&lt;span class="c1"&gt;#include &amp;lt;stdlib.h&amp;gt;&lt;/span&gt;
+
+int main&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    printf&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Hello world!\n&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    exit&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/docker/test$ cat Dockerfile 
+FROM alpine:3.5 AS builder
+RUN apk add --no-cache gcc musl-dev
+COPY hello.c /
+RUN gcc -static -o /hello /hello.c &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    strip /hello
+
+FROM scratch
+COPY --from&lt;span class="o"&gt;=&lt;/span&gt;builder /hello /
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/hello&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@aldebaran:~/docker/test$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De esta forma, la primera imagen compila nuestro código fuente, y la segunda se limita a copiar el resultado, que al tratarse de un binario estático no necesita librerías adicionales, lo que nos permite partir de la imagen vacía &lt;em&gt;scratch&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/test$ docker build -t hello .
+Sending build context to Docker daemon  &lt;span class="m"&gt;3&lt;/span&gt;.072kB
+...  
+Step &lt;span class="m"&gt;5&lt;/span&gt;/7 : FROM scratch
+ ---&amp;gt; 
+Step &lt;span class="m"&gt;6&lt;/span&gt;/7 : COPY --from&lt;span class="o"&gt;=&lt;/span&gt;builder /hello /
+ ---&amp;gt; b01e9f03b69d
+Removing intermediate container c177f03a3dab
+Step &lt;span class="m"&gt;7&lt;/span&gt;/7 : CMD /hello
+ ---&amp;gt; Running in e19eb91bc975
+ ---&amp;gt; fb52f56a9c03
+Removing intermediate container e19eb91bc975
+Successfully built fb52f56a9c03
+Successfully tagged hello:latest
+gerard@aldebaran:~/docker/test$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto podemos desechar la imagen de compilación que es muy grande, en favor a una imagen de &lt;em&gt;runtime&lt;/em&gt; sin compiladores ni librerías, sin necesidad de preocuparnos de limpiar aquello que se haya instalado para compilar nuestro binario.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/test$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+hello               latest              fb52f56a9c03        &lt;span class="m"&gt;2&lt;/span&gt; minutes ago       &lt;span class="m"&gt;10&lt;/span&gt;.1kB
+&amp;lt;none&amp;gt;              &amp;lt;none&amp;gt;              fe6a6edae999        &lt;span class="m"&gt;2&lt;/span&gt; minutes ago       101MB
+alpine              &lt;span class="m"&gt;3&lt;/span&gt;.5                 4a415e366388        &lt;span class="m"&gt;2&lt;/span&gt; months ago        &lt;span class="m"&gt;3&lt;/span&gt;.99MB
+gerard@aldebaran:~/docker/test$ docker run -ti --rm hello
+Hello world!
+gerard@aldebaran:~/docker/test$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es especialmente interesante ver que hacen falta 101mb para construir un binario que solo necesita 10kb para ejecutarse...&lt;/p&gt;</content><category term="docker"></category><category term="dockerfile"></category><category term="multistage"></category><category term="build"></category></entry><entry><title>Reduciendo el tiempo de build con Docker y su caché</title><link href="http://www.linuxsysadmin.tk/2017/05/reduciendo-el-tiempo-de-build-con-docker-y-su-cache.html" rel="alternate"></link><published>2017-05-08T10:00:00+02:00</published><updated>2017-05-08T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-05-08:/2017/05/reduciendo-el-tiempo-de-build-con-docker-y-su-cache.html</id><summary type="html">&lt;p&gt;Cuando construimos imágenes &lt;strong&gt;docker&lt;/strong&gt;, muchas veces no somos conscientes del poder de la caché integrada. Si reordenamos algunas instrucciones y aplicamos algún truco, podemos evitarnos el hecho de reconstruir muchas de esas capas, llegando a reducir el tiempo de &lt;em&gt;rebuild&lt;/em&gt; a prácticamente cero, siempre y cuando no hayan grandes cambios …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando construimos imágenes &lt;strong&gt;docker&lt;/strong&gt;, muchas veces no somos conscientes del poder de la caché integrada. Si reordenamos algunas instrucciones y aplicamos algún truco, podemos evitarnos el hecho de reconstruir muchas de esas capas, llegando a reducir el tiempo de &lt;em&gt;rebuild&lt;/em&gt; a prácticamente cero, siempre y cuando no hayan grandes cambios.&lt;/p&gt;
 &lt;p&gt;Esa es una reflexión que me hice el otro día. Es verdad que con la caché integrada me ahorro de descargar la imagen base y de instalar algunas dependencias habituales, pero usando la cabeza descubrí que puedo conseguir mucho más.&lt;/p&gt;
 &lt;p&gt;Es muy habitual que tenga que construir proyectos que usen &lt;strong&gt;python&lt;/strong&gt;, pero me molesta un poco tener que perder el tiempo en el comando &lt;strong&gt;pip&lt;/strong&gt; instalando dependencias; hay que tener en cuenta que casi nunca cambian entre diferentes versiones y es un tiempo que no sería necesario.&lt;/p&gt;
 &lt;p&gt;Así que hice el ejercicio de reordenar las instrucciones en mi &lt;em&gt;Dockerfile&lt;/em&gt;, moviendo al principio aquellas instrucciones que raramente provocarán cambios, y dejando al final aquellas que es más frecuente que cambien, y por lo tanto, que necesiten ser reconstruidas.&lt;/p&gt;
