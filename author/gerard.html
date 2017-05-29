@@ -92,6 +92,13 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
+                <h2><a href="http://www.linuxsysadmin.tk/2017/05/generacion-facil-de-certificados-con-easyrsa.html">Generación fácil de certificados con easyrsa</a></h2>
+                <div class="summary"><p>Ya vimos en <a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">otro artículo</a> como restringir los accesos a una web usando certificados SSL. Sin embargo, la generación de los mismos era un poco confusa. Sin embargo, existe una herramienta llamada <strong>easyrsa</strong> que nos permite generar peticiones de forma fácil, firmarlas con nuestra CA y obtener el producto final …</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2017/05/generacion-facil-de-certificados-con-easyrsa.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://www.linuxsysadmin.tk/2017/05/docker-1705-con-multi-stage-build.html">Docker 17.05 con multi-stage build</a></h2>
                 <div class="summary"><p>Hacía tiempo que esperaba ansiosamente la nueva versión de <strong>docker</strong>. La raíz de tanta expectación son las mejoras que la versión candidata anunciaba, especialmente el nuevo modelo de <em>build</em>. Se ha modificado los <em>Dockerfile</em> para que puedan generar varias imágenes en un solo fichero, algunas de ellas partiendo de otras …</p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2017/05/docker-1705-con-multi-stage-build.html">Seguir leyendo</a>
@@ -116,13 +123,6 @@ Linux Sysadmin            </a>
                 <h2><a href="http://www.linuxsysadmin.tk/2017/05/problemas-de-log-con-docker-y-python.html">Problemas de log con docker y python</a></h2>
                 <div class="summary"><p>El otro día estaba haciendo un <em>script</em> de <strong>python</strong> que debía ejecutarse en un contenedor <strong>docker</strong>. A pesar de la cantidad de <em>verbose</em> que le puse, no era capaz de ver ningún texto cuando miraba los <em>logs</em>. Tras mucha búsqueda, finalmente encontré el culpable en la variable de entorno <strong>PYTHONUNBUFFERED …</strong></p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2017/05/problemas-de-log-con-docker-y-python.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2017/04/administrando-docker-via-web-portainer.html">Administrando Docker vía web: Portainer</a></h2>
-                <div class="summary"><p>El otro día me topé con un desarrollador que quiere desplegar sus contenedores <strong>Docker</strong> en el servidor de integración, pero no conoce la sintaxis del comando <em>docker</em> y prefiere una interfaz gráfica. Eso me llevó a investigar, buscando una opción bonita, funcional y ligera; al final, me topé con <strong>Portainer …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2017/04/administrando-docker-via-web-portainer.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
@@ -163,6 +163,8 @@ Linux Sysadmin            </a>
                             href="http://www.linuxsysadmin.tk/author/gerard16.html">16</a></li>
                     <li class=""><a
                             href="http://www.linuxsysadmin.tk/author/gerard17.html">17</a></li>
+                    <li class=""><a
+                            href="http://www.linuxsysadmin.tk/author/gerard18.html">18</a></li>
                 <li class="next"><a
                         href="http://www.linuxsysadmin.tk/author/gerard2.html">&raquo;</a></li>
         </ul>
@@ -227,6 +229,16 @@ Linux Sysadmin            </a>
 
             <li class="list-group-item"><a href="http://www.linuxsysadmin.tk/tags.html"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
                 <ul class="list-group list-inline tagcloud" id="tags">
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.tk/tag/12factor.html">
+                            12factor
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/2-way-ssl.html">
+                            2 way ssl
+                        </a>
+                    </li>
                     <li class="list-group-item tag-2">
                         <a href="http://www.linuxsysadmin.tk/tag/ansible.html">
                             ansible
@@ -327,11 +339,6 @@ Linux Sysadmin            </a>
                             dns
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/dnsmasq.html">
-                            dnsmasq
-                        </a>
-                    </li>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/docker.html">
                             docker
@@ -375,11 +382,6 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-2">
                         <a href="http://www.linuxsysadmin.tk/tag/firehol.html">
                             firehol
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/framework.html">
-                            framework
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -647,7 +649,7 @@ Linux Sysadmin            </a>
                             ssh
                         </a>
                     </li>
-                    <li class="list-group-item tag-3">
+                    <li class="list-group-item tag-2">
                         <a href="http://www.linuxsysadmin.tk/tag/ssl.html">
                             ssl
                         </a>

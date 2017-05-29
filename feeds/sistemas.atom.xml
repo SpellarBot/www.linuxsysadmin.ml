@@ -1,5 +1,201 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-03-27T10:00:00+02:00</updated><entry><title>Un entorno web estático con nginx, rsync y docker</title><link href="http://www.linuxsysadmin.tk/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html" rel="alternate"></link><published>2017-03-27T10:00:00+02:00</published><updated>2017-03-27T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-27:/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html</id><summary type="html">&lt;p&gt;Hemos hablado de generar nuestro contenido HTML estático con otras herramientas, y finalmente ha llegado la hora de servirlo. Normalmente, los ficheros que cambian tal y como vamos generando páginas son pocos y nos interesa copiarlo de forma remota, pero no podemos hacerlo con &lt;strong&gt;docker&lt;/strong&gt; porque hacen falta dos servicios …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hemos hablado de generar nuestro contenido HTML estático con otras herramientas, y finalmente ha llegado la hora de servirlo. Normalmente, los ficheros que cambian tal y como vamos generando páginas son pocos y nos interesa copiarlo de forma remota, pero no podemos hacerlo con &lt;strong&gt;docker&lt;/strong&gt; porque hacen falta dos servicios.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-05-29T10:00:00+02:00</updated><entry><title>Generación fácil de certificados con easyrsa</title><link href="http://www.linuxsysadmin.tk/2017/05/generacion-facil-de-certificados-con-easyrsa.html" rel="alternate"></link><published>2017-05-29T10:00:00+02:00</published><updated>2017-05-29T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-05-29:/2017/05/generacion-facil-de-certificados-con-easyrsa.html</id><summary type="html">&lt;p&gt;Ya vimos en &lt;a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html"&gt;otro artículo&lt;/a&gt; como restringir los accesos a una web usando certificados SSL. Sin embargo, la generación de los mismos era un poco confusa. Sin embargo, existe una herramienta llamada &lt;strong&gt;easyrsa&lt;/strong&gt; que nos permite generar peticiones de forma fácil, firmarlas con nuestra CA y obtener el producto final …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ya vimos en &lt;a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html"&gt;otro artículo&lt;/a&gt; como restringir los accesos a una web usando certificados SSL. Sin embargo, la generación de los mismos era un poco confusa. Sin embargo, existe una herramienta llamada &lt;strong&gt;easyrsa&lt;/strong&gt; que nos permite generar peticiones de forma fácil, firmarlas con nuestra CA y obtener el producto final.&lt;/p&gt;
+&lt;p&gt;Vamos a intentar seguir los pasos del citado artículo, solo en la parte de generación de los certificados. Si no se necesitara, se puede obviar la parte del certificado cliente, o porque no, generar certificados para decenas o cientos de usuarios de forma fácil.&lt;/p&gt;
+&lt;p&gt;Vamos a partir de una distribución &lt;a href="https://alpinelinux.org/"&gt;Alpine Linux&lt;/a&gt;. Para los que no lo sospechen ya es un contenedor &lt;strong&gt;Docker&lt;/strong&gt; por la facilidad de crearlo y de destruirlo al acabar el artículo. Además, esta distribución nos ofrece la herramienta en la versión 3, que me ha parecido más intuitiva que la versión anterior. Asumo también que se dispone del paquete &lt;strong&gt;easy-rsa&lt;/strong&gt;, que se puede instalar con &lt;code&gt;apk add easy-rsa&lt;/code&gt;.&lt;/p&gt;
+&lt;h2&gt;Preparando la CA&lt;/h2&gt;
+&lt;p&gt;lo primero para hacer una CA es copiar la estructura base a cualquier sitio. La idea es que tenemos una copia para cada CA que tengamos en el servidor, y no quiero trabajar en las carpetas de sistema para no destruir la plantilla.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rsa:~# cp -R /usr/share/easy-rsa/* .
+rsa:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Otro paso necesario es inicializar las estructura de PKI, que básicamente es crear un esqueleto de carpetas para contener nuestros ficheros.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rsa:~# easyrsa init-pki
+
+init-pki complete&lt;span class="p"&gt;;&lt;/span&gt; you may now create a CA or requests.
+Your newly created PKI dir is: /root/pki
+
+rsa:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finalmente creamos los certificados y claves necesarios para la CA con un simple comando único.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rsa:~# easyrsa build-ca
+Generating a &lt;span class="m"&gt;2048&lt;/span&gt; bit RSA private key
+........................+++
+...............................................+++
+writing new private key to &lt;span class="s1"&gt;&amp;#39;/root/pki/private/ca.key.XXXXPPMHOb&amp;#39;&lt;/span&gt;
+Enter PEM pass phrase:
+Verifying - Enter PEM pass phrase:
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter &lt;span class="s1"&gt;&amp;#39;.&amp;#39;&lt;/span&gt;, the field will be left blank.
+-----
+Common Name &lt;span class="o"&gt;(&lt;/span&gt;eg: your user, host, or server name&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;Easy-RSA CA&lt;span class="o"&gt;]&lt;/span&gt;:
+
+CA creation &lt;span class="nb"&gt;complete&lt;/span&gt; and you may now import and sign cert requests.
+Your new CA certificate file &lt;span class="k"&gt;for&lt;/span&gt; publishing is at:
+/root/pki/ca.crt
+
+rsa:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El resultado que deberemos exportar a nuestro servidor es el certificado de la CA, cuya localización es &lt;em&gt;/root/pki/ca.crt&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Generando el certificado de nuestro servidor&lt;/h2&gt;
+&lt;p&gt;Este paso se debe repetir tantas veces como servidores queramos que utilicen un certificado SSL. De momento, nos basta con uno. Además, lo vamos a crear sin contraseña porque no queremos tener que introducirla cada vez que se reinicie el servidor.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rsa:~# easyrsa gen-req private nopass
+Generating a &lt;span class="m"&gt;2048&lt;/span&gt; bit RSA private key
+......................................................+++
+.+++
+writing new private key to &lt;span class="s1"&gt;&amp;#39;/root/pki/private/private.key.XXXXhfGNmO&amp;#39;&lt;/span&gt;
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter &lt;span class="s1"&gt;&amp;#39;.&amp;#39;&lt;/span&gt;, the field will be left blank.
+-----
+Common Name &lt;span class="o"&gt;(&lt;/span&gt;eg: your user, host, or server name&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;private&lt;span class="o"&gt;]&lt;/span&gt;:
+
+Keypair and certificate request completed. Your files are:
+req: /root/pki/reqs/private.req
+key: /root/pki/private/private.key
+
+rsa:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;IMPORTANTE&lt;/strong&gt;: el &lt;em&gt;Common Name&lt;/em&gt; es el parámetro mas importante; debe coincidir con el dominio para que se dé por bueno.&lt;/p&gt;
+&lt;p&gt;Lo firmamos con nuestra CA y ya habremos acabado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rsa:~# easyrsa sign-req server private
+
+
+You are about to sign the following certificate.
+Please check over the details shown below &lt;span class="k"&gt;for&lt;/span&gt; accuracy. Note that this request
+has not been cryptographically verified. Please be sure it came from a trusted
+&lt;span class="nb"&gt;source&lt;/span&gt; or that you have verified the request checksum with the sender.
+
+Request subject, to be signed as a server certificate &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="m"&gt;3650&lt;/span&gt; days:
+
+&lt;span class="nv"&gt;subject&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;
+    &lt;span class="nv"&gt;commonName&lt;/span&gt;                &lt;span class="o"&gt;=&lt;/span&gt; private
+
+
+Type the word &lt;span class="s1"&gt;&amp;#39;yes&amp;#39;&lt;/span&gt; to &lt;span class="k"&gt;continue&lt;/span&gt;, or any other input to abort.
+  Confirm request details: yes
+Using configuration from /root/openssl-1.0.cnf
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; /root/pki/private/ca.key:
+Check that the request matches the signature
+Signature ok
+The Subject&lt;span class="s1"&gt;&amp;#39;s Distinguished Name is as follows&lt;/span&gt;
+&lt;span class="s1"&gt;commonName            :ASN.1 12:&amp;#39;&lt;/span&gt;private&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;
+Certificate is to be certified &lt;span class="k"&gt;until&lt;/span&gt; Nov  &lt;span class="m"&gt;9&lt;/span&gt; &lt;span class="m"&gt;11&lt;/span&gt;:24:39 &lt;span class="m"&gt;2026&lt;/span&gt; GMT &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;3650&lt;/span&gt; days&lt;span class="o"&gt;)&lt;/span&gt;
+
+Write out database with &lt;span class="m"&gt;1&lt;/span&gt; new entries
+Data Base Updated
+
+Certificate created at: /root/pki/issued/private.crt
+
+rsa:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a necesitar los ficheros &lt;em&gt;/root/pki/private/private.key&lt;/em&gt; y &lt;em&gt;/root/pki/private/private.crt&lt;/em&gt; para ponerlos en nuestro servidor, juntamente con el certificado de la CA.&lt;/p&gt;
+&lt;h2&gt;Generando certificados cliente (opcional)&lt;/h2&gt;
+&lt;p&gt;Se trata de la misma filosofía; generamos una &lt;em&gt;request&lt;/em&gt;, la firmamos y finalmente la vamos a empaquetar en un fichero &lt;em&gt;.p12&lt;/em&gt; para su fácil y segura distribución.&lt;/p&gt;
+&lt;p&gt;Repetimos la generación de la &lt;em&gt;request&lt;/em&gt; de la misma manera:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rsa:~# easyrsa gen-req gerard
+Generating a &lt;span class="m"&gt;2048&lt;/span&gt; bit RSA private key
+............................................+++
+...........+++
+writing new private key to &lt;span class="s1"&gt;&amp;#39;/root/pki/private/gerard.key.XXXXfHJDkE&amp;#39;&lt;/span&gt;
+Enter PEM pass phrase:
+Verifying - Enter PEM pass phrase:
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter &lt;span class="s1"&gt;&amp;#39;.&amp;#39;&lt;/span&gt;, the field will be left blank.
+-----
+Common Name &lt;span class="o"&gt;(&lt;/span&gt;eg: your user, host, or server name&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;gerard&lt;span class="o"&gt;]&lt;/span&gt;:
+
+Keypair and certificate request completed. Your files are:
+req: /root/pki/reqs/gerard.req
+key: /root/pki/private/gerard.key
+
+rsa:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Firmamos la petición. Es especialmente importante el parámetro &lt;em&gt;client&lt;/em&gt;, ya que sino, no va a funcionar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rsa:~# easyrsa sign-req client gerard
+
+
+You are about to sign the following certificate.
+Please check over the details shown below &lt;span class="k"&gt;for&lt;/span&gt; accuracy. Note that this request
+has not been cryptographically verified. Please be sure it came from a trusted
+&lt;span class="nb"&gt;source&lt;/span&gt; or that you have verified the request checksum with the sender.
+
+Request subject, to be signed as a client certificate &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="m"&gt;3650&lt;/span&gt; days:
+
+&lt;span class="nv"&gt;subject&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;
+    &lt;span class="nv"&gt;commonName&lt;/span&gt;                &lt;span class="o"&gt;=&lt;/span&gt; gerard
+
+
+Type the word &lt;span class="s1"&gt;&amp;#39;yes&amp;#39;&lt;/span&gt; to &lt;span class="k"&gt;continue&lt;/span&gt;, or any other input to abort.
+  Confirm request details: yes
+Using configuration from /root/openssl-1.0.cnf
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; /root/pki/private/ca.key:
+Check that the request matches the signature
+Signature ok
+The Subject&lt;span class="s1"&gt;&amp;#39;s Distinguished Name is as follows&lt;/span&gt;
+&lt;span class="s1"&gt;commonName            :ASN.1 12:&amp;#39;&lt;/span&gt;gerard&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;
+Certificate is to be certified &lt;span class="k"&gt;until&lt;/span&gt; Nov  &lt;span class="m"&gt;9&lt;/span&gt; &lt;span class="m"&gt;11&lt;/span&gt;:42:10 &lt;span class="m"&gt;2026&lt;/span&gt; GMT &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;3650&lt;/span&gt; days&lt;span class="o"&gt;)&lt;/span&gt;
+
+Write out database with &lt;span class="m"&gt;1&lt;/span&gt; new entries
+Data Base Updated
+
+Certificate created at: /root/pki/issued/gerard.crt
+
+rsa:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finalmente tenemos los ficheros &lt;em&gt;gerard.key&lt;/em&gt; y &lt;em&gt;gerard.crt&lt;/em&gt;, que no son lo que solemos importar en nuestro navegador. Para ellos lo empaquetamos en un fichero &lt;em&gt;gerard.12&lt;/em&gt; que está protegido por contraseña y es el que deberá importar el usuario de nuestra web.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;rsa:~# openssl pkcs12 -export -in pki/issued/gerard.crt -inkey pki/private/gerard.key -out gerard.p12
+Enter pass phrase &lt;span class="k"&gt;for&lt;/span&gt; pki/private/gerard.key:
+Enter Export Password:
+Verifying - Enter Export Password:
+rsa:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Un ejemplo de servidor nginx funcional&lt;/h2&gt;
+&lt;p&gt;Tenemos 3 ficheros para nuestro servidor, que son &lt;em&gt;ca.crt&lt;/em&gt;, &lt;em&gt;server.crt&lt;/em&gt; y &lt;em&gt;server.key&lt;/em&gt;, con los que podemos montar un dominio estándar, como en el artículo citado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@server:~# cat /etc/nginx/sites-enabled/private.linuxsysadmin.tk
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen                      &lt;span class="m"&gt;443&lt;/span&gt; ssl&lt;span class="p"&gt;;&lt;/span&gt;
+    server_name                 private&lt;span class="p"&gt;;&lt;/span&gt;
+    root                        /srv/www&lt;span class="p"&gt;;&lt;/span&gt;
+
+    ssl_certificate             /etc/ssl/certs/server.crt&lt;span class="p"&gt;;&lt;/span&gt;
+    ssl_certificate_key         /etc/ssl/private/server.key&lt;span class="p"&gt;;&lt;/span&gt;
+    ssl_client_certificate      /etc/ssl/certs/ca.crt&lt;span class="p"&gt;;&lt;/span&gt;
+    ssl_verify_client           on&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@server:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y suponiendo que el cliente ha importado su clave con éxito, ya tenemos el dominio montado.&lt;/p&gt;</content><category term="easyrsa"></category><category term="openssl"></category><category term="ssl"></category><category term="2 way ssl"></category><category term="certificado"></category></entry><entry><title>Un entorno web estático con nginx, rsync y docker</title><link href="http://www.linuxsysadmin.tk/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html" rel="alternate"></link><published>2017-03-27T10:00:00+02:00</published><updated>2017-03-27T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-03-27:/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html</id><summary type="html">&lt;p&gt;Hemos hablado de generar nuestro contenido HTML estático con otras herramientas, y finalmente ha llegado la hora de servirlo. Normalmente, los ficheros que cambian tal y como vamos generando páginas son pocos y nos interesa copiarlo de forma remota, pero no podemos hacerlo con &lt;strong&gt;docker&lt;/strong&gt; porque hacen falta dos servicios …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hemos hablado de generar nuestro contenido HTML estático con otras herramientas, y finalmente ha llegado la hora de servirlo. Normalmente, los ficheros que cambian tal y como vamos generando páginas son pocos y nos interesa copiarlo de forma remota, pero no podemos hacerlo con &lt;strong&gt;docker&lt;/strong&gt; porque hacen falta dos servicios.&lt;/p&gt;
 &lt;p&gt;Si has asentido con la cabeza, mal. Es verdad que se necesitan dos servicios, pero hay maneras de ejecutar dos procesos en un mismo contenedor, por ejemplo &lt;a href="http://www.linuxsysadmin.tk/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html"&gt;con un gestor de procesos&lt;/a&gt;. Sin embargo, esa no es la filosofía de &lt;strong&gt;docker&lt;/strong&gt;. Un contenedor solo debería ejecutar un proceso, simplificando su contenido y siendo necesarios varios contenedores para hacer nuestro sistema modular.&lt;/p&gt;
 &lt;p&gt;Así que solo nos queda pensar las partes que tiene nuestro pequeño entorno, para luego levantar contenedores que ejecuten todos los servicios necesarios, posiblemente con &lt;strong&gt;docker-compose&lt;/strong&gt;:&lt;/p&gt;
 &lt;ul&gt;
