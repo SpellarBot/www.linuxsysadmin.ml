@@ -1,5 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-06-06T10:00:00+02:00</updated><entry><title>Logs en formato JSON en Nginx</title><link href="http://www.linuxsysadmin.tk/2017/06/logs-en-formato-json-en-nginx.html" rel="alternate"></link><published>2017-06-06T10:00:00+02:00</published><updated>2017-06-06T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-06-06:/2017/06/logs-en-formato-json-en-nginx.html</id><summary type="html">&lt;p&gt;Vimos en un artículo anterior como trabajar con herramientas para agregar los &lt;em&gt;logs&lt;/em&gt; en un mismo servidor, para su consulta. Algunos formatos de &lt;em&gt;logs&lt;/em&gt; necesitan complejas formas de &lt;em&gt;parseado&lt;/em&gt; para que puedan servir de base para nuestra consulta, y en el caso de &lt;strong&gt;logstash&lt;/strong&gt; nos conviene un formato &lt;strong&gt;JSON&lt;/strong&gt; válido …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Vimos en un artículo anterior como trabajar con herramientas para agregar los &lt;em&gt;logs&lt;/em&gt; en un mismo servidor, para su consulta. Algunos formatos de &lt;em&gt;logs&lt;/em&gt; necesitan complejas formas de &lt;em&gt;parseado&lt;/em&gt; para que puedan servir de base para nuestra consulta, y en el caso de &lt;strong&gt;logstash&lt;/strong&gt; nos conviene un formato &lt;strong&gt;JSON&lt;/strong&gt; válido.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-06-12T10:00:00+02:00</updated><entry><title>Exponiendo puertos TCP a través de un firewall con ngrok</title><link href="http://www.linuxsysadmin.tk/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html" rel="alternate"></link><published>2017-06-12T10:00:00+02:00</published><updated>2017-06-12T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-06-12:/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html</id><summary type="html">&lt;p&gt;A veces tenemos la necesidad de exponer en internet algún puerto TCP de forma temporal, para hacer &lt;em&gt;testing&lt;/em&gt; o alguna &lt;em&gt;demo&lt;/em&gt;. Ya vimos como podemos hacer esto mediante &lt;a href="http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html"&gt;túneles SSH reversos&lt;/a&gt;, aunque no siempre disponemos de un dominio público. En estos casos podemos usar un sistema de túneles llamado &lt;strong&gt;ngrok …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;A veces tenemos la necesidad de exponer en internet algún puerto TCP de forma temporal, para hacer &lt;em&gt;testing&lt;/em&gt; o alguna &lt;em&gt;demo&lt;/em&gt;. Ya vimos como podemos hacer esto mediante &lt;a href="http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html"&gt;túneles SSH reversos&lt;/a&gt;, aunque no siempre disponemos de un dominio público. En estos casos podemos usar un sistema de túneles llamado &lt;strong&gt;ngrok&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;El concepto es muy simple, tal como nos indican en su &lt;a href="https://ngrok.com/"&gt;página web&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Secure tunnels to localhost&lt;/strong&gt;&lt;br&gt;
+I want to expose a local server behind a NAT or firewall to the internet.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Se trata de un binario que abre un túnel reverso SSH contra una de sus servidores, exponiendo dicho puerto mediante un dominio de la forma &lt;code&gt;&amp;lt;dominio.ngrok.io&amp;gt;&lt;/code&gt;. Algunas de las funcionalidades requieren una versión de pago, pero la versión gratuita nos puede sacar de algún apuro.&lt;/p&gt;
+&lt;h2&gt;El escenario de partida&lt;/h2&gt;
+&lt;p&gt;Vamos a suponer que estamos desarrollando una página web y nos interesa que un cliente nos valide que es lo que quiere, o puede ser que pidamos opiniones de terceros.&lt;/p&gt;
+&lt;p&gt;Vamos a suponer que es una página HTML simple, aunque podría ser un puerto levantado por nuestro &lt;em&gt;framework&lt;/em&gt; favorito. Para servirlo vamos a utilizar un servidor web simple, por ejemplo, el &lt;em&gt;SimpleHTTPServer&lt;/em&gt; de &lt;strong&gt;python&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;No vamos a desarrollar una página muy completa, solo lo justo para que se vea el ejemplo. Este es nuestro código HTML:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sodium:~/web$ cat index.html 
+&amp;lt;!doctype html&amp;gt;
+
+&amp;lt;html &lt;span class="nv"&gt;lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;es&amp;quot;&lt;/span&gt;&amp;gt;
+
+&amp;lt;head&amp;gt;
+  &amp;lt;meta &lt;span class="nv"&gt;charset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;utf-8&amp;quot;&lt;/span&gt;&amp;gt;
+  &amp;lt;title&amp;gt;Lorem ipsum&amp;lt;/title&amp;gt;
+  &amp;lt;link &lt;span class="nv"&gt;rel&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;stylesheet&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;href&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;style.css&amp;quot;&lt;/span&gt;&amp;gt;
+&amp;lt;/head&amp;gt;
+
+&amp;lt;body&amp;gt;
+  &amp;lt;h1&amp;gt;Lorem ipsum&amp;lt;/h1&amp;gt;
+  &amp;lt;p&amp;gt;Lorem ipsum dolor sit amet&amp;lt;/p&amp;gt;
+  &amp;lt;p&amp;gt;Lorem ipsum dolor sit amet&amp;lt;/p&amp;gt;
+  &amp;lt;p&amp;gt;Lorem ipsum dolor sit amet&amp;lt;/p&amp;gt;
+&amp;lt;/body&amp;gt;
+
+&amp;lt;/html&amp;gt;
+gerard@sodium:~/web$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Por poner algo con un poco de color, utilizaremos una hoja de estilo CSS:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sodium:~/web$ cat style.css 
+body &lt;span class="o"&gt;{&lt;/span&gt;
+  width: 800px&lt;span class="p"&gt;;&lt;/span&gt;
+  margin: auto&lt;span class="p"&gt;;&lt;/span&gt;
+  background-color: cyan&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+h1 &lt;span class="o"&gt;{&lt;/span&gt; text-align: center&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+p &lt;span class="o"&gt;{&lt;/span&gt; text-align: justify&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sodium:~/web$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y como necesitamos servirla, ponemos un servidor cualquiera para servirlo, por ejemplo, el de &lt;strong&gt;python&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sodium:~/web$ python -m SimpleHTTPServer
+Serving HTTP on &lt;span class="m"&gt;0&lt;/span&gt;.0.0.0 port &lt;span class="m"&gt;8000&lt;/span&gt; ...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este punto podemos ver la página web localmente en &lt;a href="http://localhost:8000/"&gt;http://localhost:8000/&lt;/a&gt;, aunque por estar detrás de un &lt;em&gt;firewall&lt;/em&gt;, nadie más allá del &lt;em&gt;firewall&lt;/em&gt; puede verlo.&lt;/p&gt;
+&lt;h2&gt;Instalando ngrok&lt;/h2&gt;
+&lt;p&gt;En este caso, el título no es muy acertado, ya que &lt;strong&gt;no se instala&lt;/strong&gt;. Se trata de un solo binario compilado estáticamente, que solo tiene que ser descargado y descomprimido.&lt;/p&gt;
+&lt;p&gt;Siguiendo la página de descarga, he elegido el binario que funciona para mi sistema operativo y arquitectura, que para variar es un sistema &lt;em&gt;Linux&lt;/em&gt; de 64 bits. Podemos descargar el enlace directamente en el navegador o con una comando adecuado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sodium:~$ wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+converted &lt;span class="s1"&gt;&amp;#39;https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;ANSI_X3.4-1968&lt;span class="o"&gt;)&lt;/span&gt; -&amp;gt; &lt;span class="s1"&gt;&amp;#39;https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;UTF-8&lt;span class="o"&gt;)&lt;/span&gt;
+--2016-12-27 &lt;span class="m"&gt;17&lt;/span&gt;:18:09--  https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+Resolving bin.equinox.io &lt;span class="o"&gt;(&lt;/span&gt;bin.equinox.io&lt;span class="o"&gt;)&lt;/span&gt;... &lt;span class="m"&gt;107&lt;/span&gt;.20.195.3, &lt;span class="m"&gt;23&lt;/span&gt;.21.165.77, &lt;span class="m"&gt;107&lt;/span&gt;.20.164.208
+Connecting to bin.equinox.io &lt;span class="o"&gt;(&lt;/span&gt;bin.equinox.io&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="m"&gt;107&lt;/span&gt;.20.195.3&lt;span class="p"&gt;|&lt;/span&gt;:443... connected.
+HTTP request sent, awaiting response... &lt;span class="m"&gt;200&lt;/span&gt; OK
+Length: &lt;span class="m"&gt;5142256&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;.9M&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;application/octet-stream&lt;span class="o"&gt;]&lt;/span&gt;
+Saving to: &lt;span class="s1"&gt;&amp;#39;ngrok-stable-linux-amd64.zip&amp;#39;&lt;/span&gt;
+
+ngrok-stable-linux-amd64 &lt;span class="m"&gt;100&lt;/span&gt;%&lt;span class="o"&gt;[====================================&lt;/span&gt;&amp;gt;&lt;span class="o"&gt;]&lt;/span&gt;   &lt;span class="m"&gt;4&lt;/span&gt;.90M  &lt;span class="m"&gt;2&lt;/span&gt;.39MB/s   in &lt;span class="m"&gt;2&lt;/span&gt;.0s   
+
+&lt;span class="m"&gt;2016&lt;/span&gt;-12-27 &lt;span class="m"&gt;17&lt;/span&gt;:18:12 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.39 MB/s&lt;span class="o"&gt;)&lt;/span&gt; - &lt;span class="s1"&gt;&amp;#39;ngrok-stable-linux-amd64.zip&amp;#39;&lt;/span&gt; saved &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;5142256&lt;/span&gt;/5142256&lt;span class="o"&gt;]&lt;/span&gt;
+
+gerard@sodium:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Se trata de un fichero &lt;em&gt;.zip&lt;/em&gt; que tenemos que descomprimir para obtener el binario.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sodium:~$ unzip ngrok-stable-linux-amd64.zip 
+Archive:  ngrok-stable-linux-amd64.zip
+  inflating: ngrok                   
+gerard@sodium:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este punto podemos dejar el nuevo binario en alguna carpeta que esté en el &lt;em&gt;PATH&lt;/em&gt; del sistema, aunque no es necesario. En este caso no voy a hacerlo por brevedad.&lt;/p&gt;
+&lt;h2&gt;Levantando el túnel&lt;/h2&gt;
+&lt;p&gt;El binario tiene muchas opciones, algunas funcionan en la versión gratuita, pero otras no. Podemos ver lo que tenemos disponible invocando el binario sin más parámetros.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sodium:~$ ./ngrok 
+NAME:
+   ngrok - tunnel &lt;span class="nb"&gt;local&lt;/span&gt; ports to public URLs and inspect traffic
+
+DESCRIPTION:
+    ngrok exposes &lt;span class="nb"&gt;local&lt;/span&gt; networked services behinds NATs and firewalls to the
+    public internet over a secure tunnel. Share &lt;span class="nb"&gt;local&lt;/span&gt; websites, build/test
+    webhook consumers and self-host personal services.
+    Detailed &lt;span class="nb"&gt;help&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; each &lt;span class="nb"&gt;command&lt;/span&gt; is available with &lt;span class="s1"&gt;&amp;#39;ngrok help &amp;lt;command&amp;gt;&amp;#39;&lt;/span&gt;.
+    Open http://localhost:4040 &lt;span class="k"&gt;for&lt;/span&gt; ngrok&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s web interface to inspect traffic.
+
+EXAMPLES:
+    ngrok http &lt;span class="m"&gt;80&lt;/span&gt;                    &lt;span class="c1"&gt;# secure public URL for port 80 web server&lt;/span&gt;
+    ngrok http -subdomain&lt;span class="o"&gt;=&lt;/span&gt;baz &lt;span class="m"&gt;8080&lt;/span&gt;   &lt;span class="c1"&gt;# port 8080 available at baz.ngrok.io&lt;/span&gt;
+    ngrok http foo.dev:80            &lt;span class="c1"&gt;# tunnel to host:port instead of localhost&lt;/span&gt;
+    ngrok tcp &lt;span class="m"&gt;22&lt;/span&gt;                     &lt;span class="c1"&gt;# tunnel arbitrary TCP traffic to port 22&lt;/span&gt;
+    ngrok tls -hostname&lt;span class="o"&gt;=&lt;/span&gt;foo.com &lt;span class="m"&gt;443&lt;/span&gt;  &lt;span class="c1"&gt;# TLS traffic for foo.com to port 443&lt;/span&gt;
+    ngrok start foo bar baz          &lt;span class="c1"&gt;# start tunnels from the configuration file&lt;/span&gt;
+
+VERSION:
+   &lt;span class="m"&gt;2&lt;/span&gt;.1.18
+
+AUTHOR:
+  inconshreveable - &amp;lt;alan@ngrok.com&amp;gt;
+
+COMMANDS:
+   authtoken    save authtoken to configuration file
+   credits  prints author and licensing information
+   http     start an HTTP tunnel
+   start    start tunnels by name from the configuration file
+   tcp      start a TCP tunnel
+   tls      start a TLS tunnel
+   update   update ngrok to the latest version
+   version  print the version string
+   &lt;span class="nb"&gt;help&lt;/span&gt;     Shows a list of commands or &lt;span class="nb"&gt;help&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; one &lt;span class="nb"&gt;command&lt;/span&gt;
+gerard@sodium:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es muy interesante la opción del puerto TCP, pero esta es de pago. Sin embargo, la opción de un túnel HTTP es gratuita. Es la que vamos a usar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sodium:~$ ./ngrok http &lt;span class="m"&gt;8000&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El comando nos va a pintar una página de estado, con alguna información útil para saber a donde tenemos que apuntar el navegador remoto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;ngrok by @inconshreveable                                                           &lt;span class="o"&gt;(&lt;/span&gt;Ctrl+C to quit&lt;span class="o"&gt;)&lt;/span&gt;
+
+Session Status                online                                                                
+Version                       &lt;span class="m"&gt;2&lt;/span&gt;.1.18                                                                
+Region                        United States &lt;span class="o"&gt;(&lt;/span&gt;us&lt;span class="o"&gt;)&lt;/span&gt;                                                    
+Web Interface                 http://127.0.0.1:4040                                                 
+Forwarding                    http://54b3ca80.ngrok.io -&amp;gt; localhost:8000                            
+Forwarding                    https://54b3ca80.ngrok.io -&amp;gt; localhost:8000                           
+
+Connections                   ttl     opn     rt1     rt5     p50     p90                           
+                              &lt;span class="m"&gt;0&lt;/span&gt;       &lt;span class="m"&gt;0&lt;/span&gt;       &lt;span class="m"&gt;0&lt;/span&gt;.00    &lt;span class="m"&gt;0&lt;/span&gt;.00    &lt;span class="m"&gt;0&lt;/span&gt;.00    &lt;span class="m"&gt;0&lt;/span&gt;.00                          
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De esta salida podemos sacar dos datos importantes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;La página pública referente a nuestro túnel, &lt;a href="http://54b3ca80.ngrok.io/"&gt;http://54b3ca80.ngrok.io/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Una página local de estadísticas local en &lt;a href="http://localhost:4040/"&gt;http://localhost:4040/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;La página de estado es una gran utilidad; es en donde podemos ver información de estado y un análisis exhaustivo de las peticiones recibidas. Vale la pena darle un vistazo.&lt;/p&gt;</content><category term="ngrok"></category><category term="túnel"></category><category term="ssh"></category></entry><entry><title>Logs en formato JSON en Nginx</title><link href="http://www.linuxsysadmin.tk/2017/06/logs-en-formato-json-en-nginx.html" rel="alternate"></link><published>2017-06-06T10:00:00+02:00</published><updated>2017-06-06T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-06-06:/2017/06/logs-en-formato-json-en-nginx.html</id><summary type="html">&lt;p&gt;Vimos en un artículo anterior como trabajar con herramientas para agregar los &lt;em&gt;logs&lt;/em&gt; en un mismo servidor, para su consulta. Algunos formatos de &lt;em&gt;logs&lt;/em&gt; necesitan complejas formas de &lt;em&gt;parseado&lt;/em&gt; para que puedan servir de base para nuestra consulta, y en el caso de &lt;strong&gt;logstash&lt;/strong&gt; nos conviene un formato &lt;strong&gt;JSON&lt;/strong&gt; válido …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Vimos en un artículo anterior como trabajar con herramientas para agregar los &lt;em&gt;logs&lt;/em&gt; en un mismo servidor, para su consulta. Algunos formatos de &lt;em&gt;logs&lt;/em&gt; necesitan complejas formas de &lt;em&gt;parseado&lt;/em&gt; para que puedan servir de base para nuestra consulta, y en el caso de &lt;strong&gt;logstash&lt;/strong&gt; nos conviene un formato &lt;strong&gt;JSON&lt;/strong&gt; válido.&lt;/p&gt;
 &lt;p&gt;Hay muchos servicios con complejos formatos de &lt;em&gt;log&lt;/em&gt;, pero suelen tener formas para cambiarlos y ahorrarnos así una tediosa expresión regular al configurar &lt;strong&gt;logstash&lt;/strong&gt;. Este es el caso de &lt;strong&gt;nginx&lt;/strong&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="m"&gt;172&lt;/span&gt;.17.0.1 - - &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;/Mar/2017:10:26:59 +0000&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;GET / HTTP/1.1&amp;quot;&lt;/span&gt; &lt;span class="m"&gt;200&lt;/span&gt; &lt;span class="m"&gt;1966&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;-&amp;quot;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36&amp;quot;&lt;/span&gt;
 &lt;span class="m"&gt;172&lt;/span&gt;.17.0.1 - - &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;/Mar/2017:10:26:59 +0000&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;GET /favicon.ico HTTP/1.1&amp;quot;&lt;/span&gt; &lt;span class="m"&gt;404&lt;/span&gt; &lt;span class="m"&gt;571&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;http://172.17.0.2/&amp;quot;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36&amp;quot;&lt;/span&gt;

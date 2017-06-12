@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Creando túneles con SSH - Linux Sysadmin</title>
+    <title>ngrok - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,22 +9,16 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html">
 
-        <meta name="author" content="Gerard" />
-        <meta name="keywords" content="ssh,túnel" />
-        <meta name="description" content="Todos conocemos las bondades de SSH cuando se trata de acceder a un servidor remoto con una sesión interactiva. Sin embargo, pocos conocen otra habilidad que este servicio nos ofrece: encapsular tráfico de cualquier protocolo a través de un túnel SSH, cifrando nuestro tráfico y pasando potencialmente por otro puerto …" />
+    <meta name="author" content="Gerard" />
+    <meta name="keywords" content="ngrok" />
 
+    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Creando túneles con SSH"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html"/>
-        <meta property="og:description" content="Todos conocemos las bondades de SSH cuando se trata de acceder a un servidor remoto con una sesión interactiva. Sin embargo, pocos conocen otra habilidad que este servicio nos ofrece: encapsular tráfico de cualquier protocolo a través de un túnel SSH, cifrando nuestro tráfico y pasando potencialmente por otro puerto …"/>
-        <meta property="article:published_time" content="2016-10-31" />
-            <meta property="article:section" content="Operaciones" />
-            <meta property="article:tag" content="ssh" />
-            <meta property="article:tag" content="túnel" />
-            <meta property="article:author" content="Gerard" />
+        <meta property="og:type" content="website"/>
+        <meta property="og:title" content="Linux Sysadmin"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
+        <meta property="og:description" content="Linux Sysadmin"/>
 
 
     <!-- Bootstrap -->
@@ -40,8 +34,6 @@
 
 
 
-        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -83,11 +75,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-            <ol class="breadcrumb">
-                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
-                <li class="active">Creando túneles con SSH</li>
-            </ol>
+    <ol class="breadcrumb">
+        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+        <li><a href="http://www.linuxsysadmin.tk/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
+        <li class="active">ngrok</li>
+    </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -100,216 +92,13 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-    <section id="content">
-        <article>
-            <header class="page-header">
-                <h1>
-                    <a href="http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html"
-                       rel="bookmark"
-                       title="Permalink to Creando túneles con SSH">
-                        Creando túneles con SSH
-                    </a>
-                </h1>
-            </header>
-            <div class="entry-content">
-                <div class="panel">
-                    <div class="panel-body">
-<footer class="post-info">
-    <span class="label label-default">Fecha</span>
-    <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2016-10-31T08:00:00+01:00"> 2016-10-31</time>
-    </span>
-
-
-            <span class="label label-default">Autor</span>
-            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
-
-        <span class="label label-default">Tiempo de lectura</span> 8 minutos
-        <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
-
-
-<span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.tk/tag/ssh.html">ssh</a>
-        /
-	<a href="http://www.linuxsysadmin.tk/tag/tunel.html">túnel</a>
-    
-</footer><!-- /.post-info -->                    </div>
+            <article>
+                <h2><a href="http://www.linuxsysadmin.tk/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html">Exponiendo puertos TCP a través de un firewall con ngrok</a></h2>
+                <div class="summary"><p>A veces tenemos la necesidad de exponer en internet algún puerto TCP de forma temporal, para hacer <em>testing</em> o alguna <em>demo</em>. Ya vimos como podemos hacer esto mediante <a href="http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html">túneles SSH reversos</a>, aunque no siempre disponemos de un dominio público. En estos casos podemos usar un sistema de túneles llamado <strong>ngrok …</strong></p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html">Seguir leyendo</a>
                 </div>
-                <p>Todos conocemos las bondades de <strong>SSH</strong> cuando se trata de acceder a un servidor remoto con una sesión interactiva. Sin embargo, pocos conocen otra habilidad que este servicio nos ofrece: encapsular tráfico de cualquier protocolo a través de un túnel <strong>SSH</strong>, cifrando nuestro tráfico y pasando potencialmente por otro puerto.</p>
-<p>La idea es que <strong>SSH</strong> encapsula el tráfico mediante el mismo protocolo <strong>SSH</strong>, evitando que curiosos accedan a nuestros datos, y pasando por el puerto <strong>SSH</strong> para llegar a puertos a los que normalmente no llegaríamos, sea porque no están visibles, o sea porque un <em>firewall</em> bloquea el resto de tráfico.</p>
-<p>Estos túneles pueden ser de dos tipos: locales o remotos; la única diferencia es donde están los extremos, desde el punto de vista del que creó el túnel. En el caso de los túneles remotos, el puerto expuesto es local a la máquina que lanza el comando <em>ssh</em> y conecta en el otro extremo con una máquina remota. En el caso de un túnel remoto, el puerto en escucha se sitúa en la máquina remota y conecta con un puerto local.</p>
-<h2>Un ejemplo de túnel local</h2>
-<p>Vamos a suponer que tenemos una máquina que tiene instalado un servicio que no es accesible desde la red, por ejemplo, una base de datos <strong>mongodb</strong>.</p>
-<div class="highlight"><pre><span></span>root@dbserver:~# netstat -lntp
-Active Internet connections <span class="o">(</span>only servers<span class="o">)</span>
-Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">127</span>.0.0.1:27017         <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">3194</span>/mongod     
-tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:22              <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">1</span>/sshd          
-tcp6       <span class="m">0</span>      <span class="m">0</span> :::22                   :::*                    LISTEN      <span class="m">1</span>/sshd          
-root@dbserver:~# 
-</pre></div>
-
-
-<p>Queremos acceder desde nuestra máquina a esa base de datos, usando un cliente local. Como la máquina remota no ofrece el puerto remotamente, pero si dispone de <strong>SSH</strong>, vamos a crear un túnel local.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~$ ssh -L <span class="m">27272</span>:localhost:27017 user@dbserver -N
-user@dbserver<span class="err">&#39;</span>s password: 
-</pre></div>
-
-
-<p>La idea es que estamos indicando que en la máquina local va a haber un puerto 27272 que va a conectar con <em>localhost:27017</em>, <strong>desde el punto de vista de la máquina remota</strong>. El <em>flag</em> -L significa que el puerto es local, y el <em>flag</em> -N indica que la sesión <strong>SSH</strong> no va a ejecutar ningún comando, ni sesión interactiva.</p>
-<p>Otro <em>flag</em> interesante es el -f, que crearía el túnel en <em>background</em>, sin bloquear el terminal. Eso significa que no nos pueden pedir la <em>password</em> del usuario y la autenticación tendría que ser por <a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">claves SSH</a>.</p>
-<p>Solo nos falta conectar con el cliente en el puerto 27272. Esto va a causar que el tráfico se encapsule de acuerdo con el protocolo <strong>SSH</strong> y pase por el puerto 22. Una vez en destino, se va a deshacer el encapsulado y se va a entregar el mensaje a <em>localhost:27017</em> que, por supuesto, es el servidor de <strong>mongodb</strong>.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~$ mongo --port <span class="m">27272</span>
-MongoDB shell version: <span class="m">3</span>.2.9
-connecting to: <span class="m">127</span>.0.0.1:27272/test
-Server has startup warnings: 
-<span class="m">2016</span>-09-02T07:22:02.640+0000 I CONTROL  <span class="o">[</span>initandlisten<span class="o">]</span> ** WARNING: You are running this process as the root user, which is not recommended.
-<span class="m">2016</span>-09-02T07:22:02.640+0000 I CONTROL  <span class="o">[</span>initandlisten<span class="o">]</span> 
-<span class="m">2016</span>-09-02T07:22:02.640+0000 I CONTROL  <span class="o">[</span>initandlisten<span class="o">]</span> 
-<span class="m">2016</span>-09-02T07:22:02.640+0000 I CONTROL  <span class="o">[</span>initandlisten<span class="o">]</span> ** WARNING: /sys/kernel/mm/transparent_hugepage/defrag is <span class="s1">&#39;always&#39;</span>.
-<span class="m">2016</span>-09-02T07:22:02.640+0000 I CONTROL  <span class="o">[</span>initandlisten<span class="o">]</span> **        We suggest setting it to <span class="s1">&#39;never&#39;</span>
-<span class="m">2016</span>-09-02T07:22:02.640+0000 I CONTROL  <span class="o">[</span>initandlisten<span class="o">]</span> 
-&gt; db
-<span class="nb">test</span>
-&gt; show dbs
-<span class="nb">local</span>  <span class="m">0</span>.000GB
-&gt; 
-</pre></div>
-
-
-<p>Por defecto, en la máquina local se utiliza <em>localhost</em> para hacer el <em>bind</em> del <em>socket</em>, con lo que solamente nuestra máquina vería ese puerto abierto. Para ofrecer este puerto en todas las interfaces, basta con indicarlo:</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~$ ssh -L <span class="m">0</span>.0.0.0:27272:localhost:27017 user@dbserver -N
-user@dbserver<span class="err">&#39;</span>s password: 
-</pre></div>
-
-
-<p>Otro detalle importante es que el destino <em>localhost:27017</em> es visto del punto de vista del servidor remoto. Aunque en este caso, lo hemos conectado a un puerto local del servidor remoto, nada nos impediría poner otro servidor, en vez de <em>localhost</em>, siempre y cuando el servidor remoto pudiera acceder a ese servidor y puerto.</p>
-<p>Como punto final, indico que puse el <em>flag</em> -N porque no me interesa abrir una sesión interactiva en el servidor destino, que es el comportamiento por defecto. Sin embargo, indicando un comando distinto se podría haber conseguido ejecutar de paso otro comando en el servidor destino. Esto nos puede venir bien para ir creando túneles en la misma línea de comandos.</p>
-<div class="highlight"><pre><span></span>ssh -L <span class="m">1234</span>:localhost:1111 user1@server1 <span class="se">\</span>
-ssh -L <span class="m">1111</span>:localhost:2222 user2@server2 <span class="se">\</span>
-ssh -L <span class="m">2222</span>:localhost:3333 user3@server3 -N
-</pre></div>
-
-
-<p>En este caso, el puerto local 1234 conecta con <em>localhost(server1):1111</em> y en <em>server1</em> ejecuta el resto del comando. Es segundo <em>ssh</em> crearía un puerto 1111 local (en <em>server1</em>) que conecta con <em>localhost(server2):2222</em> y ejecuta el tercer <em>ssh</em> en el mismo, que crea un nuevo túnel que conecta el puerto 2222 de <em>server2</em> al 3333 en <em>server3</em>.</p>
-<p>Entonces el usuario inicial se conecta a su local en el puerto 1234. Lo que envíe por ese <em>socket</em> va a aparecer en <em>server1:1111</em>, que lo entregará al otro túnel, y este al tercero. Esto significa que lo que hemos enviado por el <em>socket</em> va a ir a parar a <em>server3:3333</em>.</p>
-<h2>Un ejemplo de túnel remoto</h2>
-<p>Imaginemos que tenemos un servicio en una máquina que no es visible desde internet, y que tenemos un proyecto en desarrollo que queremos hacer accesible. La idea es que vamos a crear túnel remoto, de forma que un puerto en una máquina remota conecte con un puerto en nuestra máquina local.</p>
-<p>Para simplificar, vamos a exponer una web simple, por ejemplo, con <strong>nginx</strong>. Podemos fijarnos que el puerto escucha solamente en <em>localhost</em>, aunque podría ser tráfico cortado por un <em>firewall</em>.</p>
-<div class="highlight"><pre><span></span>root@webserver:~# netstat -lntp
-Active Internet connections <span class="o">(</span>only servers<span class="o">)</span>
-Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">127</span>.0.0.1:80            <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">3169</span>/nginx: master 
-root@webserver:~# 
-</pre></div>
-
-
-<p>Disponemos de un servidor accesible de forma pública por internet, que es el que va a exponer el puerto web. Creamos el túnel remoto de forma simple.</p>
-<div class="highlight"><pre><span></span>root@webserver:~# ssh -R <span class="m">0</span>.0.0.0:8888:localhost:80 user@publicserver -N
-user@publicserver<span class="err">&#39;</span>s password: 
-</pre></div>
-
-
-<p>En este caso, vamos a crear un <em>bind</em> en <em>publicserver</em>, de forma que va a escuchar en <em>0.0.0.0:8888</em> y esto va a llevar a el puerto 80 de <em>webserver</em>. Es el mismo caso que antes, pero en este caso, el origen del túnel esta en el servidor remoto, desde el punto de vista del que lanza el comando <em>ssh</em>.</p>
-<p>Otro detalle importante es que hemos declarado que el puerto origen del túnel escuche en todas las direcciones IP, ya que queremos que cualquier persona en internet lo pueda ver.</p>
-<p>Como detalle extra, <strong>SSH</strong> no permite el <em>bind</em> en <em>0.0.0.0</em> por defecto, y para que lo permita, el demonio <strong>SSH</strong> deber ser configurado con la directiva <em>GatewayPorts</em>, que ponemos previamente al reinicio del servicio.</p>
-<div class="highlight"><pre><span></span>root@publicserver:~# grep -i gatewayports /etc/ssh/sshd_config 
-GatewayPorts yes
-root@publicserver:~# 
-</pre></div>
-
-
-<p>Y podemos ver como el servidor <em>publicserver</em> ha expuesto correctamente el puerto en todas las interfaces.</p>
-<div class="highlight"><pre><span></span>root@publicserver:~# netstat -lntp
-Active Internet connections <span class="o">(</span>only servers<span class="o">)</span>
-Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:8888            <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">13</span>/sshd: root   
-tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:22              <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">1</span>/sshd          
-tcp6       <span class="m">0</span>      <span class="m">0</span> :::8888                 :::*                    LISTEN      <span class="m">13</span>/sshd: root   
-tcp6       <span class="m">0</span>      <span class="m">0</span> :::22                   :::*                    LISTEN      <span class="m">1</span>/sshd          
-root@publicserver:~# 
-</pre></div>
-
-
-<p>Ahora ya podemos acceder a nuestra web desde cualquier punto conectado a internet, solo que lo haremos en el puerto abierto en el servidor público. El túnel se encarga de entregarlo al servidor no visible en internet.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~$ curl http://172.17.0.2:8888/
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-&lt;title&gt;Welcome to nginx on Debian!&lt;/title&gt;
-&lt;style&gt;
-    body <span class="o">{</span>
-        width: 35em<span class="p">;</span>
-        margin: <span class="m">0</span> auto<span class="p">;</span>
-        font-family: Tahoma, Verdana, Arial, sans-serif<span class="p">;</span>
-    <span class="o">}</span>
-&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;h1&gt;Welcome to nginx on Debian!&lt;/h1&gt;
-&lt;p&gt;If you see this page, the nginx web server is successfully installed and
-working on Debian. Further configuration is required.&lt;/p&gt;
-
-&lt;p&gt;For online documentation and support please refer to
-&lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;http://nginx.org/&quot;</span>&gt;nginx.org&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;
-      Please use the &lt;tt&gt;reportbug&lt;/tt&gt; tool to report bugs in the
-      nginx package with Debian. However, check &lt;a
-      <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;http://bugs.debian.org/cgi-bin/pkgreport.cgi?ordering=normal;archive=0;src=nginx;repeatmerged=0&quot;</span>&gt;existing
-      bug reports&lt;/a&gt; before reporting a new bug.
-&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Thank you <span class="k">for</span> using debian and nginx.&lt;/em&gt;&lt;/p&gt;
-
-
-&lt;/body&gt;
-&lt;/html&gt;
-gerard@sirius:~$ 
-</pre></div>
-            </div>
-            <!-- /.entry-content -->
-<section class="well" id="related-posts">
-    <h4>Posts relacionados:</h4>
-    <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/11/levantando-tuneles-ssh-con-systemd.html">Levantando túneles SSH con systemd</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html">Exponiendo puertos TCP a través de un firewall con ngrok</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">Autenticación SSH por claves</a></li>
-    </ul>
-</section>
-    <hr/>
-    <section class="comments" id="comments">
-        <h2>Comments</h2>
-
-        <div id="disqus_thread"></div>
-        <script type="text/javascript">
-            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
-
-                    var disqus_identifier = 'creando-tuneles-con-ssh';
-                var disqus_url = 'http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html';
-
-            var disqus_config = function () {
-                this.language = "es";
-            };
-
-            /* * * DON'T EDIT BELOW THIS LINE * * */
-            (function () {
-                var dsq = document.createElement('script');
-                dsq.type = 'text/javascript';
-                dsq.async = true;
-                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            })();
-        </script>
-        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
-            Disqus.</a></noscript>
-        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-    </section>
-        </article>
-    </section>
+            </article>
+            <hr/>
 
         </div>
         <div class="col-sm-3" id="sidebar">
