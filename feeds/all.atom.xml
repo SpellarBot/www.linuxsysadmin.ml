@@ -1,5 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-06-12T10:00:00+02:00</updated><entry><title>Exponiendo puertos TCP a través de un firewall con ngrok</title><link href="http://www.linuxsysadmin.tk/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html" rel="alternate"></link><published>2017-06-12T10:00:00+02:00</published><updated>2017-06-12T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-06-12:/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html</id><summary type="html">&lt;p&gt;A veces tenemos la necesidad de exponer en internet algún puerto TCP de forma temporal, para hacer &lt;em&gt;testing&lt;/em&gt; o alguna &lt;em&gt;demo&lt;/em&gt;. Ya vimos como podemos hacer esto mediante &lt;a href="http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html"&gt;túneles SSH reversos&lt;/a&gt;, aunque no siempre disponemos de un dominio público. En estos casos podemos usar un sistema de túneles llamado &lt;strong&gt;ngrok …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;A veces tenemos la necesidad de exponer en internet algún puerto TCP de forma temporal, para hacer &lt;em&gt;testing&lt;/em&gt; o alguna &lt;em&gt;demo&lt;/em&gt;. Ya vimos como podemos hacer esto mediante &lt;a href="http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html"&gt;túneles SSH reversos&lt;/a&gt;, aunque no siempre disponemos de un dominio público. En estos casos podemos usar un sistema de túneles llamado &lt;strong&gt;ngrok&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-06-19T10:00:00+02:00</updated><entry><title>Explorando bash: la variable de entorno PROMPT_COMMAND</title><link href="http://www.linuxsysadmin.tk/2017/06/explorando-bash-la-variable-de-entorno-prompt-command.html" rel="alternate"></link><published>2017-06-19T10:00:00+02:00</published><updated>2017-06-19T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-06-19:/2017/06/explorando-bash-la-variable-de-entorno-prompt-command.html</id><summary type="html">&lt;p&gt;Los &lt;em&gt;gurús&lt;/em&gt; del terminal ya conocemos muchas de las virtudes de &lt;strong&gt;bash&lt;/strong&gt;. Sin embargo, es una utilidad muy grande y no es raro que cada vez que busquemos encontremos cosas nuevas. Esta vez, y casi por curiosidad, encontré una variable llamada &lt;strong&gt;PROMPT_COMMAND&lt;/strong&gt;, que aunque no es conocida, es muy útil …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Los &lt;em&gt;gurús&lt;/em&gt; del terminal ya conocemos muchas de las virtudes de &lt;strong&gt;bash&lt;/strong&gt;. Sin embargo, es una utilidad muy grande y no es raro que cada vez que busquemos encontremos cosas nuevas. Esta vez, y casi por curiosidad, encontré una variable llamada &lt;strong&gt;PROMPT_COMMAND&lt;/strong&gt;, que aunque no es conocida, es muy útil.&lt;/p&gt;
+&lt;p&gt;El cometido de esta variable de entorno es el de ejecutar un comando de &lt;strong&gt;bash&lt;/strong&gt; antes de pintar el símbolo de sistema, según &lt;a href="http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x264.html"&gt;la documentación&lt;/a&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Bash provides an environment variable called PROMPT_COMMAND. The contents of this variable are executed as a regular Bash command just before Bash displays a prompt.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;No parece muy impresionante a simple vista, pero con algunas ideas adecuadas nos puede quitar mucho trabajo, automatizando aquellas tareas que hacemos cuando entramos en la carpeta, con vistas a trabajar en ella.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: En todos los ejemplos vamos a definir la variable &lt;strong&gt;PROMPT_COMMAND&lt;/strong&gt; en el fichero &lt;em&gt;.bashrc&lt;/em&gt;, para que se haga automáticamente. Para que se active, hace falta hacer un &lt;em&gt;source&lt;/em&gt; del fichero o abrir de nuevo el terminal; no siempre se menciona en los ejemplos.&lt;/p&gt;
+&lt;h2&gt;Un comando informativo e incondicional&lt;/h2&gt;
+&lt;p&gt;¿Que hay mas útil que saber la hora del día sin tener que salir del terminal? Podemos poner una función que nos informe de la hora cada vez que pintemos el símbolo del sistema. Luego enchufamos esta función en la variable de entorno, y cada vez que lo pinte, tenemos un bonito reloj.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ cat .bashrc 
+...
+prompt_command&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;quot;Current time: &amp;quot;&lt;/span&gt;
+    date &lt;span class="s2"&gt;&amp;quot;+%Y-%m-%d %H:%M:%S&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;PROMPT_COMMAND&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;prompt_command
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo hace falta abrir de nuevo el terminal, o hacer un &lt;em&gt;source&lt;/em&gt; del fichero &lt;em&gt;.bashrc&lt;/em&gt;. La siguiente vez que pinte un &lt;em&gt;prompt&lt;/em&gt;, ejecutará antes nuestra función; de hecho lo va a ejecutar tan pronto como acabe el comando &lt;em&gt;source&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ &lt;span class="nb"&gt;source&lt;/span&gt; .bashrc
+Current time: &lt;span class="m"&gt;2017&lt;/span&gt;-01-13 &lt;span class="m"&gt;10&lt;/span&gt;:27:11
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Un conjunto de instrucciones por carpeta&lt;/h2&gt;
+&lt;p&gt;Supongamos que cada vez que entremos en una carpeta queremos ejecutar un conjunto distinto de comandos. Solo necesitamos que cada carpeta defina su propio &lt;em&gt;script&lt;/em&gt; para ejecutar. Nuestra función va a darse cuenta de que ese &lt;em&gt;script&lt;/em&gt; existe, y lo va a ejecutar automáticamente en caso afirmativo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ cat .bashrc 
+...
+prompt_command&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;test&lt;/span&gt; -x .prompt_command.sh&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt; ./.prompt_command.sh&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;fi&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;PROMPT_COMMAND&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;prompt_command
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Des esta forma, cada carpeta que tenga un &lt;em&gt;script&lt;/em&gt; llamado &lt;em&gt;.prompt_command.sh&lt;/em&gt; conseguirá que sea ejecutado cada vez que se dibuje el &lt;em&gt;prompt&lt;/em&gt;. Lo que haga el &lt;em&gt;script&lt;/em&gt; ya es un tema de preferencia personal.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ &lt;span class="nb"&gt;cd&lt;/span&gt; projects/
+gerard@aldebaran:~$ cat sandbox/.prompt_command.sh
+&lt;span class="c1"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Hello world&amp;quot;&lt;/span&gt;
+gerard@aldebaran:~/projects$ &lt;span class="nb"&gt;cd&lt;/span&gt; sandbox/
+Hello world
+gerard@aldebaran:~/projects/sandbox$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es importante ver que solo ha saltado el mensaje informativo en la carpeta &lt;em&gt;sandbox&lt;/em&gt;. De hecho, cada comando que ejecutemos en ella va a disparar el comando. Añadid lógica extra para evitar ejecuciones inútiles.&lt;/p&gt;
+&lt;h2&gt;Creación y activado automático de &lt;em&gt;virtualenvs&lt;/em&gt; de python&lt;/h2&gt;
+&lt;p&gt;Este es el &lt;em&gt;script&lt;/em&gt; que más trabajo me ahorra. Cuando trabajo con &lt;strong&gt;python&lt;/strong&gt; suelo hacerlo siempre con &lt;em&gt;virtualenv&lt;/em&gt;, y con la variable &lt;strong&gt;PYTHONDONTWRITEBYTECODE&lt;/strong&gt;, para ahorrarme los molestos ficheros &lt;em&gt;.pyc&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;La idea es que activar y desactivar el &lt;em&gt;virtualenv&lt;/em&gt; es tedioso, y me gustaría que se activara automáticamente si la carpeta lo tiene, para desactivarlo al salir de la carpeta, aunque sin desactivarlo en las carpetas subordinadas. Como plus, cuando se active el &lt;em&gt;virtualenv&lt;/em&gt;, también puedo hacer que se defina la variable de entorno y que se creen los &lt;em&gt;virtualenvs&lt;/em&gt; de forma automática si no estuvieran creados.&lt;/p&gt;
+&lt;p&gt;Para ello, me basta con una convención simple:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Una carpeta con un fichero &lt;em&gt;requirements.txt&lt;/em&gt; debería tener un &lt;em&gt;virtualenv&lt;/em&gt; llamado &lt;em&gt;.venv&lt;/em&gt; en la misma carpeta, con las dependencias instaladas.&lt;/li&gt;
+&lt;li&gt;Una carpeta que tenga una carpeta llamada &lt;em&gt;.venv&lt;/em&gt; asume que es un &lt;em&gt;virtualenv&lt;/em&gt; y lo activa, si no estuviera ya activado.&lt;/li&gt;
+&lt;li&gt;En caso de no haber una carpeta &lt;em&gt;.venv&lt;/em&gt; pero hubiera un &lt;em&gt;virtualenv&lt;/em&gt; activo, solo se desactivaría si la nueva carpeta no está dentro de la que contenga el &lt;em&gt;virtualenv&lt;/em&gt; activado.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Un &lt;em&gt;virtualenv&lt;/em&gt; define una variable de entorno &lt;strong&gt;VIRTUAL_ENV&lt;/strong&gt; con el &lt;em&gt;path&lt;/em&gt; que lo contiene. El resto es una simple comparación de &lt;em&gt;substrings&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ cat .bashrc 
+...
+prompt_command&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;test&lt;/span&gt; -e requirements.txt -a ! -e .venv&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+        virtualenv .venv
+        ./.venv/bin/pip install -r requirements.txt
+    &lt;span class="k"&gt;fi&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;test&lt;/span&gt; -d .venv&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;test&lt;/span&gt; -z &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;VIRTUAL_ENV&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+            &lt;span class="nb"&gt;source&lt;/span&gt; .venv/bin/activate
+            &lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;PYTHONDONTWRITEBYTECODE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot; &amp;quot;&lt;/span&gt;
+        &lt;span class="k"&gt;fi&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;test&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;VIRTUAL_ENV&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;PWD&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nv"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="si"&gt;${#&lt;/span&gt;&lt;span class="nv"&gt;VIRTUAL_ENV&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="p"&gt;-5&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; !&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;VIRTUAL_ENV&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nv"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="si"&gt;${#&lt;/span&gt;&lt;span class="nv"&gt;VIRTUAL_ENV&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="p"&gt;-5&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+                &lt;span class="nb"&gt;unset&lt;/span&gt; PYTHONDONTWRITEBYTECODE
+                deactivate
+            &lt;span class="k"&gt;fi&lt;/span&gt;
+        &lt;span class="k"&gt;fi&lt;/span&gt;
+    &lt;span class="k"&gt;fi&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;PROMPT_COMMAND&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;prompt_command
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto ya nos funciona el montaje. Asumamos que tenemos un fichero &lt;em&gt;requirements.txt&lt;/em&gt; en la carpeta &lt;em&gt;sandbox&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ &lt;span class="nb"&gt;cd&lt;/span&gt; projects/
+gerard@aldebaran:~/projects$ cat sandbox/requirements.txt 
+&lt;span class="nv"&gt;Django&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.10.5
+gerard@aldebaran:~/projects$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo necesitamos entrar en ella para que se ejecute nuestra función; como hay un &lt;em&gt;requirements.txt&lt;/em&gt; y no hay un &lt;em&gt;.venv&lt;/em&gt;, lo crea, instalando en él las dependencias contenidas en el fichero &lt;em&gt;requirements.txt&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/projects$ &lt;span class="nb"&gt;cd&lt;/span&gt; sandbox/
+New python executable in /home/gerard/projects/sandbox/.venv/bin/python
+Installing setuptools, pip, wheel...done.
+Collecting &lt;span class="nv"&gt;Django&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.10.5 &lt;span class="o"&gt;(&lt;/span&gt;from -r requirements.txt &lt;span class="o"&gt;(&lt;/span&gt;line &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;))&lt;/span&gt;
+  Using cached Django-1.10.5-py2.py3-none-any.whl
+Installing collected packages: Django
+Successfully installed Django-1.10.5
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/sandbox$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora ya tenemos en &lt;em&gt;virtualenv&lt;/em&gt; activado, hasta salir de la carpeta. Si volvemos a entrar, solo lo acitva, sin reinstalarlo. Al entrar en una subcarpeta, no lo desactiva.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/sandbox$ &lt;span class="nb"&gt;cd&lt;/span&gt; ..
+gerard@aldebaran:~/projects$ &lt;span class="nb"&gt;cd&lt;/span&gt; sandbox/
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/sandbox$ &lt;span class="nb"&gt;cd&lt;/span&gt; folder/
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@aldebaran:~/projects/sandbox/folder$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto me evito tener que ir preocupándome de los &lt;em&gt;virtualenvs&lt;/em&gt; y de los fichero &lt;em&gt;.pyc&lt;/em&gt;. Muy útil y muy productivo.&lt;/p&gt;</content><category term="bash"></category><category term="variable"></category><category term="PROMPT_COMMAND"></category></entry><entry><title>Exponiendo puertos TCP a través de un firewall con ngrok</title><link href="http://www.linuxsysadmin.tk/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html" rel="alternate"></link><published>2017-06-12T10:00:00+02:00</published><updated>2017-06-12T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-06-12:/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html</id><summary type="html">&lt;p&gt;A veces tenemos la necesidad de exponer en internet algún puerto TCP de forma temporal, para hacer &lt;em&gt;testing&lt;/em&gt; o alguna &lt;em&gt;demo&lt;/em&gt;. Ya vimos como podemos hacer esto mediante &lt;a href="http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html"&gt;túneles SSH reversos&lt;/a&gt;, aunque no siempre disponemos de un dominio público. En estos casos podemos usar un sistema de túneles llamado &lt;strong&gt;ngrok …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;A veces tenemos la necesidad de exponer en internet algún puerto TCP de forma temporal, para hacer &lt;em&gt;testing&lt;/em&gt; o alguna &lt;em&gt;demo&lt;/em&gt;. Ya vimos como podemos hacer esto mediante &lt;a href="http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html"&gt;túneles SSH reversos&lt;/a&gt;, aunque no siempre disponemos de un dominio público. En estos casos podemos usar un sistema de túneles llamado &lt;strong&gt;ngrok&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;El concepto es muy simple, tal como nos indican en su &lt;a href="https://ngrok.com/"&gt;página web&lt;/a&gt;:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;&lt;strong&gt;Secure tunnels to localhost&lt;/strong&gt;&lt;br&gt;
@@ -5598,7 +5714,7 @@ root@65b056d5d699:~#
 
 
 &lt;p&gt;Este &lt;em&gt;script&lt;/em&gt; recibe la ruta de la carpeta monitorizada y el fichero. Lo que hace el &lt;em&gt;script&lt;/em&gt; se deja a la imaginación del lector. Como punto adicional, recalcar que se ha usado el evento &lt;strong&gt;IN_WRITE_CLOSE&lt;/strong&gt; en vez de &lt;strong&gt;IN_CREATE&lt;/strong&gt; porque este último salta inmediatamente, y podríamos encontrarnos con un fichero a medio subir, en caso de ser puesto por un protocolo remoto.&lt;/p&gt;
-&lt;p&gt;Estoy seguro que en un futuro no muy lejano, esta herramienta me va a ser de gran utilidad.&lt;/p&gt;</content></entry><entry><title>Lanzando playbooks de Ansible desde Jenkins</title><link href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html" rel="alternate"></link><published>2016-09-26T08:00:00+02:00</published><updated>2016-09-26T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-09-26:/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html</id><summary type="html">&lt;p&gt;Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con &lt;strong&gt;Ansible&lt;/strong&gt; o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto &lt;strong&gt;Ansible Tower&lt;/strong&gt;, su precio es prohibitivo para muchos …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con &lt;strong&gt;Ansible&lt;/strong&gt; o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto &lt;strong&gt;Ansible Tower&lt;/strong&gt;, su precio es prohibitivo para muchos.&lt;/p&gt;
+&lt;p&gt;Estoy seguro que en un futuro no muy lejano, esta herramienta me va a ser de gran utilidad.&lt;/p&gt;</content><category term="incron"></category></entry><entry><title>Lanzando playbooks de Ansible desde Jenkins</title><link href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html" rel="alternate"></link><published>2016-09-26T08:00:00+02:00</published><updated>2016-09-26T08:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2016-09-26:/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html</id><summary type="html">&lt;p&gt;Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con &lt;strong&gt;Ansible&lt;/strong&gt; o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto &lt;strong&gt;Ansible Tower&lt;/strong&gt;, su precio es prohibitivo para muchos …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con &lt;strong&gt;Ansible&lt;/strong&gt; o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto &lt;strong&gt;Ansible Tower&lt;/strong&gt;, su precio es prohibitivo para muchos.&lt;/p&gt;
 &lt;p&gt;Desarrollar una solución propia no suele ser una opción viable, pero afortunadamente, hay muchas soluciones que pueden satisfacer nuestras necesidades. Una de ellas es &lt;strong&gt;Jenkins&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;En este tutorial y, por comodidad, nos vamos a ahorrar la instalación de &lt;strong&gt;Jenkins&lt;/strong&gt; usando la imagen oficial para &lt;strong&gt;Docker&lt;/strong&gt;. Sobre esta imagen vamos a añadir aquello que podamos necesitar para lanzar nuestros &lt;em&gt;playbooks&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Vamos a adoptar un modelo de trabajo en el que nuestro inventario y nuestros &lt;em&gt;playbooks&lt;/em&gt; están alojados en un servidor &lt;strong&gt;git&lt;/strong&gt;. Nuestro &lt;strong&gt;Jenkins&lt;/strong&gt; va a descargarse este repositorio como "fuente" de código y va a "construir" ejecutando los &lt;em&gt;playbooks&lt;/em&gt; del repositorio.&lt;/p&gt;
