@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2017-06-19T07:54:08-00:00</lastmod>
+<lastmod>2017-06-26T09:05:21-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2017-06-19T07:54:08-00:00</lastmod>
+<lastmod>2017-06-26T09:05:21-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2017-06-19T07:54:08-00:00</lastmod>
+<lastmod>2017-06-26T09:05:21-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2017-06-19T07:54:08-00:00</lastmod>
+<lastmod>2017-06-26T09:05:21-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2017-06-19T07:54:08-00:00</lastmod>
+<lastmod>2017-06-26T09:05:21-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2017/06/un-servidor-de-git-local-con-gitolite.html</loc>
+<lastmod>2017-06-26T10:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -691,7 +698,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/sistemas.html</loc>
-<lastmod>2017-05-29T10:00:00-00:15</lastmod>
+<lastmod>2017-06-26T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1433,7 +1440,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/git.html</loc>
-<lastmod>2017-03-20T10:00:00-00:15</lastmod>
+<lastmod>2017-06-26T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1579,8 +1586,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/owncloud.html</loc>
-<lastmod>2017-02-20T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/ansible.html</loc>
+<lastmod>2017-02-27T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1642,8 +1649,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/ansible.html</loc>
-<lastmod>2017-02-27T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/owncloud.html</loc>
+<lastmod>2017-02-20T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1873,6 +1880,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/gitolite.html</loc>
+<lastmod>2017-06-26T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/snapshot.html</loc>
 <lastmod>2016-02-15T08:30:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1930,7 +1944,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2017-06-19T10:00:00-00:15</lastmod>
+<lastmod>2017-06-26T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

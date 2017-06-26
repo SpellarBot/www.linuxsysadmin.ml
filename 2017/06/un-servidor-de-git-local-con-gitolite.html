@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Disparando acciones en respuesta a modificaciones en el sistema de fichero con incron - Linux Sysadmin</title>
+    <title>Un servidor de git local con gitolite - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,20 +9,21 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/10/disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron.html">
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2017/06/un-servidor-de-git-local-con-gitolite.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="keywords" content="incron" />
-        <meta name="description" content="El otro día recibí una petición diferente en mi trabajo. Se necesitaba monitorizar una carpeta, de forma que cuando alguien dejara ficheros, se lanzara una tarea para procesarlos. Tras buscar un poco por internet, topé con una herramienta tipo cron, que ejecutaba comandos ante eventos en el sistema de ficheros …" />
+        <meta name="keywords" content="git,gitolite" />
+        <meta name="description" content="A todos nos encanta el sistema de control de versiones git. Tanto a nivel local como a nivel público en GitHub es una maravilla; lo que no me gusta tanto es el precio que suelen tener las soluciones privadas. Sin embargo, y con un poco de habilidad, podemos encontrar alternativas …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Disparando acciones en respuesta a modificaciones en el sistema de fichero con incron"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/10/disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron.html"/>
-        <meta property="og:description" content="El otro día recibí una petición diferente en mi trabajo. Se necesitaba monitorizar una carpeta, de forma que cuando alguien dejara ficheros, se lanzara una tarea para procesarlos. Tras buscar un poco por internet, topé con una herramienta tipo cron, que ejecutaba comandos ante eventos en el sistema de ficheros …"/>
-        <meta property="article:published_time" content="2016-10-03" />
+        <meta property="og:title" content="Un servidor de git local con gitolite"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/06/un-servidor-de-git-local-con-gitolite.html"/>
+        <meta property="og:description" content="A todos nos encanta el sistema de control de versiones git. Tanto a nivel local como a nivel público en GitHub es una maravilla; lo que no me gusta tanto es el precio que suelen tener las soluciones privadas. Sin embargo, y con un poco de habilidad, podemos encontrar alternativas …"/>
+        <meta property="article:published_time" content="2017-06-26" />
             <meta property="article:section" content="Sistemas" />
-            <meta property="article:tag" content="incron" />
+            <meta property="article:tag" content="git" />
+            <meta property="article:tag" content="gitolite" />
             <meta property="article:author" content="Gerard" />
 
 
@@ -85,7 +86,7 @@ Linux Sysadmin            </a>
             <ol class="breadcrumb">
                 <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
                 <li><a href="http://www.linuxsysadmin.tk/category/sistemas.html" title="Sistemas">Sistemas</a></li>
-                <li class="active">Disparando acciones en respuesta a modificaciones en el sistema de fichero con incron</li>
+                <li class="active">Un servidor de git local con gitolite</li>
             </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -103,10 +104,10 @@ Linux Sysadmin            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://www.linuxsysadmin.tk/2016/10/disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron.html"
+                    <a href="http://www.linuxsysadmin.tk/2017/06/un-servidor-de-git-local-con-gitolite.html"
                        rel="bookmark"
-                       title="Permalink to Disparando acciones en respuesta a modificaciones en el sistema de fichero con incron">
-                        Disparando acciones en respuesta a modificaciones en el sistema de fichero con incron
+                       title="Permalink to Un servidor de git local con gitolite">
+                        Un servidor de git local con gitolite
                     </a>
                 </h1>
             </header>
@@ -116,148 +117,279 @@ Linux Sysadmin            </a>
 <footer class="post-info">
     <span class="label label-default">Fecha</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2016-10-03T08:00:00+02:00"> 2016-10-03</time>
+        <i class="fa fa-calendar"></i><time datetime="2017-06-26T10:00:00+02:00"> 2017-06-26</time>
     </span>
 
 
             <span class="label label-default">Autor</span>
             <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
 
-        <span class="label label-default">Tiempo de lectura</span> 6 minutos
+        <span class="label label-default">Tiempo de lectura</span> 10 minutos
         <span class="label label-default">Categoría</span>
         <a href="http://www.linuxsysadmin.tk/category/sistemas.html">Sistemas</a>
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.tk/tag/incron.html">incron</a>
+	<a href="http://www.linuxsysadmin.tk/tag/git.html">git</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/gitolite.html">gitolite</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>El otro día recibí una petición diferente en mi trabajo. Se necesitaba monitorizar una carpeta, de forma que cuando alguien dejara ficheros, se lanzara una tarea para procesarlos. Tras buscar un poco por internet, topé con una herramienta tipo <em>cron</em>, que ejecutaba comandos ante eventos en el sistema de ficheros.</p>
-<p>Como me pareció interesante, me puse a investigar como funcionaba y, aunque no sirvió para cubrir nuestras necesidades, decidí apuntarla por sus usos potenciales en el futuro.</p>
-<p>Como no podía ser de otra forma, vamos a empezar instalando el paquete que lo contiene:</p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:~# apt-get install -y incron
-Reading package lists... Done
-Building dependency tree       
-Reading state information... Done
-The following NEW packages will be installed:
-  incron
-<span class="m">0</span> upgraded, <span class="m">1</span> newly installed, <span class="m">0</span> to remove and <span class="m">0</span> not upgraded.
-Need to get <span class="m">68</span>.8 kB of archives.
-After this operation, <span class="m">321</span> kB of additional disk space will be used.
+                <p>A todos nos encanta el sistema de control de versiones <strong>git</strong>. Tanto a nivel local como a nivel público en <em>GitHub</em> es una maravilla; lo que no me gusta tanto es el precio que suelen tener las soluciones privadas. Sin embargo, y con un poco de habilidad, podemos encontrar alternativas.</p>
+<p>Existen varias alternativas tipo web, como por ejemplo <a href="https://github.com/gitlabhq/gitlabhq">GitLab</a> (imagen para <strong>docker</strong> en <a href="https://hub.docker.com/r/gitlab/gitlab-ce/">DockerHub</a>); sin embargo, como amante del terminal me decanto por <a href="http://gitolite.com/gitolite/index.html">Gitolite</a>.</p>
+<p>Además de las virtudes propias de <strong>git</strong>, <strong>gitolite</strong> nos ofrece un sistema de control de permisos en los repositorios bajo su administración, usando un usuario remoto SSH único y diferenciando quien es el usuario mediante la clave SSH que use para establecer la conexión.</p>
+<p>Otro punto interesante es que el servidor (usuarios, repositorios y permisos) se administra mediante <strong>git</strong>, existiendo el usuario <em>admin</em> con permisos sobre el repositorio <em>gitolite-admin</em>. Este tiene la responsabilidad de clonar el repositorio, añadir los cambios y empujarlos con un <em>git push</em>.</p>
+<h2>Montando el servidor</h2>
+<p>Como viene siendo tradición, vamos a aislar nuestro servicio de <strong>gitolite</strong> en un contenedor <strong>docker</strong>. Para ello vamos a utilizar una base de <em>Alpine Linux</em> que nos va a dar un conjunto de paquetes bastante actualizados, a un tamaño bastante pequeño.</p>
+<p>Vamos a crear una imagen y le vamos a poner un <em>tag</em> para diferenciarla del resto, por ejemplo, <em>gitolite</em>. Aquí os paso el contexto para su construcción:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/gitolite$ cat Dockerfile 
+FROM alpine:3.5
+RUN apk add --no-cache openssh gitolite <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    passwd -u git
+COPY start.sh /
+CMD <span class="o">[</span><span class="s2">&quot;/start.sh&quot;</span><span class="o">]</span>
+gerard@aldebaran:~/docker/gitolite$ cat start.sh 
+<span class="c1">#!/bin/sh</span>
+
+ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N <span class="s1">&#39;&#39;</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;</span><span class="nv">$SSH_PUBKEY</span><span class="s2">&quot;</span> &gt; /tmp/admin.pub
+su git -c <span class="s2">&quot;gitolite setup -pk /tmp/admin.pub&quot;</span>
+rm /tmp/admin.pub
+
+<span class="nb">exec</span> /usr/sbin/sshd -D -e
+gerard@aldebaran:~/docker/gitolite$ 
+</pre></div>
+
+
+<p>El <em>script</em> de inicialización <em>start.sh</em> va a iniciar el demonio de SSH, no sin antes generar las claves de <em>host</em> nuevas e inicializar <strong>gitolite</strong>. Un pequeño detalle interesante es que <strong>gitolite</strong> exige una clave pública SSH para que el usuario <em>admin</em> pueda modificar el repositorio de administración; por comodidad la vamos a pasar mediante la variable de entorno <em>SSH_PUBKEY</em>.</p>
+<p>La forma más fácil de levantar el servidor es con <strong>docker compose</strong>, y aunque este varia según vuestros gustos personales, yo he usado algo así:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/gitolite$ cat docker-compose.yml 
+version: <span class="s1">&#39;3&#39;</span>
+services:
+  gitolite:
+    image: gitolite
+    container_name: gitolite
+    hostname: gitolite
+    environment:
+      SSH_PUBKEY: <span class="s2">&quot;ssh-rsa ...&quot;</span>
+    ports:
+      - <span class="s2">&quot;22:22&quot;</span>
+gerard@aldebaran:~/docker/gitolite$ 
+</pre></div>
+
+
+<p><strong>TRUCO</strong>: Para evitar indicar el usuario, la dirección IP y la clave SSH a usar, podemos definir algunos <em>hosts</em> en el fichero <em>~/.ssh/config</em>, que también nos va a ser útil en el momento de las operaciones <strong>git</strong> remotas, que no aceptan parámetros.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~$ cat .ssh/config 
+...
+Host gitolite-admin
+    Hostname <span class="m">127</span>.0.0.1
+    User git
+    IdentityFile ~/docker/gitolite/keys/admin
+
+Host gitolite-gerard
+    Hostname <span class="m">127</span>.0.0.1
+    User git
+    IdentityFile ~/docker/gitolite/keys/gerard
+gerard@aldebaran:~$ 
+</pre></div>
+
+
+<h2>Administrando gitolite</h2>
+<p>Como ya se ha indicado, el usuario <em>admin</em> debe clonar el repositorio <em>gitolite-admin</em> para editar los cambios. En principio es el único usuario y tiene permisos sobre el repositorio mencionado. Podemos ver sus permisos intentando entrar al servidor por SSH (recordad que lo he mapeado al puerto 22 de mi máquina).</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/gitolite/workspace$ ssh -i ../keys/admin git@localhost
+Warning: Permanently added <span class="s1">&#39;localhost&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> to the list of known hosts.
+PTY allocation request failed on channel <span class="m">0</span>
+hello admin, this is git@gitolite running gitolite3 v3.4.0-4380-g8bd1571 on git <span class="m">2</span>.11.2
+
+ R W    gitolite-admin
+ R W    testing
+Connection to localhost closed.
+gerard@aldebaran:~/docker/gitolite/workspace$ 
+</pre></div>
+
+
+<p>Alternativamente podemos usar el <em>host</em> declarado en la configuración SSH cliente (el truco está más arriba):</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/gitolite/workspace$ ssh gitolite-admin
+Warning: Permanently added <span class="s1">&#39;127.0.0.1&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> to the list of known hosts.
+PTY allocation request failed on channel <span class="m">0</span>
+hello admin, this is git@gitolite running gitolite3 v3.4.0-4380-g8bd1571 on git <span class="m">2</span>.11.2
+
+ R W    gitolite-admin
+ R W    testing
+Connection to <span class="m">127</span>.0.0.1 closed.
+gerard@aldebaran:~/docker/gitolite/workspace$ 
+</pre></div>
+
+
+<p>La sesión se cierra, ya que la función de este SSH es solamente hacer las operaciones remotas de <em>clone</em>, <em>pull</em> y <em>push</em>. Cualquier otro usuario va a fallar si intenta entrar al servidor de la misma forma, ya que no hay nadie más autorizado.</p>
+<p>Para realizar modificaciones tenemos que clonar el repositorio de administración:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/gitolite/workspace$ git clone gitolite-admin:gitolite-admin.git
+Cloning into <span class="s1">&#39;gitolite-admin&#39;</span>...
+Warning: Permanently added <span class="s1">&#39;127.0.0.1&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> to the list of known hosts.
+remote: Counting objects: <span class="m">6</span>, <span class="k">done</span>.
+remote: Compressing objects: <span class="m">100</span>% <span class="o">(</span><span class="m">4</span>/4<span class="o">)</span>, <span class="k">done</span>.
+remote: Total <span class="m">6</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>
+Receiving objects: <span class="m">100</span>% <span class="o">(</span><span class="m">6</span>/6<span class="o">)</span>, <span class="k">done</span>.
+Checking connectivity... <span class="k">done</span>.
+gerard@aldebaran:~/docker/gitolite/workspace$ 
+</pre></div>
+
+
+<p>Esto nos da el repositorio de administración, que de por sí, es bastante intuitivo.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ tree
+.
+├── conf
+│   └── gitolite.conf
+└── keydir
+    └── admin.pub
+
+<span class="m">2</span> directories, <span class="m">2</span> files
+gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ 
+</pre></div>
+
+
+<p>La carpeta <em>keydir</em> es donde hay que poner las claves de los usuarios SSH para que puedan entrar en la máquina. Es importante poner el formato <code>&lt;usuario&gt;.pub</code> donde <code>usuario</code> es el usuario tal como lo conoce <strong>gitolite</strong> y como hay que indicar en los permisos; da igual como se llama la clave privada en la máquina del usuario (por ejemplo, <em>id_rsa</em>).</p>
+<p>El fichero <em>conf/gitolite.conf</em> tiene la especificación de los repositorios y los permisos que tienen los usuarios sobre ellos.</p>
+<h3>Añadiendo usuarios</h3>
+<p>Para añadir o retirar usuarios, basta con añadir o quitar su clave de la carpeta <em>keydir</em> en nuestro repositorio local, para posteriormente hacer el correspondiente <em>push</em>. Por ejemplo, añado la clave para mi usuario:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ tree
+.
+├── conf
+│   └── gitolite.conf
+└── keydir
+    ├── admin.pub
+    └── gerard.pub
+
+<span class="m">2</span> directories, <span class="m">3</span> files
+gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ git add keydir/gerard.pub 
+gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ git commit -m <span class="s2">&quot;Add user gerard&quot;</span>
+...
+gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ 
+</pre></div>
+
+
+<p>Podemos ver que ahora puedo usar el usuario <em>gerard</em> para hacer SSH, pero que los repositorios a los que tiene acceso no son los mismos; de hecho, viene uno llamado <em>testing</em> por defecto. Recordad que <strong>gitolite</strong> decide el usuario en función de la clave SSH usada, y esta la he puesto en la configuración SSH cliente en <em>~/.ssh/config</em></p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ ssh gitolite-admin
+Warning: Permanently added <span class="s1">&#39;127.0.0.1&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> to the list of known hosts.
+PTY allocation request failed on channel <span class="m">0</span>
+hello admin, this is git@gitolite running gitolite3 v3.4.0-4380-g8bd1571 on git <span class="m">2</span>.11.2
+
+ R W    gitolite-admin
+ R W    testing
+Connection to <span class="m">127</span>.0.0.1 closed.
+gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ ssh gitolite-gerard
+Warning: Permanently added <span class="s1">&#39;127.0.0.1&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> to the list of known hosts.
+PTY allocation request failed on channel <span class="m">0</span>
+hello gerard, this is git@gitolite running gitolite3 v3.4.0-4380-g8bd1571 on git <span class="m">2</span>.11.2
+
+ R W    testing
+Connection to <span class="m">127</span>.0.0.1 closed.
+gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ 
+</pre></div>
+
+
+<p>El punto interesante de todo esto es que todos los usuarios utilizan un <em>shell</em> restringido, pero este acepta un parámetro, que es el usuario. Este parámetro es forzado por SSH cuando alguna de las líneas del fichero <em>authorized_keys</em> da positivo.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ docker <span class="nb">exec</span> gitolite cat /var/lib/git/.ssh/authorized_keys
+<span class="c1"># gitolite start</span>
+<span class="nv">command</span><span class="o">=</span><span class="s2">&quot;/usr/lib/gitolite/gitolite-shell admin&quot;</span>,no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa ...  
+<span class="nv">command</span><span class="o">=</span><span class="s2">&quot;/usr/lib/gitolite/gitolite-shell gerard&quot;</span>,no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa ...  
+<span class="c1"># gitolite end</span>
+gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ 
+</pre></div>
+
+
+<h3>Administrando repositorios y permisos</h3>
+<p>El fichero clave para esto es <em>conf/gitolite.conf</em>. Si vemos lo que tiene, comprenderemos inmediatamente lo que hay que hacer.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ cat conf/gitolite.conf 
+repo gitolite-admin
+    RW+     <span class="o">=</span>   admin
+
+repo testing
+    RW+     <span class="o">=</span>   @all
+gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ 
+</pre></div>
+
+
+<p>Se trata de repositorios (o grupos) con una lista tabulada de permisos y usuarios o grupos a los que afectan. Más información en <a href="http://gitolite.com/gitolite/conf/">la documentación</a>. El grupo <em>all</em> es especial y viene predefinido.</p>
+<p>Vamos a poner algunos repositorios, grupos y permisos:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ cat conf/gitolite.conf 
+@devs <span class="o">=</span> dev1 dev2 dev3
+@ops <span class="o">=</span> ops1
+@staff <span class="o">=</span> @devs @ops
+
+@blog <span class="o">=</span>  blog-public blog-admin
+@shop <span class="o">=</span> shop-public shop-admin shop-api
+
+repo gitolite-admin
+    RW+ <span class="o">=</span> admin
+
+repo @blog
+    RW+ <span class="o">=</span> gerard
+    <span class="nv">RW</span> <span class="o">=</span> @devs
+    <span class="nv">R</span> <span class="o">=</span> @ops
+
+repo @shop
+    RW+ <span class="o">=</span> @staff
+    <span class="nv">R</span> <span class="o">=</span> gerard
+gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ git add conf/gitolite.conf 
+gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ git commit -m <span class="s2">&quot;Added some projects and permissions&quot;</span>
+<span class="o">[</span>master f8fe801<span class="o">]</span> Added some projects and permissions
+ <span class="m">1</span> file changed, <span class="m">16</span> insertions<span class="o">(</span>+<span class="o">)</span>, <span class="m">3</span> deletions<span class="o">(</span>-<span class="o">)</span>
+gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ git push
 ...  
-Processing triggers <span class="k">for</span> systemd <span class="o">(</span><span class="m">215</span>-17+deb8u4<span class="o">)</span> ...
-root@65b056d5d699:~# 
+Warning: Permanently added <span class="s1">&#39;127.0.0.1&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> to the list of known hosts.
+Counting objects: <span class="m">4</span>, <span class="k">done</span>.
+Delta compression using up to <span class="m">4</span> threads.
+Compressing objects: <span class="m">100</span>% <span class="o">(</span><span class="m">3</span>/3<span class="o">)</span>, <span class="k">done</span>.
+Writing objects: <span class="m">100</span>% <span class="o">(</span><span class="m">4</span>/4<span class="o">)</span>, <span class="m">474</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
+Total <span class="m">4</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>
+remote: Initialized empty Git repository in /var/lib/git/repositories/blog-admin.git/
+remote: Initialized empty Git repository in /var/lib/git/repositories/blog-public.git/
+remote: Initialized empty Git repository in /var/lib/git/repositories/shop-admin.git/
+remote: Initialized empty Git repository in /var/lib/git/repositories/shop-api.git/
+remote: Initialized empty Git repository in /var/lib/git/repositories/shop-public.git/
+To gitolite-admin:gitolite-admin.git
+   <span class="m">5114865</span>..f8fe801  master -&gt; master
+gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ 
 </pre></div>
 
 
-<p>Normalmente, los servicios se levantan solos en <strong>Debian</strong>, pero como estamos trabajando con un contenedor <strong>docker</strong> mediante <strong>SSH</strong>, vamos a tener que hacerlo manualmente.</p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:~# service incron start
-<span class="o">[</span> ok <span class="o">]</span> Starting File system events scheduler: incron.
-root@65b056d5d699:~# 
+<p>Y solo nos queda ver los permisos que tenemos ahora con los diferentes usuarios:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ ssh gitolite-admin
+Warning: Permanently added <span class="s1">&#39;127.0.0.1&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> to the list of known hosts.
+PTY allocation request failed on channel <span class="m">0</span>
+hello admin, this is git@gitolite running gitolite3 v3.4.0-4380-g8bd1571 on git <span class="m">2</span>.11.2
+
+ R W    gitolite-admin
+Connection to <span class="m">127</span>.0.0.1 closed.
+gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ ssh gitolite-gerard
+Warning: Permanently added <span class="s1">&#39;127.0.0.1&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> to the list of known hosts.
+PTY allocation request failed on channel <span class="m">0</span>
+hello gerard, this is git@gitolite running gitolite3 v3.4.0-4380-g8bd1571 on git <span class="m">2</span>.11.2
+
+ R W    blog-admin
+ R W    blog-public
+ R      shop-admin
+ R      shop-api
+ R      shop-public
+Connection to <span class="m">127</span>.0.0.1 closed.
+gerard@aldebaran:~/docker/gitolite/workspace/gitolite-admin$ 
 </pre></div>
 
 
-<p>Esta herramienta se puede configurar de forma similar al <strong>cron</strong>; tenemos la opción de poner ficheros de configuración en <em>/etc/incron.d/</em> o podemos usar comandos de <strong>incron</strong> por usuario, mediante el comando <em>incron</em>, con los flags correspondientes.</p>
-<ul>
-<li><strong>incron -l</strong> &rarr; lista la tabla de incron del usuario actual</li>
-<li><strong>incron -e</strong> &rarr; edita la tabla de incron del usuario actual</li>
-<li><strong>incron -r</strong> &rarr; elimina la tabla de incron del usuario actual</li>
-</ul>
-<p>Para usar <strong>incron</strong> a nivel de usuario, este debe aparecer en <em>/etc/incron.allow</em>.</p>
-<h2>Un caso práctico</h2>
-<p>Supongamos que tenemos un servidor web <strong>nginx</strong>.</p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:/etc/nginx/sites-enabled# netstat -lntp
-Active Internet connections <span class="o">(</span>only servers<span class="o">)</span>
-Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:80              <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">249</span>/nginx       
-tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:22              <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">1</span>/sshd          
-tcp6       <span class="m">0</span>      <span class="m">0</span> :::22                   :::*                    LISTEN      <span class="m">1</span>/sshd          
-root@65b056d5d699:/etc/nginx/sites-enabled# 
-</pre></div>
-
-
-<p>Estamos cansados de recargar la configuración cada vez que modificamos alguno de los ficheros de configuración, así que vamos a delegar esta tarea a <strong>incron</strong>. Concretamente queremos que cada vez que se modifique el fichero <em>/etc/nginx/nginx.conf</em> o algunos de los <em>virtualhosts</em> en <em>/etc/nginx/sites-enabled/</em>, se haga un <em>reload</em> del servicio.</p>
-<p>Miramos la tabla de eventos posibles a monitorizar y vemos que nos interesa el evento <strong>IN_MODIFY</strong>. Se pueden monitorizar varios eventos uniéndolos con un <strong>OR</strong> lógico, pero no se pueden poner mas de una línea por carpeta monitorizada.</p>
-<ul>
-<li><strong>IN_ACCESS</strong> &rarr; Se ha accedido al fichero o directorio.</li>
-<li><strong>IN_ATTRIB</strong> &rarr; Se han cambiado los <em>metadatos</em> (o los <em>timestamps</em>).</li>
-<li><strong>IN_CLOSE_WRITE</strong> &rarr; Se ha cerrado un fichero abierto en modo distinto al de escritura.</li>
-<li><strong>IN_CLOSE_NOWRITE</strong> &rarr; Se ha cerrado un fichero abierto en modo de escritura.</li>
-<li><strong>IN_CREATE</strong> &rarr; Se ha creado un fichero en el directorio monitorizado.</li>
-<li><strong>IN_DELETE</strong> &rarr; Se ha borrado un fichero en la carpeta.</li>
-<li><strong>IN_DELETE_SELF</strong> &rarr; El fichero o directorio monitorizado ha sido borrado.</li>
-<li><strong>IN_MODIFY</strong> &rarr; El fichero ha sido modificado.</li>
-<li><strong>IN_MOVE_SELF</strong> &rarr; El fichero o carpeta monitorizado se ha movido.</li>
-<li><strong>IN_MOVED_FROM</strong> &rarr; Un fichero se ha movido desde la carpeta monitorizada.</li>
-<li><strong>IN_MOVED_TO</strong> &rarr; Un fichero se ha movido hacia la carpeta monitorizada.</li>
-<li><strong>IN_OPEN</strong> &rarr; Se ha abierto un fichero en la carpeta monitorizada.</li>
-<li><strong>IN_MOVE</strong> &rarr; Combinación de IN_MOVED_FROM y de IN_MOVED_TO.</li>
-<li><strong>IN_CLOSE</strong> &rarr; Combinación de IN_CLOSE_WRITE y IN_CLOSE_NOWRITE.</li>
-<li><strong>IN_ALL_EVENTS</strong> &rarr; Todos los eventos anteriores.</li>
-</ul>
-<p>Así pues, ponemos la tripleta <em>carpeta, evento, acción</em>, ya sea con el comando <em>incron -e</em> o mediante un fichero en <em>/etc/incron.d/</em>. Es importante indicar que la salida del comando no se puede recoger en este fichero; si es necesario, habría que llamar a un <em>script</em> que tuviera la redirección.</p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:~# cat /etc/incron.d/nginx 
-/etc/nginx/nginx.conf IN_MODIFY /usr/sbin/service nginx reload
-/etc/nginx/sites-enabled/ IN_MODIFY /usr/sbin/service nginx reload
-root@65b056d5d699:~# 
-</pre></div>
-
-
-<p>En este punto no hay que recargar nada; <strong>incron</strong> ha detectado el cambio y se ha recargado solo.</p>
-<p>Vamos a cambiar, por ejemplo, el puerto en el que escucha nuestra web.</p>
-<p><strong>ANTES:</strong></p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:~# cat /etc/nginx/sites-enabled/mysite 
-server <span class="o">{</span>
-    listen <span class="m">80</span> default_server<span class="p">;</span>
-    root /var/www/html<span class="p">;</span>
-    server_name _<span class="p">;</span>
-<span class="o">}</span>
-</pre></div>
-
-
-<p><strong>DESPUES:</strong></p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:~# cat /etc/nginx/sites-enabled/mysite 
-server <span class="o">{</span>
-    listen <span class="m">8080</span> default_server<span class="p">;</span>
-    root /var/www/html<span class="p">;</span>
-    server_name _<span class="p">;</span>
-<span class="o">}</span>
-root@65b056d5d699:~# 
-</pre></div>
-
-
-<p>Y sin recargar la configuración de <strong>nginx</strong> -puesto que ya lo ha hecho <strong>incron</strong>-, vemos que se ha puesto a escuchar en el nuevo puerto.</p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:~# netstat -lntp
-Active Internet connections <span class="o">(</span>only servers<span class="o">)</span>
-Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:8080            <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">249</span>/nginx       
-tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:22              <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">1</span>/sshd          
-tcp6       <span class="m">0</span>      <span class="m">0</span> :::22                   :::*                    LISTEN      <span class="m">1</span>/sshd          
-root@65b056d5d699:~# 
-</pre></div>
-
-
-<h2>Ejecución parametrizada de nuestras tareas</h2>
-<p>El proceso de <strong>incron</strong> nos ofrece unos parámetros para discernir cual de los eventos disparó el <em>trigger</em>:</p>
-<ul>
-<li><strong>$$</strong> &rarr; Símbolo de dólar.</li>
-<li><strong>$@</strong> &rarr; Ruta de la carpeta monitorizada.</li>
-<li><strong>$#</strong> &rarr; Fichero modificado.</li>
-<li><strong>$%</strong> &rarr; Evento que disparó la acción, en texto.</li>
-<li><strong>$&amp;</strong> &rarr; Evento que disparó la acción, en número.</li>
-</ul>
-<p>Si quisiéramos procesar un fichero tal como nos lo dejen en una carpeta, podemos usar un <em>script</em> con parámetros que haga lo que deba con el mismo.</p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:~# cat /etc/incron.d/batch_process 
-/opt/batch_process/inbox/ IN_WRITE_CLOSE /opt/batch_process/process_file.py <span class="nv">$@</span> <span class="nv">$#</span>
-root@65b056d5d699:~# 
-</pre></div>
-
-
-<p>Este <em>script</em> recibe la ruta de la carpeta monitorizada y el fichero. Lo que hace el <em>script</em> se deja a la imaginación del lector. Como punto adicional, recalcar que se ha usado el evento <strong>IN_WRITE_CLOSE</strong> en vez de <strong>IN_CREATE</strong> porque este último salta inmediatamente, y podríamos encontrarnos con un fichero a medio subir, en caso de ser puesto por un protocolo remoto.</p>
-<p>Estoy seguro que en un futuro no muy lejano, esta herramienta me va a ser de gran utilidad.</p>
+<p>El repositorio <em>testing</em> no aparece en la configuración, pero sus datos siguen en el servidor. En caso de querer eliminarlo definitivamente, necesitamos eliminar su carpeta entrando en el servidor.</p>
             </div>
             <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2017/03/hospedando-contenido-estatico-en-github-pages.html">Hospedando contenido estático en Github pages</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/preparando-un-servidor-de-repositorios-git.html">Preparando un servidor de repositorios GIT</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html">Lanzando playbooks de Ansible desde Jenkins</a></li>
+    </ul>
+</section>
     <hr/>
     <section class="comments" id="comments">
         <h2>Comments</h2>
@@ -267,8 +399,8 @@ root@65b056d5d699:~#
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron';
-                var disqus_url = 'http://www.linuxsysadmin.tk/2016/10/disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron.html';
+                    var disqus_identifier = 'un-servidor-de-git-local-con-gitolite';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2017/06/un-servidor-de-git-local-con-gitolite.html';
 
             var disqus_config = function () {
                 this.language = "es";

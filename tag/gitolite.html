@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Disparando acciones en respuesta a modificaciones en el sistema de fichero con incron - Linux Sysadmin</title>
+    <title>gitolite - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,21 +9,16 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/10/disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron.html">
 
-        <meta name="author" content="Gerard" />
-        <meta name="keywords" content="incron" />
-        <meta name="description" content="El otro día recibí una petición diferente en mi trabajo. Se necesitaba monitorizar una carpeta, de forma que cuando alguien dejara ficheros, se lanzara una tarea para procesarlos. Tras buscar un poco por internet, topé con una herramienta tipo cron, que ejecutaba comandos ante eventos en el sistema de ficheros …" />
+    <meta name="author" content="Gerard" />
+    <meta name="keywords" content="gitolite" />
 
+    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Disparando acciones en respuesta a modificaciones en el sistema de fichero con incron"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/10/disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron.html"/>
-        <meta property="og:description" content="El otro día recibí una petición diferente en mi trabajo. Se necesitaba monitorizar una carpeta, de forma que cuando alguien dejara ficheros, se lanzara una tarea para procesarlos. Tras buscar un poco por internet, topé con una herramienta tipo cron, que ejecutaba comandos ante eventos en el sistema de ficheros …"/>
-        <meta property="article:published_time" content="2016-10-03" />
-            <meta property="article:section" content="Sistemas" />
-            <meta property="article:tag" content="incron" />
-            <meta property="article:author" content="Gerard" />
+        <meta property="og:type" content="website"/>
+        <meta property="og:title" content="Linux Sysadmin"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
+        <meta property="og:description" content="Linux Sysadmin"/>
 
 
     <!-- Bootstrap -->
@@ -39,8 +34,6 @@
 
 
 
-        <link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -82,11 +75,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-            <ol class="breadcrumb">
-                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.tk/category/sistemas.html" title="Sistemas">Sistemas</a></li>
-                <li class="active">Disparando acciones en respuesta a modificaciones en el sistema de fichero con incron</li>
-            </ol>
+    <ol class="breadcrumb">
+        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+        <li><a href="http://www.linuxsysadmin.tk/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
+        <li class="active">gitolite</li>
+    </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -99,197 +92,13 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-    <section id="content">
-        <article>
-            <header class="page-header">
-                <h1>
-                    <a href="http://www.linuxsysadmin.tk/2016/10/disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron.html"
-                       rel="bookmark"
-                       title="Permalink to Disparando acciones en respuesta a modificaciones en el sistema de fichero con incron">
-                        Disparando acciones en respuesta a modificaciones en el sistema de fichero con incron
-                    </a>
-                </h1>
-            </header>
-            <div class="entry-content">
-                <div class="panel">
-                    <div class="panel-body">
-<footer class="post-info">
-    <span class="label label-default">Fecha</span>
-    <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2016-10-03T08:00:00+02:00"> 2016-10-03</time>
-    </span>
-
-
-            <span class="label label-default">Autor</span>
-            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
-
-        <span class="label label-default">Tiempo de lectura</span> 6 minutos
-        <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.tk/category/sistemas.html">Sistemas</a>
-
-
-<span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.tk/tag/incron.html">incron</a>
-    
-</footer><!-- /.post-info -->                    </div>
+            <article>
+                <h2><a href="http://www.linuxsysadmin.tk/2017/06/un-servidor-de-git-local-con-gitolite.html">Un servidor de git local con gitolite</a></h2>
+                <div class="summary"><p>A todos nos encanta el sistema de control de versiones <strong>git</strong>. Tanto a nivel local como a nivel público en <em>GitHub</em> es una maravilla; lo que no me gusta tanto es el precio que suelen tener las soluciones privadas. Sin embargo, y con un poco de habilidad, podemos encontrar alternativas …</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2017/06/un-servidor-de-git-local-con-gitolite.html">Seguir leyendo</a>
                 </div>
-                <p>El otro día recibí una petición diferente en mi trabajo. Se necesitaba monitorizar una carpeta, de forma que cuando alguien dejara ficheros, se lanzara una tarea para procesarlos. Tras buscar un poco por internet, topé con una herramienta tipo <em>cron</em>, que ejecutaba comandos ante eventos en el sistema de ficheros.</p>
-<p>Como me pareció interesante, me puse a investigar como funcionaba y, aunque no sirvió para cubrir nuestras necesidades, decidí apuntarla por sus usos potenciales en el futuro.</p>
-<p>Como no podía ser de otra forma, vamos a empezar instalando el paquete que lo contiene:</p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:~# apt-get install -y incron
-Reading package lists... Done
-Building dependency tree       
-Reading state information... Done
-The following NEW packages will be installed:
-  incron
-<span class="m">0</span> upgraded, <span class="m">1</span> newly installed, <span class="m">0</span> to remove and <span class="m">0</span> not upgraded.
-Need to get <span class="m">68</span>.8 kB of archives.
-After this operation, <span class="m">321</span> kB of additional disk space will be used.
-...  
-Processing triggers <span class="k">for</span> systemd <span class="o">(</span><span class="m">215</span>-17+deb8u4<span class="o">)</span> ...
-root@65b056d5d699:~# 
-</pre></div>
-
-
-<p>Normalmente, los servicios se levantan solos en <strong>Debian</strong>, pero como estamos trabajando con un contenedor <strong>docker</strong> mediante <strong>SSH</strong>, vamos a tener que hacerlo manualmente.</p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:~# service incron start
-<span class="o">[</span> ok <span class="o">]</span> Starting File system events scheduler: incron.
-root@65b056d5d699:~# 
-</pre></div>
-
-
-<p>Esta herramienta se puede configurar de forma similar al <strong>cron</strong>; tenemos la opción de poner ficheros de configuración en <em>/etc/incron.d/</em> o podemos usar comandos de <strong>incron</strong> por usuario, mediante el comando <em>incron</em>, con los flags correspondientes.</p>
-<ul>
-<li><strong>incron -l</strong> &rarr; lista la tabla de incron del usuario actual</li>
-<li><strong>incron -e</strong> &rarr; edita la tabla de incron del usuario actual</li>
-<li><strong>incron -r</strong> &rarr; elimina la tabla de incron del usuario actual</li>
-</ul>
-<p>Para usar <strong>incron</strong> a nivel de usuario, este debe aparecer en <em>/etc/incron.allow</em>.</p>
-<h2>Un caso práctico</h2>
-<p>Supongamos que tenemos un servidor web <strong>nginx</strong>.</p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:/etc/nginx/sites-enabled# netstat -lntp
-Active Internet connections <span class="o">(</span>only servers<span class="o">)</span>
-Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:80              <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">249</span>/nginx       
-tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:22              <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">1</span>/sshd          
-tcp6       <span class="m">0</span>      <span class="m">0</span> :::22                   :::*                    LISTEN      <span class="m">1</span>/sshd          
-root@65b056d5d699:/etc/nginx/sites-enabled# 
-</pre></div>
-
-
-<p>Estamos cansados de recargar la configuración cada vez que modificamos alguno de los ficheros de configuración, así que vamos a delegar esta tarea a <strong>incron</strong>. Concretamente queremos que cada vez que se modifique el fichero <em>/etc/nginx/nginx.conf</em> o algunos de los <em>virtualhosts</em> en <em>/etc/nginx/sites-enabled/</em>, se haga un <em>reload</em> del servicio.</p>
-<p>Miramos la tabla de eventos posibles a monitorizar y vemos que nos interesa el evento <strong>IN_MODIFY</strong>. Se pueden monitorizar varios eventos uniéndolos con un <strong>OR</strong> lógico, pero no se pueden poner mas de una línea por carpeta monitorizada.</p>
-<ul>
-<li><strong>IN_ACCESS</strong> &rarr; Se ha accedido al fichero o directorio.</li>
-<li><strong>IN_ATTRIB</strong> &rarr; Se han cambiado los <em>metadatos</em> (o los <em>timestamps</em>).</li>
-<li><strong>IN_CLOSE_WRITE</strong> &rarr; Se ha cerrado un fichero abierto en modo distinto al de escritura.</li>
-<li><strong>IN_CLOSE_NOWRITE</strong> &rarr; Se ha cerrado un fichero abierto en modo de escritura.</li>
-<li><strong>IN_CREATE</strong> &rarr; Se ha creado un fichero en el directorio monitorizado.</li>
-<li><strong>IN_DELETE</strong> &rarr; Se ha borrado un fichero en la carpeta.</li>
-<li><strong>IN_DELETE_SELF</strong> &rarr; El fichero o directorio monitorizado ha sido borrado.</li>
-<li><strong>IN_MODIFY</strong> &rarr; El fichero ha sido modificado.</li>
-<li><strong>IN_MOVE_SELF</strong> &rarr; El fichero o carpeta monitorizado se ha movido.</li>
-<li><strong>IN_MOVED_FROM</strong> &rarr; Un fichero se ha movido desde la carpeta monitorizada.</li>
-<li><strong>IN_MOVED_TO</strong> &rarr; Un fichero se ha movido hacia la carpeta monitorizada.</li>
-<li><strong>IN_OPEN</strong> &rarr; Se ha abierto un fichero en la carpeta monitorizada.</li>
-<li><strong>IN_MOVE</strong> &rarr; Combinación de IN_MOVED_FROM y de IN_MOVED_TO.</li>
-<li><strong>IN_CLOSE</strong> &rarr; Combinación de IN_CLOSE_WRITE y IN_CLOSE_NOWRITE.</li>
-<li><strong>IN_ALL_EVENTS</strong> &rarr; Todos los eventos anteriores.</li>
-</ul>
-<p>Así pues, ponemos la tripleta <em>carpeta, evento, acción</em>, ya sea con el comando <em>incron -e</em> o mediante un fichero en <em>/etc/incron.d/</em>. Es importante indicar que la salida del comando no se puede recoger en este fichero; si es necesario, habría que llamar a un <em>script</em> que tuviera la redirección.</p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:~# cat /etc/incron.d/nginx 
-/etc/nginx/nginx.conf IN_MODIFY /usr/sbin/service nginx reload
-/etc/nginx/sites-enabled/ IN_MODIFY /usr/sbin/service nginx reload
-root@65b056d5d699:~# 
-</pre></div>
-
-
-<p>En este punto no hay que recargar nada; <strong>incron</strong> ha detectado el cambio y se ha recargado solo.</p>
-<p>Vamos a cambiar, por ejemplo, el puerto en el que escucha nuestra web.</p>
-<p><strong>ANTES:</strong></p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:~# cat /etc/nginx/sites-enabled/mysite 
-server <span class="o">{</span>
-    listen <span class="m">80</span> default_server<span class="p">;</span>
-    root /var/www/html<span class="p">;</span>
-    server_name _<span class="p">;</span>
-<span class="o">}</span>
-</pre></div>
-
-
-<p><strong>DESPUES:</strong></p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:~# cat /etc/nginx/sites-enabled/mysite 
-server <span class="o">{</span>
-    listen <span class="m">8080</span> default_server<span class="p">;</span>
-    root /var/www/html<span class="p">;</span>
-    server_name _<span class="p">;</span>
-<span class="o">}</span>
-root@65b056d5d699:~# 
-</pre></div>
-
-
-<p>Y sin recargar la configuración de <strong>nginx</strong> -puesto que ya lo ha hecho <strong>incron</strong>-, vemos que se ha puesto a escuchar en el nuevo puerto.</p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:~# netstat -lntp
-Active Internet connections <span class="o">(</span>only servers<span class="o">)</span>
-Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:8080            <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">249</span>/nginx       
-tcp        <span class="m">0</span>      <span class="m">0</span> <span class="m">0</span>.0.0.0:22              <span class="m">0</span>.0.0.0:*               LISTEN      <span class="m">1</span>/sshd          
-tcp6       <span class="m">0</span>      <span class="m">0</span> :::22                   :::*                    LISTEN      <span class="m">1</span>/sshd          
-root@65b056d5d699:~# 
-</pre></div>
-
-
-<h2>Ejecución parametrizada de nuestras tareas</h2>
-<p>El proceso de <strong>incron</strong> nos ofrece unos parámetros para discernir cual de los eventos disparó el <em>trigger</em>:</p>
-<ul>
-<li><strong>$$</strong> &rarr; Símbolo de dólar.</li>
-<li><strong>$@</strong> &rarr; Ruta de la carpeta monitorizada.</li>
-<li><strong>$#</strong> &rarr; Fichero modificado.</li>
-<li><strong>$%</strong> &rarr; Evento que disparó la acción, en texto.</li>
-<li><strong>$&amp;</strong> &rarr; Evento que disparó la acción, en número.</li>
-</ul>
-<p>Si quisiéramos procesar un fichero tal como nos lo dejen en una carpeta, podemos usar un <em>script</em> con parámetros que haga lo que deba con el mismo.</p>
-<div class="highlight"><pre><span></span>root@65b056d5d699:~# cat /etc/incron.d/batch_process 
-/opt/batch_process/inbox/ IN_WRITE_CLOSE /opt/batch_process/process_file.py <span class="nv">$@</span> <span class="nv">$#</span>
-root@65b056d5d699:~# 
-</pre></div>
-
-
-<p>Este <em>script</em> recibe la ruta de la carpeta monitorizada y el fichero. Lo que hace el <em>script</em> se deja a la imaginación del lector. Como punto adicional, recalcar que se ha usado el evento <strong>IN_WRITE_CLOSE</strong> en vez de <strong>IN_CREATE</strong> porque este último salta inmediatamente, y podríamos encontrarnos con un fichero a medio subir, en caso de ser puesto por un protocolo remoto.</p>
-<p>Estoy seguro que en un futuro no muy lejano, esta herramienta me va a ser de gran utilidad.</p>
-            </div>
-            <!-- /.entry-content -->
-    <hr/>
-    <section class="comments" id="comments">
-        <h2>Comments</h2>
-
-        <div id="disqus_thread"></div>
-        <script type="text/javascript">
-            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
-
-                    var disqus_identifier = 'disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron';
-                var disqus_url = 'http://www.linuxsysadmin.tk/2016/10/disparando-acciones-en-respuesta-a-modificaciones-en-el-sistema-de-fichero-con-incron.html';
-
-            var disqus_config = function () {
-                this.language = "es";
-            };
-
-            /* * * DON'T EDIT BELOW THIS LINE * * */
-            (function () {
-                var dsq = document.createElement('script');
-                dsq.type = 'text/javascript';
-                dsq.async = true;
-                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            })();
-        </script>
-        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
-            Disqus.</a></noscript>
-        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-    </section>
-        </article>
-    </section>
+            </article>
+            <hr/>
 
         </div>
         <div class="col-sm-3" id="sidebar">
