@@ -1,5 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-06-26T10:00:00+02:00</updated><entry><title>Un servidor de git local con gitolite</title><link href="http://www.linuxsysadmin.tk/2017/06/un-servidor-de-git-local-con-gitolite.html" rel="alternate"></link><published>2017-06-26T10:00:00+02:00</published><updated>2017-06-26T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-06-26:/2017/06/un-servidor-de-git-local-con-gitolite.html</id><summary type="html">&lt;p&gt;A todos nos encanta el sistema de control de versiones &lt;strong&gt;git&lt;/strong&gt;. Tanto a nivel local como a nivel público en &lt;em&gt;GitHub&lt;/em&gt; es una maravilla; lo que no me gusta tanto es el precio que suelen tener las soluciones privadas. Sin embargo, y con un poco de habilidad, podemos encontrar alternativas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;A todos nos encanta el sistema de control de versiones &lt;strong&gt;git&lt;/strong&gt;. Tanto a nivel local como a nivel público en &lt;em&gt;GitHub&lt;/em&gt; es una maravilla; lo que no me gusta tanto es el precio que suelen tener las soluciones privadas. Sin embargo, y con un poco de habilidad, podemos encontrar alternativas.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-07-03T10:00:00+02:00</updated><entry><title>El concepto del servidor fachada con Docker</title><link href="http://www.linuxsysadmin.tk/2017/07/el-concepto-del-servidor-fachada-con-docker.html" rel="alternate"></link><published>2017-07-03T10:00:00+02:00</published><updated>2017-07-03T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-07-03:/2017/07/el-concepto-del-servidor-fachada-con-docker.html</id><summary type="html">&lt;p&gt;Muchos de nosotros tenemos un servidor en casa o en algún &lt;em&gt;hosting&lt;/em&gt;. Como no tenemos mucho tráfico y cada servidor tiene un coste, acabamos llenándolo con un conjunto de servicios bastante grande. Esto supone un problema para actualizar el sistema operativo, suponiendo que los servicios no se molesten entre sí …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Muchos de nosotros tenemos un servidor en casa o en algún &lt;em&gt;hosting&lt;/em&gt;. Como no tenemos mucho tráfico y cada servidor tiene un coste, acabamos llenándolo con un conjunto de servicios bastante grande. Esto supone un problema para actualizar el sistema operativo, suponiendo que los servicios no se molesten entre sí.&lt;/p&gt;
+&lt;p&gt;En estos casos podemos valernos de &lt;strong&gt;docker&lt;/strong&gt; (o de cualquier otro sistema de contenedores) para aislar cada servicio en su propio contenedor y para facilitar su portabilidad hacia un nuevo servidor. Con un poco de habilidad con reglas de &lt;em&gt;networking&lt;/em&gt;, podemos hacer esta transición sin cortes y poco a poco.&lt;/p&gt;
+&lt;p&gt;El truco es utilizar el concepto &lt;strong&gt;fachada&lt;/strong&gt;, es decir, nuestro servidor es solo la fachada de cada una de nuestros contenedores. Estos exponen su servicio como un puerto en la máquina &lt;em&gt;host&lt;/em&gt; y así parece que el &lt;em&gt;host&lt;/em&gt; es un único servidor. Este &lt;em&gt;host&lt;/em&gt; también nos puede servir para albergar los &lt;em&gt;host volumes&lt;/em&gt; y para hacer tareas de mantenimiento tales como &lt;em&gt;backups&lt;/em&gt; o &lt;em&gt;logrotate&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo práctico&lt;/h2&gt;
+&lt;p&gt;Supongamos que queremos un servidor casero con 3 servicios:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Un servidor &lt;strong&gt;mariadb&lt;/strong&gt; y su interfaz de administración web &lt;strong&gt;adminer&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Un servidor de &lt;strong&gt;mongodb&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Un servidor web &lt;strong&gt;nginx&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;En vez de instalarlo todo en nuestro servidor, vamos a aplicar la técnica antes descrita, de mapear en los puertos oficiales los puertos de los contenedores que ejecutan los servicios. Para simplificar el artículo, vamos a utilizar las imágenes oficiales en &lt;em&gt;DockerHub&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Para su fácil lanzamiento, vamos a usar &lt;strong&gt;docker-compose&lt;/strong&gt;, que nos simplifica bastante la línea de comandos, ocultando en el fichero &lt;em&gt;docker-compose.yml&lt;/em&gt; cosas como las variables de entorno, el mapeo de puertos o los volúmenes.&lt;/p&gt;
+&lt;h3&gt;MariaDB y Adminer&lt;/h3&gt;
+&lt;p&gt;Necesitaremos un &lt;em&gt;docker-compose.yml&lt;/em&gt; para levantar los contenedores de &lt;strong&gt;mariadb&lt;/strong&gt; y &lt;strong&gt;adminer&lt;/strong&gt;. En el caso de &lt;strong&gt;mariadb&lt;/strong&gt;, tiene una parte de datos persistentes, que vamos a dejar como un &lt;em&gt;host volume&lt;/em&gt; local.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/homeserver$ tree mariadb/
+mariadb/
+├── data
+└── docker-compose.yml
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;1&lt;/span&gt; file
+gerard@aldebaran:~/docker/homeserver$ cat mariadb/docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;
+services:
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    hostname: mariadb
+    volumes:
+      - ./data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;3306:3306&amp;quot;&lt;/span&gt;
+  adminer:
+    image: adminer
+    container_name: adminer
+    hostname: adminer
+    ports:
+      - &lt;span class="m"&gt;8080&lt;/span&gt;:8080
+gerard@aldebaran:~/docker/homeserver$ docker-compose -f mariadb/docker-compose.yml up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;mariadb_default&amp;quot;&lt;/span&gt; with the default driver
+Creating mariadb
+Creating adminer
+gerard@aldebaran:~/docker/homeserver$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;MongoDB&lt;/h3&gt;
+&lt;p&gt;De forma análoga, vamos a usar un &lt;em&gt;docker-compose.yml&lt;/em&gt;, mapeando el puerto de &lt;strong&gt;mongodb&lt;/strong&gt; y su carpeta de datos en el &lt;em&gt;host&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/homeserver$ tree mongodb/
+mongodb/
+├── data
+└── docker-compose.yml
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;1&lt;/span&gt; file
+gerard@aldebaran:~/docker/homeserver$ cat mongodb/docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    hostname: mongodb
+    volumes:
+      - ./data:/data/db
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;27017:27017&amp;quot;&lt;/span&gt;
+gerard@aldebaran:~/docker/homeserver$ docker-compose -f mongodb/docker-compose.yml up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;mongodb_default&amp;quot;&lt;/span&gt; with the default driver
+Creating mongodb
+gerard@aldebaran:~/docker/homeserver$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Nginx&lt;/h3&gt;
+&lt;p&gt;Y volvemos a repetir el proceso; un &lt;em&gt;docker-compose.yml&lt;/em&gt;, un puerto mapeado, y un &lt;em&gt;host volume&lt;/em&gt; para albergar el contenido web.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/homeserver$ tree nginx/
+nginx/
+├── www
+│   └── index.html
+└── docker-compose.yml
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;2&lt;/span&gt; files
+gerard@aldebaran:~/docker/homeserver$ cat nginx/docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;
+services:
+  nginx:
+    image: nginx
+    container_name: nginx
+    hostname: nginx
+    volumes:
+      - ./www:/usr/share/nginx/html:ro
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;80:80&amp;quot;&lt;/span&gt;
+gerard@aldebaran:~/docker/homeserver$ docker-compose -f nginx/docker-compose.yml up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;nginx_default&amp;quot;&lt;/span&gt; with the default driver
+Creating nginx
+gerard@aldebaran:~/docker/homeserver$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;El resultado&lt;/h3&gt;
+&lt;p&gt;Si miramos los puertos abiertos en nuestro servidor, podemos ver fácilmente que responde los 4 puertos que suministran los servicios antes citados, y nada nos impide seguir creando servicios para ofrecer más puertos en nuestro servidor. &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/homeserver$ netstat -lnt
+Active Internet connections &lt;span class="o"&gt;(&lt;/span&gt;only servers&lt;span class="o"&gt;)&lt;/span&gt;
+Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+tcp6       &lt;span class="m"&gt;0&lt;/span&gt;      &lt;span class="m"&gt;0&lt;/span&gt; :::27017                :::*                    LISTEN     
+tcp6       &lt;span class="m"&gt;0&lt;/span&gt;      &lt;span class="m"&gt;0&lt;/span&gt; :::3306                 :::*                    LISTEN     
+tcp6       &lt;span class="m"&gt;0&lt;/span&gt;      &lt;span class="m"&gt;0&lt;/span&gt; :::80                   :::*                    LISTEN     
+tcp6       &lt;span class="m"&gt;0&lt;/span&gt;      &lt;span class="m"&gt;0&lt;/span&gt; :::8080                 :::*                    LISTEN     
+gerard@aldebaran:~/docker/homeserver$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En caso de querer actualizar el sistema operativo base, solo tenemos que crear un nuevo servidor y levantar los contenedores de servicio, uno por uno; si usamos algún elemento de red como un &lt;em&gt;firewall&lt;/em&gt;, podemos desviar tráfico sin que se note, hasta que estemos preparados para reemplazar el servidor viejo con el nuevo.&lt;/p&gt;
+&lt;p&gt;Al tratarse de contenedores individuales, lo que pase en un contendedor no va a interferir en lo que pase en otro, ganando así el concepto de aislamiento, pudiendo convivir varias versiones de un mismo &lt;em&gt;software&lt;/em&gt; o diversos servicios que ofrezcan el mismo protocolo. solo hay que tener en cuenta que los puertos mapeados en el &lt;em&gt;host&lt;/em&gt; deben ser únicos.&lt;/p&gt;</content><category term="docker"></category><category term="fachada"></category><category term="docker-compose"></category></entry><entry><title>Un servidor de git local con gitolite</title><link href="http://www.linuxsysadmin.tk/2017/06/un-servidor-de-git-local-con-gitolite.html" rel="alternate"></link><published>2017-06-26T10:00:00+02:00</published><updated>2017-06-26T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-06-26:/2017/06/un-servidor-de-git-local-con-gitolite.html</id><summary type="html">&lt;p&gt;A todos nos encanta el sistema de control de versiones &lt;strong&gt;git&lt;/strong&gt;. Tanto a nivel local como a nivel público en &lt;em&gt;GitHub&lt;/em&gt; es una maravilla; lo que no me gusta tanto es el precio que suelen tener las soluciones privadas. Sin embargo, y con un poco de habilidad, podemos encontrar alternativas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;A todos nos encanta el sistema de control de versiones &lt;strong&gt;git&lt;/strong&gt;. Tanto a nivel local como a nivel público en &lt;em&gt;GitHub&lt;/em&gt; es una maravilla; lo que no me gusta tanto es el precio que suelen tener las soluciones privadas. Sin embargo, y con un poco de habilidad, podemos encontrar alternativas.&lt;/p&gt;
 &lt;p&gt;Existen varias alternativas tipo web, como por ejemplo &lt;a href="https://github.com/gitlabhq/gitlabhq"&gt;GitLab&lt;/a&gt; (imagen para &lt;strong&gt;docker&lt;/strong&gt; en &lt;a href="https://hub.docker.com/r/gitlab/gitlab-ce/"&gt;DockerHub&lt;/a&gt;); sin embargo, como amante del terminal me decanto por &lt;a href="http://gitolite.com/gitolite/index.html"&gt;Gitolite&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Además de las virtudes propias de &lt;strong&gt;git&lt;/strong&gt;, &lt;strong&gt;gitolite&lt;/strong&gt; nos ofrece un sistema de control de permisos en los repositorios bajo su administración, usando un usuario remoto SSH único y diferenciando quien es el usuario mediante la clave SSH que use para establecer la conexión.&lt;/p&gt;
 &lt;p&gt;Otro punto interesante es que el servidor (usuarios, repositorios y permisos) se administra mediante &lt;strong&gt;git&lt;/strong&gt;, existiendo el usuario &lt;em&gt;admin&lt;/em&gt; con permisos sobre el repositorio &lt;em&gt;gitolite-admin&lt;/em&gt;. Este tiene la responsabilidad de clonar el repositorio, añadir los cambios y empujarlos con un &lt;em&gt;git push&lt;/em&gt;.&lt;/p&gt;
