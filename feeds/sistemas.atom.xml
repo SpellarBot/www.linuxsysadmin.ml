@@ -1,5 +1,227 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-07-03T10:00:00+02:00</updated><entry><title>El concepto del servidor fachada con Docker</title><link href="http://www.linuxsysadmin.tk/2017/07/el-concepto-del-servidor-fachada-con-docker.html" rel="alternate"></link><published>2017-07-03T10:00:00+02:00</published><updated>2017-07-03T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-07-03:/2017/07/el-concepto-del-servidor-fachada-con-docker.html</id><summary type="html">&lt;p&gt;Muchos de nosotros tenemos un servidor en casa o en algún &lt;em&gt;hosting&lt;/em&gt;. Como no tenemos mucho tráfico y cada servidor tiene un coste, acabamos llenándolo con un conjunto de servicios bastante grande. Esto supone un problema para actualizar el sistema operativo, suponiendo que los servicios no se molesten entre sí …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Muchos de nosotros tenemos un servidor en casa o en algún &lt;em&gt;hosting&lt;/em&gt;. Como no tenemos mucho tráfico y cada servidor tiene un coste, acabamos llenándolo con un conjunto de servicios bastante grande. Esto supone un problema para actualizar el sistema operativo, suponiendo que los servicios no se molesten entre sí.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-07-10T10:00:00+02:00</updated><entry><title>Desactivando nuestras APIs con un frontal nginx</title><link href="http://www.linuxsysadmin.tk/2017/07/desactivando-nuestras-apis-con-un-frontal-nginx.html" rel="alternate"></link><published>2017-07-10T10:00:00+02:00</published><updated>2017-07-10T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-07-10:/2017/07/desactivando-nuestras-apis-con-un-frontal-nginx.html</id><summary type="html">&lt;p&gt;El otro día recibí una petición algo atípica en mi trabajo: querían activar y desactivar en un único punto centralizado cada una de las varias APIs que tenemos. Se trata de poner un &lt;strong&gt;nginx&lt;/strong&gt; frontal que gestione los &lt;em&gt;virtualhosts&lt;/em&gt; existentes y haga &lt;em&gt;proxy_pass&lt;/em&gt; o no en función de un &lt;em&gt;flag …&lt;/em&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día recibí una petición algo atípica en mi trabajo: querían activar y desactivar en un único punto centralizado cada una de las varias APIs que tenemos. Se trata de poner un &lt;strong&gt;nginx&lt;/strong&gt; frontal que gestione los &lt;em&gt;virtualhosts&lt;/em&gt; existentes y haga &lt;em&gt;proxy_pass&lt;/em&gt; o no en función de un &lt;em&gt;flag&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;La propuesta me pareció bastante interesante, así que decidí hacer una prueba de concepto que aquí queda reflejada. Se trata de ofrecer un frontal web (por ejemplo un &lt;strong&gt;jenkins&lt;/strong&gt;) mediante el cual se puedan poner los ficheros cuya presencia le indican a &lt;strong&gt;nginx&lt;/strong&gt; si ese &lt;em&gt;virtualhost&lt;/em&gt; concreto debe dar un error o no.&lt;/p&gt;
+&lt;h2&gt;Simulando las APIs&lt;/h2&gt;
+&lt;p&gt;Vamos a poner un par de contenedores &lt;strong&gt;docker&lt;/strong&gt; con &lt;strong&gt;nginx&lt;/strong&gt;, que sirvan una página personalizada y nos sirva para simular la API. No es especialmente complejo, así que solo se adjunta por completitud.&lt;/p&gt;
+&lt;p&gt;el único punto interesante es que, para no repetirnos, vamos a pasar el contenido del fichero &lt;em&gt;index.html&lt;/em&gt; como una variable de entorno. Así no hay que construir varias imágenes.&lt;/p&gt;
+&lt;p&gt;Empezamos con un &lt;em&gt;Dockerfile&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/gw-poc$ cat api/Dockerfile 
+FROM alpine:3.5
+RUN apk add --no-cache nginx &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    ln -s /dev/stdout /var/log/nginx/access.log &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    ln -s /dev/stderr /var/log/nginx/error.log &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    mkdir /run/nginx &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    mkdir /srv/www &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/
+COPY conf.d/* /etc/nginx/conf.d/
+COPY start.sh /
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/start.sh&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@aldebaran:~/docker/gw-poc$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y lo acompañamos con sus ficheros auxiliares.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/gw-poc$ cat api/nginx.conf 
+worker_processes  &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+events &lt;span class="o"&gt;{&lt;/span&gt;
+    worker_connections  &lt;span class="m"&gt;1024&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+http &lt;span class="o"&gt;{&lt;/span&gt;
+    include mime.types&lt;span class="p"&gt;;&lt;/span&gt;
+    default_type application/octet-stream&lt;span class="p"&gt;;&lt;/span&gt;
+    sendfile on&lt;span class="p"&gt;;&lt;/span&gt;
+    keepalive_timeout &lt;span class="m"&gt;65&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    include conf.d/*&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/docker/gw-poc$ cat api/conf.d/api 
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    server_name _&lt;span class="p"&gt;;&lt;/span&gt;
+    listen &lt;span class="m"&gt;80&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    root /srv/www&lt;span class="p"&gt;;&lt;/span&gt;
+    index index.html&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/docker/gw-poc$ cat api/start.sh 
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;GREETING&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &amp;gt; /srv/www/index.html
+&lt;span class="nb"&gt;exec&lt;/span&gt; /usr/sbin/nginx -g &lt;span class="s2"&gt;&amp;quot;daemon off;&amp;quot;&lt;/span&gt;
+gerard@aldebaran:~/docker/gw-poc$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos nuestra imagen lista para ser construida.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/gw-poc$ dbuild -t api api/
+Sending build context to Docker daemon &lt;span class="m"&gt;5&lt;/span&gt;.632 kB
+...  
+Successfully built c91adbf6534e
+gerard@aldebaran:~/docker/gw-poc$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Creando un proxy como fachada&lt;/h2&gt;
+&lt;p&gt;Esta es la piedra angular de la solución. Vamos a empezar con un &lt;strong&gt;nginx&lt;/strong&gt;, pero la novedad es que cada &lt;em&gt;virtualhost&lt;/em&gt; va a incluir una condición nueva: si existe un fichero con el mismo nombre que el dominio en la carpeta raíz (la misma para todos los dominios vale), devolveremos un error 503 en JSON sin pasar la petición a nuestro &lt;em&gt;backend&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/gw-poc$ cat gw/Dockerfile 
+FROM alpine:3.5
+RUN apk add --no-cache nginx &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    ln -s /dev/stdout /var/log/nginx/access.log &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    ln -s /dev/stderr /var/log/nginx/error.log &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    mkdir /run/nginx &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    mkdir /srv/www &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/
+COPY conf.d/* /etc/nginx/conf.d/
+COPY start.sh /
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/start.sh&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@aldebaran:~/docker/gw-poc$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y también ponemos las configuraciones necesarias para dos APIs de &lt;em&gt;backend&lt;/em&gt;, que nos basta para ver si funciona.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/gw-poc$ cat gw/nginx.conf 
+worker_processes  &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+events &lt;span class="o"&gt;{&lt;/span&gt;
+    worker_connections  &lt;span class="m"&gt;1024&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+http &lt;span class="o"&gt;{&lt;/span&gt;
+    include mime.types&lt;span class="p"&gt;;&lt;/span&gt;
+    default_type application/octet-stream&lt;span class="p"&gt;;&lt;/span&gt;
+    sendfile on&lt;span class="p"&gt;;&lt;/span&gt;
+    keepalive_timeout &lt;span class="m"&gt;65&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    include conf.d/*&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/docker/gw-poc$ cat gw/conf.d/api1 
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    server_name api1&lt;span class="p"&gt;;&lt;/span&gt;
+    listen &lt;span class="m"&gt;80&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    root /srv/www&lt;span class="p"&gt;;&lt;/span&gt;
+
+    location / &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;-f &lt;span class="nv"&gt;$document_root&lt;/span&gt;/&lt;span class="nv"&gt;$host&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="m"&gt;503&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+        proxy_pass http://api1:80&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+
+    error_page &lt;span class="m"&gt;503&lt;/span&gt; @maintenance&lt;span class="p"&gt;;&lt;/span&gt;
+
+    location @maintenance &lt;span class="o"&gt;{&lt;/span&gt;
+        default_type application/json&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="m"&gt;503&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{&amp;quot;message&amp;quot;:&amp;quot;Sorry you! This entity (api1) is in maintenance mode&amp;quot;}&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/docker/gw-poc$ cat gw/conf.d/api2 
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    server_name api2&lt;span class="p"&gt;;&lt;/span&gt;
+    listen &lt;span class="m"&gt;80&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    root /srv/www&lt;span class="p"&gt;;&lt;/span&gt;
+
+    location / &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;-f &lt;span class="nv"&gt;$document_root&lt;/span&gt;/&lt;span class="nv"&gt;$host&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="m"&gt;503&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+        proxy_pass http://api2:80&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+
+    error_page &lt;span class="m"&gt;503&lt;/span&gt; @maintenance&lt;span class="p"&gt;;&lt;/span&gt;
+
+    location @maintenance &lt;span class="o"&gt;{&lt;/span&gt;
+        default_type application/json&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="m"&gt;503&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{&amp;quot;message&amp;quot;:&amp;quot;Sorry you! This entity (api2) is in maintenance mode&amp;quot;}&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/docker/gw-poc$ cat gw/start.sh 
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class="nb"&gt;exec&lt;/span&gt; /usr/sbin/nginx -g &lt;span class="s2"&gt;&amp;quot;daemon off;&amp;quot;&lt;/span&gt;
+gerard@aldebaran:~/docker/gw-poc$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y construimos la imagen.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/gw-poc$ dbuild -t gw gw/
+Sending build context to Docker daemon &lt;span class="m"&gt;6&lt;/span&gt;.656 kB
+...
+Successfully built ddf3f294c99c
+gerard@aldebaran:~/docker/gw-poc$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Ponemos todo junto&lt;/h2&gt;
+&lt;p&gt;El último paso es montar un entorno que nos permita lanzar pruebas y ver que funciona. Para ello, vamos a usar &lt;strong&gt;docker-compose&lt;/strong&gt; por la comodidad que supone.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/gw-poc$ cat docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;
+services:
+  gw:
+    image: gw
+    container_name: gw
+    hostname: gw
+    volumes:
+      - ./volume:/srv/www
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;80:80&amp;quot;&lt;/span&gt;
+    depends_on:
+      - api1
+      - api2
+  api1:
+    image: api
+    container_name: api1
+    hostname: api1
+    environment:
+      GREETING: &lt;span class="s2"&gt;&amp;quot;Hello from api1&amp;quot;&lt;/span&gt;
+  api2:
+    image: api
+    container_name: api2
+    hostname: api2
+    environment:
+      GREETING: &lt;span class="s2"&gt;&amp;quot;Bye from api2&amp;quot;&lt;/span&gt;
+gerard@aldebaran:~/docker/gw-poc$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Levantamos el entorno entero con los comandos habituales:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/gw-poc$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;gwpoc_default&amp;quot;&lt;/span&gt; with the default driver
+Creating api1
+Creating api2
+Creating gw
+gerard@aldebaran:~/docker/gw-poc$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Tras levantar el entorno, podemos hacer algunas peticiones, tanto a los contenedores que sirven la API, como al &lt;em&gt;gateway&lt;/em&gt; que las engloba.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/gw-poc$ curl http://172.18.0.2/
+Hello from api1
+gerard@aldebaran:~/docker/gw-poc$ curl http://172.18.0.3/
+Bye from api2
+gerard@aldebaran:~/docker/gw-poc$ curl -H &lt;span class="s2"&gt;&amp;quot;Host: api1&amp;quot;&lt;/span&gt; http://localhost/
+Hello from api1
+gerard@aldebaran:~/docker/gw-poc$ curl -H &lt;span class="s2"&gt;&amp;quot;Host: api2&amp;quot;&lt;/span&gt; http://localhost/
+Bye from api2
+gerard@aldebaran:~/docker/gw-poc$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y ahora solo nos falta la magia: tiramos un fichero en &lt;em&gt;/srv/www/&lt;/em&gt;, cómodamente mapeados como un &lt;em&gt;host volume&lt;/em&gt; en la carpeta &lt;em&gt;volume/&lt;/em&gt;. Un fichero con el nombre del &lt;em&gt;virtualhost&lt;/em&gt; va a deshabilitar dicho &lt;em&gt;virtualhost&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/gw-poc$ touch volume/api2
+gerard@aldebaran:~/docker/gw-poc$ curl -H &lt;span class="s2"&gt;&amp;quot;Host: api1&amp;quot;&lt;/span&gt; http://localhost/
+Hello from api1
+gerard@aldebaran:~/docker/gw-poc$ curl -H &lt;span class="s2"&gt;&amp;quot;Host: api2&amp;quot;&lt;/span&gt; http://localhost/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;:&lt;span class="s2"&gt;&amp;quot;Sorry you! This entity (api2) is in maintenance mode&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/docker/gw-poc$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De la misma manera, podemos rehabilitarlo quitando ese fichero de ahí.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/gw-poc$ rm volume/api2 
+gerard@aldebaran:~/docker/gw-poc$ curl -H &lt;span class="s2"&gt;&amp;quot;Host: api1&amp;quot;&lt;/span&gt; http://localhost/
+Hello from api1
+gerard@aldebaran:~/docker/gw-poc$ curl -H &lt;span class="s2"&gt;&amp;quot;Host: api2&amp;quot;&lt;/span&gt; http://localhost/
+Bye from api2
+gerard@aldebaran:~/docker/gw-poc$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y lo mismo aplica para el primer dominio, aunque no lo repito por brevedad.&lt;/p&gt;
+&lt;h2&gt;Siguientes pasos&lt;/h2&gt;
+&lt;p&gt;El hecho de habilitar y deshabilitar las APIs se necesitaba hacer por parte de gente que no tiene necesariamente conocimientos técnicos para acceder al entorno, o no queremos simplemente por seguridad. La solución cómoda es una bonita interfaz web que les permita hacerlo a golpe de click y con una gestión de permisos adecuada ya incorporada.&lt;/p&gt;
+&lt;p&gt;Como no queremos inventar la rueda nuevamente, podemos usar algo que ya esté hecho, como por ejemplo un &lt;strong&gt;jenkins&lt;/strong&gt;. De hecho, nada nos impide que el &lt;strong&gt;jenkins&lt;/strong&gt; lance &lt;em&gt;playbooks&lt;/em&gt; de &lt;strong&gt;ansible&lt;/strong&gt;. Sin embargo este ya es otro proyecto y en caso de que os interese, &lt;a href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html"&gt;ya he escrito sobre esto&lt;/a&gt;.&lt;/p&gt;</content><category term="api"></category><category term="gateway"></category><category term="proxy"></category><category term="nginx"></category></entry><entry><title>El concepto del servidor fachada con Docker</title><link href="http://www.linuxsysadmin.tk/2017/07/el-concepto-del-servidor-fachada-con-docker.html" rel="alternate"></link><published>2017-07-03T10:00:00+02:00</published><updated>2017-07-03T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-07-03:/2017/07/el-concepto-del-servidor-fachada-con-docker.html</id><summary type="html">&lt;p&gt;Muchos de nosotros tenemos un servidor en casa o en algún &lt;em&gt;hosting&lt;/em&gt;. Como no tenemos mucho tráfico y cada servidor tiene un coste, acabamos llenándolo con un conjunto de servicios bastante grande. Esto supone un problema para actualizar el sistema operativo, suponiendo que los servicios no se molesten entre sí …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Muchos de nosotros tenemos un servidor en casa o en algún &lt;em&gt;hosting&lt;/em&gt;. Como no tenemos mucho tráfico y cada servidor tiene un coste, acabamos llenándolo con un conjunto de servicios bastante grande. Esto supone un problema para actualizar el sistema operativo, suponiendo que los servicios no se molesten entre sí.&lt;/p&gt;
 &lt;p&gt;En estos casos podemos valernos de &lt;strong&gt;docker&lt;/strong&gt; (o de cualquier otro sistema de contenedores) para aislar cada servicio en su propio contenedor y para facilitar su portabilidad hacia un nuevo servidor. Con un poco de habilidad con reglas de &lt;em&gt;networking&lt;/em&gt;, podemos hacer esta transición sin cortes y poco a poco.&lt;/p&gt;
 &lt;p&gt;El truco es utilizar el concepto &lt;strong&gt;fachada&lt;/strong&gt;, es decir, nuestro servidor es solo la fachada de cada una de nuestros contenedores. Estos exponen su servicio como un puerto en la máquina &lt;em&gt;host&lt;/em&gt; y así parece que el &lt;em&gt;host&lt;/em&gt; es un único servidor. Este &lt;em&gt;host&lt;/em&gt; también nos puede servir para albergar los &lt;em&gt;host volumes&lt;/em&gt; y para hacer tareas de mantenimiento tales como &lt;em&gt;backups&lt;/em&gt; o &lt;em&gt;logrotate&lt;/em&gt;.&lt;/p&gt;
 &lt;h2&gt;Un ejemplo práctico&lt;/h2&gt;
