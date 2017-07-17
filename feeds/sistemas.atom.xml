@@ -1,5 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-07-10T10:00:00+02:00</updated><entry><title>Desactivando nuestras APIs con un frontal nginx</title><link href="http://www.linuxsysadmin.tk/2017/07/desactivando-nuestras-apis-con-un-frontal-nginx.html" rel="alternate"></link><published>2017-07-10T10:00:00+02:00</published><updated>2017-07-10T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-07-10:/2017/07/desactivando-nuestras-apis-con-un-frontal-nginx.html</id><summary type="html">&lt;p&gt;El otro día recibí una petición algo atípica en mi trabajo: querían activar y desactivar en un único punto centralizado cada una de las varias APIs que tenemos. Se trata de poner un &lt;strong&gt;nginx&lt;/strong&gt; frontal que gestione los &lt;em&gt;virtualhosts&lt;/em&gt; existentes y haga &lt;em&gt;proxy_pass&lt;/em&gt; o no en función de un &lt;em&gt;flag …&lt;/em&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día recibí una petición algo atípica en mi trabajo: querían activar y desactivar en un único punto centralizado cada una de las varias APIs que tenemos. Se trata de poner un &lt;strong&gt;nginx&lt;/strong&gt; frontal que gestione los &lt;em&gt;virtualhosts&lt;/em&gt; existentes y haga &lt;em&gt;proxy_pass&lt;/em&gt; o no en función de un &lt;em&gt;flag&lt;/em&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-07-17T10:00:00+02:00</updated><entry><title>Autenticación centralizada por claves SSH</title><link href="http://www.linuxsysadmin.tk/2017/07/autenticacion-centralizada-por-claves-ssh.html" rel="alternate"></link><published>2017-07-17T10:00:00+02:00</published><updated>2017-07-17T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-07-17:/2017/07/autenticacion-centralizada-por-claves-ssh.html</id><summary type="html">&lt;p&gt;Ya vimos en &lt;a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html"&gt;un artículo anterior&lt;/a&gt; como autenticar las sesiones &lt;strong&gt;SSH&lt;/strong&gt; mediante claves locales en la máquina. Sin embargo, esto no es práctico cuando tenemos muchos servidores, y hay que replicar esas claves en todos ellos. Hoy vamos a ver como usar un &lt;em&gt;script&lt;/em&gt; que pueda sacar las claves dinámicamente …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ya vimos en &lt;a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html"&gt;un artículo anterior&lt;/a&gt; como autenticar las sesiones &lt;strong&gt;SSH&lt;/strong&gt; mediante claves locales en la máquina. Sin embargo, esto no es práctico cuando tenemos muchos servidores, y hay que replicar esas claves en todos ellos. Hoy vamos a ver como usar un &lt;em&gt;script&lt;/em&gt; que pueda sacar las claves dinámicamente.&lt;/p&gt;
+&lt;p&gt;Empezamos teniendo un servidor con el servicio &lt;strong&gt;SSH&lt;/strong&gt; levantado; vamos a crear un usuario &lt;em&gt;guest&lt;/em&gt; en él para que pueda abrir una sesión en él.&lt;/p&gt;
+&lt;h2&gt;Estado inicial&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@sshserver:~# adduser guest
+Adding user &lt;span class="sb"&gt;`&lt;/span&gt;guest&lt;span class="s1"&gt;&amp;#39; ...&lt;/span&gt;
+&lt;span class="s1"&gt;Adding new group `guest&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1000&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; ...
+Adding new user &lt;span class="sb"&gt;`&lt;/span&gt;guest&lt;span class="s1"&gt;&amp;#39; (1000) with group `guest&amp;#39;&lt;/span&gt; ...
+Creating home directory &lt;span class="sb"&gt;`&lt;/span&gt;/home/guest&lt;span class="s1"&gt;&amp;#39; ...&lt;/span&gt;
+&lt;span class="s1"&gt;Copying files from `/etc/skel&amp;#39;&lt;/span&gt; ...
+Enter new UNIX password: 
+Retype new UNIX password: 
+passwd: password updated successfully
+Changing the user information &lt;span class="k"&gt;for&lt;/span&gt; guest
+Enter the new value, or press ENTER &lt;span class="k"&gt;for&lt;/span&gt; the default
+    Full Name &lt;span class="o"&gt;[]&lt;/span&gt;: 
+    Room Number &lt;span class="o"&gt;[]&lt;/span&gt;: 
+    Work Phone &lt;span class="o"&gt;[]&lt;/span&gt;: 
+    Home Phone &lt;span class="o"&gt;[]&lt;/span&gt;: 
+    Other &lt;span class="o"&gt;[]&lt;/span&gt;: 
+Is the information correct? &lt;span class="o"&gt;[&lt;/span&gt;Y/n&lt;span class="o"&gt;]&lt;/span&gt; y
+root@sshserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Por supuesto, este usuario pueden entrar con su contraseña sin problemas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/ssh$ ssh guest@sshserver
+guest@sshserver&amp;#39;s password: 
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+guest@sshserver:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;El script&lt;/h2&gt;
+&lt;p&gt;La idea es que necesitamos un &lt;em&gt;script&lt;/em&gt; que reciba como primer parámetro el usuario del que queremos las claves, y este &lt;em&gt;script&lt;/em&gt; nos va a dar una salida con el mismo formato que pondríamos en el &lt;em&gt;authorized_keys&lt;/em&gt;. Eso significa que podemos devolver 0, 1 o mas líneas, con una clave pública por línea.&lt;/p&gt;
+&lt;p&gt;No es importante de donde saque este &lt;em&gt;script&lt;/em&gt; la información; puede ser de un campo LDAP, de una base de datos, o de una llamada a un &lt;em&gt;webservice&lt;/em&gt;. Para evitar complicaciones innecesarias, para este artículo y a modo de ejemplo, vamos a poner los valores en el mismo &lt;em&gt;script&lt;/em&gt;. Echad un poco de imaginación si lo reproducís.&lt;/p&gt;
+&lt;p&gt;Supongamos que queremos entrar con el usuario &lt;em&gt;guest&lt;/em&gt;, y disponemos en la máquina inicial la clave privada &lt;em&gt;id_rsa&lt;/em&gt;, habiendo generado una clave pública correspondiente. Creamos un &lt;em&gt;script&lt;/em&gt; que nos vuelque esta clave si el usuario solicitado es &lt;em&gt;guest&lt;/em&gt;, siempre con permisos de ejecución.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@sshserver:~# cat /usr/bin/authorized_keys_by_user.sh 
+&lt;span class="c1"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$1&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;guest&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9heqwqgv+O9aekeCpETDR/6BdTQWDOrSlNN/tnZeZZa8/qjf0JEF4r8jSA/MquPQog1tpOXM0XUEY9YWNphARAmZ/gV1IiNJZmqQJSb2pk2/nQLq9nCqWoHBgKHKINUKfgmsiopGz9IjnZw5BBZKrloE9ZU0oApduxnVUTl/G71OWH/SdCbef08zvwVvLxv3zAWEKSnRvnSn5Q/FkRNb4Qe09po8ePgMqpZWKUvEpAntOvokI7uid300mmZjiUL8EMbJo4oJ3ONOnDbH8FNKEmGI4q2UK5HbDIUm8SJcmyJXvoo6xabApkc2AcM7X2tXRd8wiYS0p7YjLVMcIJ/NR gerard@sirius&amp;quot;&lt;/span&gt;
+&lt;span class="k"&gt;fi&lt;/span&gt;
+root@sshserver:~# chmod &lt;span class="m"&gt;755&lt;/span&gt; /usr/bin/authorized_keys_by_user.sh 
+root@sshserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos comprobar que nos da la clave pública para el usuario &lt;em&gt;guest&lt;/em&gt; y ninguna para otros usuarios.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@sshserver:~# /usr/bin/authorized_keys_by_user.sh guest
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9heqwqgv+O9aekeCpETDR/6BdTQWDOrSlNN/tnZeZZa8/qjf0JEF4r8jSA/MquPQog1tpOXM0XUEY9YWNphARAmZ/gV1IiNJZmqQJSb2pk2/nQLq9nCqWoHBgKHKINUKfgmsiopGz9IjnZw5BBZKrloE9ZU0oApduxnVUTl/G71OWH/SdCbef08zvwVvLxv3zAWEKSnRvnSn5Q/FkRNb4Qe09po8ePgMqpZWKUvEpAntOvokI7uid300mmZjiUL8EMbJo4oJ3ONOnDbH8FNKEmGI4q2UK5HbDIUm8SJcmyJXvoo6xabApkc2AcM7X2tXRd8wiYS0p7YjLVMcIJ/NR gerard@sirius
+root@sshserver:~# /usr/bin/authorized_keys_by_user.sh other
+root@sshserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso hemos puesto una sola clave, pero podrían haber sido varias, igual que cuando usamos el fichero &lt;em&gt;authorized_keys&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Configuración SSH&lt;/h2&gt;
+&lt;p&gt;Por una limitación del servicio &lt;strong&gt;SSH&lt;/strong&gt;, es necesario que tanto el &lt;em&gt;script&lt;/em&gt; como todas las carpetas en el &lt;em&gt;path&lt;/em&gt;, pertenezcan al usuario &lt;em&gt;root&lt;/em&gt; y que solo este tenga permisos de escritura. Aunque nos saldría un mensaje de error en el &lt;em&gt;log&lt;/em&gt; del &lt;strong&gt;SSH&lt;/strong&gt;, cuesta poco de comprobarlo antes.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@sshserver:~# &lt;span class="k"&gt;for&lt;/span&gt; folder in / /usr /usr/bin /usr/bin/authorized_keys_by_user.sh&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; stat --printf &lt;span class="s2"&gt;&amp;quot;%U:%G\t%A %n\n&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;$folder&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;done&lt;/span&gt;
+root:root   drwxr-xr-x /
+root:root   drwxr-xr-x /usr
+root:root   drwxr-xr-x /usr/bin
+root:root   -rwxr-xr-x /usr/bin/authorized_keys_by_user.sh
+root@sshserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El truco consiste en indicar dos directivas al demonio &lt;strong&gt;SSH&lt;/strong&gt;, para que sepa que debe ejecutar este &lt;em&gt;script&lt;/em&gt; para sacar el &lt;em&gt;authorized_keys&lt;/em&gt; de cada usuario.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@sshserver:~# tail -2 /etc/ssh/sshd_config 
+AuthorizedKeysCommand /usr/bin/authorized_keys_by_user.sh
+AuthorizedKeysCommandUser nobody
+root@sshserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Recargamos la configuración del demonio &lt;strong&gt;SSH&lt;/strong&gt;, para que relea la configuración nueva que acabamos de poner.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@sshserver:~# service ssh reload
+Reloading OpenBSD Secure Shell server&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s configuration: sshd.
+root@sshserver:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y solo nos queda comprobar que podemos entrar con el usuario &lt;em&gt;guest&lt;/em&gt; usando la clave privada. En este ejemplo no se indica porque la clave &lt;em&gt;.ssh/id_rsa&lt;/em&gt; es ofrecida por defecto, y es la parte privada de la clave que pusimos en el &lt;em&gt;script&lt;/em&gt; remoto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/ssh$ ssh guest@sshserver
+
+The programs included with the Debian GNU/Linux system are free software&lt;span class="p"&gt;;&lt;/span&gt;
+the exact distribution terms &lt;span class="k"&gt;for&lt;/span&gt; each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Thu Jul &lt;span class="m"&gt;21&lt;/span&gt; &lt;span class="m"&gt;08&lt;/span&gt;:39:21 &lt;span class="m"&gt;2016&lt;/span&gt; from &lt;span class="m"&gt;172&lt;/span&gt;.20.0.1
+guest@sshserver:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A partir de aquí, podéis modificar el &lt;em&gt;script&lt;/em&gt; remoto para que saque la información de las claves de algún sitio centralizado (LDAP, base de datos, &lt;em&gt;webservice&lt;/em&gt;, ...).&lt;/p&gt;</content><category term="ssh / autenticación / password / passphrase / centralizado"></category></entry><entry><title>Desactivando nuestras APIs con un frontal nginx</title><link href="http://www.linuxsysadmin.tk/2017/07/desactivando-nuestras-apis-con-un-frontal-nginx.html" rel="alternate"></link><published>2017-07-10T10:00:00+02:00</published><updated>2017-07-10T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-07-10:/2017/07/desactivando-nuestras-apis-con-un-frontal-nginx.html</id><summary type="html">&lt;p&gt;El otro día recibí una petición algo atípica en mi trabajo: querían activar y desactivar en un único punto centralizado cada una de las varias APIs que tenemos. Se trata de poner un &lt;strong&gt;nginx&lt;/strong&gt; frontal que gestione los &lt;em&gt;virtualhosts&lt;/em&gt; existentes y haga &lt;em&gt;proxy_pass&lt;/em&gt; o no en función de un &lt;em&gt;flag …&lt;/em&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día recibí una petición algo atípica en mi trabajo: querían activar y desactivar en un único punto centralizado cada una de las varias APIs que tenemos. Se trata de poner un &lt;strong&gt;nginx&lt;/strong&gt; frontal que gestione los &lt;em&gt;virtualhosts&lt;/em&gt; existentes y haga &lt;em&gt;proxy_pass&lt;/em&gt; o no en función de un &lt;em&gt;flag&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;La propuesta me pareció bastante interesante, así que decidí hacer una prueba de concepto que aquí queda reflejada. Se trata de ofrecer un frontal web (por ejemplo un &lt;strong&gt;jenkins&lt;/strong&gt;) mediante el cual se puedan poner los ficheros cuya presencia le indican a &lt;strong&gt;nginx&lt;/strong&gt; si ese &lt;em&gt;virtualhost&lt;/em&gt; concreto debe dar un error o no.&lt;/p&gt;
 &lt;h2&gt;Simulando las APIs&lt;/h2&gt;
 &lt;p&gt;Vamos a poner un par de contenedores &lt;strong&gt;docker&lt;/strong&gt; con &lt;strong&gt;nginx&lt;/strong&gt;, que sirvan una página personalizada y nos sirva para simular la API. No es especialmente complejo, así que solo se adjunta por completitud.&lt;/p&gt;
