@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Operaciones - Linux Sysadmin</title>
+    <title>Montando un servidor docker con Debian Stretch - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,25 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2017/07/montando-un-servidor-docker-con-debian-stretch.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="Operaciones" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="linux,debian,stretch,docker,docker-compose" />
+        <meta name="description" content="Finalmente ha sucedido: ha llegado el esperado lanzamiento de Debian Stretch. Como buen linuxero no me he podido resistir a hacer alguna instalación para probar, aunque solo sea como una máquina virtual. Su función, determinada por mi actual flujo de trabajo, va a ser como servidor de docker con docker-compose …" />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Montando un servidor docker con Debian Stretch"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/07/montando-un-servidor-docker-con-debian-stretch.html"/>
+        <meta property="og:description" content="Finalmente ha sucedido: ha llegado el esperado lanzamiento de Debian Stretch. Como buen linuxero no me he podido resistir a hacer alguna instalación para probar, aunque solo sea como una máquina virtual. Su función, determinada por mi actual flujo de trabajo, va a ser como servidor de docker con docker-compose …"/>
+        <meta property="article:published_time" content="2017-07-24" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="debian" />
+            <meta property="article:tag" content="stretch" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:tag" content="docker-compose" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,8 +43,8 @@
 
 
 
-        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Operaciones ATOM Feed"/>
+        <link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -77,11 +86,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.tk/categories.html" title="Categorías de Linux Sysadmin">Categorías</a></li>
-        <li class="active">Operaciones</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Montando un servidor docker con Debian Stretch</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -94,64 +103,196 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/06/un-root-shell-en-c.html">Un root shell en C</a></h2>
-                <div class="summary"><p>Cuando operamos un servidor de producción es habitual que no tengamos acceso habitual al usuario <em>root</em>, e incluso lo tengan altamente vigilado. Podemos intentar dejar una puerta trasera, por ejemplo poniendo un binario con el <em>setuid</em> bit activado, te pueden pillar. Sin embargo es posible dejar una puerta abierta oculta …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/06/un-root-shell-en-c.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></h2>
-                <div class="summary"><p>La facilidad de levantar un contenedor <strong>docker</strong> nos lleva a la pregunta del millón: ¿es posible usar <strong>docker</strong> para crear contenedores de usar y tirar para probar otras tecnologías? La respuesta es que sí, y para demostrarlo, vamos a generar un entorno minimalista en contenedores <strong>docker</strong>, desplegados mediante <strong>ansible</strong> <em>playbooks …</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">Autenticación SSH por claves</a></h2>
-                <div class="summary"><p>A pesar de que el protocolo <strong>SSH</strong> es lo que mas seguridad ofrece hoy en día, un servidor rápido puede probar gran cantidad de contraseñas generadas mediante un generador por fuerza bruta. Para añadir mas seguridad podemos autenticar mediante claves en vez de usar contraseña, opcionalmente protegidos con una <em>passphrase …</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html">Algunas ideas sueltas sobre Ansible</a></h2>
-                <div class="summary"><p>En un <a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">artículo anterior</a> vimos qué era <strong>Ansible</strong> y como instalarlo, dejando su funcionamiento para el lector; Hay miles de tutoriales por internet, y muchos son mejores de los que pueda poner aquí. Sin embargo, hay algunas ideas que no son fáciles de ver juntas, así que aquí las dejo …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></h2>
-                <div class="summary"><p>Cuando nos encontramos delante de servidores únicos, es bastante fácil su gestión. Sin embargo, cuando tenemos 8 instancias de cada tipo de servidor, las tareas se vuelven lentas y repetitivas. Podemos incluso automatizar la gestión de una sola máquina para hacer su entorno fácilmente reproducible, en vistas a su reconstrucción …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2017/07/montando-un-servidor-docker-con-debian-stretch.html"
+                       rel="bookmark"
+                       title="Permalink to Montando un servidor docker con Debian Stretch">
+                        Montando un servidor docker con Debian Stretch
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2017-07-24T10:00:00+02:00"> 2017-07-24</time>
+    </span>
 
-        <ul class="pagination">
-                <li class="prev"><a href="http://www.linuxsysadmin.tk/category/operaciones5.html">&laquo;</a>
-                </li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/category/operaciones.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/category/operaciones2.html">2</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/category/operaciones3.html">3</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/category/operaciones4.html">4</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/category/operaciones5.html">5</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.tk/category/operaciones6.html">6</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/category/operaciones7.html">7</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/category/operaciones8.html">8</a></li>
-                <li class="next"><a
-                        href="http://www.linuxsysadmin.tk/category/operaciones7.html">&raquo;</a></li>
-        </ul>
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 6 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/sistemas.html">Sistemas</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/linux.html">linux</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/debian.html">debian</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/stretch.html">stretch</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/docker.html">docker</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/docker-compose.html">docker-compose</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>Finalmente ha sucedido: ha llegado el esperado lanzamiento de <strong>Debian Stretch</strong>. Como buen linuxero no me he podido resistir a hacer alguna instalación para probar, aunque solo sea como una máquina virtual. Su función, determinada por mi actual flujo de trabajo, va a ser como servidor de <strong>docker</strong> con <strong>docker-compose</strong>.</p>
+<p>En este caso, lo necesito para mi uso personal, pero en el ámbito de mi trabajo. Una de las particularidades a las que me enfrento es un <em>proxy</em> <strong>squid</strong> no transparente, así que también voy a ponerlo como anotaciones en el artículo.</p>
+<h2>El servidor base</h2>
+<p>Se trata de instalar un sistema operativo básico con SSH, partiendo de la imagen <em>netinst</em>, que considero suficiente para un servidor estándar, y me evita descargar una <em>iso</em> más grande.</p>
+<p>No voy a explicar como se instala; simplemente he respondido las preguntas de la instalación tal como me las hacía. Solo hace falta tener en cuenta que se eligió el servidor <strong>SSH</strong> durante la instalación (concretamente en el <em>tasksel</em>) y que se indicó el <em>proxy</em> cuando se me preguntó.</p>
+<p>Para evitar que la operación <strong>apt-get update</strong> tarde más tiempo de lo debido, vamos a limpiar el fichero <em>/etc/apt/sources.list</em>, eliminando las entradas que no nos interesen.</p>
+<p>Y ya para acabar, vamos a crear una carpeta <em>bin</em> para nuestro usuario de trabajo, lo que hace especialmente fácil poner <em>scripts</em> locales para el mismo usuario.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~$ mkdir bin
+gerard@atlantis:~$
+</pre></div>
+
+
+<h2>Instalar docker engine y docker-compose</h2>
+<h3>Docker engine</h3>
+<p>Para instalar <strong>docker engine</strong> vamos a seguir <a href="https://docs.docker.com/engine/installation/linux/docker-ce/debian/">la documentación</a>. El primer paso es descargarse la clave oficial GPG de <strong>docker</strong>, para que <strong>apt</strong> confíe en la fuente de <em>software</em>.</p>
+<p><strong>NOTA</strong>: es probable que el comando <strong>wget</strong> falle si estamos detrás de un <em>proxy</em>; basta con exportar la variable de entorno <strong>https_proxy</strong>.</p>
+<div class="highlight"><pre><span></span>root@atlantis:~# apt-get install apt-transport-https
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+...
+root@atlantis:~# wget -qO- https://download.docker.com/linux/debian/gpg <span class="p">|</span> apt-key add -
+OK
+root@atlantis:~#
+</pre></div>
+
+
+<p>Añadimos la línea adecuada para usar el repositorio oficial de <strong>docker</strong> y, tras hacer el correspondiente <em>update</em>, instalamos el paquete <strong>docker-ce</strong>.</p>
+<div class="highlight"><pre><span></span>root@atlantis:~# <span class="nb">echo</span> <span class="s2">&quot;deb https://download.docker.com/linux/debian stretch stable&quot;</span> &gt; /etc/apt/sources.list.d/docker.list
+root@atlantis:~# apt-get update
+Obj:1 http://security.debian.org/debian-security stretch/updates InRelease
+Des:2 https://download.docker.com/linux/debian stretch InRelease <span class="o">[</span><span class="m">20</span>,2 kB<span class="o">]</span>
+Des:3 https://download.docker.com/linux/debian stretch/stable amd64 Packages <span class="o">[</span><span class="m">1</span>.934 B<span class="o">]</span>
+Ign:4 http://ftp.fr.debian.org/debian stretch InRelease
+Des:5 http://ftp.fr.debian.org/debian stretch-updates InRelease <span class="o">[</span><span class="m">88</span>,5 kB<span class="o">]</span>
+Obj:6 http://ftp.fr.debian.org/debian stretch Release
+Descargados <span class="m">111</span> kB en 5s <span class="o">(</span><span class="m">19</span>,5 kB/s<span class="o">)</span>
+Leyendo lista de paquetes... Hecho
+root@atlantis:~# apt-get install docker-ce
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+...
+root@atlantis:~#
+</pre></div>
+
+
+<p>Para hacer mas fácil el acceso a <strong>docker</strong> para el usuario de trabajo, vamos a añadirlo al mismo grupo.</p>
+<div class="highlight"><pre><span></span>root@atlantis:~# usermod -a -G docker gerard
+root@atlantis:~#
+</pre></div>
+
+
+<h3>Docker compose</h3>
+<p>Para instalar esta utilidad, vamos a seguir <a href="https://docs.docker.com/compose/install/">su documentación</a>. En esencia se limita a descargar el binario en algún lugar del <em>path</em> y a darle permisos de ejecución.</p>
+<div class="highlight"><pre><span></span>root@atlantis:~# wget -qO /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/1.14.0/docker-compose-<span class="sb">`</span>uname -s<span class="sb">`</span>-<span class="sb">`</span>uname -m<span class="sb">`</span>
+root@atlantis:~# chmod <span class="m">755</span> /usr/local/bin/docker-compose
+root@atlantis:~#
+</pre></div>
+
+
+<h2>Sobre los servidores proxy</h2>
+<p>Trabajar detrás de un servidor <em>proxy</em> es un problema cuando trabajamos con <strong>docker</strong>, ya que el <em>proxy</em> debe configurarse a nivel de servicio, luego debe especificarse en cada <em>docker build</em> y finalmente en cada <em>docker run</em>.</p>
+<p>La primera configuración <em>proxy</em> necesaria es la de <strong>apt</strong>. Por suerte para nosotros, cuando instalamos el sistema operativo y lo indicamos ya nos guardó ese parámetro en <em>/etc/apt/apt.conf</em>.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~$ cat /etc/apt/apt.conf
+Acquire::http::Proxy <span class="s2">&quot;http://192.168.0.2:3128&quot;</span><span class="p">;</span>
+gerard@atlantis:~$
+</pre></div>
+
+
+<p>A veces, algunos comandos como el <strong>wget</strong> necesitan definir el <em>proxy</em> como una variable de sistema; por ejemplo, para poner la variable <strong>https_proxy</strong> para esta sesión de terminal, podemos hacer algo como:</p>
+<div class="highlight"><pre><span></span>root@atlantis:~# <span class="nb">export</span> <span class="nv">https_proxy</span><span class="o">=</span>http://192.168.0.2:3128
+root@atlantis:~#
+</pre></div>
+
+
+<p>El demonio de <strong>docker</strong> utiliza el <em>proxy</em> definido en las variables de sistema. En el caso de <em>systemd</em> podemos añadir estas variables de forma fácil añadiendo una configuración <em>overlay</em>. Esto hace necesario recargar las configuraciones para el demonio de <strong>systemd</strong> y luego el mismo demonio de <strong>docker</strong> para que utilice las nuevas variables.</p>
+<div class="highlight"><pre><span></span>root@atlantis:~# mkdir /etc/systemd/system/docker.service.d
+root@atlantis:~# cat /etc/systemd/system/docker.service.d/proxy.conf
+<span class="o">[</span>Service<span class="o">]</span>
+<span class="nv">Environment</span><span class="o">=</span><span class="s2">&quot;HTTP_PROXY=http://192.168.0.2:3128&quot;</span>
+<span class="nv">Environment</span><span class="o">=</span><span class="s2">&quot;HTTPS_PROXY=http://192.168.0.2:3128&quot;</span>
+root@atlantis:~# systemctl daemon-reload
+root@atlantis:~# systemctl restart docker
+root@atlantis:~#
+</pre></div>
+
+
+<p>Finalmente, y por comodidad podemos añadir estas variables de entorno de forma permanente para el usuario de trabajo en el fichero <em>~/.bashrc</em>, de forma que en cada nueva sesión de SSH no tengamos que redefinirlas. Aprovechamos también para añadir algunos <em>alias</em> útiles para reducir los comandos de construcción de imágenes y ejecución de contenedores, escondiendo las variables del <em>proxy</em>.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~$ cat .bashrc
+...
+<span class="nb">alias</span> <span class="nv">drun</span><span class="o">=</span><span class="s1">&#39;docker run -e &quot;http_proxy=http://192.168.0.2:3128&quot; -e &quot;https_proxy=http://192.168.0.2:3128&quot;&#39;</span>
+<span class="nb">alias</span> <span class="nv">dbuild</span><span class="o">=</span><span class="s1">&#39;docker build --build-arg=&quot;http_proxy=http://192.168.0.2:3128&quot; --build-arg=&quot;https_proxy=http://192.168.0.2:3128&quot;&#39;</span>
+<span class="nb">export</span> <span class="nv">HTTP_PROXY</span><span class="o">=</span>http://192.168.0.2:3128
+<span class="nb">export</span> <span class="nv">HTTPS_PROXY</span><span class="o">=</span><span class="si">${</span><span class="nv">HTTP_PROXY</span><span class="si">}</span>
+<span class="nb">export</span> <span class="nv">http_proxy</span><span class="o">=</span><span class="si">${</span><span class="nv">HTTP_PROXY</span><span class="si">}</span>
+<span class="nb">export</span> <span class="nv">https_proxy</span><span class="o">=</span><span class="si">${</span><span class="nv">HTTP_PROXY</span><span class="si">}</span>
+<span class="nb">export</span> <span class="nv">NO_PROXY</span><span class="o">=</span><span class="s2">&quot;127.0.0.1,localhost&quot;</span>
+<span class="nb">export</span> <span class="nv">no_proxy</span><span class="o">=</span><span class="si">${</span><span class="nv">NO_PROXY</span><span class="si">}</span>
+gerard@atlantis:~$
+</pre></div>
+
+
+<h2>Siguientes pasos</h2>
+<p>Es probable que este servidor necesite algunas utilidades que no hayan venido con los paquetes base. Nada nos impide ponerlos nosotros a mano, con los correspondientes <em>apt-get install</em>. A partir de aquí, solo nos queda disfrutar de nuestro nuevo servidor <strong>docker</strong> mínimo.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html">Un entorno web estático con nginx, rsync y docker</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html">Creando un entorno escalable (IV)</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'montando-un-servidor-docker-con-debian-stretch';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2017/07/montando-un-servidor-docker-con-debian-stretch.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>

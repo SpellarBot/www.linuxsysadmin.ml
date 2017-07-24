@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2017-07-17T09:46:56-00:00</lastmod>
+<lastmod>2017-07-24T07:31:34-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2017-07-17T09:46:56-00:00</lastmod>
+<lastmod>2017-07-24T07:31:34-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2017-07-17T09:46:56-00:00</lastmod>
+<lastmod>2017-07-24T07:31:34-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2017-07-17T09:46:56-00:00</lastmod>
+<lastmod>2017-07-24T07:31:34-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2017-07-17T09:46:56-00:00</lastmod>
+<lastmod>2017-07-24T07:31:34-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2017/07/montando-un-servidor-docker-con-debian-stretch.html</loc>
+<lastmod>2017-07-24T10:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -719,7 +726,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/sistemas.html</loc>
-<lastmod>2017-07-17T10:00:00-00:15</lastmod>
+<lastmod>2017-07-24T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -816,8 +823,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/systemd.html</loc>
-<lastmod>2016-11-14T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/virtual-hosts.html</loc>
+<lastmod>2016-12-26T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1097,7 +1104,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/linux.html</loc>
-<lastmod>2017-02-06T10:00:00-00:15</lastmod>
+<lastmod>2017-07-24T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1229,8 +1236,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/virtual-hosts.html</loc>
-<lastmod>2016-12-26T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/systemd.html</loc>
+<lastmod>2016-11-14T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1509,6 +1516,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/stretch.html</loc>
+<lastmod>2017-07-24T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/escritorio.html</loc>
 <lastmod>2016-07-25T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1734,7 +1748,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/docker-compose.html</loc>
-<lastmod>2017-07-03T10:00:00-00:15</lastmod>
+<lastmod>2017-07-24T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1881,7 +1895,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/debian.html</loc>
-<lastmod>2017-02-06T10:00:00-00:15</lastmod>
+<lastmod>2017-07-24T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1979,7 +1993,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/docker.html</loc>
-<lastmod>2017-07-03T10:00:00-00:15</lastmod>
+<lastmod>2017-07-24T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2000,7 +2014,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2017-07-17T10:00:00-00:15</lastmod>
+<lastmod>2017-07-24T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
