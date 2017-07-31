@@ -93,6 +93,20 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
+                <h2><a href="http://www.linuxsysadmin.tk/2017/07/ignorando-el-proxy-de-mi-empresa-un-proxy-socks.html">Ignorando el proxy de mi empresa: un proxy SOCKS</a></h2>
+                <div class="summary"><p>Tenemos en el trabajo uno de esos <em>enginjerks</em> que lanzan acciones <em>random</em> para justificar su trabajo. Cortó el acceso a <em>Dropbox</em>, en donde tengo cosas útiles para mi trabajo. Harto de encender los datos móviles de mi móvil para ir sincronizando ficheros, me he montado un proxy <strong>SOCKS</strong> para mí …</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2017/07/ignorando-el-proxy-de-mi-empresa-un-proxy-socks.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
+                <h2><a href="http://www.linuxsysadmin.tk/2017/07/autenticacion-centralizada-por-claves-ssh.html">Autenticación centralizada por claves SSH</a></h2>
+                <div class="summary"><p>Ya vimos en <a href="http://www.linuxsysadmin.tk/2016/05/autenticacion-ssh-por-claves.html">un artículo anterior</a> como autenticar las sesiones <strong>SSH</strong> mediante claves locales en la máquina. Sin embargo, esto no es práctico cuando tenemos muchos servidores, y hay que replicar esas claves en todos ellos. Hoy vamos a ver como usar un <em>script</em> que pueda sacar las claves dinámicamente …</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2017/07/autenticacion-centralizada-por-claves-ssh.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://www.linuxsysadmin.tk/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html">Exponiendo puertos TCP a través de un firewall con ngrok</a></h2>
                 <div class="summary"><p>A veces tenemos la necesidad de exponer en internet algún puerto TCP de forma temporal, para hacer <em>testing</em> o alguna <em>demo</em>. Ya vimos como podemos hacer esto mediante <a href="http://www.linuxsysadmin.tk/2016/10/creando-tuneles-con-ssh.html">túneles SSH reversos</a>, aunque no siempre disponemos de un dominio público. En estos casos podemos usar un sistema de túneles llamado <strong>ngrok …</strong></p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html">Seguir leyendo</a>
@@ -148,21 +162,16 @@ Linux Sysadmin            </a>
                 </div>
             </article>
             <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Enjaulado de usuarios para uso de rsync</a></h2>
-                <div class="summary"><p>Todos nos hemos encontrado alguna vez con una web, sea en <em>HTML</em> o en <em>PHP</em>, que se compone de centenares o miles de ficheros, y que hay que ir actualizando cada vez que cambian unos pocos ficheros. En estos casos la capacidad incremental de la herramienta <strong>rsync</strong> puede ayudarnos mucho …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/01/enjaulado-de-usuarios-para-uso-de-rsync.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Ocultando puertos con port knocking</a></h2>
-                <div class="summary"><p>En este artículo vamos a enseñar como ocultar un puerto tras el firewall, de forma que solamente se abra tras utilizar el protocolo <em>port knocking</em>. Las tecnologías usadas van a ser <em>firehol</em> como firewall y el demonio <em>knockd</em> ocultando el <em>SSH</em>, aunque vamos a permitir acceder al puerto de HTTP …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/10/ocultando-puertos-con-port-knocking.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
 
+        <ul class="pagination">
+                <li class="prev disabled"><a href="#">&laquo;</a></li>
+                    <li class="active"><a
+                            href="http://www.linuxsysadmin.tk/tag/ssh.html">1</a></li>
+                    <li class=""><a
+                            href="http://www.linuxsysadmin.tk/tag/ssh2.html">2</a></li>
+                <li class="next"><a
+                        href="http://www.linuxsysadmin.tk/tag/ssh2.html">&raquo;</a></li>
+        </ul>
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
@@ -242,6 +251,11 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/auditoria.html">
                             auditoría
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/autenticacion.html">
+                            autenticación
                         </a>
                     </li>
                     <li class="list-group-item tag-3">
@@ -375,11 +389,6 @@ Linux Sysadmin            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/framework.html">
-                            framework
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/genisoimage.html">
                             genisoimage
                         </a>
@@ -422,11 +431,6 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-1">
                         <a href="http://www.linuxsysadmin.tk/tag/jessie.html">
                             jessie
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.tk/tag/keepalived.html">
-                            keepalived
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -524,7 +528,7 @@ Linux Sysadmin            </a>
                             paquete
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
+                    <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.tk/tag/passphrase.html">
                             passphrase
                         </a>
@@ -562,6 +566,11 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.tk/tag/port-knocking.html">
                             port knocking
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://www.linuxsysadmin.tk/tag/proxy.html">
+                            proxy
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

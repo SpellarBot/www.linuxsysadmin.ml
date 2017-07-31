@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2017-07-24T07:31:34-00:00</lastmod>
+<lastmod>2017-07-31T08:19:29-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2017-07-24T07:31:34-00:00</lastmod>
+<lastmod>2017-07-31T08:19:29-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2017-07-24T07:31:34-00:00</lastmod>
+<lastmod>2017-07-31T08:19:29-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2017-07-24T07:31:34-00:00</lastmod>
+<lastmod>2017-07-31T08:19:29-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2017-07-24T07:31:34-00:00</lastmod>
+<lastmod>2017-07-31T08:19:29-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2017/07/ignorando-el-proxy-de-mi-empresa-un-proxy-socks.html</loc>
+<lastmod>2017-07-31T10:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -712,7 +719,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/operaciones.html</loc>
-<lastmod>2017-06-19T10:00:00-00:15</lastmod>
+<lastmod>2017-07-31T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -831,7 +838,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/password.html</loc>
-<lastmod>2016-08-22T10:00:00-00:15</lastmod>
+<lastmod>2017-07-17T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -942,8 +949,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/framework.html</loc>
-<lastmod>2017-05-15T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/nginx.html</loc>
+<lastmod>2017-07-10T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -957,7 +964,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/ssh.html</loc>
-<lastmod>2017-06-12T10:00:00-00:15</lastmod>
+<lastmod>2017-07-31T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1132,7 +1139,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/passphrase.html</loc>
-<lastmod>2016-05-30T08:00:00-00:15</lastmod>
+<lastmod>2017-07-17T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1265,7 +1272,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/proxy.html</loc>
-<lastmod>2017-07-10T10:00:00-00:15</lastmod>
+<lastmod>2017-07-31T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1315,13 +1322,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/apache-benchmark.html</loc>
 <lastmod>2017-04-10T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>http://www.linuxsysadmin.tk/tag/ssl.html</loc>
-<lastmod>2017-05-29T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1432,8 +1432,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/apt.html</loc>
-<lastmod>2016-01-11T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/socks.html</loc>
+<lastmod>2017-07-31T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1455,6 +1455,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/api.html</loc>
 <lastmod>2017-07-10T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/framework.html</loc>
+<lastmod>2017-05-15T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1503,7 +1510,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/autenticacion.html</loc>
-<lastmod>2016-05-30T08:00:00-00:15</lastmod>
+<lastmod>2017-07-17T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1553,6 +1560,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/dns.html</loc>
 <lastmod>2017-04-17T00:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/centralizado.html</loc>
+<lastmod>2017-07-17T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1649,8 +1663,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/ssh-autenticacion-password-passphrase-centralizado.html</loc>
-<lastmod>2017-07-17T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/apt.html</loc>
+<lastmod>2016-01-11T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1922,8 +1936,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/nginx.html</loc>
-<lastmod>2017-07-10T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/ssl.html</loc>
+<lastmod>2017-05-29T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2014,7 +2028,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2017-07-24T10:00:00-00:15</lastmod>
+<lastmod>2017-07-31T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
