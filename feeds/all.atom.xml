@@ -1,5 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-07-31T10:00:00+02:00</updated><entry><title>Ignorando el proxy de mi empresa: un proxy SOCKS</title><link href="http://www.linuxsysadmin.tk/2017/07/ignorando-el-proxy-de-mi-empresa-un-proxy-socks.html" rel="alternate"></link><published>2017-07-31T10:00:00+02:00</published><updated>2017-07-31T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-07-31:/2017/07/ignorando-el-proxy-de-mi-empresa-un-proxy-socks.html</id><summary type="html">&lt;p&gt;Tenemos en el trabajo uno de esos &lt;em&gt;enginjerks&lt;/em&gt; que lanzan acciones &lt;em&gt;random&lt;/em&gt; para justificar su trabajo. Cortó el acceso a &lt;em&gt;Dropbox&lt;/em&gt;, en donde tengo cosas útiles para mi trabajo. Harto de encender los datos móviles de mi móvil para ir sincronizando ficheros, me he montado un proxy &lt;strong&gt;SOCKS&lt;/strong&gt; para mí …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Tenemos en el trabajo uno de esos &lt;em&gt;enginjerks&lt;/em&gt; que lanzan acciones &lt;em&gt;random&lt;/em&gt; para justificar su trabajo. Cortó el acceso a &lt;em&gt;Dropbox&lt;/em&gt;, en donde tengo cosas útiles para mi trabajo. Harto de encender los datos móviles de mi móvil para ir sincronizando ficheros, me he montado un proxy &lt;strong&gt;SOCKS&lt;/strong&gt; para mí.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-08-07T10:00:00+02:00</updated><entry><title>Evitando problemas de concurrencia múltiple con flock</title><link href="http://www.linuxsysadmin.tk/2017/08/evitando-problemas-de-concurrencia-multiple-con-flock.html" rel="alternate"></link><published>2017-08-07T10:00:00+02:00</published><updated>2017-08-07T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-08-07:/2017/08/evitando-problemas-de-concurrencia-multiple-con-flock.html</id><summary type="html">&lt;p&gt;Cuando trabajas con procesos en &lt;em&gt;background&lt;/em&gt;, es fácil que algunos de los procesos hagan algo que necesite exclusividad, no siendo seguro ejecutar varios de estos procesos a la vez. Por ejemplo, archivos que se descomprimen, se procesan y luego se borran; si usan la misma carpeta suele ser un problema …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando trabajas con procesos en &lt;em&gt;background&lt;/em&gt;, es fácil que algunos de los procesos hagan algo que necesite exclusividad, no siendo seguro ejecutar varios de estos procesos a la vez. Por ejemplo, archivos que se descomprimen, se procesan y luego se borran; si usan la misma carpeta suele ser un problema.&lt;/p&gt;
+&lt;p&gt;No vamos a entrar en como se lanzan estos procesos, pero vamos a dar énfasis en que no deben ejecutarse a la vez. Para ello, vamos a suponer que tenemos un proceso que nos interesa ejecutar en exclusividad. Voy a sustituir este proceso por un &lt;em&gt;script&lt;/em&gt;, para que no nos distraigamos del punto importante.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/flock_test$ cat process.sh 
+&lt;span class="c1"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;date +%H:%M:%S&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="s2"&gt; - Starting process in terminal &lt;/span&gt;&lt;span class="nv"&gt;$1&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+sleep &lt;span class="m"&gt;5&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;date +%H:%M:%S&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="s2"&gt; - Process ended in terminal &lt;/span&gt;&lt;span class="nv"&gt;$1&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+gerard@aldebaran:~/flock_test$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Muchos de los desarrolladores os propondrían miles de soluciones para evitar este caso, pero si buscamos en la &lt;em&gt;toolbox&lt;/em&gt; de Linux, podemos encontrar herramientas útiles. En mi caso concreto encontré el comando &lt;strong&gt;flock&lt;/strong&gt;, que actúa bloqueando un comando, en base a la existencia de un fichero de &lt;em&gt;lock&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Ejecutando casi concurrentemente&lt;/h2&gt;
+&lt;p&gt;Para conseguirlo, voy a abrir dos terminales, uno para cada proceso. El &lt;em&gt;script&lt;/em&gt; va a recibir el numero de terminal por un parámetro, que voy a poner manualmente.&lt;/p&gt;
+&lt;p&gt;Vamos al primer terminal, y ejecutamos nuestro &lt;em&gt;script&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/flock_test$ ./process.sh &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="m"&gt;12&lt;/span&gt;:43:38 - Starting process in terminal &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="m"&gt;12&lt;/span&gt;:43:43 - Process ended in terminal &lt;span class="m"&gt;1&lt;/span&gt;
+gerard@aldebaran:~/flock_test$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Antes de que acabe, cambio al otro terminal y ejecuto lo mismo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/flock_test$ ./process.sh &lt;span class="m"&gt;2&lt;/span&gt;
+&lt;span class="m"&gt;12&lt;/span&gt;:43:40 - Starting process in terminal &lt;span class="m"&gt;2&lt;/span&gt;
+&lt;span class="m"&gt;12&lt;/span&gt;:43:45 - Process ended in terminal &lt;span class="m"&gt;2&lt;/span&gt;
+gerard@aldebaran:~/flock_test$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si juntamos las líneas de &lt;em&gt;log&lt;/em&gt; y las ordenamos, vemos claramente que los procesos estuvieron en algún momento ejecutándose a la vez.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="m"&gt;12&lt;/span&gt;:43:38 - Starting process in terminal &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="m"&gt;12&lt;/span&gt;:43:40 - Starting process in terminal &lt;span class="m"&gt;2&lt;/span&gt;
+&lt;span class="m"&gt;12&lt;/span&gt;:43:43 - Process ended in terminal &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="m"&gt;12&lt;/span&gt;:43:45 - Process ended in terminal &lt;span class="m"&gt;2&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso, no parece peligroso que se ejecuten a la vez, pero hay que usar la imaginación y creernos que podrían dar problemas ejecutados a la vez.&lt;/p&gt;
+&lt;h2&gt;Ejecución exclusiva con flock&lt;/h2&gt;
+&lt;p&gt;Como puede interesarnos que no se ejecuten a la vez, podemos utilizar el comando &lt;strong&gt;flock&lt;/strong&gt; para conseguir que ambos procesos esperen ordenadamente la posibilidad de ejecutarse.&lt;/p&gt;
+&lt;p&gt;El comando &lt;strong&gt;flock&lt;/strong&gt; esperaría la inexistencia de un &lt;em&gt;lock&lt;/em&gt; en el fichero indicado, momento en el que pondría dicho &lt;em&gt;lock&lt;/em&gt; para asegurar que ningún otro proceso pudiera ejecutarse. Lo siguiente sería ejecutar nuestro &lt;em&gt;script&lt;/em&gt;, y finalmente, eliminar el &lt;em&gt;lock&lt;/em&gt; puesto. Otro proceso concurrente quedaría a la espera de la liberación de &lt;em&gt;lock&lt;/em&gt; antes de poder proceder, de manera similar al anterior.&lt;/p&gt;
+&lt;p&gt;El proceso va a ser el mismo: ejecutamos el &lt;em&gt;script&lt;/em&gt; en ambos terminales, prefijado esta vez por el comando &lt;strong&gt;flock&lt;/strong&gt; y el fichero sobre el que se va a poner el &lt;em&gt;lock&lt;/em&gt;. Pasamos a juntar las líneas de ambos terminales por brevedad:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="m"&gt;12&lt;/span&gt;:44:59 - Starting process in terminal &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="m"&gt;12&lt;/span&gt;:45:04 - Process ended in terminal &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="m"&gt;12&lt;/span&gt;:45:04 - Starting process in terminal &lt;span class="m"&gt;2&lt;/span&gt;
+&lt;span class="m"&gt;12&lt;/span&gt;:45:09 - Process ended in terminal &lt;span class="m"&gt;2&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto podemos ver que el proceso del terminal 2 ha tenido que esperar a que el comando &lt;strong&gt;flock&lt;/strong&gt; en el primer terminal acabara, antes de poder proceder a ejecutar su &lt;em&gt;script&lt;/em&gt;. Con eso se garantiza la exclusividad de ejecución y los problemas que podría haber derivados de esta situación.&lt;/p&gt;
+&lt;p&gt;En un caso de &lt;em&gt;boom&lt;/em&gt; de procesos, podríamos ver un grupo de procesos esperando sin lanzar sus respectivos &lt;em&gt;scripts&lt;/em&gt;, mientras que uno solo de ello estaría ejecutando en exclusividad.&lt;/p&gt;</content><category term="flock"></category></entry><entry><title>Ignorando el proxy de mi empresa: un proxy SOCKS</title><link href="http://www.linuxsysadmin.tk/2017/07/ignorando-el-proxy-de-mi-empresa-un-proxy-socks.html" rel="alternate"></link><published>2017-07-31T10:00:00+02:00</published><updated>2017-07-31T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-07-31:/2017/07/ignorando-el-proxy-de-mi-empresa-un-proxy-socks.html</id><summary type="html">&lt;p&gt;Tenemos en el trabajo uno de esos &lt;em&gt;enginjerks&lt;/em&gt; que lanzan acciones &lt;em&gt;random&lt;/em&gt; para justificar su trabajo. Cortó el acceso a &lt;em&gt;Dropbox&lt;/em&gt;, en donde tengo cosas útiles para mi trabajo. Harto de encender los datos móviles de mi móvil para ir sincronizando ficheros, me he montado un proxy &lt;strong&gt;SOCKS&lt;/strong&gt; para mí …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Tenemos en el trabajo uno de esos &lt;em&gt;enginjerks&lt;/em&gt; que lanzan acciones &lt;em&gt;random&lt;/em&gt; para justificar su trabajo. Cortó el acceso a &lt;em&gt;Dropbox&lt;/em&gt;, en donde tengo cosas útiles para mi trabajo. Harto de encender los datos móviles de mi móvil para ir sincronizando ficheros, me he montado un proxy &lt;strong&gt;SOCKS&lt;/strong&gt; para mí.&lt;/p&gt;
 &lt;p&gt;Se trata de una tocada de narices tener que encender los datos móviles de mi &lt;em&gt;smartphone&lt;/em&gt; para sincronizar la carpeta de &lt;em&gt;Dropbox&lt;/em&gt; periódicamente. También es completamente inútil como medida de seguridad, puesto que muevo con frecuencia mi ordenador portátil por obligaciones profesionales.&lt;/p&gt;
 &lt;p&gt;Sin embargo, hay un acceso más allá de los puertos 80 y 443; se trata del puerto 22, específicamente hacia un servidor bastión que nos sirve para acceder a los entornos en donde corren nuestras aplicaciones. Por supuesto están fuera de nuestra infraestructura.&lt;/p&gt;
 &lt;p&gt;La idea es muy simple: levantamos un &lt;em&gt;proxy SOCKS&lt;/em&gt; en la máquina remota (con pleno acceso a internet), en un puerto al que podamos llegar con nuestro ordenador; configuramos nuestro ordenador para usar ese &lt;em&gt;proxy&lt;/em&gt; remoto. Alternativamente, como no tengo más puertos por los que pasar, puedo levantar el puerto del &lt;em&gt;proxy&lt;/em&gt; en mi mismo ordenador, de la misma forma que los túneles SSH.&lt;/p&gt;

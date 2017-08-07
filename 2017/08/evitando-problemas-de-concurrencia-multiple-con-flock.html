@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>PyPI - Linux Sysadmin</title>
+    <title>Evitando problemas de concurrencia múltiple con flock - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,21 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2017/08/evitando-problemas-de-concurrencia-multiple-con-flock.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="PyPI" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="flock" />
+        <meta name="description" content="Cuando trabajas con procesos en background, es fácil que algunos de los procesos hagan algo que necesite exclusividad, no siendo seguro ejecutar varios de estos procesos a la vez. Por ejemplo, archivos que se descomprimen, se procesan y luego se borran; si usan la misma carpeta suele ser un problema …" />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Evitando problemas de concurrencia múltiple con flock"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/08/evitando-problemas-de-concurrencia-multiple-con-flock.html"/>
+        <meta property="og:description" content="Cuando trabajas con procesos en background, es fácil que algunos de los procesos hagan algo que necesite exclusividad, no siendo seguro ejecutar varios de estos procesos a la vez. Por ejemplo, archivos que se descomprimen, se procesan y luego se borran; si usan la misma carpeta suele ser un problema …"/>
+        <meta property="article:published_time" content="2017-08-07" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="flock" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,6 +39,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -75,11 +82,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.tk/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
-        <li class="active">PyPI</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Evitando problemas de concurrencia múltiple con flock</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -92,13 +99,127 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html">Un servidor pypi local</a></h2>
-                <div class="summary"><p>Cuando trabajamos con <strong>python</strong>, muchas veces necesitamos instalar librerías con <em>pip</em> o <em>easy_install</em>. Dependiendo de la naturaleza de nuestros proyectos, las librerías suelen variar, pero siempre solemos utilizar los mismos. En estos casos puede ser útil tenerlos cerca, cacheados en un servidor en nuestra red local, para su rápido acceso …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/09/un-servidor-pypi-local.html">Seguir leyendo</a>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2017/08/evitando-problemas-de-concurrencia-multiple-con-flock.html"
+                       rel="bookmark"
+                       title="Permalink to Evitando problemas de concurrencia múltiple con flock">
+                        Evitando problemas de concurrencia múltiple con flock
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2017-08-07T10:00:00+02:00"> 2017-08-07</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 4 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/sistemas.html">Sistemas</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/flock.html">flock</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 </div>
-            </article>
-            <hr/>
+                <p>Cuando trabajas con procesos en <em>background</em>, es fácil que algunos de los procesos hagan algo que necesite exclusividad, no siendo seguro ejecutar varios de estos procesos a la vez. Por ejemplo, archivos que se descomprimen, se procesan y luego se borran; si usan la misma carpeta suele ser un problema.</p>
+<p>No vamos a entrar en como se lanzan estos procesos, pero vamos a dar énfasis en que no deben ejecutarse a la vez. Para ello, vamos a suponer que tenemos un proceso que nos interesa ejecutar en exclusividad. Voy a sustituir este proceso por un <em>script</em>, para que no nos distraigamos del punto importante.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/flock_test$ cat process.sh 
+<span class="c1">#!/bin/bash</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;</span><span class="k">$(</span>date +%H:%M:%S<span class="k">)</span><span class="s2"> - Starting process in terminal </span><span class="nv">$1</span><span class="s2">&quot;</span>
+sleep <span class="m">5</span>
+<span class="nb">echo</span> <span class="s2">&quot;</span><span class="k">$(</span>date +%H:%M:%S<span class="k">)</span><span class="s2"> - Process ended in terminal </span><span class="nv">$1</span><span class="s2">&quot;</span>
+gerard@aldebaran:~/flock_test$ 
+</pre></div>
+
+
+<p>Muchos de los desarrolladores os propondrían miles de soluciones para evitar este caso, pero si buscamos en la <em>toolbox</em> de Linux, podemos encontrar herramientas útiles. En mi caso concreto encontré el comando <strong>flock</strong>, que actúa bloqueando un comando, en base a la existencia de un fichero de <em>lock</em>.</p>
+<h2>Ejecutando casi concurrentemente</h2>
+<p>Para conseguirlo, voy a abrir dos terminales, uno para cada proceso. El <em>script</em> va a recibir el numero de terminal por un parámetro, que voy a poner manualmente.</p>
+<p>Vamos al primer terminal, y ejecutamos nuestro <em>script</em>:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/flock_test$ ./process.sh <span class="m">1</span>
+<span class="m">12</span>:43:38 - Starting process in terminal <span class="m">1</span>
+<span class="m">12</span>:43:43 - Process ended in terminal <span class="m">1</span>
+gerard@aldebaran:~/flock_test$ 
+</pre></div>
+
+
+<p>Antes de que acabe, cambio al otro terminal y ejecuto lo mismo:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/flock_test$ ./process.sh <span class="m">2</span>
+<span class="m">12</span>:43:40 - Starting process in terminal <span class="m">2</span>
+<span class="m">12</span>:43:45 - Process ended in terminal <span class="m">2</span>
+gerard@aldebaran:~/flock_test$ 
+</pre></div>
+
+
+<p>Si juntamos las líneas de <em>log</em> y las ordenamos, vemos claramente que los procesos estuvieron en algún momento ejecutándose a la vez.</p>
+<div class="highlight"><pre><span></span><span class="m">12</span>:43:38 - Starting process in terminal <span class="m">1</span>
+<span class="m">12</span>:43:40 - Starting process in terminal <span class="m">2</span>
+<span class="m">12</span>:43:43 - Process ended in terminal <span class="m">1</span>
+<span class="m">12</span>:43:45 - Process ended in terminal <span class="m">2</span>
+</pre></div>
+
+
+<p>En este caso, no parece peligroso que se ejecuten a la vez, pero hay que usar la imaginación y creernos que podrían dar problemas ejecutados a la vez.</p>
+<h2>Ejecución exclusiva con flock</h2>
+<p>Como puede interesarnos que no se ejecuten a la vez, podemos utilizar el comando <strong>flock</strong> para conseguir que ambos procesos esperen ordenadamente la posibilidad de ejecutarse.</p>
+<p>El comando <strong>flock</strong> esperaría la inexistencia de un <em>lock</em> en el fichero indicado, momento en el que pondría dicho <em>lock</em> para asegurar que ningún otro proceso pudiera ejecutarse. Lo siguiente sería ejecutar nuestro <em>script</em>, y finalmente, eliminar el <em>lock</em> puesto. Otro proceso concurrente quedaría a la espera de la liberación de <em>lock</em> antes de poder proceder, de manera similar al anterior.</p>
+<p>El proceso va a ser el mismo: ejecutamos el <em>script</em> en ambos terminales, prefijado esta vez por el comando <strong>flock</strong> y el fichero sobre el que se va a poner el <em>lock</em>. Pasamos a juntar las líneas de ambos terminales por brevedad:</p>
+<div class="highlight"><pre><span></span><span class="m">12</span>:44:59 - Starting process in terminal <span class="m">1</span>
+<span class="m">12</span>:45:04 - Process ended in terminal <span class="m">1</span>
+<span class="m">12</span>:45:04 - Starting process in terminal <span class="m">2</span>
+<span class="m">12</span>:45:09 - Process ended in terminal <span class="m">2</span>
+</pre></div>
+
+
+<p>Y con esto podemos ver que el proceso del terminal 2 ha tenido que esperar a que el comando <strong>flock</strong> en el primer terminal acabara, antes de poder proceder a ejecutar su <em>script</em>. Con eso se garantiza la exclusividad de ejecución y los problemas que podría haber derivados de esta situación.</p>
+<p>En un caso de <em>boom</em> de procesos, podríamos ver un grupo de procesos esperando sin lanzar sus respectivos <em>scripts</em>, mientras que uno solo de ello estaría ejecutando en exclusividad.</p>
+            </div>
+            <!-- /.entry-content -->
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'evitando-problemas-de-concurrencia-multiple-con-flock';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2017/08/evitando-problemas-de-concurrencia-multiple-con-flock.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
 
         </div>
         <div class="col-sm-3" id="sidebar">
@@ -675,7 +796,7 @@ Linux Sysadmin            </a>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2016 Gerard
+         <div class="col-xs-10">&copy; 2017 Gerard
             &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
