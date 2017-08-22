@@ -1,5 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-08-07T10:00:00+02:00</updated><entry><title>Evitando problemas de concurrencia múltiple con flock</title><link href="http://www.linuxsysadmin.tk/2017/08/evitando-problemas-de-concurrencia-multiple-con-flock.html" rel="alternate"></link><published>2017-08-07T10:00:00+02:00</published><updated>2017-08-07T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-08-07:/2017/08/evitando-problemas-de-concurrencia-multiple-con-flock.html</id><summary type="html">&lt;p&gt;Cuando trabajas con procesos en &lt;em&gt;background&lt;/em&gt;, es fácil que algunos de los procesos hagan algo que necesite exclusividad, no siendo seguro ejecutar varios de estos procesos a la vez. Por ejemplo, archivos que se descomprimen, se procesan y luego se borran; si usan la misma carpeta suele ser un problema …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando trabajas con procesos en &lt;em&gt;background&lt;/em&gt;, es fácil que algunos de los procesos hagan algo que necesite exclusividad, no siendo seguro ejecutar varios de estos procesos a la vez. Por ejemplo, archivos que se descomprimen, se procesan y luego se borran; si usan la misma carpeta suele ser un problema.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-08-21T10:00:00+02:00</updated><entry><title>Problemas de escritura con openshift</title><link href="http://www.linuxsysadmin.tk/2017/08/problemas-de-escritura-con-openshift.html" rel="alternate"></link><published>2017-08-21T10:00:00+02:00</published><updated>2017-08-21T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-08-21:/2017/08/problemas-de-escritura-con-openshift.html</id><summary type="html">&lt;p&gt;En mi trabajo se ha decidido por el uso de virtualización por contenedores usando &lt;strong&gt;Openshift&lt;/strong&gt;. No es nada demasiado nuevo, puesto que ya usábamos &lt;strong&gt;Docker&lt;/strong&gt; de manera habitual, pero ha habido alguna &lt;em&gt;feature&lt;/em&gt; que nos ha hecho plantearnos el modo en el que hacemos las cosas, especialmente para las escrituras …&lt;/p&gt;</summary><content type="html">&lt;p&gt;En mi trabajo se ha decidido por el uso de virtualización por contenedores usando &lt;strong&gt;Openshift&lt;/strong&gt;. No es nada demasiado nuevo, puesto que ya usábamos &lt;strong&gt;Docker&lt;/strong&gt; de manera habitual, pero ha habido alguna &lt;em&gt;feature&lt;/em&gt; que nos ha hecho plantearnos el modo en el que hacemos las cosas, especialmente para las escrituras.&lt;/p&gt;
+&lt;p&gt;Todo viene por una directiva de seguridad que prohibe estrictamente ejecutar un contenedor como &lt;em&gt;root&lt;/em&gt;, y de la misma manera, ejecuta el contenedor con un usuario aleatorio para incrementar la seguridad general.&lt;/p&gt;
+&lt;p&gt;El problema viene para el pobre hombre que se dedica a generar imágenes, ya que la falta de determinismo, te asegura casi al 100% que no vas a poder escribir en las carpetas del contenedor, a menos que sepas lo que estás haciendo.&lt;/p&gt;
+&lt;p&gt;Sin embargo, saber lo que hace &lt;strong&gt;Openshift&lt;/strong&gt; no es tarea complicada:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Se te asegura que nunca vas a usar el &lt;em&gt;uid&lt;/em&gt; 0, sino uno aleatorio&lt;/li&gt;
+&lt;li&gt;El grupo del usuario de ejecución se mantiene siempre como &lt;em&gt;root&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Un problema derivado de esto es que no podemos ejecutar nada que requiera &lt;em&gt;root&lt;/em&gt;, como por ejemplo SSH (que no podríamos exponer en &lt;strong&gt;Openshift&lt;/strong&gt; de todas formas). Otro problema es que no tendremos permisos para crear carpetas en &lt;em&gt;runtime&lt;/em&gt; o incluso para cambiar el usuario de ejecución.&lt;/p&gt;
+&lt;h2&gt;Simulando el comportamiento de Openshift&lt;/h2&gt;
+&lt;p&gt;Vamos a poner un ejemplo tipo para entender lo que pasa:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/openshift_simulator$ cat Dockerfile
+FROM python:2-slim
+COPY server.py /
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/server.py&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@atlantis:~/projects/openshift_simulator$ cat server.py
+&lt;span class="c1"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+from wsgiref.simple_server import make_server, demo_app
+
+&lt;span class="nv"&gt;server&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; make_server&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;0.0.0.0&amp;#39;&lt;/span&gt;, &lt;span class="m"&gt;8080&lt;/span&gt;, demo_app&lt;span class="o"&gt;)&lt;/span&gt;
+server.serve_forever&lt;span class="o"&gt;()&lt;/span&gt;
+gerard@atlantis:~/projects/openshift_simulator$
+
+Y lo construimos:
+
+&lt;span class="sb"&gt;```&lt;/span&gt;bash
+gerard@atlantis:~/projects/openshift_simulator$ docker build -t openshift_simulator .
+Sending build context to Docker daemon  &lt;span class="m"&gt;3&lt;/span&gt;.072kB
+...
+Successfully tagged openshift_simulator:latest
+gerard@atlantis:~/projects/openshift_simulator$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Normalmente lo ejecutaríamos de la siguiente manera:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/openshift_simulator$ docker run -ti --rm -p 8888:8080 --name test1 openshift_simulator
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos comprobar que los procesos, tanto nuevos como antiguos, corren con el usuario &lt;em&gt;root&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ docker &lt;span class="nb"&gt;exec&lt;/span&gt; test1 id
+&lt;span class="nv"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;root&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;root&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;root&lt;span class="o"&gt;)&lt;/span&gt;
+gerard@atlantis:~$ docker &lt;span class="nb"&gt;exec&lt;/span&gt; test1 ps -efa
+UID        PID  PPID  C STIME TTY          TIME CMD
+root         &lt;span class="m"&gt;1&lt;/span&gt;     &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="m"&gt;14&lt;/span&gt;:18 pts/0    &lt;span class="m"&gt;00&lt;/span&gt;:00:00 python /server.py
+root        &lt;span class="m"&gt;17&lt;/span&gt;     &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="m"&gt;14&lt;/span&gt;:20 ?        &lt;span class="m"&gt;00&lt;/span&gt;:00:00 ps -efa
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Sin embargo, en &lt;strong&gt;openshift&lt;/strong&gt; el usuario se elige de forma aleatoria, y se impone con el &lt;em&gt;flag&lt;/em&gt; de usuario &lt;em&gt;-u&lt;/em&gt;, como sigue:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/openshift_simulator$ docker run -ti --rm -p &lt;span class="m"&gt;8888&lt;/span&gt;:8080 --name test2 -u &lt;span class="m"&gt;123456&lt;/span&gt; openshift_simulator
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y podemos ver que los procesos amparados por este contenedor se ejecutarían con el &lt;em&gt;uid&lt;/em&gt; especificado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ docker &lt;span class="nb"&gt;exec&lt;/span&gt; test2 id
+&lt;span class="nv"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;123456&lt;/span&gt; &lt;span class="nv"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;root&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;root&lt;span class="o"&gt;)&lt;/span&gt;
+gerard@atlantis:~$ docker &lt;span class="nb"&gt;exec&lt;/span&gt; test2 ps -efa
+UID        PID  PPID  C STIME TTY          TIME CMD
+&lt;span class="m"&gt;123456&lt;/span&gt;       &lt;span class="m"&gt;1&lt;/span&gt;     &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="m"&gt;14&lt;/span&gt;:22 pts/0    &lt;span class="m"&gt;00&lt;/span&gt;:00:00 python /server.py
+&lt;span class="m"&gt;123456&lt;/span&gt;       &lt;span class="m"&gt;9&lt;/span&gt;     &lt;span class="m"&gt;0&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="m"&gt;14&lt;/span&gt;:22 ?        &lt;span class="m"&gt;00&lt;/span&gt;:00:00 ps -efa
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Implicaciones en escritura&lt;/h2&gt;
+&lt;p&gt;Como no sabemos el usuario con el que vamos a ejecutar, es especialmente interesante saber donde vamos a escribir, ya que los permisos de lectura suelen ser suficientes para todo el mundo. Sin embargo, las carpetas de escritura suelen estar más restringidas.&lt;/p&gt;
+&lt;p&gt;En este caso, estas carpetas tienen dos posibles salidas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Les damos barra libre con permisos 777, que no van a gustar a ningún miembro del equipo de seguridad&lt;/li&gt;
+&lt;li&gt;Afinamos los permisos aprovechándonos de que nunca vamos a ser &lt;em&gt;root&lt;/em&gt;, pero vamos a ejecutar con su grupo&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;De esta forma, podemos ver la propiedad y los permisos de forma individual:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Usuario&lt;/strong&gt;: con pertenencia a &lt;em&gt;root&lt;/em&gt; nos aseguramos de que los permisos no aplican nunca, con lo que podemos ponerlos como queramos.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Grupo&lt;/strong&gt;: Esta es la mejor forma de asegurar que la carpeta nos pertenece. Aquí si que tenemos que dar permisos de escritura.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Otros&lt;/strong&gt;: Nunca hay que dar permisos de escritura a este grupo; ningún auditor de seguridad lo va a permitir.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;De esta forma, la pertenencia habuitual para carpetas de lectura y escritura que suelo poner es &lt;code&gt;root:root&lt;/code&gt;, y los permisos acostumbran a ser 575, aunque no me libro de explicaciones cuando pido las excepciones de seguridad pertinentes.&lt;/p&gt;</content><category term="docker"></category><category term="openshift"></category><category term="permisos"></category></entry><entry><title>Evitando problemas de concurrencia múltiple con flock</title><link href="http://www.linuxsysadmin.tk/2017/08/evitando-problemas-de-concurrencia-multiple-con-flock.html" rel="alternate"></link><published>2017-08-07T10:00:00+02:00</published><updated>2017-08-07T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-08-07:/2017/08/evitando-problemas-de-concurrencia-multiple-con-flock.html</id><summary type="html">&lt;p&gt;Cuando trabajas con procesos en &lt;em&gt;background&lt;/em&gt;, es fácil que algunos de los procesos hagan algo que necesite exclusividad, no siendo seguro ejecutar varios de estos procesos a la vez. Por ejemplo, archivos que se descomprimen, se procesan y luego se borran; si usan la misma carpeta suele ser un problema …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando trabajas con procesos en &lt;em&gt;background&lt;/em&gt;, es fácil que algunos de los procesos hagan algo que necesite exclusividad, no siendo seguro ejecutar varios de estos procesos a la vez. Por ejemplo, archivos que se descomprimen, se procesan y luego se borran; si usan la misma carpeta suele ser un problema.&lt;/p&gt;
 &lt;p&gt;No vamos a entrar en como se lanzan estos procesos, pero vamos a dar énfasis en que no deben ejecutarse a la vez. Para ello, vamos a suponer que tenemos un proceso que nos interesa ejecutar en exclusividad. Voy a sustituir este proceso por un &lt;em&gt;script&lt;/em&gt;, para que no nos distraigamos del punto importante.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/flock_test$ cat process.sh 
 &lt;span class="c1"&gt;#!/bin/bash&lt;/span&gt;

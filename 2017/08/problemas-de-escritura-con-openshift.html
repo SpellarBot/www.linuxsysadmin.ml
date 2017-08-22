@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Sistemas - Linux Sysadmin</title>
+    <title>Problemas de escritura con openshift - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,23 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2017/08/problemas-de-escritura-con-openshift.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="Sistemas" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="docker,openshift,permisos" />
+        <meta name="description" content="En mi trabajo se ha decidido por el uso de virtualización por contenedores usando Openshift. No es nada demasiado nuevo, puesto que ya usábamos Docker de manera habitual, pero ha habido alguna feature que nos ha hecho plantearnos el modo en el que hacemos las cosas, especialmente para las escrituras …" />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Problemas de escritura con openshift"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/08/problemas-de-escritura-con-openshift.html"/>
+        <meta property="og:description" content="En mi trabajo se ha decidido por el uso de virtualización por contenedores usando Openshift. No es nada demasiado nuevo, puesto que ya usábamos Docker de manera habitual, pero ha habido alguna feature que nos ha hecho plantearnos el modo en el que hacemos las cosas, especialmente para las escrituras …"/>
+        <meta property="article:published_time" content="2017-08-21" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:tag" content="openshift" />
+            <meta property="article:tag" content="permisos" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -74,11 +81,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.tk/categories.html" title="Categorías de Linux Sysadmin">Categorías</a></li>
-        <li class="active">Sistemas</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.tk/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Problemas de escritura con openshift</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -91,91 +98,170 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html">Creando un entorno escalable (IV)</a></h2>
-                <div class="summary"><p>Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un <em>proxy HTTP</em> que haga las funciones de terminación <em>SSL</em> y de <em>balanceador</em>, exponiendo todo el sistema en una sola dirección IP …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-4.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></h2>
-                <div class="summary"><p>En el artículo anterior de esta serie montamos el cluster de la base de datos que íbamos a necesitar para las aplicaciones que conformaban este entorno de ejemplo. Ahora que tenemos la base de datos, falta poner los servidores de aplicaciones que sirven nuestras aplicaciones y que usan el cluster …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-3.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></h2>
-                <div class="summary"><p>Seguimos con la serie de montar un entorno escalable. Tras explicar en el primer artículo lo que vamos a montar, seguimos con ello. En este artículo vamos a montar un <em>cluster</em> de bases de datos; será <strong>mongodb</strong> porque la aplicación lo requiere y usará la topología de un <strong>replica set …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/03/creando-un-entorno-escalable-2.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html">Creando un entorno escalable (I)</a></h2>
-                <div class="summary"><p>Mucha gente tiene un servidor único para alojar páginas web dinámicas, por ejemplo con <strong>PHP</strong> y con <strong>MySQL</strong>. Sin embargo, a veces esto puede resultar insuficiente; nos puede interesar tener un entorno de bajas especificaciones y de bajo coste, pero preparado crecer al mismo ritmo que lo hacen los usuarios …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/02/creando-un-entorno-escalable.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">Restringiendo accesos mediante certificados de cliente</a></h2>
-                <div class="summary"><p>De vez en cuando, tenemos algún contenido web o una API que necesita un control de acceso superior. El método mas eficaz del que disponemos hoy en día es la autenticación con certificados SSL cliente, en donde es el cliente el que debe ofrecer un certificado que el servidor validará …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-mediante-certificados-de-cliente.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html">Restringiendo accesos web mediante autenticación básica</a></h2>
-                <div class="summary"><p>Algunas veces nos encontramos con la necesidad de restringir el acceso a algunos recursos web. Normalmente se suele implementar algún sistema de <em>login</em>, <em>cookies</em> o <em>sesiones</em>; no obstante, esta opción no siempre nos es posible, y tenemos que proteger esos recursos usando los mecanismos que nos ofrezca el servidor web …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/02/un-proxy-dns-con-dnsmasq.html">Un proxy DNS con dnsmasq</a></h2>
-                <div class="summary"><p>A veces nos puede interesar disponer de una servidor <strong>DNS</strong> para nombrar las máquinas de nuestra red privada, sin la complejidad de <strong>BIND</strong>. Otras, queremos acelerar el acceso a internet desde nuestra red; es interesante ver el tiempo que se pierde en la resolución <strong>DNS</strong>. Para eso disponemos de <strong>dnsmasq …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/02/un-proxy-dns-con-dnsmasq.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2016/01/un-repositorio-de-debian-con-reprepro.html">Un repositorio de Debian con reprepro</a></h2>
-                <div class="summary"><p>Una de las grandes facilidades que nos ofrece una distribución de Linux es su sistema de gestor de paquetes. Los paquetes oficiales nos simplifican la instalación y mantenimiento de paquetes; sin embargo, podemos sacar provecho del sistema de paquetes para uso personal, para automatizar instalaciones y actualizaciones que queramos hacer …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2016/01/un-repositorio-de-debian-con-reprepro.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html">Utilizando apt-cacher-ng para agilizar la instalación de paquetes</a></h2>
-                <div class="summary"><p>Hace tiempo veo que tras usar muchas maquinas virtuales <em>Debian</em> para el uso diario y para las demostraciones de este blog, el ancho de banda usado para bajar los paquetes se dispara. La mayoría de veces se trata de los mismos paquetes, para instalar las mismas aplicaciones, servicios o actualizaciones …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/12/utilizando-apt-cacher-ng-para-agilizar-la-instalacion-de-paquetes.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></h2>
-                <div class="summary"><p>El otro día estaba habilitando un servidor de <em>mongodb</em> para un entorno de producción. Como me interesaba mejorar el rendimiento de los accesos a disco y no disponía de discos SSD con una durabilidad aceptable, me propuse montar un <em>array de discos</em> en configuración de <strong>RAID 10</strong>, como se recomienda …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2015/12/construyendo-un-raid-10-en-linux.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.tk/2017/08/problemas-de-escritura-con-openshift.html"
+                       rel="bookmark"
+                       title="Permalink to Problemas de escritura con openshift">
+                        Problemas de escritura con openshift
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2017-08-21T10:00:00+02:00"> 2017-08-21</time>
+    </span>
 
-        <ul class="pagination">
-                <li class="prev"><a href="http://www.linuxsysadmin.tk/category/sistemas2.html">&laquo;</a>
-                </li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/category/sistemas.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/category/sistemas2.html">2</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.tk/category/sistemas3.html">3</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.tk/category/sistemas4.html">4</a></li>
-                <li class="next"><a
-                        href="http://www.linuxsysadmin.tk/category/sistemas4.html">&raquo;</a></li>
-        </ul>
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 4 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.tk/category/sistemas.html">Sistemas</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.tk/tag/docker.html">docker</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/openshift.html">openshift</a>
+        /
+	<a href="http://www.linuxsysadmin.tk/tag/permisos.html">permisos</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>En mi trabajo se ha decidido por el uso de virtualización por contenedores usando <strong>Openshift</strong>. No es nada demasiado nuevo, puesto que ya usábamos <strong>Docker</strong> de manera habitual, pero ha habido alguna <em>feature</em> que nos ha hecho plantearnos el modo en el que hacemos las cosas, especialmente para las escrituras.</p>
+<p>Todo viene por una directiva de seguridad que prohibe estrictamente ejecutar un contenedor como <em>root</em>, y de la misma manera, ejecuta el contenedor con un usuario aleatorio para incrementar la seguridad general.</p>
+<p>El problema viene para el pobre hombre que se dedica a generar imágenes, ya que la falta de determinismo, te asegura casi al 100% que no vas a poder escribir en las carpetas del contenedor, a menos que sepas lo que estás haciendo.</p>
+<p>Sin embargo, saber lo que hace <strong>Openshift</strong> no es tarea complicada:</p>
+<ul>
+<li>Se te asegura que nunca vas a usar el <em>uid</em> 0, sino uno aleatorio</li>
+<li>El grupo del usuario de ejecución se mantiene siempre como <em>root</em></li>
+</ul>
+<p>Un problema derivado de esto es que no podemos ejecutar nada que requiera <em>root</em>, como por ejemplo SSH (que no podríamos exponer en <strong>Openshift</strong> de todas formas). Otro problema es que no tendremos permisos para crear carpetas en <em>runtime</em> o incluso para cambiar el usuario de ejecución.</p>
+<h2>Simulando el comportamiento de Openshift</h2>
+<p>Vamos a poner un ejemplo tipo para entender lo que pasa:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/openshift_simulator$ cat Dockerfile
+FROM python:2-slim
+COPY server.py /
+CMD <span class="o">[</span><span class="s2">&quot;/server.py&quot;</span><span class="o">]</span>
+gerard@atlantis:~/projects/openshift_simulator$ cat server.py
+<span class="c1">#!/usr/bin/env python</span>
+
+from wsgiref.simple_server import make_server, demo_app
+
+<span class="nv">server</span> <span class="o">=</span> make_server<span class="o">(</span><span class="s1">&#39;0.0.0.0&#39;</span>, <span class="m">8080</span>, demo_app<span class="o">)</span>
+server.serve_forever<span class="o">()</span>
+gerard@atlantis:~/projects/openshift_simulator$
+
+Y lo construimos:
+
+<span class="sb">```</span>bash
+gerard@atlantis:~/projects/openshift_simulator$ docker build -t openshift_simulator .
+Sending build context to Docker daemon  <span class="m">3</span>.072kB
+...
+Successfully tagged openshift_simulator:latest
+gerard@atlantis:~/projects/openshift_simulator$
+</pre></div>
+
+
+<p>Normalmente lo ejecutaríamos de la siguiente manera:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/openshift_simulator$ docker run -ti --rm -p 8888:8080 --name test1 openshift_simulator
+...
+</pre></div>
+
+
+<p>Podemos comprobar que los procesos, tanto nuevos como antiguos, corren con el usuario <em>root</em>.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~$ docker <span class="nb">exec</span> test1 id
+<span class="nv">uid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span>
+gerard@atlantis:~$ docker <span class="nb">exec</span> test1 ps -efa
+UID        PID  PPID  C STIME TTY          TIME CMD
+root         <span class="m">1</span>     <span class="m">0</span>  <span class="m">0</span> <span class="m">14</span>:18 pts/0    <span class="m">00</span>:00:00 python /server.py
+root        <span class="m">17</span>     <span class="m">0</span>  <span class="m">0</span> <span class="m">14</span>:20 ?        <span class="m">00</span>:00:00 ps -efa
+gerard@atlantis:~$
+</pre></div>
+
+
+<p>Sin embargo, en <strong>openshift</strong> el usuario se elige de forma aleatoria, y se impone con el <em>flag</em> de usuario <em>-u</em>, como sigue:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/openshift_simulator$ docker run -ti --rm -p <span class="m">8888</span>:8080 --name test2 -u <span class="m">123456</span> openshift_simulator
+...
+</pre></div>
+
+
+<p>Y podemos ver que los procesos amparados por este contenedor se ejecutarían con el <em>uid</em> especificado.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~$ docker <span class="nb">exec</span> test2 id
+<span class="nv">uid</span><span class="o">=</span><span class="m">123456</span> <span class="nv">gid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span>
+gerard@atlantis:~$ docker <span class="nb">exec</span> test2 ps -efa
+UID        PID  PPID  C STIME TTY          TIME CMD
+<span class="m">123456</span>       <span class="m">1</span>     <span class="m">0</span>  <span class="m">0</span> <span class="m">14</span>:22 pts/0    <span class="m">00</span>:00:00 python /server.py
+<span class="m">123456</span>       <span class="m">9</span>     <span class="m">0</span>  <span class="m">0</span> <span class="m">14</span>:22 ?        <span class="m">00</span>:00:00 ps -efa
+gerard@atlantis:~$
+</pre></div>
+
+
+<h2>Implicaciones en escritura</h2>
+<p>Como no sabemos el usuario con el que vamos a ejecutar, es especialmente interesante saber donde vamos a escribir, ya que los permisos de lectura suelen ser suficientes para todo el mundo. Sin embargo, las carpetas de escritura suelen estar más restringidas.</p>
+<p>En este caso, estas carpetas tienen dos posibles salidas:</p>
+<ul>
+<li>Les damos barra libre con permisos 777, que no van a gustar a ningún miembro del equipo de seguridad</li>
+<li>Afinamos los permisos aprovechándonos de que nunca vamos a ser <em>root</em>, pero vamos a ejecutar con su grupo</li>
+</ul>
+<p>De esta forma, podemos ver la propiedad y los permisos de forma individual:</p>
+<ul>
+<li><strong>Usuario</strong>: con pertenencia a <em>root</em> nos aseguramos de que los permisos no aplican nunca, con lo que podemos ponerlos como queramos.</li>
+<li><strong>Grupo</strong>: Esta es la mejor forma de asegurar que la carpeta nos pertenece. Aquí si que tenemos que dar permisos de escritura.</li>
+<li><strong>Otros</strong>: Nunca hay que dar permisos de escritura a este grupo; ningún auditor de seguridad lo va a permitir.</li>
+</ul>
+<p>De esta forma, la pertenencia habuitual para carpetas de lectura y escritura que suelo poner es <code>root:root</code>, y los permisos acostumbran a ser 575, aunque no me libro de explicaciones cuando pido las excepciones de seguridad pertinentes.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.tk/2016/10/microservicios-con-docker-compose.html">Microservicios con docker-compose</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/09/imagenes-docker-reusables-mediante-configuraciones-dinamicas.html">Imágenes docker reusables mediante configuraciones dinámicas</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'problemas-de-escritura-con-openshift';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2017/08/problemas-de-escritura-con-openshift.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
