@@ -1,5 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-08-21T10:00:00+02:00</updated><entry><title>Problemas de escritura con openshift</title><link href="http://www.linuxsysadmin.tk/2017/08/problemas-de-escritura-con-openshift.html" rel="alternate"></link><published>2017-08-21T10:00:00+02:00</published><updated>2017-08-21T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-08-21:/2017/08/problemas-de-escritura-con-openshift.html</id><summary type="html">&lt;p&gt;En mi trabajo se ha decidido por el uso de virtualización por contenedores usando &lt;strong&gt;Openshift&lt;/strong&gt;. No es nada demasiado nuevo, puesto que ya usábamos &lt;strong&gt;Docker&lt;/strong&gt; de manera habitual, pero ha habido alguna &lt;em&gt;feature&lt;/em&gt; que nos ha hecho plantearnos el modo en el que hacemos las cosas, especialmente para las escrituras …&lt;/p&gt;</summary><content type="html">&lt;p&gt;En mi trabajo se ha decidido por el uso de virtualización por contenedores usando &lt;strong&gt;Openshift&lt;/strong&gt;. No es nada demasiado nuevo, puesto que ya usábamos &lt;strong&gt;Docker&lt;/strong&gt; de manera habitual, pero ha habido alguna &lt;em&gt;feature&lt;/em&gt; que nos ha hecho plantearnos el modo en el que hacemos las cosas, especialmente para las escrituras.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-08-28T10:00:00+02:00</updated><entry><title>Creando imágenes con estilo: la instrucción ONBUILD</title><link href="http://www.linuxsysadmin.tk/2017/08/creando-imagenes-con-estilo-la-instruccion-onbuild.html" rel="alternate"></link><published>2017-08-28T10:00:00+02:00</published><updated>2017-08-28T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-08-28:/2017/08/creando-imagenes-con-estilo-la-instruccion-onbuild.html</id><summary type="html">&lt;p&gt;En el día a día de mi trabajo, me encuentro con un conjunto muy variado de ficheros &lt;em&gt;Dockerfile&lt;/em&gt; que vienen a hacer lo mismo, pero de formas muy distintas. El fichero original se pasa de mano en mano, pervirtiéndose en cada paso y al final queda hecho un gran asco …&lt;/p&gt;</summary><content type="html">&lt;p&gt;En el día a día de mi trabajo, me encuentro con un conjunto muy variado de ficheros &lt;em&gt;Dockerfile&lt;/em&gt; que vienen a hacer lo mismo, pero de formas muy distintas. El fichero original se pasa de mano en mano, pervirtiéndose en cada paso y al final queda hecho un gran asco.&lt;/p&gt;
+&lt;p&gt;Para evitar la reinvención de la rueda me propuse crear una imagen base, para que los desarrolladores no tuvieran que crear una imagen, que muchas veces está mal por falta de conocimiento de &lt;em&gt;Linux&lt;/em&gt;, y que reduzca al máximo su participación.&lt;/p&gt;
+&lt;h2&gt;Un caso simple&lt;/h2&gt;
+&lt;p&gt;Imaginemos una aplicación hecha con &lt;em&gt;NodeJS&lt;/em&gt;, que es el caso más frecuente en mi trabajo; nuestro flujo de trabajo exige el uso de &lt;em&gt;npm&lt;/em&gt; y del correspondiente &lt;em&gt;package.json&lt;/em&gt;. Una instalación básica es bastante simple: se trata de copiar la aplicación, ejecutar el &lt;code&gt;npm install&lt;/code&gt; de rigor y declarar que se va a ejecutar con &lt;code&gt;npm start&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Tomemos como ejemplo el básico de &lt;em&gt;express&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/nodetest/v1$ cat app/app.js 
+const &lt;span class="nv"&gt;express&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; require&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;express&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+const &lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; express&lt;span class="o"&gt;()&lt;/span&gt;
+
+app.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;, &lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;req, res&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+  res.send&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Hello World!&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;})&lt;/span&gt;
+
+app.listen&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;3000&lt;/span&gt;, &lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+  console.log&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Example app listening on port 3000!&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;})&lt;/span&gt;
+gerard@aldebaran:~/docker/nodetest/v1$ cat app/package.json 
+&lt;span class="o"&gt;{&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;app&amp;quot;&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;description&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;main&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;app.js&amp;quot;&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;scripts&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;start&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;node app.js&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;test&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;echo \&amp;quot;Error: no test specified\&amp;quot; &amp;amp;&amp;amp; exit 1&amp;quot;&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;keywords&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[]&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;author&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;license&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;ISC&amp;quot;&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;dependencies&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;express&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;4.15.3&amp;quot;&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/docker/nodetest/v1$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Siguiendo las instrucciones descritas más arriba, el &lt;em&gt;Dockerfile&lt;/em&gt; no guarda ninguna complicación:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/nodetest/v1$ cat Dockerfile 
+FROM node:6-slim
+COPY app/ /srv/app/
+WORKDIR /srv/app
+RUN npm install --production
+USER node
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;npm&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;start&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@aldebaran:~/docker/nodetest/v1$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Este &lt;em&gt;Dockerfile&lt;/em&gt; nos genera una imagen adecuada, pero este fichero peca del mismo error que el resto: va a mutar un poco por cada mano por la que pase. Sin embargo, no podemos hacer una imagen base porque necesitamos la aplicación en la primera instrucción tras el &lt;strong&gt;FROM&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;La imagen base onbuild&lt;/h2&gt;
+&lt;p&gt;Si miramos &lt;a href="https://docs.docker.com/engine/reference/builder/#onbuild"&gt;la documentación&lt;/a&gt;, podemos ver que podemos declarar algunas operaciones para que se lancen automáticamente tras todo &lt;strong&gt;FROM&lt;/strong&gt; que herede de nuestra imagen base. De esta forma, podemos declarar operaciones pendientes, al no disponer todavía de la aplicación final que va a tener que ejecutar nuestro contenedor.&lt;/p&gt;
+&lt;p&gt;Vamos a retrasar la ejecución de todas aquellas instrucciones que dependan de la aplicación, que por cierto no está en este contexto, al no existir todavía:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/nodetest/onbuild$ cat Dockerfile 
+FROM node:6-slim
+ONBUILD COPY app/ /srv/app/
+ONBUILD WORKDIR /srv/app
+ONBUILD RUN npm install --production
+ONBUILD USER node
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;npm&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;start&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@aldebaran:~/docker/nodetest/onbuild$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Con este &lt;em&gt;Dockerfile&lt;/em&gt; podemos generar una imagen base, que registre nuestras operaciones pendientes. Si construimos la imagen, veremos que no se ejecuta el &lt;code&gt;npm install&lt;/code&gt;, ni las otras instrucciones precedidas por &lt;strong&gt;ONBUILD&lt;/strong&gt;. Cualquier &lt;em&gt;Dockerfile&lt;/em&gt; que extienda esta imagen base, conseguirá varias cosas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Va a disponer de todos los añadidos por instrucciones lanzadas sin el &lt;strong&gt;ONBUILD&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Inmediatamente tras el &lt;strong&gt;FROM&lt;/strong&gt; se van a ejecutar las operaciones indicadas en el &lt;strong&gt;ONBUILD&lt;/strong&gt; (el &lt;strong&gt;COPY&lt;/strong&gt;, el &lt;strong&gt;WORKDIR&lt;/strong&gt;, el &lt;strong&gt;RUN&lt;/strong&gt; y el &lt;strong&gt;USER&lt;/strong&gt;)&lt;/li&gt;
+&lt;li&gt;El desarrollador no necesita declarar todas estas operaciones; solo va a necesitar aquellas que sean específicas de su proyecto.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Veamos el mismo ejemplo de antes; creamos un contexto con la misma aplicación y un &lt;em&gt;Dockerfile&lt;/em&gt;, aunque este último queda bastante simplificado (suponiendo que la imagen base ha sido etiquetada como &lt;em&gt;gerard/node:onbuild&lt;/em&gt;):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/nodetest/v2$ tree
+.
+├── app
+│   ├── app.js
+│   └── package.json
+└── Dockerfile
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;3&lt;/span&gt; files
+gerard@aldebaran:~/docker/nodetest/v2$ cat Dockerfile 
+FROM gerard/node:onbuild
+gerard@aldebaran:~/docker/nodetest/v2$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si la construimos, vemos que justo tras acabar el paso del &lt;strong&gt;FROM&lt;/strong&gt;, van a saltar de forma automática los &lt;em&gt;triggers&lt;/em&gt;  declarados por la instrucción &lt;strong&gt;ONBUILD&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/nodetest/v2$ docker build -t gerard/app:v2 .
+Sending build context to Docker daemon  &lt;span class="m"&gt;4&lt;/span&gt;.608kB
+Step &lt;span class="m"&gt;1&lt;/span&gt;/1 : FROM gerard/node:onbuild
+&lt;span class="c1"&gt;# Executing 4 build triggers...&lt;/span&gt;
+Step &lt;span class="m"&gt;1&lt;/span&gt;/1 : COPY app/ /srv/app/
+Step &lt;span class="m"&gt;1&lt;/span&gt;/1 : WORKDIR /srv/app
+Step &lt;span class="m"&gt;1&lt;/span&gt;/1 : RUN npm install --production
+ ---&amp;gt; Running in e3fe9e739e34
+...  
+Step &lt;span class="m"&gt;1&lt;/span&gt;/1 : USER node
+ ---&amp;gt; Running in 3725eb574aff
+ ---&amp;gt; d4661e9857e8
+Removing intermediate container 7c9b3293ed2f
+Removing intermediate container 7976c2b5aaaa
+Removing intermediate container e3fe9e739e34
+Removing intermediate container 3725eb574aff
+Successfully built d4661e9857e8
+Successfully tagged gerard/app:v2
+gerard@aldebaran:~/docker/nodetest/v2$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto aseguramos que el desarrollador pasa por el aro, usando las instrucciones que realmente necesitamos para ejecutar la aplicación.&lt;/p&gt;</content><category term="docker"></category><category term="dockerfile"></category><category term="onbuild"></category></entry><entry><title>Problemas de escritura con openshift</title><link href="http://www.linuxsysadmin.tk/2017/08/problemas-de-escritura-con-openshift.html" rel="alternate"></link><published>2017-08-21T10:00:00+02:00</published><updated>2017-08-21T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-08-21:/2017/08/problemas-de-escritura-con-openshift.html</id><summary type="html">&lt;p&gt;En mi trabajo se ha decidido por el uso de virtualización por contenedores usando &lt;strong&gt;Openshift&lt;/strong&gt;. No es nada demasiado nuevo, puesto que ya usábamos &lt;strong&gt;Docker&lt;/strong&gt; de manera habitual, pero ha habido alguna &lt;em&gt;feature&lt;/em&gt; que nos ha hecho plantearnos el modo en el que hacemos las cosas, especialmente para las escrituras …&lt;/p&gt;</summary><content type="html">&lt;p&gt;En mi trabajo se ha decidido por el uso de virtualización por contenedores usando &lt;strong&gt;Openshift&lt;/strong&gt;. No es nada demasiado nuevo, puesto que ya usábamos &lt;strong&gt;Docker&lt;/strong&gt; de manera habitual, pero ha habido alguna &lt;em&gt;feature&lt;/em&gt; que nos ha hecho plantearnos el modo en el que hacemos las cosas, especialmente para las escrituras.&lt;/p&gt;
 &lt;p&gt;Todo viene por una directiva de seguridad que prohibe estrictamente ejecutar un contenedor como &lt;em&gt;root&lt;/em&gt;, y de la misma manera, ejecuta el contenedor con un usuario aleatorio para incrementar la seguridad general.&lt;/p&gt;
 &lt;p&gt;El problema viene para el pobre hombre que se dedica a generar imágenes, ya que la falta de determinismo, te asegura casi al 100% que no vas a poder escribir en las carpetas del contenedor, a menos que sepas lo que estás haciendo.&lt;/p&gt;
 &lt;p&gt;Sin embargo, saber lo que hace &lt;strong&gt;Openshift&lt;/strong&gt; no es tarea complicada:&lt;/p&gt;

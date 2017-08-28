@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Problemas de escritura con openshift - Linux Sysadmin</title>
+    <title>onbuild - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,23 +9,16 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.tk/2017/08/problemas-de-escritura-con-openshift.html">
 
-        <meta name="author" content="Gerard" />
-        <meta name="keywords" content="docker,openshift,permisos" />
-        <meta name="description" content="En mi trabajo se ha decidido por el uso de virtualización por contenedores usando Openshift. No es nada demasiado nuevo, puesto que ya usábamos Docker de manera habitual, pero ha habido alguna feature que nos ha hecho plantearnos el modo en el que hacemos las cosas, especialmente para las escrituras …" />
+    <meta name="author" content="Gerard" />
+    <meta name="keywords" content="onbuild" />
 
+    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Problemas de escritura con openshift"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/08/problemas-de-escritura-con-openshift.html"/>
-        <meta property="og:description" content="En mi trabajo se ha decidido por el uso de virtualización por contenedores usando Openshift. No es nada demasiado nuevo, puesto que ya usábamos Docker de manera habitual, pero ha habido alguna feature que nos ha hecho plantearnos el modo en el que hacemos las cosas, especialmente para las escrituras …"/>
-        <meta property="article:published_time" content="2017-08-21" />
-            <meta property="article:section" content="Sistemas" />
-            <meta property="article:tag" content="docker" />
-            <meta property="article:tag" content="openshift" />
-            <meta property="article:tag" content="permisos" />
-            <meta property="article:author" content="Gerard" />
+        <meta property="og:type" content="website"/>
+        <meta property="og:title" content="Linux Sysadmin"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk"/>
+        <meta property="og:description" content="Linux Sysadmin"/>
 
 
     <!-- Bootstrap -->
@@ -41,8 +34,6 @@
 
 
 
-        <link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -81,11 +72,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-            <ol class="breadcrumb">
-                <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.tk/category/sistemas.html" title="Sistemas">Sistemas</a></li>
-                <li class="active">Problemas de escritura con openshift</li>
-            </ol>
+    <ol class="breadcrumb">
+        <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+        <li><a href="http://www.linuxsysadmin.tk/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
+        <li class="active">onbuild</li>
+    </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -98,169 +89,13 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-    <section id="content">
-        <article>
-            <header class="page-header">
-                <h1>
-                    <a href="http://www.linuxsysadmin.tk/2017/08/problemas-de-escritura-con-openshift.html"
-                       rel="bookmark"
-                       title="Permalink to Problemas de escritura con openshift">
-                        Problemas de escritura con openshift
-                    </a>
-                </h1>
-            </header>
-            <div class="entry-content">
-                <div class="panel">
-                    <div class="panel-body">
-<footer class="post-info">
-    <span class="label label-default">Fecha</span>
-    <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2017-08-21T10:00:00+02:00"> 2017-08-21</time>
-    </span>
-
-
-            <span class="label label-default">Autor</span>
-            <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
-
-        <span class="label label-default">Tiempo de lectura</span> 4 minutos
-        <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.tk/category/sistemas.html">Sistemas</a>
-
-
-<span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.tk/tag/docker.html">docker</a>
-        /
-	<a href="http://www.linuxsysadmin.tk/tag/openshift.html">openshift</a>
-        /
-	<a href="http://www.linuxsysadmin.tk/tag/permisos.html">permisos</a>
-    
-</footer><!-- /.post-info -->                    </div>
+            <article>
+                <h2><a href="http://www.linuxsysadmin.tk/2017/08/creando-imagenes-con-estilo-la-instruccion-onbuild.html">Creando imágenes con estilo: la instrucción ONBUILD</a></h2>
+                <div class="summary"><p>En el día a día de mi trabajo, me encuentro con un conjunto muy variado de ficheros <em>Dockerfile</em> que vienen a hacer lo mismo, pero de formas muy distintas. El fichero original se pasa de mano en mano, pervirtiéndose en cada paso y al final queda hecho un gran asco …</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.tk/2017/08/creando-imagenes-con-estilo-la-instruccion-onbuild.html">Seguir leyendo</a>
                 </div>
-                <p>En mi trabajo se ha decidido por el uso de virtualización por contenedores usando <strong>Openshift</strong>. No es nada demasiado nuevo, puesto que ya usábamos <strong>Docker</strong> de manera habitual, pero ha habido alguna <em>feature</em> que nos ha hecho plantearnos el modo en el que hacemos las cosas, especialmente para las escrituras.</p>
-<p>Todo viene por una directiva de seguridad que prohibe estrictamente ejecutar un contenedor como <em>root</em>, y de la misma manera, ejecuta el contenedor con un usuario aleatorio para incrementar la seguridad general.</p>
-<p>El problema viene para el pobre hombre que se dedica a generar imágenes, ya que la falta de determinismo, te asegura casi al 100% que no vas a poder escribir en las carpetas del contenedor, a menos que sepas lo que estás haciendo.</p>
-<p>Sin embargo, saber lo que hace <strong>Openshift</strong> no es tarea complicada:</p>
-<ul>
-<li>Se te asegura que nunca vas a usar el <em>uid</em> 0, sino uno aleatorio</li>
-<li>El grupo del usuario de ejecución se mantiene siempre como <em>root</em></li>
-</ul>
-<p>Un problema derivado de esto es que no podemos ejecutar nada que requiera <em>root</em>, como por ejemplo SSH (que no podríamos exponer en <strong>Openshift</strong> de todas formas). Otro problema es que no tendremos permisos para crear carpetas en <em>runtime</em> o incluso para cambiar el usuario de ejecución.</p>
-<h2>Simulando el comportamiento de Openshift</h2>
-<p>Vamos a poner un ejemplo tipo para entender lo que pasa:</p>
-<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/openshift_simulator$ cat Dockerfile
-FROM python:2-slim
-COPY server.py /
-CMD <span class="o">[</span><span class="s2">&quot;/server.py&quot;</span><span class="o">]</span>
-gerard@atlantis:~/projects/openshift_simulator$ cat server.py
-<span class="c1">#!/usr/bin/env python</span>
-
-from wsgiref.simple_server import make_server, demo_app
-
-<span class="nv">server</span> <span class="o">=</span> make_server<span class="o">(</span><span class="s1">&#39;0.0.0.0&#39;</span>, <span class="m">8080</span>, demo_app<span class="o">)</span>
-server.serve_forever<span class="o">()</span>
-gerard@atlantis:~/projects/openshift_simulator$
-
-Y lo construimos:
-
-<span class="sb">```</span>bash
-gerard@atlantis:~/projects/openshift_simulator$ docker build -t openshift_simulator .
-Sending build context to Docker daemon  <span class="m">3</span>.072kB
-...
-Successfully tagged openshift_simulator:latest
-gerard@atlantis:~/projects/openshift_simulator$
-</pre></div>
-
-
-<p>Normalmente lo ejecutaríamos de la siguiente manera:</p>
-<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/openshift_simulator$ docker run -ti --rm -p 8888:8080 --name test1 openshift_simulator
-...
-</pre></div>
-
-
-<p>Podemos comprobar que los procesos, tanto nuevos como antiguos, corren con el usuario <em>root</em>.</p>
-<div class="highlight"><pre><span></span>gerard@atlantis:~$ docker <span class="nb">exec</span> test1 id
-<span class="nv">uid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span>
-gerard@atlantis:~$ docker <span class="nb">exec</span> test1 ps -efa
-UID        PID  PPID  C STIME TTY          TIME CMD
-root         <span class="m">1</span>     <span class="m">0</span>  <span class="m">0</span> <span class="m">14</span>:18 pts/0    <span class="m">00</span>:00:00 python /server.py
-root        <span class="m">17</span>     <span class="m">0</span>  <span class="m">0</span> <span class="m">14</span>:20 ?        <span class="m">00</span>:00:00 ps -efa
-gerard@atlantis:~$
-</pre></div>
-
-
-<p>Sin embargo, en <strong>openshift</strong> el usuario se elige de forma aleatoria, y se impone con el <em>flag</em> de usuario <em>-u</em>, como sigue:</p>
-<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/openshift_simulator$ docker run -ti --rm -p <span class="m">8888</span>:8080 --name test2 -u <span class="m">123456</span> openshift_simulator
-...
-</pre></div>
-
-
-<p>Y podemos ver que los procesos amparados por este contenedor se ejecutarían con el <em>uid</em> especificado.</p>
-<div class="highlight"><pre><span></span>gerard@atlantis:~$ docker <span class="nb">exec</span> test2 id
-<span class="nv">uid</span><span class="o">=</span><span class="m">123456</span> <span class="nv">gid</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span><span class="m">0</span><span class="o">(</span>root<span class="o">)</span>
-gerard@atlantis:~$ docker <span class="nb">exec</span> test2 ps -efa
-UID        PID  PPID  C STIME TTY          TIME CMD
-<span class="m">123456</span>       <span class="m">1</span>     <span class="m">0</span>  <span class="m">0</span> <span class="m">14</span>:22 pts/0    <span class="m">00</span>:00:00 python /server.py
-<span class="m">123456</span>       <span class="m">9</span>     <span class="m">0</span>  <span class="m">0</span> <span class="m">14</span>:22 ?        <span class="m">00</span>:00:00 ps -efa
-gerard@atlantis:~$
-</pre></div>
-
-
-<h2>Implicaciones en escritura</h2>
-<p>Como no sabemos el usuario con el que vamos a ejecutar, es especialmente interesante saber donde vamos a escribir, ya que los permisos de lectura suelen ser suficientes para todo el mundo. Sin embargo, las carpetas de escritura suelen estar más restringidas.</p>
-<p>En este caso, estas carpetas tienen dos posibles salidas:</p>
-<ul>
-<li>Les damos barra libre con permisos 777, que no van a gustar a ningún miembro del equipo de seguridad</li>
-<li>Afinamos los permisos aprovechándonos de que nunca vamos a ser <em>root</em>, pero vamos a ejecutar con su grupo</li>
-</ul>
-<p>De esta forma, podemos ver la propiedad y los permisos de forma individual:</p>
-<ul>
-<li><strong>Usuario</strong>: con pertenencia a <em>root</em> nos aseguramos de que los permisos no aplican nunca, con lo que podemos ponerlos como queramos.</li>
-<li><strong>Grupo</strong>: Esta es la mejor forma de asegurar que la carpeta nos pertenece. Aquí si que tenemos que dar permisos de escritura.</li>
-<li><strong>Otros</strong>: Nunca hay que dar permisos de escritura a este grupo; ningún auditor de seguridad lo va a permitir.</li>
-</ul>
-<p>De esta forma, la pertenencia habuitual para carpetas de lectura y escritura que suelo poner es <code>root:root</code>, y los permisos acostumbran a ser 575, aunque no me libro de explicaciones cuando pido las excepciones de seguridad pertinentes.</p>
-            </div>
-            <!-- /.entry-content -->
-<section class="well" id="related-posts">
-    <h4>Posts relacionados:</h4>
-    <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/10/microservicios-con-docker-compose.html">Microservicios con docker-compose</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2017/04/una-toolbox-empaquetada-en-contenedores.html">Una toolbox empaquetada en contenedores</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/07/tipos-de-volumenes-en-docker.html">Tipos de volúmenes en Docker</a></li>
-    </ul>
-</section>
-    <hr/>
-    <section class="comments" id="comments">
-        <h2>Comments</h2>
-
-        <div id="disqus_thread"></div>
-        <script type="text/javascript">
-            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
-
-                    var disqus_identifier = 'problemas-de-escritura-con-openshift';
-                var disqus_url = 'http://www.linuxsysadmin.tk/2017/08/problemas-de-escritura-con-openshift.html';
-
-            var disqus_config = function () {
-                this.language = "es";
-            };
-
-            /* * * DON'T EDIT BELOW THIS LINE * * */
-            (function () {
-                var dsq = document.createElement('script');
-                dsq.type = 'text/javascript';
-                dsq.async = true;
-                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            })();
-        </script>
-        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
-            Disqus.</a></noscript>
-        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-    </section>
-        </article>
-    </section>
+            </article>
+            <hr/>
 
         </div>
         <div class="col-sm-3" id="sidebar">
