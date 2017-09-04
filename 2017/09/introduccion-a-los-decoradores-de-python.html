@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Algunas ideas sueltas sobre Ansible - Linux Sysadmin</title>
+    <title>Introducción a los decoradores de python - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,21 +9,21 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html">
+<link rel="canonical" href="http://www.linuxsysadmin.tk/2017/09/introduccion-a-los-decoradores-de-python.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="keywords" content="ansible,playbook" />
-        <meta name="description" content="En un artículo anterior vimos qué era Ansible y como instalarlo, dejando su funcionamiento para el lector; Hay miles de tutoriales por internet, y muchos son mejores de los que pueda poner aquí. Sin embargo, hay algunas ideas que no son fáciles de ver juntas, así que aquí las dejo …" />
+        <meta name="keywords" content="python,decorador" />
+        <meta name="description" content="Mucha gente no sabe de lo que hablamos cuando nos referimos a decoradores en contexto de programación python. No es un concepto demasiado complejo, pero nos puede servir para simplificar bastante nuestro código. Sin embargo, hay que admitir que es un concepto difícil si intentamos estudiarlo sin ninguna ayuda externa …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Algunas ideas sueltas sobre Ansible"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html"/>
-        <meta property="og:description" content="En un artículo anterior vimos qué era Ansible y como instalarlo, dejando su funcionamiento para el lector; Hay miles de tutoriales por internet, y muchos son mejores de los que pueda poner aquí. Sin embargo, hay algunas ideas que no son fáciles de ver juntas, así que aquí las dejo …"/>
-        <meta property="article:published_time" content="2016-05-09" />
-            <meta property="article:section" content="Operaciones" />
-            <meta property="article:tag" content="ansible" />
-            <meta property="article:tag" content="playbook" />
+        <meta property="og:title" content="Introducción a los decoradores de python"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.tk/2017/09/introduccion-a-los-decoradores-de-python.html"/>
+        <meta property="og:description" content="Mucha gente no sabe de lo que hablamos cuando nos referimos a decoradores en contexto de programación python. No es un concepto demasiado complejo, pero nos puede servir para simplificar bastante nuestro código. Sin embargo, hay que admitir que es un concepto difícil si intentamos estudiarlo sin ninguna ayuda externa …"/>
+        <meta property="article:published_time" content="2017-09-04" />
+            <meta property="article:section" content="Desarrollo" />
+            <meta property="article:tag" content="python" />
+            <meta property="article:tag" content="decorador" />
             <meta property="article:author" content="Gerard" />
 
 
@@ -40,8 +40,8 @@
 
 
 
-        <link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Operaciones ATOM Feed"/>
+        <link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Desarrollo ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -82,8 +82,8 @@ Linux Sysadmin            </a>
         <div class="col-sm-9">
             <ol class="breadcrumb">
                 <li><a href="http://www.linuxsysadmin.tk" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.tk/category/operaciones.html" title="Operaciones">Operaciones</a></li>
-                <li class="active">Algunas ideas sueltas sobre Ansible</li>
+                <li><a href="http://www.linuxsysadmin.tk/category/desarrollo.html" title="Desarrollo">Desarrollo</a></li>
+                <li class="active">Introducción a los decoradores de python</li>
             </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -101,10 +101,10 @@ Linux Sysadmin            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html"
+                    <a href="http://www.linuxsysadmin.tk/2017/09/introduccion-a-los-decoradores-de-python.html"
                        rel="bookmark"
-                       title="Permalink to Algunas ideas sueltas sobre Ansible">
-                        Algunas ideas sueltas sobre Ansible
+                       title="Permalink to Introducción a los decoradores de python">
+                        Introducción a los decoradores de python
                     </a>
                 </h1>
             </header>
@@ -114,293 +114,317 @@ Linux Sysadmin            </a>
 <footer class="post-info">
     <span class="label label-default">Fecha</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2016-05-09T08:00:00+02:00"> 2016-05-09</time>
+        <i class="fa fa-calendar"></i><time datetime="2017-09-04T10:00:00+02:00"> 2017-09-04</time>
     </span>
 
 
             <span class="label label-default">Autor</span>
             <a href="http://www.linuxsysadmin.tk/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
 
-        <span class="label label-default">Tiempo de lectura</span> 7 minutos
+        <span class="label label-default">Tiempo de lectura</span> 9 minutos
         <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.tk/category/operaciones.html">Operaciones</a>
+        <a href="http://www.linuxsysadmin.tk/category/desarrollo.html">Desarrollo</a>
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.tk/tag/ansible.html">ansible</a>
+	<a href="http://www.linuxsysadmin.tk/tag/python.html">python</a>
         /
-	<a href="http://www.linuxsysadmin.tk/tag/playbook.html">playbook</a>
+	<a href="http://www.linuxsysadmin.tk/tag/decorador.html">decorador</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>En un <a href="http://www.linuxsysadmin.tk/2016/04/instalando-ansible-para-gestionar-servidores.html">artículo anterior</a> vimos qué era <strong>Ansible</strong> y como instalarlo, dejando su funcionamiento para el lector; Hay miles de tutoriales por internet, y muchos son mejores de los que pueda poner aquí. Sin embargo, hay algunas ideas que no son fáciles de ver juntas, así que aquí las dejo.</p>
-<h2>Playbooks plantilla</h2>
-<p>Si solo queremos los <em>playbooks</em> como una manera fácil de aprovisionar una máquina, nos conviene que no tenga un <em>host</em> asignado en el mismo, para poder pasar el objetivo por parámetro. Por ejemplo:</p>
-<div class="highlight"><pre><span></span>root@ansible:~# cat ping.yml
-- hosts: <span class="s1">&#39;{{ target }}&#39;</span>
-  tasks:
-    - ping:
-root@ansible:~#
+                <p>Mucha gente no sabe de lo que hablamos cuando nos referimos a <em>decoradores</em> en contexto de programación <em>python</em>. No es un concepto demasiado complejo, pero nos puede servir para simplificar bastante nuestro código. Sin embargo, hay que admitir que es un concepto difícil si intentamos estudiarlo sin ninguna ayuda externa.</p>
+<p>Los decoradores no son otra cosa que <strong>azúcar sintáctico</strong>. En realidad solo son funciones que aceptan una función origen por parámetro. Cuando llamemos a la función origen, en realidad estaremos llamando a la funcíon que devolvió la función decorador.</p>
+<p>Esto nos da varias posibilidades, como por ejemplo hacer cosas antes y después de declarar una función, o la posibilidad de suplantarla por completo, en vistas a añadir cosas a cada llamada, o a condicionar su ejecución. A continuación veremos algunos ejemplos:</p>
+<h2>El decorador simple</h2>
+<p>Vemos un primer <em>script</em> hecho en <em>python</em>:</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="k">def</span> <span class="nf">simple_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s1">&#39;Decorating&#39;</span><span class="p">,</span> <span class="n">func</span>
+    <span class="k">return</span> <span class="n">func</span>
+
+<span class="nd">@simple_decorator</span>
+<span class="k">def</span> <span class="nf">myfunc</span><span class="p">():</span>
+    <span class="k">print</span> <span class="s1">&#39;Hello world!&#39;</span>
+
+<span class="n">myfunc</span><span class="p">()</span>
+<span class="n">myfunc</span><span class="p">()</span>
 </pre></div>
 
 
-<p>En este caso hay que pasar un argumento extra como <em>target</em>, y en caso de no ponerlo, el <em>playbook</em> no haría nada. Con este truco, podemos ir variando el objetivo, siempre que esté en el fichero <em>hosts</em>.</p>
-<div class="highlight"><pre><span></span>root@ansible:~# ansible-playbook ping.yml
+<p>La línea que empieza con <code>@</code> está <strong>decorando</strong> la función a la que precede. En este caso, <code>simple_decorator</code> es un decorador; esto es una función que acepta una función a la que decora.</p>
+<p>El script mencionado arriba es exactamente el mismo que el siguiente, en donde la aplicación del decorador es explícita.</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
 
-PLAY <span class="o">[{{</span> target <span class="o">}}]</span> ***********************************************************
-skipping: no hosts matched
+<span class="k">def</span> <span class="nf">simple_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s1">&#39;Decorating&#39;</span><span class="p">,</span> <span class="n">func</span>
+    <span class="k">return</span> <span class="n">func</span>
 
-PLAY RECAP ********************************************************************
+<span class="k">def</span> <span class="nf">myfunc</span><span class="p">():</span>
+    <span class="k">print</span> <span class="s1">&#39;Hello world!&#39;</span>
+<span class="n">myfunc</span> <span class="o">=</span> <span class="n">simple_decorator</span><span class="p">(</span><span class="n">myfunc</span><span class="p">)</span>
 
-root@ansible:~# ansible-playbook ping.yml --extra-vars <span class="s2">&quot;target=appservers&quot;</span>
-
-PLAY <span class="o">[</span>appservers<span class="o">]</span> *************************************************************
-
-GATHERING FACTS ***************************************************************
-ok: <span class="o">[</span><span class="m">10</span>.0.0.3<span class="o">]</span>
-ok: <span class="o">[</span><span class="m">10</span>.0.0.4<span class="o">]</span>
-
-TASK: <span class="o">[</span>ping <span class="o">]</span> *****************************************************************
-ok: <span class="o">[</span><span class="m">10</span>.0.0.4<span class="o">]</span>
-ok: <span class="o">[</span><span class="m">10</span>.0.0.3<span class="o">]</span>
-
-PLAY RECAP ********************************************************************
-<span class="m">10</span>.0.0.3                   : <span class="nv">ok</span><span class="o">=</span><span class="m">2</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">0</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
-<span class="m">10</span>.0.0.4                   : <span class="nv">ok</span><span class="o">=</span><span class="m">2</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">0</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
-
-root@ansible:~# ansible-playbook ping.yml --extra-vars <span class="s2">&quot;target=10.0.0.3&quot;</span>
-
-PLAY <span class="o">[</span><span class="m">10</span>.0.0.3<span class="o">]</span> ***************************************************************
-
-GATHERING FACTS ***************************************************************
-ok: <span class="o">[</span><span class="m">10</span>.0.0.3<span class="o">]</span>
-
-TASK: <span class="o">[</span>ping <span class="o">]</span> *****************************************************************
-ok: <span class="o">[</span><span class="m">10</span>.0.0.3<span class="o">]</span>
-
-PLAY RECAP ********************************************************************
-<span class="m">10</span>.0.0.3                   : <span class="nv">ok</span><span class="o">=</span><span class="m">2</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">0</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
-
-root@ansible:~#
+<span class="n">myfunc</span><span class="p">()</span>
+<span class="n">myfunc</span><span class="p">()</span>
 </pre></div>
 
 
-<h2>Variar el entorno sin cambiar los playbooks</h2>
-<p>Aunque las máquinas y las redes asignadas a cada entorno sean variables, los grupos y funcionalidades son las mismas. Suponiendo que los <em>playbooks</em> actúen contra los grupos, variando el fichero de <em>hosts</em> podemos conseguir todos los entornos necesarios.</p>
-<p>De hecho, podemos tener varios ficheros de <em>hosts</em> y especificarlos por parámetro en el momento de lanzar <strong>ansible-playbook</strong>. Por ejemplo, para el entorno de <em>preproducción</em>:</p>
-<div class="highlight"><pre><span></span>root@ansible:~# cat hosts-pre
-<span class="o">[</span>loadbalancer<span class="o">]</span>
-<span class="m">172</span>.20.0.2
-
-<span class="o">[</span>appservers<span class="o">]</span>
-<span class="m">172</span>.20.0.3
-<span class="m">172</span>.20.0.4
-
-<span class="o">[</span>dbservers<span class="o">]</span>
-<span class="m">172</span>.20.0.5
-root@ansible:~# ansible-playbook -i hosts-pre --list-hosts setup.yml
-
-playbook: setup.yml
-
-  play <span class="c1">#1 (loadbalancer): Setup load balancer...        TAGS: []</span>
-    pattern: <span class="o">[</span>u<span class="s1">&#39;loadbalancer&#39;</span><span class="o">]</span>
-    hosts <span class="o">(</span><span class="m">1</span><span class="o">)</span>:
-      <span class="m">172</span>.20.0.2
-
-  play <span class="c1">#2 (appservers): Setup application servers...    TAGS: []</span>
-    pattern: <span class="o">[</span>u<span class="s1">&#39;appservers&#39;</span><span class="o">]</span>
-    hosts <span class="o">(</span><span class="m">2</span><span class="o">)</span>:
-      <span class="m">172</span>.20.0.3
-      <span class="m">172</span>.20.0.4
-
-  play <span class="c1">#3 (dbservers): Setup database servers...        TAGS: []</span>
-    pattern: <span class="o">[</span>u<span class="s1">&#39;dbservers&#39;</span><span class="o">]</span>
-    hosts <span class="o">(</span><span class="m">1</span><span class="o">)</span>:
-      <span class="m">172</span>.20.0.5
-root@ansible:~#
+<p>Ejecutamos el <em>script</em> y vemos como se comporta:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/decorators$ ./simple.py
+Decorating &lt;<span class="k">function</span> myfunc at 0x7f3433328668&gt;
+Hello world!
+Hello world!
+gerard@atlantis:~/projects/decorators$
 </pre></div>
 
 
-<p>Y casi lo mismo para el entono de <em>producción</em>:</p>
-<div class="highlight"><pre><span></span>root@ansible:~# cat hosts-pro
-<span class="o">[</span>loadbalancer<span class="o">]</span>
-<span class="m">10</span>.0.0.2
+<p>La función se decora una sola vez, en tiempo de declaración; ejecutar varias veces la función no hace repetir el código de la función decoradora. De la misma forma, una llamada a <code>myfunc()</code> ejecuta la misma función, porque es la función que devolvió el decorador.</p>
+<h2>Decoradores parametrizados</h2>
+<p>El ejemplo anterior era solo un ejemplo. En el mundo real nos puede interesar tener un decorador que sea parametrizable, cambiando sus parámetros para adaptarse a las necesidades.</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
 
-<span class="o">[</span>appservers<span class="o">]</span>
-<span class="m">10</span>.0.0.3
-<span class="m">10</span>.0.0.4
-<span class="m">10</span>.0.0.5
-<span class="m">10</span>.0.0.6
-<span class="m">10</span>.0.0.7
+<span class="k">def</span> <span class="nf">register_route</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s1">&#39;Registering function&#39;</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="s1">&#39;to&#39;</span><span class="p">,</span> <span class="n">url</span>
+        <span class="k">return</span> <span class="n">func</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
 
-<span class="o">[</span>dbservers<span class="o">]</span>
-<span class="m">10</span>.0.0.8
-<span class="m">10</span>.0.0.9
-<span class="m">10</span>.0.0.10
-root@ansible:~# ansible-playbook -i hosts-pro --list-hosts setup.yml
+<span class="nd">@register_route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">home_page</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;home page&#39;</span>
+<span class="c1"># same as: home_page = register_route(&#39;/&#39;)(home_page)</span>
 
-playbook: setup.yml
+<span class="nd">@register_route</span><span class="p">(</span><span class="s1">&#39;/admin&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">admin_panel</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;admin panel&#39;</span>
+<span class="c1"># same as: admin_panel = register_route(&#39;/admin&#39;)(admin_panel)</span>
 
-  play <span class="c1">#1 (loadbalancer): Setup load balancer...        TAGS: []</span>
-    pattern: <span class="o">[</span>u<span class="s1">&#39;loadbalancer&#39;</span><span class="o">]</span>
-    hosts <span class="o">(</span><span class="m">1</span><span class="o">)</span>:
-      <span class="m">10</span>.0.0.2
-
-  play <span class="c1">#2 (appservers): Setup application servers...    TAGS: []</span>
-    pattern: <span class="o">[</span>u<span class="s1">&#39;appservers&#39;</span><span class="o">]</span>
-    hosts <span class="o">(</span><span class="m">5</span><span class="o">)</span>:
-      <span class="m">10</span>.0.0.5
-      <span class="m">10</span>.0.0.4
-      <span class="m">10</span>.0.0.7
-      <span class="m">10</span>.0.0.6
-      <span class="m">10</span>.0.0.3
-
-  play <span class="c1">#3 (dbservers): Setup database servers...        TAGS: []</span>
-    pattern: <span class="o">[</span>u<span class="s1">&#39;dbservers&#39;</span><span class="o">]</span>
-    hosts <span class="o">(</span><span class="m">3</span><span class="o">)</span>:
-      <span class="m">10</span>.0.0.9
-      <span class="m">10</span>.0.0.8
-      <span class="m">10</span>.0.0.10
-root@ansible:~#
+<span class="k">print</span> <span class="n">admin_panel</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">home_page</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">home_page</span><span class="p">()</span>
 </pre></div>
 
 
-<h2>Inventario autogenerado</h2>
-<p>A veces nos conviene sacar la lista de <em>hosts</em> y de <em>grupos</em> de otro lugar, por ejemplo, de una base de datos corporativa. En estos casos, basta con saber que el fichero <em>hosts</em> puede ser ejecutable y se espera que devuelva un diccionario JSON de <em>grupos</em>, cada uno con una lista de los <em>hosts</em> que lo componen. <strong>Ansible</strong> va a ejecutar el <em>script</em> para sacar esa información.</p>
-<p>Vamos a hacer un ejercicio de imaginación: supongamos este <em>script</em> saca los datos de algún sitio (LDAP, BBDD, una API de nuestra CMDB, ...), y los saca en formato JSON:</p>
-<div class="highlight"><pre><span></span>root@ansible:~# cat hosts.py
-<span class="c1">#!/usr/bin/env python</span>
-
-import json
-
-<span class="nv">inventory</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="s1">&#39;loadbalancer&#39;</span>: <span class="o">[</span><span class="s1">&#39;10.0.0.2&#39;</span><span class="o">]</span>,
-    <span class="s1">&#39;appservers&#39;</span>: <span class="o">[</span><span class="s1">&#39;10.0.0.3&#39;</span>, <span class="s1">&#39;10.0.0.4&#39;</span><span class="o">]</span>,
-    <span class="s1">&#39;dbservers&#39;</span>: <span class="o">[</span><span class="s1">&#39;10.0.0.5&#39;</span><span class="o">]</span>,
-<span class="o">}</span>
-
-print json.dumps<span class="o">(</span>inventory<span class="o">)</span>
-root@ansible:~# chmod <span class="m">755</span> hosts.py
-root@ansible:~# ./hosts.py
-<span class="o">{</span><span class="s2">&quot;appservers&quot;</span>: <span class="o">[</span><span class="s2">&quot;10.0.0.3&quot;</span>, <span class="s2">&quot;10.0.0.4&quot;</span><span class="o">]</span>, <span class="s2">&quot;loadbalancer&quot;</span>: <span class="o">[</span><span class="s2">&quot;10.0.0.2&quot;</span><span class="o">]</span>, <span class="s2">&quot;dbservers&quot;</span>: <span class="o">[</span><span class="s2">&quot;10.0.0.5&quot;</span><span class="o">]}</span>
-root@ansible:~#
+<p>Vemos que las funciones están decoradas por la misma función, pero esta viene parametrizada. No os dejéis engañar; la expresión entera es un decorador, haciendo que <code>register_route('/')</code> devuelva la función con la que vamos a decorar la función final.</p>
+<p>El decorador en sí mismo es <code>wrapper</code>, pero en este caso tenemos la ventaja de que el decorador tiene visibilidad a las variables y parámetros de <code>register_route</code>, que tiene la obligación de devolver el decorador, que como ya sabemos es una función que acepta a otra por parámetro.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/decorators$ ./parametrized.py
+Registering <span class="k">function</span> &lt;<span class="k">function</span> home_page at 0x7f2c07d79758&gt; to /
+Registering <span class="k">function</span> &lt;<span class="k">function</span> admin_panel at 0x7f2c07d797d0&gt; to /admin
+admin panel
+home page
+home page
+gerard@atlantis:~/projects/decorators$
 </pre></div>
 
 
-<p>Veamos que es capaz de sacar los grupos que le pidamos de forma fácil:</p>
-<div class="highlight"><pre><span></span>root@ansible:~# ansible -i hosts.py --list-hosts loadbalancer
-  hosts <span class="o">(</span><span class="m">1</span><span class="o">)</span>:
-    <span class="m">10</span>.0.0.2
-root@ansible:~# ansible -i hosts.py --list-hosts appservers
-  hosts <span class="o">(</span><span class="m">2</span><span class="o">)</span>:
-    <span class="m">10</span>.0.0.3
-    <span class="m">10</span>.0.0.4
-root@ansible:~# ansible -i hosts.py --list-hosts dbservers
-  hosts <span class="o">(</span><span class="m">1</span><span class="o">)</span>:
-    <span class="m">10</span>.0.0.5
-root@ansible:~# ansible -i hosts.py --list-hosts all
-  hosts <span class="o">(</span><span class="m">4</span><span class="o">)</span>:
-    <span class="m">10</span>.0.0.3
-    <span class="m">10</span>.0.0.4
-    <span class="m">10</span>.0.0.2
-    <span class="m">10</span>.0.0.5
-root@ansible:~#
+<p>Es interesante recalcar que las decoraciones se hacen en tiempo de declaración de la función, y luego podemos observar las llamadas que hacemos a las mismas. Otra observación es que el código del decorador ve, no solamente la función decorada <code>func</code>, sino también los parámetros de la funcion <code>register_route</code>.</p>
+<p>Esta construcción es típica de algunos <em>frameworks</em> que usan esta misma forma para crear la tabla de rutas. El reactor del mismo <em>framework</em> va a ir llamando estas funciones según las peticiones lleguen. como ejemplo, podemos observar el caso del <em>framework</em> <strong>bottle</strong>:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bottle</span> <span class="kn">import</span> <span class="n">Bottle</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Bottle</span><span class="p">()</span>
+
+<span class="nd">@app.get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;Hello world&#39;</span>
 </pre></div>
 
 
-<h2>Desplegar ficheros según el host</h2>
-<p>En los <em>playbooks</em> podemos usar variables, bien sean de ejecución, o las que indiquemos nosotros. Esto puede jugar a nuestro favor en caso, por ejemplo, de querer desplegar ficheros distintos en cada servidor. Un ejemplo:</p>
-<p>Supongamos que tenemos esta estructura de ficheros, con su fichero de <em>hosts</em> y su <em>playbook</em>:</p>
-<div class="highlight"><pre><span></span>root@ansible:~/multiple_webservers# tree
-.
-├── hosts
-├── playbook.yml
-└── webs
-    ├── server1
-    │   ├── index.html
-    │   └── sitemap.xml
-    └── server2
-        ├── adminer.php
-        └── index.php
+<h2>Reemplazando la función decorada</h2>
+<p>Hacer cosas en tiempo de declaración de una función puede ayudarnos en muchas ocasiones, pero la verdadera potencia de los decoradores viene cuando podemos interceptar cada llamada a una función, sea para enriquecerla, o para reemplazarla total o parcialmente. Veamos un ejemplo de cada:</p>
+<h3>Enriqueciendo una función</h3>
+<p>Este es un caso claro de <em>man-in-the-middle</em>. Queremos ejecutar una función que acabe llamando a la original, pero que haga algo más. En este ejemplo, queremos cronometrar nuestras funciones. Para ello hacemos el siguiente <em>script</em>:</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
 
-<span class="m">3</span> directories, <span class="m">6</span> files
-root@ansible:~/multiple_webservers# cat hosts
-<span class="o">[</span>webservers<span class="o">]</span>
-server1
-server2
-root@ansible:~/multiple_webservers# cat playbook.yml
-- hosts: webservers
-  gather_facts: <span class="nb">false</span>
-  tasks:
-    - copy: <span class="nv">src</span><span class="o">=</span>webs/<span class="o">{{</span> inventory_hostname <span class="o">}}</span>/ <span class="nv">dest</span><span class="o">=</span>/var/www/
-root@ansible:~/multiple_webservers#
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">def</span> <span class="nf">measure_time</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">ini</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s1">&#39;Execution time:&#39;</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">ini</span><span class="p">,</span> <span class="s1">&#39;seconds&#39;</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="nd">@measure_time</span>
+<span class="k">def</span> <span class="nf">myfunc</span><span class="p">():</span>
+    <span class="k">print</span> <span class="s1">&#39;Start&#39;</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s1">&#39;End&#39;</span>
+
+<span class="n">myfunc</span><span class="p">()</span>
+<span class="n">myfunc</span><span class="p">()</span>
 </pre></div>
 
 
-<p>Lanzamos el <em>playbook</em> para aprovisionar los ficheros <em>web</em> a los servidores:</p>
-<div class="highlight"><pre><span></span>root@ansible:~/multiple_webservers# ansible-playbook -i hosts playbook.yml
-
-PLAY ***************************************************************************
-
-TASK <span class="o">[</span>copy<span class="o">]</span> ********************************************************************
-changed: <span class="o">[</span>server1<span class="o">]</span>
-changed: <span class="o">[</span>server2<span class="o">]</span>
-
-PLAY RECAP *********************************************************************
-server1                    : <span class="nv">ok</span><span class="o">=</span><span class="m">1</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">1</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
-server2                    : <span class="nv">ok</span><span class="o">=</span><span class="m">1</span>    <span class="nv">changed</span><span class="o">=</span><span class="m">1</span>    <span class="nv">unreachable</span><span class="o">=</span><span class="m">0</span>    <span class="nv">failed</span><span class="o">=</span><span class="m">0</span>
-
-root@ansible:~/multiple_webservers#
+<p>Con el decorador <code>measure_time</code>, conseguimos que <code>myfunc()</code> quede reemplazada por la función <code>wrapper()</code>, que va a guardar el valor inicial del cronómetro, va a llamar a nuestra función original, y finalmente va a escribir en pantalla la diferencia en el cronómetro.</p>
+<p>Fijaos que el decorador <code>measure_time</code> no devuelve nunca la función original <code>func</code>; en cambio declara y devuelve otra que será la función suplantante. Nuevamente, esta función <code>wrapper</code> tiene visibilidad por los parámetros de decorador, concretamente de <code>func</code>, que nos interesa conocer porque es la función original a la que queremos llamar.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/decorators$ ./count_time.py
+Start
+End
+Execution time: <span class="m">3</span>.01089406013 seconds
+Start
+End
+Execution time: <span class="m">3</span>.00343680382 seconds
+gerard@atlantis:~/projects/decorators$
 </pre></div>
 
 
-<p>Y fácilmente comprobamos que cada servidor tiene los suyos:</p>
-<div class="highlight"><pre><span></span>root@ansible:~/multiple_webservers# ssh root@server1 ls /var/www/
-index.html
-sitemap.xml
-root@ansible:~/multiple_webservers# ssh root@server2 ls /var/www/
-adminer.php
-index.php
-root@ansible:~/multiple_webservers#
+<p>Haciendo dos llamadas podemos comprobar que la función <code>wrapper</code> es llamada cada vez que invocamos a <code>myfunc</code>.</p>
+<h3>Reemplazando parcial o totalmente otra función</h3>
+<p>Hay situaciones en las que no interesa hacer el comportamiento habitual. Por ejemplo, podemos restringir ciertas funciones a usuarios validados en nuestra web, o limitarlos por cualquier otro criterio. Vamos a suponer que solo queremos que el usuario <em>root</em> pueda llegar a ejecutar una función:</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">def</span> <span class="nf">root_required</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">geteuid</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s1">&#39;You need root access to do this&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="nd">@root_required</span>
+<span class="k">def</span> <span class="nf">myfunc</span><span class="p">():</span>
+    <span class="k">print</span> <span class="s1">&#39;Access granted&#39;</span>
+
+<span class="n">myfunc</span><span class="p">()</span>
 </pre></div>
 
 
-<h2>Variables en el inventario</h2>
-<p>Hay algunas variables que dependen de la máquina en la que se ejecutan. Aunque es posible definir estructuras condicionales en los <em>playbooks</em>, no escala. Para no ensuciar los <em>playbooks</em>, las podemos definir en el fichero de <em>hosts</em>. Así pues, cada <em>grupo</em> puede tener sus propias variables; pueden ser variables "nuestras" o variables que entienda <strong>ansible</strong>. Como ejemplo, un <em>inventario</em> con variables de acceso:</p>
-<div class="highlight"><pre><span></span>root@ansible:~# cat hosts
-[slaves]
-10.0.0.2
-10.0.0.3
-
-[slaves:vars]
-ansible_user = ansible
-ansible_ssh_pass = s3cr3t
-ansible_become = true
-ansible_become_method = sudo
-ansible_become_user = root
-ansible_become_pass = s3cr3t
-root@ansible:~#
+<p>Como en el caso anterior, la función original es reemplazada por <code>wrapper</code>; la diferencia es que en vez de enriquecerla, va a llamar a la función original solo si se cumple cierto criterio, que en este caso es ejecutar como <em>root</em>.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/decorators$ ./no_access.py
+You need root access to <span class="k">do</span> this
+gerard@atlantis:~/projects/decorators$ sudo ./no_access.py
+Access granted
+gerard@atlantis:~/projects/decorators$
 </pre></div>
 
 
-<p>De esta forma, y de acuerdo con la <a href="http://docs.ansible.com/ansible/intro_inventory.html#list-of-behavioral-inventory-parameters">documentación oficial</a> de <strong>ansible</strong>, entraríamos con el usuario <em>ansible</em> para hacer seguidamente <strong>sudo</strong> para actuar con el usuario <em>root</em>.</p>
-<div class="highlight"><pre><span></span>root@ansible:~# ansible -i hosts -m command -a id slaves
-10.0.0.3 | SUCCESS | rc=0 &gt;&gt;
-uid=0(root) gid=0(root) grupos=0(root)
+<p>Muchos <em>frameworks</em> web usan este truco para permitir ejecutar ciertas vistas a usuarios seleccionados.</p>
+<h2>Parámetros y reemplazo de funciones a la vez</h2>
+<p>También es posible utilizar la técnica del reemplazo con un decorador parametrizado, aunque este caso se complica; solo hay que tener en cuenta que necesitamos 3 funciones:</p>
+<ul>
+<li>Una para los parámetros</li>
+<li>El decorador en sí mismo</li>
+<li>La funcion suplantante</li>
+</ul>
+<p>Podemos hacer un decorador para cachear resultados varios segundos:</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
 
-10.0.0.2 | SUCCESS | rc=0 &gt;&gt;
-uid=0(root) gid=0(root) grupos=0(root)
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
-root@ansible:~#
+<span class="k">def</span> <span class="nf">now</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M:%S&#39;</span><span class="p">)</span>
+
+<span class="n">cache_data</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">def</span> <span class="nf">cache_result</span><span class="p">(</span><span class="n">seconds</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">wrapper1</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">wrapper2</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">aux</span> <span class="o">=</span> <span class="n">cache_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">aux</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">seconds</span> <span class="o">&gt;=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                <span class="n">cache_data</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span> <span class="n">result</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">wrapper2</span>
+    <span class="k">return</span> <span class="n">wrapper1</span>
+
+<span class="nd">@cache_result</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">complex_math</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">now</span><span class="p">(),</span> <span class="s1">&#39;Started complex_math with n = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">number</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">complex_math</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">now</span><span class="p">(),</span> <span class="s1">&#39;Ended complex_math with n = </span><span class="si">%s</span><span class="s1"> with result = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </pre></div>
+
+
+<p>En este caso tenemos las 3 funciones citadas:</p>
+<ul>
+<li>La función parametrizada (<code>cache_result</code>)</li>
+<li>La función decoradora (<code>wrapper1</code>)</li>
+<li>La función suplantante (<code>wrapper2</code>)</li>
+</ul>
+<p>Cada vez que llamemos a la función <code>complex_math</code>, en realidad vamos a estar llamando a la función <code>wrapper2</code>, que va a poder acceder a los parámetros de las otras 2, siendo <code>func</code> la función original decorada.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/decorators$ ./big_math.py
+<span class="m">13</span>:32:45 Started complex_math with <span class="nv">n</span> <span class="o">=</span> <span class="m">3</span>
+<span class="m">13</span>:32:48 Ended complex_math with <span class="nv">n</span> <span class="o">=</span> <span class="m">3</span> with <span class="nv">result</span> <span class="o">=</span> <span class="m">4</span>
+<span class="m">13</span>:32:48 Started complex_math with <span class="nv">n</span> <span class="o">=</span> <span class="m">3</span>
+<span class="m">13</span>:32:48 Ended complex_math with <span class="nv">n</span> <span class="o">=</span> <span class="m">3</span> with <span class="nv">result</span> <span class="o">=</span> <span class="m">4</span>
+<span class="m">13</span>:32:48 Started complex_math with <span class="nv">n</span> <span class="o">=</span> <span class="m">5</span>
+<span class="m">13</span>:32:51 Ended complex_math with <span class="nv">n</span> <span class="o">=</span> <span class="m">5</span> with <span class="nv">result</span> <span class="o">=</span> <span class="m">6</span>
+<span class="m">13</span>:32:51 Started complex_math with <span class="nv">n</span> <span class="o">=</span> <span class="m">3</span>
+<span class="m">13</span>:32:54 Ended complex_math with <span class="nv">n</span> <span class="o">=</span> <span class="m">3</span> with <span class="nv">result</span> <span class="o">=</span> <span class="m">4</span>
+gerard@atlantis:~/projects/decorators$
+</pre></div>
+
+
+<p>Solo queda verificar que el decorador hace realmente lo que deseábamos: <em>cachear</em> la primera llamada con <code>n = 3</code>, de forma que la segunda no tarda los 3 segundos de <em>delay</em>. La tercera con la misma entrada se recalcula porque el tiempo de <em>cache</em> se ha pasado mientras se hacía la llamanda con <code>n = 5</code>.</p>
+<h2>Siendo correctos con la firma de la función</h2>
+<p>Cuando reemplazamos la función original por otra, no engañamos a nadie. Por ejemplo, en un caso simple como el siguiente:</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="nd">@decorator</span>
+<span class="k">def</span> <span class="nf">myfunc</span><span class="p">():</span>
+    <span class="k">pass</span>
+
+<span class="k">print</span> <span class="n">myfunc</span><span class="o">.</span><span class="vm">__name__</span>
+</pre></div>
+
+
+<p>Toda ls información referente a la firma de la función sale de acuerdo a la nueva función.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/decorators$ ./no_wrap.py
+wrapper
+gerard@atlantis:~/projects/decorators$
+</pre></div>
+
+
+<p>Este cambio de firma puede suponer un problema en algún momento futuro. Para eso, la librería estándar nos ofrece una forma de copiar la firma de la función a la función suplantante: un decorador llamado <code>wraps</code> en el paquete <code>functools</code>.</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="nd">@decorator</span>
+<span class="k">def</span> <span class="nf">myfunc</span><span class="p">():</span>
+    <span class="k">pass</span>
+
+<span class="k">print</span> <span class="n">myfunc</span><span class="o">.</span><span class="vm">__name__</span>
+</pre></div>
+
+
+<p>Con este pequeño añadido nos evitamos el problema, ya que este se encarga de copiar el nombre de la función, los <em>docstrings</em>, la lista de argumentos y otras propiedades desde la función decorada a la función suplantante.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/decorators$ ./wrap.py
+myfunc
+gerard@atlantis:~/projects/decorators$
+</pre></div>
+
+
+<p>Parece una tontería, pero puede evitarnos muchos problemas difíciles de diagnosticar en un futuro no muy lejano.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.tk/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html">Lanzando playbooks de Ansible desde Jenkins</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/05/mongodb-sharding-con-ansible.html">MongoDB sharding con ansible</a></li>
-        <li><a href="http://www.linuxsysadmin.tk/2016/08/creando-roles-con-ansible.html">Creando roles con ansible</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2017/05/desarrollando-aplicaciones-web-con-python-y-bottle.html">Desarrollando aplicaciones web con python y bottle</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></li>
+        <li><a href="http://www.linuxsysadmin.tk/2017/02/escribiendo-un-servidor-dns-en-python-con-twisted.html">Escribiendo un servidor DNS en python con twisted</a></li>
     </ul>
 </section>
     <hr/>
@@ -412,8 +436,8 @@ root@ansible:~#
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'algunas-ideas-sueltas-sobre-ansible';
-                var disqus_url = 'http://www.linuxsysadmin.tk/2016/05/algunas-ideas-sueltas-sobre-ansible.html';
+                    var disqus_identifier = 'introduccion-a-los-decoradores-de-python';
+                var disqus_url = 'http://www.linuxsysadmin.tk/2017/09/introduccion-a-los-decoradores-de-python.html';
 
             var disqus_config = function () {
                 this.language = "es";

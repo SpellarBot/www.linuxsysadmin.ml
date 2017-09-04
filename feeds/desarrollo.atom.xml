@@ -1,5 +1,288 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Desarrollo</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-05-15T10:00:00+02:00</updated><entry><title>Desarrollando aplicaciones web con python y bottle</title><link href="http://www.linuxsysadmin.tk/2017/05/desarrollando-aplicaciones-web-con-python-y-bottle.html" rel="alternate"></link><published>2017-05-15T10:00:00+02:00</published><updated>2017-05-15T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-05-15:/2017/05/desarrollando-aplicaciones-web-con-python-y-bottle.html</id><summary type="html">&lt;p&gt;Ya sabéis que me gusta mucho el lenguaje &lt;strong&gt;python&lt;/strong&gt;. Muchos de mis ejemplos y algunas aplicaciones simples no merecen el uso de un &lt;em&gt;framework&lt;/em&gt; tan grande como pueda ser &lt;strong&gt;django&lt;/strong&gt;. Para estos casos me encantan los &lt;em&gt;microframeworks&lt;/em&gt;, y aunque hay varias alternativas disponibles, me gusta especialmente un &lt;em&gt;microframework&lt;/em&gt; llamado &lt;strong&gt;bottle …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ya sabéis que me gusta mucho el lenguaje &lt;strong&gt;python&lt;/strong&gt;. Muchos de mis ejemplos y algunas aplicaciones simples no merecen el uso de un &lt;em&gt;framework&lt;/em&gt; tan grande como pueda ser &lt;strong&gt;django&lt;/strong&gt;. Para estos casos me encantan los &lt;em&gt;microframeworks&lt;/em&gt;, y aunque hay varias alternativas disponibles, me gusta especialmente un &lt;em&gt;microframework&lt;/em&gt; llamado &lt;strong&gt;bottle&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Desarrollo</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-09-04T10:00:00+02:00</updated><entry><title>Introducción a los decoradores de python</title><link href="http://www.linuxsysadmin.tk/2017/09/introduccion-a-los-decoradores-de-python.html" rel="alternate"></link><published>2017-09-04T10:00:00+02:00</published><updated>2017-09-04T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-09-04:/2017/09/introduccion-a-los-decoradores-de-python.html</id><summary type="html">&lt;p&gt;Mucha gente no sabe de lo que hablamos cuando nos referimos a &lt;em&gt;decoradores&lt;/em&gt; en contexto de programación &lt;em&gt;python&lt;/em&gt;. No es un concepto demasiado complejo, pero nos puede servir para simplificar bastante nuestro código. Sin embargo, hay que admitir que es un concepto difícil si intentamos estudiarlo sin ninguna ayuda externa …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Mucha gente no sabe de lo que hablamos cuando nos referimos a &lt;em&gt;decoradores&lt;/em&gt; en contexto de programación &lt;em&gt;python&lt;/em&gt;. No es un concepto demasiado complejo, pero nos puede servir para simplificar bastante nuestro código. Sin embargo, hay que admitir que es un concepto difícil si intentamos estudiarlo sin ninguna ayuda externa.&lt;/p&gt;
+&lt;p&gt;Los decoradores no son otra cosa que &lt;strong&gt;azúcar sintáctico&lt;/strong&gt;. En realidad solo son funciones que aceptan una función origen por parámetro. Cuando llamemos a la función origen, en realidad estaremos llamando a la funcíon que devolvió la función decorador.&lt;/p&gt;
+&lt;p&gt;Esto nos da varias posibilidades, como por ejemplo hacer cosas antes y después de declarar una función, o la posibilidad de suplantarla por completo, en vistas a añadir cosas a cada llamada, o a condicionar su ejecución. A continuación veremos algunos ejemplos:&lt;/p&gt;
+&lt;h2&gt;El decorador simple&lt;/h2&gt;
+&lt;p&gt;Vemos un primer &lt;em&gt;script&lt;/em&gt; hecho en &lt;em&gt;python&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;simple_decorator&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Decorating&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;func&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;func&lt;/span&gt;
+
+&lt;span class="nd"&gt;@simple_decorator&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Hello world!&amp;#39;&lt;/span&gt;
+
+&lt;span class="n"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La línea que empieza con &lt;code&gt;@&lt;/code&gt; está &lt;strong&gt;decorando&lt;/strong&gt; la función a la que precede. En este caso, &lt;code&gt;simple_decorator&lt;/code&gt; es un decorador; esto es una función que acepta una función a la que decora.&lt;/p&gt;
+&lt;p&gt;El script mencionado arriba es exactamente el mismo que el siguiente, en donde la aplicación del decorador es explícita.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;simple_decorator&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Decorating&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;func&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;func&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Hello world!&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;myfunc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;simple_decorator&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ejecutamos el &lt;em&gt;script&lt;/em&gt; y vemos como se comporta:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/decorators$ ./simple.py
+Decorating &amp;lt;&lt;span class="k"&gt;function&lt;/span&gt; myfunc at 0x7f3433328668&amp;gt;
+Hello world!
+Hello world!
+gerard@atlantis:~/projects/decorators$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La función se decora una sola vez, en tiempo de declaración; ejecutar varias veces la función no hace repetir el código de la función decoradora. De la misma forma, una llamada a &lt;code&gt;myfunc()&lt;/code&gt; ejecuta la misma función, porque es la función que devolvió el decorador.&lt;/p&gt;
+&lt;h2&gt;Decoradores parametrizados&lt;/h2&gt;
+&lt;p&gt;El ejemplo anterior era solo un ejemplo. En el mundo real nos puede interesar tener un decorador que sea parametrizable, cambiando sus parámetros para adaptarse a las necesidades.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;register_route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;wrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Registering function&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;to&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;url&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;func&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;wrapper&lt;/span&gt;
+
+&lt;span class="nd"&gt;@register_route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;home_page&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;home page&amp;#39;&lt;/span&gt;
+&lt;span class="c1"&gt;# same as: home_page = register_route(&amp;#39;/&amp;#39;)(home_page)&lt;/span&gt;
+
+&lt;span class="nd"&gt;@register_route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/admin&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;admin_panel&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;admin panel&amp;#39;&lt;/span&gt;
+&lt;span class="c1"&gt;# same as: admin_panel = register_route(&amp;#39;/admin&amp;#39;)(admin_panel)&lt;/span&gt;
+
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;admin_panel&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;home_page&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;home_page&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vemos que las funciones están decoradas por la misma función, pero esta viene parametrizada. No os dejéis engañar; la expresión entera es un decorador, haciendo que &lt;code&gt;register_route('/')&lt;/code&gt; devuelva la función con la que vamos a decorar la función final.&lt;/p&gt;
+&lt;p&gt;El decorador en sí mismo es &lt;code&gt;wrapper&lt;/code&gt;, pero en este caso tenemos la ventaja de que el decorador tiene visibilidad a las variables y parámetros de &lt;code&gt;register_route&lt;/code&gt;, que tiene la obligación de devolver el decorador, que como ya sabemos es una función que acepta a otra por parámetro.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/decorators$ ./parametrized.py
+Registering &lt;span class="k"&gt;function&lt;/span&gt; &amp;lt;&lt;span class="k"&gt;function&lt;/span&gt; home_page at 0x7f2c07d79758&amp;gt; to /
+Registering &lt;span class="k"&gt;function&lt;/span&gt; &amp;lt;&lt;span class="k"&gt;function&lt;/span&gt; admin_panel at 0x7f2c07d797d0&amp;gt; to /admin
+admin panel
+home page
+home page
+gerard@atlantis:~/projects/decorators$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es interesante recalcar que las decoraciones se hacen en tiempo de declaración de la función, y luego podemos observar las llamadas que hacemos a las mismas. Otra observación es que el código del decorador ve, no solamente la función decorada &lt;code&gt;func&lt;/code&gt;, sino también los parámetros de la funcion &lt;code&gt;register_route&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Esta construcción es típica de algunos &lt;em&gt;frameworks&lt;/em&gt; que usan esta misma forma para crear la tabla de rutas. El reactor del mismo &lt;em&gt;framework&lt;/em&gt; va a ir llamando estas funciones según las peticiones lleguen. como ejemplo, podemos observar el caso del &lt;em&gt;framework&lt;/em&gt; &lt;strong&gt;bottle&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;bottle&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Bottle&lt;/span&gt;
+
+&lt;span class="n"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Bottle&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+&lt;span class="nd"&gt;@app.get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;index&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Hello world&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Reemplazando la función decorada&lt;/h2&gt;
+&lt;p&gt;Hacer cosas en tiempo de declaración de una función puede ayudarnos en muchas ocasiones, pero la verdadera potencia de los decoradores viene cuando podemos interceptar cada llamada a una función, sea para enriquecerla, o para reemplazarla total o parcialmente. Veamos un ejemplo de cada:&lt;/p&gt;
+&lt;h3&gt;Enriqueciendo una función&lt;/h3&gt;
+&lt;p&gt;Este es un caso claro de &lt;em&gt;man-in-the-middle&lt;/em&gt;. Queremos ejecutar una función que acabe llamando a la original, pero que haga algo más. En este ejemplo, queremos cronometrar nuestras funciones. Para ello hacemos el siguiente &lt;em&gt;script&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;time&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;measure_time&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;wrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;ini&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+        &lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;end&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Execution time:&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;end&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;ini&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;seconds&amp;#39;&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;wrapper&lt;/span&gt;
+
+&lt;span class="nd"&gt;@measure_time&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Start&amp;#39;&lt;/span&gt;
+    &lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sleep&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;End&amp;#39;&lt;/span&gt;
+
+&lt;span class="n"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Con el decorador &lt;code&gt;measure_time&lt;/code&gt;, conseguimos que &lt;code&gt;myfunc()&lt;/code&gt; quede reemplazada por la función &lt;code&gt;wrapper()&lt;/code&gt;, que va a guardar el valor inicial del cronómetro, va a llamar a nuestra función original, y finalmente va a escribir en pantalla la diferencia en el cronómetro.&lt;/p&gt;
+&lt;p&gt;Fijaos que el decorador &lt;code&gt;measure_time&lt;/code&gt; no devuelve nunca la función original &lt;code&gt;func&lt;/code&gt;; en cambio declara y devuelve otra que será la función suplantante. Nuevamente, esta función &lt;code&gt;wrapper&lt;/code&gt; tiene visibilidad por los parámetros de decorador, concretamente de &lt;code&gt;func&lt;/code&gt;, que nos interesa conocer porque es la función original a la que queremos llamar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/decorators$ ./count_time.py
+Start
+End
+Execution time: &lt;span class="m"&gt;3&lt;/span&gt;.01089406013 seconds
+Start
+End
+Execution time: &lt;span class="m"&gt;3&lt;/span&gt;.00343680382 seconds
+gerard@atlantis:~/projects/decorators$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Haciendo dos llamadas podemos comprobar que la función &lt;code&gt;wrapper&lt;/code&gt; es llamada cada vez que invocamos a &lt;code&gt;myfunc&lt;/code&gt;.&lt;/p&gt;
+&lt;h3&gt;Reemplazando parcial o totalmente otra función&lt;/h3&gt;
+&lt;p&gt;Hay situaciones en las que no interesa hacer el comportamiento habitual. Por ejemplo, podemos restringir ciertas funciones a usuarios validados en nuestra web, o limitarlos por cualquier otro criterio. Vamos a suponer que solo queremos que el usuario &lt;em&gt;root&lt;/em&gt; pueda llegar a ejecutar una función:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;os&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;root_required&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;wrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geteuid&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;You need root access to do this&amp;#39;&lt;/span&gt;
+        &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;wrapper&lt;/span&gt;
+
+&lt;span class="nd"&gt;@root_required&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Access granted&amp;#39;&lt;/span&gt;
+
+&lt;span class="n"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como en el caso anterior, la función original es reemplazada por &lt;code&gt;wrapper&lt;/code&gt;; la diferencia es que en vez de enriquecerla, va a llamar a la función original solo si se cumple cierto criterio, que en este caso es ejecutar como &lt;em&gt;root&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/decorators$ ./no_access.py
+You need root access to &lt;span class="k"&gt;do&lt;/span&gt; this
+gerard@atlantis:~/projects/decorators$ sudo ./no_access.py
+Access granted
+gerard@atlantis:~/projects/decorators$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Muchos &lt;em&gt;frameworks&lt;/em&gt; web usan este truco para permitir ejecutar ciertas vistas a usuarios seleccionados.&lt;/p&gt;
+&lt;h2&gt;Parámetros y reemplazo de funciones a la vez&lt;/h2&gt;
+&lt;p&gt;También es posible utilizar la técnica del reemplazo con un decorador parametrizado, aunque este caso se complica; solo hay que tener en cuenta que necesitamos 3 funciones:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Una para los parámetros&lt;/li&gt;
+&lt;li&gt;El decorador en sí mismo&lt;/li&gt;
+&lt;li&gt;La funcion suplantante&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Podemos hacer un decorador para cachear resultados varios segundos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;datetime&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;time&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;now&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;datetime&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;datetime&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;now&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;strftime&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;%H:%M:%S&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;cache_data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{}&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;cache_result&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;seconds&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;wrapper1&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;wrapper2&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+            &lt;span class="n"&gt;aux&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cache_data&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;aux&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="bp"&gt;None&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="n"&gt;aux&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;seconds&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;=&lt;/span&gt; &lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+                &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;aux&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+            &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+                &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+                &lt;span class="n"&gt;cache_data&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+                &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;wrapper2&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;wrapper1&lt;/span&gt;
+
+&lt;span class="nd"&gt;@cache_result&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;complex_math&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sleep&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;number&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;now&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Started complex_math with n = &lt;/span&gt;&lt;span class="si"&gt;%s&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="n"&gt;number&lt;/span&gt;
+    &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;complex_math&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;number&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;now&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Ended complex_math with n = &lt;/span&gt;&lt;span class="si"&gt;%s&lt;/span&gt;&lt;span class="s1"&gt; with result = &lt;/span&gt;&lt;span class="si"&gt;%s&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;number&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso tenemos las 3 funciones citadas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;La función parametrizada (&lt;code&gt;cache_result&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;La función decoradora (&lt;code&gt;wrapper1&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;La función suplantante (&lt;code&gt;wrapper2&lt;/code&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Cada vez que llamemos a la función &lt;code&gt;complex_math&lt;/code&gt;, en realidad vamos a estar llamando a la función &lt;code&gt;wrapper2&lt;/code&gt;, que va a poder acceder a los parámetros de las otras 2, siendo &lt;code&gt;func&lt;/code&gt; la función original decorada.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/decorators$ ./big_math.py
+&lt;span class="m"&gt;13&lt;/span&gt;:32:45 Started complex_math with &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;3&lt;/span&gt;
+&lt;span class="m"&gt;13&lt;/span&gt;:32:48 Ended complex_math with &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;3&lt;/span&gt; with &lt;span class="nv"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;4&lt;/span&gt;
+&lt;span class="m"&gt;13&lt;/span&gt;:32:48 Started complex_math with &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;3&lt;/span&gt;
+&lt;span class="m"&gt;13&lt;/span&gt;:32:48 Ended complex_math with &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;3&lt;/span&gt; with &lt;span class="nv"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;4&lt;/span&gt;
+&lt;span class="m"&gt;13&lt;/span&gt;:32:48 Started complex_math with &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;5&lt;/span&gt;
+&lt;span class="m"&gt;13&lt;/span&gt;:32:51 Ended complex_math with &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;5&lt;/span&gt; with &lt;span class="nv"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;6&lt;/span&gt;
+&lt;span class="m"&gt;13&lt;/span&gt;:32:51 Started complex_math with &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;3&lt;/span&gt;
+&lt;span class="m"&gt;13&lt;/span&gt;:32:54 Ended complex_math with &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;3&lt;/span&gt; with &lt;span class="nv"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;4&lt;/span&gt;
+gerard@atlantis:~/projects/decorators$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo queda verificar que el decorador hace realmente lo que deseábamos: &lt;em&gt;cachear&lt;/em&gt; la primera llamada con &lt;code&gt;n = 3&lt;/code&gt;, de forma que la segunda no tarda los 3 segundos de &lt;em&gt;delay&lt;/em&gt;. La tercera con la misma entrada se recalcula porque el tiempo de &lt;em&gt;cache&lt;/em&gt; se ha pasado mientras se hacía la llamanda con &lt;code&gt;n = 5&lt;/code&gt;.&lt;/p&gt;
+&lt;h2&gt;Siendo correctos con la firma de la función&lt;/h2&gt;
+&lt;p&gt;Cuando reemplazamos la función original por otra, no engañamos a nadie. Por ejemplo, en un caso simple como el siguiente:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;decorator&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;wrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;wrapper&lt;/span&gt;
+
+&lt;span class="nd"&gt;@decorator&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;pass&lt;/span&gt;
+
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;myfunc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="vm"&gt;__name__&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Toda ls información referente a la firma de la función sale de acuerdo a la nueva función.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/decorators$ ./no_wrap.py
+wrapper
+gerard@atlantis:~/projects/decorators$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Este cambio de firma puede suponer un problema en algún momento futuro. Para eso, la librería estándar nos ofrece una forma de copiar la firma de la función a la función suplantante: un decorador llamado &lt;code&gt;wraps&lt;/code&gt; en el paquete &lt;code&gt;functools&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;functools&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;decorator&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="nd"&gt;@functools.wraps&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;wrapper&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;func&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;wrapper&lt;/span&gt;
+
+&lt;span class="nd"&gt;@decorator&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;myfunc&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;pass&lt;/span&gt;
+
+&lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="n"&gt;myfunc&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="vm"&gt;__name__&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Con este pequeño añadido nos evitamos el problema, ya que este se encarga de copiar el nombre de la función, los &lt;em&gt;docstrings&lt;/em&gt;, la lista de argumentos y otras propiedades desde la función decorada a la función suplantante.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/decorators$ ./wrap.py
+myfunc
+gerard@atlantis:~/projects/decorators$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Parece una tontería, pero puede evitarnos muchos problemas difíciles de diagnosticar en un futuro no muy lejano.&lt;/p&gt;</content><category term="python"></category><category term="decorador"></category></entry><entry><title>Desarrollando aplicaciones web con python y bottle</title><link href="http://www.linuxsysadmin.tk/2017/05/desarrollando-aplicaciones-web-con-python-y-bottle.html" rel="alternate"></link><published>2017-05-15T10:00:00+02:00</published><updated>2017-05-15T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-05-15:/2017/05/desarrollando-aplicaciones-web-con-python-y-bottle.html</id><summary type="html">&lt;p&gt;Ya sabéis que me gusta mucho el lenguaje &lt;strong&gt;python&lt;/strong&gt;. Muchos de mis ejemplos y algunas aplicaciones simples no merecen el uso de un &lt;em&gt;framework&lt;/em&gt; tan grande como pueda ser &lt;strong&gt;django&lt;/strong&gt;. Para estos casos me encantan los &lt;em&gt;microframeworks&lt;/em&gt;, y aunque hay varias alternativas disponibles, me gusta especialmente un &lt;em&gt;microframework&lt;/em&gt; llamado &lt;strong&gt;bottle …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ya sabéis que me gusta mucho el lenguaje &lt;strong&gt;python&lt;/strong&gt;. Muchos de mis ejemplos y algunas aplicaciones simples no merecen el uso de un &lt;em&gt;framework&lt;/em&gt; tan grande como pueda ser &lt;strong&gt;django&lt;/strong&gt;. Para estos casos me encantan los &lt;em&gt;microframeworks&lt;/em&gt;, y aunque hay varias alternativas disponibles, me gusta especialmente un &lt;em&gt;microframework&lt;/em&gt; llamado &lt;strong&gt;bottle&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Una de las mejores características de este &lt;em&gt;framework&lt;/em&gt; es que no es complejo. Ponerse a hacer algo cuesta un tiempo de aprendizaje tendiendo a cero, y &lt;a href="https://bottlepy.org/docs/dev/"&gt;la documentación&lt;/a&gt; es excelente. Solamente nos oculta la complejidad del protocolo &lt;strong&gt;WSGI&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Otro punto a favor es la sencillez y simplicidad. No tiene dependencias con ninguna base de datos, motor de plantillas (aunque lleva un motor de plantillas mínimo) o &lt;em&gt;middleware&lt;/em&gt; externo. No añade nada que no tenga una especificación formal, y evita protocolos propios (por ejemplo, sesiones), en favor de especificaciones aceptadas (por ejemplo, &lt;em&gt;cookies&lt;/em&gt;).&lt;/p&gt;
 &lt;h2&gt;Objetos y métodos básicos&lt;/h2&gt;
