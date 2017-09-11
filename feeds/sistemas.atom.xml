@@ -1,5 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-08-28T10:00:00+02:00</updated><entry><title>Creando imágenes con estilo: la instrucción ONBUILD</title><link href="http://www.linuxsysadmin.tk/2017/08/creando-imagenes-con-estilo-la-instruccion-onbuild.html" rel="alternate"></link><published>2017-08-28T10:00:00+02:00</published><updated>2017-08-28T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-08-28:/2017/08/creando-imagenes-con-estilo-la-instruccion-onbuild.html</id><summary type="html">&lt;p&gt;En el día a día de mi trabajo, me encuentro con un conjunto muy variado de ficheros &lt;em&gt;Dockerfile&lt;/em&gt; que vienen a hacer lo mismo, pero de formas muy distintas. El fichero original se pasa de mano en mano, pervirtiéndose en cada paso y al final queda hecho un gran asco …&lt;/p&gt;</summary><content type="html">&lt;p&gt;En el día a día de mi trabajo, me encuentro con un conjunto muy variado de ficheros &lt;em&gt;Dockerfile&lt;/em&gt; que vienen a hacer lo mismo, pero de formas muy distintas. El fichero original se pasa de mano en mano, pervirtiéndose en cada paso y al final queda hecho un gran asco.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-09-11T10:00:00+02:00</updated><entry><title>Un proceso inicial para docker: tini y dumb-init</title><link href="http://www.linuxsysadmin.tk/2017/09/un-proceso-inicial-para-docker-tini-y-dumb-init.html" rel="alternate"></link><published>2017-09-11T10:00:00+02:00</published><updated>2017-09-11T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-09-11:/2017/09/un-proceso-inicial-para-docker-tini-y-dumb-init.html</id><summary type="html">&lt;p&gt;Siempre nos han vendido que &lt;strong&gt;docker&lt;/strong&gt; ejecuta un solo proceso, y que este puede ser cualquiera. Sin embargo, este proceso se ejecuta con PID 1, que es un poco especial y que tiene unas responsabilidades adicionales. Si no queremos implementarlas, podemos usar alguna solución que ya lo haga para nosotros …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Siempre nos han vendido que &lt;strong&gt;docker&lt;/strong&gt; ejecuta un solo proceso, y que este puede ser cualquiera. Sin embargo, este proceso se ejecuta con PID 1, que es un poco especial y que tiene unas responsabilidades adicionales. Si no queremos implementarlas, podemos usar alguna solución que ya lo haga para nosotros.&lt;/p&gt;
+&lt;p&gt;Entre estas responsabilidades, podemos citar 3 que se consideran básicas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Tiene que adoptar y controlar todos aquellos procesos que quedan huérfanos debido a una mala gestión de su anterior padre&lt;/li&gt;
+&lt;li&gt;No puede dejar que ningún proceso &lt;em&gt;zombie&lt;/em&gt; quede sin su correspondiente &lt;em&gt;wait&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Debe ser capaz de progresar las señales de terminación a sus procesos hijos&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Muchos de los binarios que utilizamos habitualmente no incumplen estas responsabilidades, sea por una buena gestión, o porque directamente no levantan procesos hijos.&lt;/p&gt;
+&lt;p&gt;El problema es cuando alguno de estos procesos sí que incumple. En estos casos &lt;strong&gt;docker&lt;/strong&gt; puede enviar señales de acabado, y viendo que no todos los procesos han acabado, tiene que entrar tras 10 segundos a arreglar el desaguisado. Aunque &lt;strong&gt;docker&lt;/strong&gt; hace un trabajo magnífico en este aspecto, el resultado es un contenedor que es caro de apagar, en cuanto a tiempo se refiere.&lt;/p&gt;
+&lt;p&gt;Y es por eso que han habido varios intentos de crear un proceso &lt;strong&gt;init&lt;/strong&gt; que pueda levantar otro proceso único, pero cumpliendo con las responsabilidades que se le presuponen. Entre estos binarios, me gustaría mencionar dos: &lt;strong&gt;tini&lt;/strong&gt; y &lt;strong&gt;dumb-init&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;El problema&lt;/h2&gt;
+&lt;p&gt;Vamos a hacer este ejemplo con un servicio afectado por el problema, para su fácil demostración. No se trata de un servicio raro o de uso minoritario, sino que estamos hablando de &lt;strong&gt;haproxy&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Vamos a partir del más simple de los balanceadores basados en &lt;strong&gt;haproxy&lt;/strong&gt; y &lt;strong&gt;alpine linux&lt;/strong&gt;, con una configuración mínima (por no decir nula).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@docker:~/docker/docker-init$ cat context/Dockerfile
+FROM alpine:3.6
+RUN apk add --no-cache haproxy
+COPY haproxy.cfg /etc/haproxy/
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;haproxy&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-f&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;/etc/haproxy/haproxy.cfg&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-db&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@docker:~/docker/docker-init$ cat context/haproxy.cfg
+global
+    chroot /var/lib/haproxy
+    user haproxy
+    group haproxy
+
+defaults
+    mode http
+
+listen stats
+    &lt;span class="nb"&gt;bind&lt;/span&gt; *:8080
+    stats &lt;span class="nb"&gt;enable&lt;/span&gt;
+    stats uri /
+
+&lt;span class="c1"&gt;#listen web&lt;/span&gt;
+&lt;span class="c1"&gt;#    bind *:80&lt;/span&gt;
+&lt;span class="c1"&gt;#    balance roundrobin&lt;/span&gt;
+&lt;span class="c1"&gt;#    server web1 web1:80 check&lt;/span&gt;
+&lt;span class="c1"&gt;#    server web2 web2:80 check&lt;/span&gt;
+gerard@docker:~/docker/docker-init$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La vamos a construir siguiendo los comandos habituales:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@docker:~/docker/docker-init$ docker build -t balancer context/
+Sending build context to Docker daemon &lt;span class="m"&gt;3&lt;/span&gt;.072 kB
+...
+Successfully built 499dc4873adb
+gerard@docker:~/docker/docker-init$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lo que vamos a ver es que la imagen no se detiene en un tiempo adecuado. Para ellos vamos a automatizar su levantamiento y su parada con &lt;strong&gt;docker-compose&lt;/strong&gt; y vamos a cronometrar lo segundo. Os adjunto el fichero &lt;em&gt;docker-compose.yml&lt;/em&gt;, aunque es relativamente simple.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@docker:~/docker/docker-init$ cat docker-compose.yml
+version: &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;
+services:
+  balancer:
+    image: balancer
+    container_name: balancer
+    hostname: balancer
+gerard@docker:~/docker/docker-init$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;dockerinit_default&amp;quot;&lt;/span&gt; with the default driver
+Creating balancer
+gerard@docker:~/docker/docker-init$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y podemos ver que este contenedor tan simple no acaba decentemente, teniendo que esperar 10 segundos para que &lt;strong&gt;docker&lt;/strong&gt; elimine el resto, cosa que es molesta y puede llevar a problemas futuros.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@docker:~/docker/docker-init$ &lt;span class="nb"&gt;time&lt;/span&gt; docker-compose down
+Stopping balancer ... &lt;span class="k"&gt;done&lt;/span&gt;
+Removing balancer ... &lt;span class="k"&gt;done&lt;/span&gt;
+Removing network dockerinit_default
+
+real    0m10,486s
+user    0m0,348s
+sys     0m0,028s
+gerard@docker:~/docker/docker-init$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;La solución&lt;/h2&gt;
+&lt;p&gt;Ambas soluciones propuestas (&lt;strong&gt;tini&lt;/strong&gt; y &lt;strong&gt;dumb-init&lt;/strong&gt;) funcionan de la misma forma: ejecutan el comando que se les pasa en los argumentos. De esta forma, el comando "peligroso" se ejecuta con PID diferente de 1, siendo el PID 1 el mismo &lt;em&gt;init&lt;/em&gt;. Podemos anteponer el &lt;em&gt;init&lt;/em&gt; sin muchas modificaciones; basta con instalar el &lt;em&gt;init&lt;/em&gt; y usar la directiva &lt;code&gt;ENTRYPOINT&lt;/code&gt; para anteponer el nuevo &lt;em&gt;init&lt;/em&gt;. Veamos ambos como ejemplo.&lt;/p&gt;
+&lt;h3&gt;Usando tini&lt;/h3&gt;
+&lt;p&gt;Podemos instalar el paquete &lt;strong&gt;tini&lt;/strong&gt; sin añadir una nueva línea en el &lt;em&gt;Dockerfile&lt;/em&gt;, aprovechando el &lt;code&gt;apk add&lt;/code&gt; del mismo &lt;strong&gt;haproxy&lt;/strong&gt;. Prefijamos nuestro &lt;code&gt;CMD&lt;/code&gt; con el binario &lt;strong&gt;tini&lt;/strong&gt; mediante el uso de &lt;code&gt;ENTRYPOINT&lt;/code&gt; y listo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@docker:~/docker/docker-init$ cat context/Dockerfile.2
+FROM alpine:3.6
+RUN apk add --no-cache haproxy tini
+COPY haproxy.cfg /etc/haproxy/
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;tini&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;haproxy&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-f&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;/etc/haproxy/haproxy.cfg&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-db&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@docker:~/docker/docker-init$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Construimos la nueva imagen, y tras modificar el &lt;em&gt;docker-compose.yml&lt;/em&gt;, la levantamos. Modificad el parámetro &lt;em&gt;image&lt;/em&gt; en el &lt;em&gt;docker-compose.yml&lt;/em&gt;, para reflejar el nuevo &lt;em&gt;tag&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@docker:~/docker/docker-init$ docker build -t balancer:v2 -f context/Dockerfile.2 context/
+Sending build context to Docker daemon  &lt;span class="m"&gt;5&lt;/span&gt;.12 kB
+...
+Successfully built 179697bbd3ed
+gerard@docker:~/docker/docker-init$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;dockerinit_default&amp;quot;&lt;/span&gt; with the default driver
+Creating balancer
+gerard@docker:~/docker/docker-init$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y midiendo el tiempo de parada, vemos que el problema ha desaparecido:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@docker:~/docker/docker-init$ &lt;span class="nb"&gt;time&lt;/span&gt; docker-compose down
+Stopping balancer ... &lt;span class="k"&gt;done&lt;/span&gt;
+Removing balancer ... &lt;span class="k"&gt;done&lt;/span&gt;
+Removing network dockerinit_default
+
+real    0m0,473s
+user    0m0,284s
+sys     0m0,020s
+gerard@docker:~/docker/docker-init$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Usando dumb-init&lt;/h3&gt;
+&lt;p&gt;Este caso es análogo al anterior, sin más cambios que el nombre del paquete a instalar y el binario del &lt;code&gt;ENTRYPOINT&lt;/code&gt;. Es importante notar que a pesar de partir del primer ejemplo, el resultado es prácticamente idéntico al segundo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@docker:~/docker/docker-init$ cat context/Dockerfile.3
+FROM alpine:3.6
+RUN apk add --no-cache haproxy dumb-init
+COPY haproxy.cfg /etc/haproxy/
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;dumb-init&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;haproxy&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-f&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;/etc/haproxy/haproxy.cfg&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-db&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@docker:~/docker/docker-init$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Construimos la nueva imagen, y tras modificar el &lt;em&gt;docker-compose.yml&lt;/em&gt;, la levantamos, justo como antes. Tened la precaución de usar nuevo &lt;em&gt;tag&lt;/em&gt; en el &lt;em&gt;docker-compose.yml&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@docker:~/docker/docker-init$ docker build -t balancer:v3 -f context/Dockerfile.3 context/
+Sending build context to Docker daemon  &lt;span class="m"&gt;5&lt;/span&gt;.12 kB
+...
+Successfully built 928c992c5251
+gerard@docker:~/docker/docker-init$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;dockerinit_default&amp;quot;&lt;/span&gt; with the default driver
+Creating balancer
+gerard@docker:~/docker/docker-init$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y midiendo el tiempo de parada, vemos que el problema también desaparece:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@docker:~/docker/docker-init$ &lt;span class="nb"&gt;time&lt;/span&gt; docker-compose down
+Stopping balancer ... &lt;span class="k"&gt;done&lt;/span&gt;
+Removing balancer ... &lt;span class="k"&gt;done&lt;/span&gt;
+Removing network dockerinit_default
+
+real    0m0,520s
+user    0m0,252s
+sys     0m0,060s
+gerard@docker:~/docker/docker-init$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;El hecho de tener procesos &lt;em&gt;zombie&lt;/em&gt; es más una molestia que un problema real, al menos mientras &lt;strong&gt;docker&lt;/strong&gt; pueda limpiar lo que quede al final. Sin embargo, las buenas maneras, y un proceso ágil de despliegue, nos sugieren encarecidamente que tratemos estos detalles de forma adecuada.&lt;/p&gt;
+&lt;p&gt;En cuanto al peso adicional en las imágenes por poner nuestros procesos &lt;em&gt;init&lt;/em&gt;, podemos ver que es casi nula:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@docker:~/docker/docker-init$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED              SIZE
+balancer            v3                  928c992c5251        About a minute ago   &lt;span class="m"&gt;5&lt;/span&gt;.674 MB
+balancer            v2                  179697bbd3ed        &lt;span class="m"&gt;5&lt;/span&gt; minutes ago        &lt;span class="m"&gt;5&lt;/span&gt;.651 MB
+balancer            latest              499dc4873adb        &lt;span class="m"&gt;9&lt;/span&gt; minutes ago        &lt;span class="m"&gt;5&lt;/span&gt;.631 MB
+alpine              &lt;span class="m"&gt;3&lt;/span&gt;.6                 7328f6f8b418        &lt;span class="m"&gt;7&lt;/span&gt; days ago           &lt;span class="m"&gt;3&lt;/span&gt;.966 MB
+gerard@docker:~/docker/docker-init$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Así pues, en caso de duda, ponerlo siempre nos puede ahorrar algunos dolores de cabeza, aunque por ahora los desconozcamos.&lt;/p&gt;</content><category term="docker"></category><category term="Dockerfile"></category><category term="tini"></category><category term="dumb-init"></category></entry><entry><title>Creando imágenes con estilo: la instrucción ONBUILD</title><link href="http://www.linuxsysadmin.tk/2017/08/creando-imagenes-con-estilo-la-instruccion-onbuild.html" rel="alternate"></link><published>2017-08-28T10:00:00+02:00</published><updated>2017-08-28T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-08-28:/2017/08/creando-imagenes-con-estilo-la-instruccion-onbuild.html</id><summary type="html">&lt;p&gt;En el día a día de mi trabajo, me encuentro con un conjunto muy variado de ficheros &lt;em&gt;Dockerfile&lt;/em&gt; que vienen a hacer lo mismo, pero de formas muy distintas. El fichero original se pasa de mano en mano, pervirtiéndose en cada paso y al final queda hecho un gran asco …&lt;/p&gt;</summary><content type="html">&lt;p&gt;En el día a día de mi trabajo, me encuentro con un conjunto muy variado de ficheros &lt;em&gt;Dockerfile&lt;/em&gt; que vienen a hacer lo mismo, pero de formas muy distintas. El fichero original se pasa de mano en mano, pervirtiéndose en cada paso y al final queda hecho un gran asco.&lt;/p&gt;
 &lt;p&gt;Para evitar la reinvención de la rueda me propuse crear una imagen base, para que los desarrolladores no tuvieran que crear una imagen, que muchas veces está mal por falta de conocimiento de &lt;em&gt;Linux&lt;/em&gt;, y que reduzca al máximo su participación.&lt;/p&gt;
 &lt;h2&gt;Un caso simple&lt;/h2&gt;
 &lt;p&gt;Imaginemos una aplicación hecha con &lt;em&gt;NodeJS&lt;/em&gt;, que es el caso más frecuente en mi trabajo; nuestro flujo de trabajo exige el uso de &lt;em&gt;npm&lt;/em&gt; y del correspondiente &lt;em&gt;package.json&lt;/em&gt;. Una instalación básica es bastante simple: se trata de copiar la aplicación, ejecutar el &lt;code&gt;npm install&lt;/code&gt; de rigor y declarar que se va a ejecutar con &lt;code&gt;npm start&lt;/code&gt;.&lt;/p&gt;
