@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/</loc>
-<lastmod>2017-09-11T08:50:18-00:00</lastmod>
+<lastmod>2017-09-19T14:53:31-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/archives.html</loc>
-<lastmod>2017-09-11T08:50:18-00:00</lastmod>
+<lastmod>2017-09-19T14:53:31-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tags.html</loc>
-<lastmod>2017-09-11T08:50:18-00:00</lastmod>
+<lastmod>2017-09-19T14:53:31-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/categories.html</loc>
-<lastmod>2017-09-11T08:50:18-00:00</lastmod>
+<lastmod>2017-09-19T14:53:31-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.tk/about.html</loc>
-<lastmod>2017-09-11T08:50:18-00:00</lastmod>
+<lastmod>2017-09-19T14:53:31-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/2017/09/escribiendo-servicios-web-con-python-y-falcon.html</loc>
+<lastmod>2017-09-19T17:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -747,7 +754,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/category/desarrollo.html</loc>
-<lastmod>2017-09-04T10:00:00-00:15</lastmod>
+<lastmod>2017-09-19T17:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -837,6 +844,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/rest.html</loc>
+<lastmod>2017-09-19T17:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/inventario.html</loc>
 <lastmod>2016-08-15T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -851,8 +865,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/mysql.html</loc>
-<lastmod>2017-03-06T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/falcon.html</loc>
+<lastmod>2017-09-19T17:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -978,7 +992,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/python.html</loc>
-<lastmod>2017-09-04T10:00:00-00:15</lastmod>
+<lastmod>2017-09-19T17:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -991,8 +1005,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/nginx.html</loc>
-<lastmod>2017-07-10T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/framework.html</loc>
+<lastmod>2017-09-19T17:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1061,6 +1075,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.tk/tag/logical-volume-manager.html</loc>
+<lastmod>2016-02-15T08:30:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.tk/tag/nfs.html</loc>
 <lastmod>2017-02-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1084,6 +1105,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/release.html</loc>
 <lastmod>2016-10-10T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.tk/tag/nginx.html</loc>
+<lastmod>2017-07-10T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1412,7 +1440,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/microframework.html</loc>
-<lastmod>2017-05-15T10:00:00-00:15</lastmod>
+<lastmod>2017-09-19T17:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1518,13 +1546,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.tk/tag/api.html</loc>
 <lastmod>2017-07-10T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>http://www.linuxsysadmin.tk/tag/framework.html</loc>
-<lastmod>2017-05-15T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1747,8 +1768,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.tk/tag/logical-volume-manager.html</loc>
-<lastmod>2016-02-15T08:30:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.tk/tag/mysql.html</loc>
+<lastmod>2017-03-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2147,7 +2168,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.tk/author/gerard.html</loc>
-<lastmod>2017-09-11T10:00:00-00:15</lastmod>
+<lastmod>2017-09-19T17:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

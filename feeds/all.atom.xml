@@ -1,5 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-09-11T10:00:00+02:00</updated><entry><title>Un proceso inicial para docker: tini y dumb-init</title><link href="http://www.linuxsysadmin.tk/2017/09/un-proceso-inicial-para-docker-tini-y-dumb-init.html" rel="alternate"></link><published>2017-09-11T10:00:00+02:00</published><updated>2017-09-11T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-09-11:/2017/09/un-proceso-inicial-para-docker-tini-y-dumb-init.html</id><summary type="html">&lt;p&gt;Siempre nos han vendido que &lt;strong&gt;docker&lt;/strong&gt; ejecuta un solo proceso, y que este puede ser cualquiera. Sin embargo, este proceso se ejecuta con PID 1, que es un poco especial y que tiene unas responsabilidades adicionales. Si no queremos implementarlas, podemos usar alguna solución que ya lo haga para nosotros …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Siempre nos han vendido que &lt;strong&gt;docker&lt;/strong&gt; ejecuta un solo proceso, y que este puede ser cualquiera. Sin embargo, este proceso se ejecuta con PID 1, que es un poco especial y que tiene unas responsabilidades adicionales. Si no queremos implementarlas, podemos usar alguna solución que ya lo haga para nosotros.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-09-19T17:00:00+02:00</updated><entry><title>Escribiendo servicios web con python y falcon</title><link href="http://www.linuxsysadmin.tk/2017/09/escribiendo-servicios-web-con-python-y-falcon.html" rel="alternate"></link><published>2017-09-19T17:00:00+02:00</published><updated>2017-09-19T17:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-09-19:/2017/09/escribiendo-servicios-web-con-python-y-falcon.html</id><summary type="html">&lt;p&gt;El otro día me vi leyendo artículos sobre arquitecturas basadas en servicios web, especialmente centrados en patrones REST y codificados en JSON. No es la primera vez que hago algo con &lt;em&gt;frameworks&lt;/em&gt; no específicos, pero tras buscar un poco por internet, descubrí un &lt;em&gt;framework&lt;/em&gt; específico para servicios REST llamado &lt;strong&gt;falcon …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día me vi leyendo artículos sobre arquitecturas basadas en servicios web, especialmente centrados en patrones REST y codificados en JSON. No es la primera vez que hago algo con &lt;em&gt;frameworks&lt;/em&gt; no específicos, pero tras buscar un poco por internet, descubrí un &lt;em&gt;framework&lt;/em&gt; específico para servicios REST llamado &lt;strong&gt;falcon&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Se trata de u &lt;em&gt;microframework&lt;/em&gt; de diseño simplista, ligero, rápido y sin ninguna magia. Eso nos lleva al punto que me enamoró: no toma ninguna decisión y no obliga a usar ninguna capa de persistencia ni ningún motor de plantillas o serializado.&lt;/p&gt;
+&lt;p&gt;Desde el punto de vista de rendimiento, está pensado para volar; no incluye nada que no sea específico de servicios web y sabe sacar provecho del &lt;em&gt;hardware&lt;/em&gt; moderno, permitiendo miles de peticiones por segundo en un &lt;em&gt;hardware&lt;/em&gt; modesto.&lt;/p&gt;
+&lt;h2&gt;Una aplicación básica&lt;/h2&gt;
+&lt;p&gt;De forma similar a otros &lt;em&gt;frameworks&lt;/em&gt; &lt;strong&gt;python&lt;/strong&gt;, nuestra API es una instancia de un objeto que se dedica a despachar rutas a controladores (aunque aquí los llaman &lt;em&gt;resources&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;A diferencia de otros &lt;em&gt;frameworks&lt;/em&gt;, sin embargo, el registro de &lt;em&gt;resources&lt;/em&gt; a rutas es explícita, invocando el método &lt;code&gt;add_route&lt;/code&gt; en el objeto API, que es la aplicación que debemos servir.&lt;/p&gt;
+&lt;p&gt;Los &lt;em&gt;resources&lt;/em&gt; registrados en las rutas son simplemente objetos que definen los métodos &lt;code&gt;on_get&lt;/code&gt;, &lt;code&gt;on_post&lt;/code&gt; y hermanos, que se van a invocar dependiendo de verbo HTTP que nos sea solicitado, con un objeto tipo &lt;em&gt;request&lt;/em&gt; y uno tipo &lt;em&gt;response&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Veamos un ejemplo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/webservice$ cat requirements.txt 
+&lt;span class="nv"&gt;falcon&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.2.0
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/webservice$ cat app.py 
+import falcon
+import json
+
+
+class HelloResource&lt;span class="o"&gt;(&lt;/span&gt;object&lt;span class="o"&gt;)&lt;/span&gt;:
+    def on_get&lt;span class="o"&gt;(&lt;/span&gt;self, req, res&lt;span class="o"&gt;)&lt;/span&gt;:
+        res.body &lt;span class="o"&gt;=&lt;/span&gt; json.dumps&lt;span class="o"&gt;(&lt;/span&gt;
+            &lt;span class="o"&gt;{&lt;/span&gt;
+                &lt;span class="s1"&gt;&amp;#39;message&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;Hello world&amp;#39;&lt;/span&gt;,
+            &lt;span class="o"&gt;}&lt;/span&gt;
+        &lt;span class="o"&gt;)&lt;/span&gt;
+
+&lt;span class="nv"&gt;api&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; falcon.API&lt;span class="o"&gt;()&lt;/span&gt;
+api.add_route&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;, HelloResource&lt;span class="o"&gt;())&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/webservice$ cat server.py 
+&lt;span class="c1"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+from wsgiref.simple_server import make_server
+from app import api
+
+&lt;span class="nv"&gt;host&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;127.0.0.1&amp;#39;&lt;/span&gt;
+&lt;span class="nv"&gt;port&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;8000&lt;/span&gt;
+&lt;span class="nv"&gt;server&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; make_server&lt;span class="o"&gt;(&lt;/span&gt;host, port, api&lt;span class="o"&gt;)&lt;/span&gt;
+try:
+    print &lt;span class="s1"&gt;&amp;#39;Serving on %s:%s...&amp;#39;&lt;/span&gt; % &lt;span class="o"&gt;(&lt;/span&gt;host, port&lt;span class="o"&gt;)&lt;/span&gt;
+    server.serve_forever&lt;span class="o"&gt;()&lt;/span&gt;
+except KeyboardInterrupt:
+    print &lt;span class="s1"&gt;&amp;#39;\nBye!&amp;#39;&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/webservice$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ejecutamos el servidor de pruebas arriba expuesto para que sirva nuestra API simple:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/webservice$ ./server.py 
+Serving on &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1:8000...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y solo nos falta hacer alguna petición para ver como funciona:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ curl -i http://localhost:8000/
+HTTP/1.0 &lt;span class="m"&gt;200&lt;/span&gt; OK
+...  
+content-type: application/json&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nv"&gt;charset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;UTF-8
+
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Hello world&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~$ curl -siX POST http://localhost:8000/ &lt;span class="p"&gt;|&lt;/span&gt; head -1
+HTTP/1.0 &lt;span class="m"&gt;405&lt;/span&gt; Method Not Allowed
+gerard@sirius:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos una API simple. Lo normal es que los datos salgan de algún tipo de base de datos, pero &lt;strong&gt;falcon&lt;/strong&gt; no ofrece soporte para ninguna, con lo que deberíamos usar lo que más nos convenga, por ejemplo &lt;strong&gt;mongodb&lt;/strong&gt; con &lt;strong&gt;mongoengine&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;En caso de querer extraer parámetros de la url, podemos registrar la ruta con una URL de la forma &lt;code&gt;/hello/{name}&lt;/code&gt;. De esta forma, nuestra función recibiría un parámetro &lt;code&gt;name&lt;/code&gt; con el contenido de ese segmento de URL, además de los objetos &lt;em&gt;request&lt;/em&gt; y &lt;em&gt;response&lt;/em&gt;. Un  ejemplo a continuación:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/webservice$ cat app.py 
+import falcon
+import json
+
+
+class HelloResource&lt;span class="o"&gt;(&lt;/span&gt;object&lt;span class="o"&gt;)&lt;/span&gt;:
+    def on_get&lt;span class="o"&gt;(&lt;/span&gt;self, req, res, name&lt;span class="o"&gt;)&lt;/span&gt;:
+        res.body &lt;span class="o"&gt;=&lt;/span&gt; json.dumps&lt;span class="o"&gt;(&lt;/span&gt;
+            &lt;span class="o"&gt;{&lt;/span&gt;
+                &lt;span class="s1"&gt;&amp;#39;message&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;Hello %s&amp;#39;&lt;/span&gt; % name,
+            &lt;span class="o"&gt;}&lt;/span&gt;
+        &lt;span class="o"&gt;)&lt;/span&gt;
+
+&lt;span class="nv"&gt;api&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; falcon.API&lt;span class="o"&gt;()&lt;/span&gt;
+api.add_route&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/hello/{name}&amp;#39;&lt;/span&gt;, HelloResource&lt;span class="o"&gt;())&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/webservice$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Hooks&lt;/h2&gt;
+&lt;p&gt;Otra funcionalidad muy interesante son los &lt;em&gt;hooks&lt;/em&gt;, que son métodos con la forma &lt;code&gt;func(req, resp, resource, params)&lt;/code&gt; que se llaman antes o después de atender la función del &lt;em&gt;resource&lt;/em&gt; y nos permiten hacer varias cosas; desde añadir código hasta condicionar un método concreto.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: Los &lt;em&gt;hooks&lt;/em&gt; registrados con &lt;code&gt;falcon.after&lt;/code&gt; no disponen del parámetro &lt;code&gt;params&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Veamos un ejemplo, para evitar el código de serialización en cada método:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/webservice$ cat app.py 
+import falcon
+import json
+
+
+def serialize&lt;span class="o"&gt;(&lt;/span&gt;req, res, resource&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="k"&gt;if&lt;/span&gt; req.client_accepts_json:
+        res.body &lt;span class="o"&gt;=&lt;/span&gt; json.dumps&lt;span class="o"&gt;(&lt;/span&gt;res.body&lt;span class="o"&gt;)&lt;/span&gt;
+
+
+class HelloResource&lt;span class="o"&gt;(&lt;/span&gt;object&lt;span class="o"&gt;)&lt;/span&gt;:
+    @falcon.after&lt;span class="o"&gt;(&lt;/span&gt;serialize&lt;span class="o"&gt;)&lt;/span&gt;
+    def on_get&lt;span class="o"&gt;(&lt;/span&gt;self, req, res, name&lt;span class="o"&gt;)&lt;/span&gt;:
+        res.body &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+            &lt;span class="s1"&gt;&amp;#39;message&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;Hello %s&amp;#39;&lt;/span&gt; % name,
+        &lt;span class="o"&gt;}&lt;/span&gt;
+
+&lt;span class="nv"&gt;api&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; falcon.API&lt;span class="o"&gt;()&lt;/span&gt;
+api.add_route&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/hello/{name}&amp;#39;&lt;/span&gt;, HelloResource&lt;span class="o"&gt;())&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/webservice$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos queda decir que estos &lt;em&gt;hooks&lt;/em&gt; se pueden registrar a nivel de método o de &lt;em&gt;resource&lt;/em&gt; (aplicaría a todos los métodos del &lt;em&gt;resource&lt;/em&gt;). En caso de querer que aplique a toda la aplicación habría que escribir un &lt;em&gt;middleware&lt;/em&gt; apropiado.&lt;/p&gt;</content><category term="falcon"></category><category term="REST"></category><category term="microframework"></category><category term="framework"></category><category term="python"></category></entry><entry><title>Un proceso inicial para docker: tini y dumb-init</title><link href="http://www.linuxsysadmin.tk/2017/09/un-proceso-inicial-para-docker-tini-y-dumb-init.html" rel="alternate"></link><published>2017-09-11T10:00:00+02:00</published><updated>2017-09-11T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-09-11:/2017/09/un-proceso-inicial-para-docker-tini-y-dumb-init.html</id><summary type="html">&lt;p&gt;Siempre nos han vendido que &lt;strong&gt;docker&lt;/strong&gt; ejecuta un solo proceso, y que este puede ser cualquiera. Sin embargo, este proceso se ejecuta con PID 1, que es un poco especial y que tiene unas responsabilidades adicionales. Si no queremos implementarlas, podemos usar alguna solución que ya lo haga para nosotros …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Siempre nos han vendido que &lt;strong&gt;docker&lt;/strong&gt; ejecuta un solo proceso, y que este puede ser cualquiera. Sin embargo, este proceso se ejecuta con PID 1, que es un poco especial y que tiene unas responsabilidades adicionales. Si no queremos implementarlas, podemos usar alguna solución que ya lo haga para nosotros.&lt;/p&gt;
 &lt;p&gt;Entre estas responsabilidades, podemos citar 3 que se consideran básicas:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Tiene que adoptar y controlar todos aquellos procesos que quedan huérfanos debido a una mala gestión de su anterior padre&lt;/li&gt;
