@@ -1,5 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-08-14T10:00:00+02:00</updated><entry><title>Espiando trazas de red con tcpdump</title><link href="http://www.linuxsysadmin.tk/2017/08/espiando-trazas-de-red-con-tcpdump.html" rel="alternate"></link><published>2017-08-14T10:00:00+02:00</published><updated>2017-08-14T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-08-14:/2017/08/espiando-trazas-de-red-con-tcpdump.html</id><summary type="html">&lt;p&gt;No suelen haber errores de conexión en los entornos que administro; sin embargo, alguna vez los hay. Esto supone un marrón, porque la red es ese elemento que escapa a mi gestión; la gente que se dedica a eso suele negar estos problemas argumentando cualquier excusa. Para eso está &lt;strong&gt;tcpdump …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;No suelen haber errores de conexión en los entornos que administro; sin embargo, alguna vez los hay. Esto supone un marrón, porque la red es ese elemento que escapa a mi gestión; la gente que se dedica a eso suele negar estos problemas argumentando cualquier excusa. Para eso está &lt;strong&gt;tcpdump&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.tk/" rel="alternate"></link><link href="http://www.linuxsysadmin.tk/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.tk/</id><updated>2017-09-25T10:00:00+02:00</updated><entry><title>Un terminal SSH en nuestro navegador web usando Wetty</title><link href="http://www.linuxsysadmin.tk/2017/09/un-terminal-ssh-en-nuestro-navegador-web-usando-wetty.html" rel="alternate"></link><published>2017-09-25T10:00:00+02:00</published><updated>2017-09-25T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-09-25:/2017/09/un-terminal-ssh-en-nuestro-navegador-web-usando-wetty.html</id><summary type="html">&lt;p&gt;No siempre tenemos acceso a nuestro terminal SSH favorito para acceder a nuestros entornos en caso de emergencia. De hecho, en muchas redes suelen prohibir el tráfico por otros puertos ajenos a la navegación web. Para estos casos podemos tener un terminal SSH a través de una página web propia …&lt;/p&gt;</summary><content type="html">&lt;p&gt;No siempre tenemos acceso a nuestro terminal SSH favorito para acceder a nuestros entornos en caso de emergencia. De hecho, en muchas redes suelen prohibir el tráfico por otros puertos ajenos a la navegación web. Para estos casos podemos tener un terminal SSH a través de una página web propia.&lt;/p&gt;
+&lt;p&gt;El truco consiste en usar &lt;strong&gt;Wetty&lt;/strong&gt;. Si os interesa, podéis encontrar el repositorio de GitHub &lt;a href="https://github.com/krishnasrinivas/wetty"&gt;aquí&lt;/a&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Terminal over HTTP and HTTPS. Wetty is an alternative to ajaxterm/anyterm but much better than them because wetty uses ChromeOS' terminal emulator (hterm) which is a full fledged implementation of terminal emulation written entirely in Javascript. Also it uses websockets instead of Ajax and hence better response time.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Podemos encontrar una imagen en &lt;a href="https://hub.docker.com/r/nathanleclaire/wetty/"&gt;DockerHub&lt;/a&gt;, que nos vale para una demostración rápida. Sin embargo, el gran tamaño de su imagen la hace impracticable para un uso habitual.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/wetty$ docker images &lt;span class="p"&gt;|&lt;/span&gt; grep wetty
+nathanleclaire/wetty   latest              94635175ccb6        &lt;span class="m"&gt;2&lt;/span&gt; years ago         &lt;span class="m"&gt;1&lt;/span&gt;.2 GB
+gerard@aldebaran:~/docker/wetty$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Así pues, podemos construir otra imagen, basándonos en los pasos de instalación que aparecían en GitHub, con el único añadido de un fichero &lt;em&gt;.tar.gz&lt;/em&gt; con una imagen del repositorio.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/wetty$ tar tf wetty.tar.gz 
+.gitignore
+Dockerfile
+Gruntfile.js
+LICENSE
+README.md
+app.js
+bin/
+bin/wetty.conf
+bin/wetty.js
+bin/wetty.service
+package.json
+public/
+public/index.html
+public/wetty/
+public/wetty/hterm_all.js
+public/wetty/index.html
+public/wetty/wetty.js
+terminal.png
+gerard@aldebaran:~/docker/wetty$ cat Dockerfile 
+FROM alpine:3.5
+RUN apk add --no-cache nodejs tini
+ENV &lt;span class="nv"&gt;NODE_ENV&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;production
+ADD wetty.tar.gz /srv/app/
+WORKDIR /srv/app/
+RUN apk add --no-cache python2 make g++ &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    npm install &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    apk del python2 make g++
+RUN adduser guest -D &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;guest:guest&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; chpasswd
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/sbin/tini&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;node&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;app.js&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-p&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;3000&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@aldebaran:~/docker/wetty$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esto nos deja una imagen mucho más pequeña, pero nos limita a entrar por SSH en un terminal de &lt;em&gt;Alpine Linux&lt;/em&gt;, que aunque magnífico, no es tan completo como el de otras distribuciones. Usad la distribución que más os convenga.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/wetty$ docker images &lt;span class="p"&gt;|&lt;/span&gt; grep wetty
+wetty                  latest              45635173077e        &lt;span class="m"&gt;35&lt;/span&gt; minutes ago      &lt;span class="m"&gt;56&lt;/span&gt;.2 MB
+gerard@aldebaran:~/docker/wetty$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como pretendo utilizarla como un máquina de salto, este tamaño y limitación son más que adecuados. Sin embargo no estaba dispuesto a pagar 1,2 gb por un contenedor que no hace nada por sí mismo...&lt;/p&gt;
+&lt;p&gt;Solo nos queda ejecutar la imagen exponiendo el puerto 3000 del contenedor, para poder acceder remotamente desde el navegador, que en mi caso estaría en &lt;a href="http://localhost:3000/"&gt;http://localhost:3000/&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/wetty$ docker run -ti --rm -p &lt;span class="m"&gt;3000&lt;/span&gt;:3000 wetty
+http on port &lt;span class="m"&gt;3000&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: Esta página está desprotegida, sin autenticación ni encriptación. Una buena opción está en dotarla de ambos usando un servidor web &lt;strong&gt;nginx&lt;/strong&gt; como frontal. También es interesante modificar el usuario de entrada con par de claves, añadir un cliente de SSH para saltar, y lo que más nos interese.&lt;/p&gt;</content><category term="ssh"></category><category term="terminal"></category><category term="wetty"></category></entry><entry><title>Espiando trazas de red con tcpdump</title><link href="http://www.linuxsysadmin.tk/2017/08/espiando-trazas-de-red-con-tcpdump.html" rel="alternate"></link><published>2017-08-14T10:00:00+02:00</published><updated>2017-08-14T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.tk,2017-08-14:/2017/08/espiando-trazas-de-red-con-tcpdump.html</id><summary type="html">&lt;p&gt;No suelen haber errores de conexión en los entornos que administro; sin embargo, alguna vez los hay. Esto supone un marrón, porque la red es ese elemento que escapa a mi gestión; la gente que se dedica a eso suele negar estos problemas argumentando cualquier excusa. Para eso está &lt;strong&gt;tcpdump …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;No suelen haber errores de conexión en los entornos que administro; sin embargo, alguna vez los hay. Esto supone un marrón, porque la red es ese elemento que escapa a mi gestión; la gente que se dedica a eso suele negar estos problemas argumentando cualquier excusa. Para eso está &lt;strong&gt;tcpdump&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Las pocas veces que tengo que recurrir a esto para conseguir evidencias siempre es una fiesta, porque como no lo utilizo de forma habitual, me olvido fácilmente de los parámetros más básicos. Y esto pretende ser una chuleta para el futuro.&lt;/p&gt;
 &lt;p&gt;Normalmente solo me encargo de capturar los paquetes en un fichero de formato &lt;em&gt;.pcap&lt;/em&gt;, dejando a otro más experto en el tema el gusto de interpretarlos. Claro que muchas otras veces son usados como evidencias sin análisis previo...&lt;/p&gt;
 &lt;h2&gt;Elegir la interfaz a usar&lt;/h2&gt;
