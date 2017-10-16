@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/</loc>
-<lastmod>2017-10-09T13:42:06-00:00</lastmod>
+<lastmod>2017-10-16T08:08:37-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2017-10-09T13:42:06-00:00</lastmod>
+<lastmod>2017-10-16T08:08:37-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2017-10-09T13:42:06-00:00</lastmod>
+<lastmod>2017-10-16T08:08:37-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2017-10-09T13:42:06-00:00</lastmod>
+<lastmod>2017-10-16T08:08:37-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2017-10-09T13:42:06-00:00</lastmod>
+<lastmod>2017-10-16T08:08:37-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/2017/10/los-context-managers-de-python.html</loc>
+<lastmod>2017-10-16T10:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -775,7 +782,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/category/desarrollo.html</loc>
-<lastmod>2017-09-19T17:00:00-00:15</lastmod>
+<lastmod>2017-10-16T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1020,7 +1027,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/python.html</loc>
-<lastmod>2017-09-19T17:00:00-00:15</lastmod>
+<lastmod>2017-10-16T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1343,6 +1350,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/red.html</loc>
 <lastmod>2017-08-14T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/tag/context-manager.html</loc>
+<lastmod>2017-10-16T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2224,7 +2238,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2017-10-09T16:30:00-00:15</lastmod>
+<lastmod>2017-10-16T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

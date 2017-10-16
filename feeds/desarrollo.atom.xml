@@ -1,5 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Desarrollo</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-09-19T17:00:00+02:00</updated><entry><title>Escribiendo servicios web con python y falcon</title><link href="http://www.linuxsysadmin.ml/2017/09/escribiendo-servicios-web-con-python-y-falcon.html" rel="alternate"></link><published>2017-09-19T17:00:00+02:00</published><updated>2017-09-19T17:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-09-19:/2017/09/escribiendo-servicios-web-con-python-y-falcon.html</id><summary type="html">&lt;p&gt;El otro día me vi leyendo artículos sobre arquitecturas basadas en servicios web, especialmente centrados en patrones REST y codificados en JSON. No es la primera vez que hago algo con &lt;em&gt;frameworks&lt;/em&gt; no específicos, pero tras buscar un poco por internet, descubrí un &lt;em&gt;framework&lt;/em&gt; específico para servicios REST llamado &lt;strong&gt;falcon …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día me vi leyendo artículos sobre arquitecturas basadas en servicios web, especialmente centrados en patrones REST y codificados en JSON. No es la primera vez que hago algo con &lt;em&gt;frameworks&lt;/em&gt; no específicos, pero tras buscar un poco por internet, descubrí un &lt;em&gt;framework&lt;/em&gt; específico para servicios REST llamado &lt;strong&gt;falcon&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Desarrollo</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-10-16T10:00:00+02:00</updated><entry><title>Los context managers de python</title><link href="http://www.linuxsysadmin.ml/2017/10/los-context-managers-de-python.html" rel="alternate"></link><published>2017-10-16T10:00:00+02:00</published><updated>2017-10-16T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-10-16:/2017/10/los-context-managers-de-python.html</id><summary type="html">&lt;p&gt;Muchas veces nos pasa que necesitamos un objeto de esos que luego necesitan algún tipo de limpieza cuando ya no se necesitan. Cualquier programador avanzado os puede contar lo fácil que es olvidarse de la destrucción del mismo, y de las veces que lo ha hecho, él u otras personas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Muchas veces nos pasa que necesitamos un objeto de esos que luego necesitan algún tipo de limpieza cuando ya no se necesitan. Cualquier programador avanzado os puede contar lo fácil que es olvidarse de la destrucción del mismo, y de las veces que lo ha hecho, él u otras personas.&lt;/p&gt;
+&lt;p&gt;Por suerte, &lt;strong&gt;python&lt;/strong&gt; nos ofrece una forma de crear objetos con el &lt;em&gt;keyword with&lt;/em&gt;, que nos asegura que el mismo lenguaje de programación llamará a los métodos de creación y destrucción del objeto. Este mecanismo se llama &lt;em&gt;context manager&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Veamos un ejemplo simple de un &lt;em&gt;context manager&lt;/em&gt; muy común y disponible en la biblioteca estándar de &lt;strong&gt;python&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/contextmanagers$ cat example.py 
+&lt;span class="c1"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+with open&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;greeting.txt&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; as f:
+    print f.read&lt;span class="o"&gt;()&lt;/span&gt;
+gerard@sirius:~/contextmanagers$ cat greeting.txt 
+Hello world
+gerard@sirius:~/contextmanagers$ ./example.py 
+Hello world
+
+gerard@sirius:~/contextmanagers$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La idea es que la función &lt;code&gt;open()&lt;/code&gt; va a inicializar y devolver un &lt;em&gt;file descriptor&lt;/em&gt; que vamos a recoger como &lt;code&gt;f&lt;/code&gt; gracias al &lt;em&gt;keyword&lt;/em&gt; &lt;code&gt;as&lt;/code&gt;. Cuando salgamos del bloque &lt;code&gt;with&lt;/code&gt;, se va a llamar a una función que se va a encargar de cerrar el fichero a nivel de sistema operativo.&lt;/p&gt;
+&lt;h2&gt;Creando un context manager&lt;/h2&gt;
+&lt;p&gt;Un &lt;em&gt;context manager&lt;/em&gt; no es otra cosa que un objeto que tiene dos métodos: &lt;code&gt;__enter__()&lt;/code&gt; y &lt;code&gt;__exit__()&lt;/code&gt;. El método &lt;code&gt;__enter__()&lt;/code&gt; es el que inicializa el objeto a devolver (el que recogemos con el &lt;em&gt;keyword&lt;/em&gt; &lt;code&gt;as&lt;/code&gt;) y lo devuelve, aunque es opcional devolver algo. El método &lt;code&gt;__exit__()&lt;/code&gt; es el que se llama automáticamente cuando acaba el bloque &lt;code&gt;with&lt;/code&gt;, y se encargaría de destruir el objeto devuelto.&lt;/p&gt;
+&lt;p&gt;Veamos un ejemplo para generar el marcado HTML de una forma programática:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/contextmanagers$ cat html_v1.py 
+&lt;span class="c1"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+class Tag&lt;span class="o"&gt;(&lt;/span&gt;object&lt;span class="o"&gt;)&lt;/span&gt;:
+
+    def __init__&lt;span class="o"&gt;(&lt;/span&gt;self, tag&lt;span class="o"&gt;)&lt;/span&gt;:
+        self.tag &lt;span class="o"&gt;=&lt;/span&gt; tag
+
+    def __enter__&lt;span class="o"&gt;(&lt;/span&gt;self&lt;span class="o"&gt;)&lt;/span&gt;:
+        print &lt;span class="s1"&gt;&amp;#39;&amp;lt;%s&amp;gt;&amp;#39;&lt;/span&gt; % self.tag
+
+    def __exit__&lt;span class="o"&gt;(&lt;/span&gt;self, *args&lt;span class="o"&gt;)&lt;/span&gt;:
+        print &lt;span class="s1"&gt;&amp;#39;&amp;lt;/%s&amp;gt;&amp;#39;&lt;/span&gt; % self.tag
+
+with Tag&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;div&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:
+    with Tag&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;p&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:
+        print &lt;span class="s1"&gt;&amp;#39;Lorem ipsum&amp;#39;&lt;/span&gt;
+    with Tag&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;p&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:
+        print &lt;span class="s1"&gt;&amp;#39;et dolor sit amet&amp;#39;&lt;/span&gt;
+gerard@sirius:~/contextmanagers$ ./html_v1.py 
+&amp;lt;div&amp;gt;
+&amp;lt;p&amp;gt;
+Lorem ipsum
+&amp;lt;/p&amp;gt;
+&amp;lt;p&amp;gt;
+et dolor sit amet
+&amp;lt;/p&amp;gt;
+&amp;lt;/div&amp;gt;
+gerard@sirius:~/contextmanagers$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Este ejemplo no es muy útil, pero queda claro como y cuando se llaman los creadores y destructores. Es interesante que no devolvemos ninguna variable en el método &lt;code&gt;__enter__()&lt;/code&gt;, y que por lo tanto, la cláusula &lt;code&gt;with&lt;/code&gt; no recoge nada con un &lt;code&gt;as&lt;/code&gt;.&lt;/p&gt;
+&lt;h2&gt;Una versión todavía más simple&lt;/h2&gt;
+&lt;p&gt;Crear el objeto que va a actuar como &lt;em&gt;context manager&lt;/em&gt; es interesante, pero también un montón de líneas en nuestro código. Si queremos simplificar nuestro &lt;em&gt;context manager&lt;/em&gt;, podemos encontrar la solución en la biblioteca estándar de &lt;strong&gt;python&lt;/strong&gt;, en el módulo &lt;em&gt;contextlib&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;De esta forma, el ejemplo anterior queda reducido a uno similar, que es el que sigue:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/contextmanagers$ cat html_v2.py 
+&lt;span class="c1"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+from contextlib import contextmanager
+
+@contextmanager
+def tag&lt;span class="o"&gt;(&lt;/span&gt;tag&lt;span class="o"&gt;)&lt;/span&gt;:
+    print &lt;span class="s1"&gt;&amp;#39;&amp;lt;%s&amp;gt;&amp;#39;&lt;/span&gt; % tag
+    yield
+    print &lt;span class="s1"&gt;&amp;#39;&amp;lt;/%s&amp;gt;&amp;#39;&lt;/span&gt; % tag
+
+with tag&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;div&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:
+    with tag&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;p&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:
+        print &lt;span class="s1"&gt;&amp;#39;Lorem ipsum&amp;#39;&lt;/span&gt;
+    with tag&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;p&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:
+        print &lt;span class="s1"&gt;&amp;#39;et dolor sit amet&amp;#39;&lt;/span&gt;
+gerard@sirius:~/contextmanagers$ ./html_v2.py 
+&amp;lt;div&amp;gt;
+&amp;lt;p&amp;gt;
+Lorem ipsum
+&amp;lt;/p&amp;gt;
+&amp;lt;p&amp;gt;
+et dolor sit amet
+&amp;lt;/p&amp;gt;
+&amp;lt;/div&amp;gt;
+gerard@sirius:~/contextmanagers$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;E·n este caso es todavía más simple de entender: tenemos la inicialización, devolvemos la variable o nada con el &lt;em&gt;keyword&lt;/em&gt; &lt;code&gt;yield&lt;/code&gt; y finalmente tenemos el código de finalización.&lt;/p&gt;</content><category term="python"></category><category term="context manager"></category></entry><entry><title>Escribiendo servicios web con python y falcon</title><link href="http://www.linuxsysadmin.ml/2017/09/escribiendo-servicios-web-con-python-y-falcon.html" rel="alternate"></link><published>2017-09-19T17:00:00+02:00</published><updated>2017-09-19T17:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-09-19:/2017/09/escribiendo-servicios-web-con-python-y-falcon.html</id><summary type="html">&lt;p&gt;El otro día me vi leyendo artículos sobre arquitecturas basadas en servicios web, especialmente centrados en patrones REST y codificados en JSON. No es la primera vez que hago algo con &lt;em&gt;frameworks&lt;/em&gt; no específicos, pero tras buscar un poco por internet, descubrí un &lt;em&gt;framework&lt;/em&gt; específico para servicios REST llamado &lt;strong&gt;falcon …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día me vi leyendo artículos sobre arquitecturas basadas en servicios web, especialmente centrados en patrones REST y codificados en JSON. No es la primera vez que hago algo con &lt;em&gt;frameworks&lt;/em&gt; no específicos, pero tras buscar un poco por internet, descubrí un &lt;em&gt;framework&lt;/em&gt; específico para servicios REST llamado &lt;strong&gt;falcon&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Se trata de u &lt;em&gt;microframework&lt;/em&gt; de diseño simplista, ligero, rápido y sin ninguna magia. Eso nos lleva al punto que me enamoró: no toma ninguna decisión y no obliga a usar ninguna capa de persistencia ni ningún motor de plantillas o serializado.&lt;/p&gt;
 &lt;p&gt;Desde el punto de vista de rendimiento, está pensado para volar; no incluye nada que no sea específico de servicios web y sabe sacar provecho del &lt;em&gt;hardware&lt;/em&gt; moderno, permitiendo miles de peticiones por segundo en un &lt;em&gt;hardware&lt;/em&gt; modesto.&lt;/p&gt;
 &lt;h2&gt;Una aplicación básica&lt;/h2&gt;
