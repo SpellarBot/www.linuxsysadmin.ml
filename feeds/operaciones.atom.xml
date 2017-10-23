@@ -1,5 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-09-25T10:00:00+02:00</updated><entry><title>Un terminal SSH en nuestro navegador web usando Wetty</title><link href="http://www.linuxsysadmin.ml/2017/09/un-terminal-ssh-en-nuestro-navegador-web-usando-wetty.html" rel="alternate"></link><published>2017-09-25T10:00:00+02:00</published><updated>2017-09-25T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-09-25:/2017/09/un-terminal-ssh-en-nuestro-navegador-web-usando-wetty.html</id><summary type="html">&lt;p&gt;No siempre tenemos acceso a nuestro terminal SSH favorito para acceder a nuestros entornos en caso de emergencia. De hecho, en muchas redes suelen prohibir el tráfico por otros puertos ajenos a la navegación web. Para estos casos podemos tener un terminal SSH a través de una página web propia …&lt;/p&gt;</summary><content type="html">&lt;p&gt;No siempre tenemos acceso a nuestro terminal SSH favorito para acceder a nuestros entornos en caso de emergencia. De hecho, en muchas redes suelen prohibir el tráfico por otros puertos ajenos a la navegación web. Para estos casos podemos tener un terminal SSH a través de una página web propia.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-10-23T10:00:00+02:00</updated><entry><title>Usar un sistema de ficheros de lectura y escritura en un fichero .tar.gz</title><link href="http://www.linuxsysadmin.ml/2017/10/usar-un-sistema-de-ficheros-de-lectura-y-escritura-en-un-fichero-targz.md.html" rel="alternate"></link><published>2017-10-23T10:00:00+02:00</published><updated>2017-10-23T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-10-23:/2017/10/usar-un-sistema-de-ficheros-de-lectura-y-escritura-en-un-fichero-targz.md.html</id><summary type="html">&lt;p&gt;¿Alguna vez habéis querido mirar en fichero &lt;em&gt;.tar.gz&lt;/em&gt;, pero sin tener que descomprimirlo? Tal vez te gustaría extraer solo unos pocos ficheros; puede que lo que te interese es trabajar con una carpeta a la que le modificamos los archivos, sin tener que archivar esta carpeta cada cierto tiempo …&lt;/p&gt;</summary><content type="html">&lt;p&gt;¿Alguna vez habéis querido mirar en fichero &lt;em&gt;.tar.gz&lt;/em&gt;, pero sin tener que descomprimirlo? Tal vez te gustaría extraer solo unos pocos ficheros; puede que lo que te interese es trabajar con una carpeta a la que le modificamos los archivos, sin tener que archivar esta carpeta cada cierto tiempo.&lt;/p&gt;
+&lt;p&gt;En este caso, tenemos un sistema de ficheros bastante interesante que se llama &lt;strong&gt;archivemount&lt;/strong&gt;, y que nos permite ver un fichero &lt;em&gt;.tar.gz&lt;/em&gt; como si de una carpeta local más se tratara. Al desmontar este sistema de fichero, se crea el mismo fichero de nuevo, de forma automática, y con previa copia del anterior.&lt;/p&gt;
+&lt;p&gt;Según la &lt;a href="https://en.wikipedia.org/wiki/Archivemount"&gt;wikipedia&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;archivemount is a FUSE-based file system for Unix variants, including Linux. Its purpose is to mount archives (i.e. tar, tar.gz, etc.) to a mount point where it can be read from or written to as with any other file system. This makes accessing the contents of the archive, which may be compressed, transparent to other programs, without decompressing them.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Para demostrar como funciona, necesitaremos una máquina normal. Como pienso desecharla tal como haya escrito estas palabras, voy a usar un contenedor &lt;strong&gt;docker&lt;/strong&gt; con una &lt;strong&gt;Debian Jessie&lt;/strong&gt;; la distribución no debería ser importante.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: No se puede usar el comando &lt;strong&gt;archivemount&lt;/strong&gt; en un contenedor &lt;strong&gt;docker&lt;/strong&gt;, a menos que se levante con la opción &lt;em&gt;--privileged&lt;/em&gt;, que es lo que yo he usado.&lt;/p&gt;
+&lt;p&gt;Vamos a empezar instalando el paquete &lt;strong&gt;archivemount&lt;/strong&gt;, que nos va a dar las herramientas para montar nuestros ficheros comprimidos. Cada distribución lo hace a su manera; revisa la documentación de la tuya.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@cfed45d103a2:~# apt-get install archivemount
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following extra packages will be installed:
+  fuse libalgorithm-c3-perl libarchive-extract-perl libarchive13 libcgi-fast-perl libcgi-pm-perl libclass-c3-perl libclass-c3-xs-perl libcpan-meta-perl libdata-optlist-perl
+  libdata-section-perl libfcgi-perl libfuse2 libgdbm3 liblog-message-perl liblog-message-simple-perl liblzo2-2 libmodule-build-perl libmodule-pluggable-perl libmodule-signature-perl
+  libmro-compat-perl libnettle4 libpackage-constants-perl libparams-util-perl libpod-latex-perl libpod-readme-perl libregexp-common-perl libsoftware-license-perl libsub-exporter-perl
+  libsub-install-perl libterm-ui-perl libtext-soundex-perl libtext-template-perl libxml2 perl perl-modules rename sgml-base xml-core
+Suggested packages:
+  lrzip perl-doc libterm-readline-gnu-perl libterm-readline-perl-perl make libb-lint-perl libcpanplus-dist-build-perl libcpanplus-perl libfile-checktree-perl libobject-accessor-perl
+  sgml-base-doc debhelper
+Recommended packages:
+  libarchive-tar-perl
+The following NEW packages will be installed:
+  archivemount fuse libalgorithm-c3-perl libarchive-extract-perl libarchive13 libcgi-fast-perl libcgi-pm-perl libclass-c3-perl libclass-c3-xs-perl libcpan-meta-perl libdata-optlist-perl
+  libdata-section-perl libfcgi-perl libfuse2 libgdbm3 liblog-message-perl liblog-message-simple-perl liblzo2-2 libmodule-build-perl libmodule-pluggable-perl libmodule-signature-perl
+  libmro-compat-perl libnettle4 libpackage-constants-perl libparams-util-perl libpod-latex-perl libpod-readme-perl libregexp-common-perl libsoftware-license-perl libsub-exporter-perl
+  libsub-install-perl libterm-ui-perl libtext-soundex-perl libtext-template-perl libxml2 perl perl-modules rename sgml-base xml-core
+&lt;span class="m"&gt;0&lt;/span&gt; upgraded, &lt;span class="m"&gt;40&lt;/span&gt; newly installed, &lt;span class="m"&gt;0&lt;/span&gt; to remove and &lt;span class="m"&gt;0&lt;/span&gt; not upgraded.
+Need to get &lt;span class="m"&gt;8172&lt;/span&gt; kB of archives.
+After this operation, &lt;span class="m"&gt;41&lt;/span&gt;.7 MB of additional disk space will be used.
+Do you want to &lt;span class="k"&gt;continue&lt;/span&gt;? &lt;span class="o"&gt;[&lt;/span&gt;Y/n&lt;span class="o"&gt;]&lt;/span&gt; y
+...
+root@cfed45d103a2:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para montar un fichero comprimido en una carpeta, necesitamos ambos, así que los creamos. El fichero comprimido va a ser un fichero &lt;em&gt;.tar.gz&lt;/em&gt; vacío.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@cfed45d103a2:~# mkdir data
+root@cfed45d103a2:~# tar czvf data.tar.gz --files-from /dev/null
+root@cfed45d103a2:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vemos como nos queda la carpeta local, con ambas cosas:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@cfed45d103a2:~# tree
+.
+&lt;span class="p"&gt;|&lt;/span&gt;-- data
+&lt;span class="sb"&gt;`&lt;/span&gt;-- data.tar.gz
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;1&lt;/span&gt; file
+root@cfed45d103a2:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo queda montar el sistema de ficheros para empezar a utilizarlo. Aunque se podría delegar el montaje del sistema de ficheros al sistema escribiendo en &lt;em&gt;/etc/fstab&lt;/em&gt;, vamos a hacerlo manualmente en este ejemplo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@cfed45d103a2:~# archivemount data.tar.gz data/
+root@cfed45d103a2:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a crear algunos ficheros en la carpeta. Es especialmente interesante fijarnos en que trabajamos con una carpeta normal, como lo haríamos habitualmente. De esta forma, hasta un &lt;em&gt;software&lt;/em&gt; existente podría modificar este sistema de ficheros.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@cfed45d103a2:~# &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;no content&amp;quot;&lt;/span&gt; &amp;gt; data/README
+root@cfed45d103a2:~# &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;1.0&amp;quot;&lt;/span&gt; &amp;gt; data/VERSION
+root@cfed45d103a2:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Comprobamos lo que tenemos, solo para asegurar el éxito:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@cfed45d103a2:~# tree
+.
+&lt;span class="p"&gt;|&lt;/span&gt;-- data
+&lt;span class="p"&gt;|&lt;/span&gt;   &lt;span class="p"&gt;|&lt;/span&gt;-- README
+&lt;span class="p"&gt;|&lt;/span&gt;   &lt;span class="sb"&gt;`&lt;/span&gt;-- VERSION
+&lt;span class="sb"&gt;`&lt;/span&gt;-- data.tar.gz
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;3&lt;/span&gt; files
+root@cfed45d103a2:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Cuando acabemos de trabajar con el sistema de ficheros y se desmonte, pasará la magia; se va a comprimir el sistema de ficheros en el fichero &lt;em&gt;.tar.gz&lt;/em&gt; con el nombre inicial, previa copia del antiguo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@cfed45d103a2:~# umount data
+root@cfed45d103a2:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver que el sistema de ficheros ya no está disponible, como esperaríamos de un &lt;em&gt;umount&lt;/em&gt;; el fichero que montamos en su momento ha quedado como &lt;em&gt;data.tar.gz.orig&lt;/em&gt;, y el fichero &lt;em&gt;data.tar.gz&lt;/em&gt; tiene el contenido actualizado de nuestra sesión de trabajo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@cfed45d103a2:~# tree
+.
+&lt;span class="p"&gt;|&lt;/span&gt;-- data
+&lt;span class="p"&gt;|&lt;/span&gt;-- data.tar.gz
+&lt;span class="sb"&gt;`&lt;/span&gt;-- data.tar.gz.orig
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;2&lt;/span&gt; files
+root@cfed45d103a2:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos comprobar el contenido simplemente verificando lo que hay en los ficheros:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@cfed45d103a2:~# tar tzf data.tar.gz
+tar: Removing leading &lt;span class="sb"&gt;`&lt;/span&gt;/&lt;span class="err"&gt;&amp;#39;&lt;/span&gt; from member names
+/README
+/VERSION
+root@cfed45d103a2:~# tar tzf data.tar.gz.orig 
+root@cfed45d103a2:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y como podíamos esperar, el fichero &lt;em&gt;data.gz.orig&lt;/em&gt; está vacío y el fichero &lt;em&gt;data.tar.gz&lt;/em&gt; contiene los nuevos ficheros. Es importante recalcar que si se volviera a montar y desmontar el sistema de ficheros -y hubieran cambios en el mismo-, se volvería a crear el fichero &lt;em&gt;data.tar.gz&lt;/em&gt;, y el &lt;em&gt;data.tar.gz.orig&lt;/em&gt; quedaría sobrescrito de nuevo.&lt;/p&gt;</content><category term="linux"></category><category term="archivemount"></category><category term="mount"></category><category term="tar"></category><category term="gz"></category><category term="targz"></category></entry><entry><title>Un terminal SSH en nuestro navegador web usando Wetty</title><link href="http://www.linuxsysadmin.ml/2017/09/un-terminal-ssh-en-nuestro-navegador-web-usando-wetty.html" rel="alternate"></link><published>2017-09-25T10:00:00+02:00</published><updated>2017-09-25T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-09-25:/2017/09/un-terminal-ssh-en-nuestro-navegador-web-usando-wetty.html</id><summary type="html">&lt;p&gt;No siempre tenemos acceso a nuestro terminal SSH favorito para acceder a nuestros entornos en caso de emergencia. De hecho, en muchas redes suelen prohibir el tráfico por otros puertos ajenos a la navegación web. Para estos casos podemos tener un terminal SSH a través de una página web propia …&lt;/p&gt;</summary><content type="html">&lt;p&gt;No siempre tenemos acceso a nuestro terminal SSH favorito para acceder a nuestros entornos en caso de emergencia. De hecho, en muchas redes suelen prohibir el tráfico por otros puertos ajenos a la navegación web. Para estos casos podemos tener un terminal SSH a través de una página web propia.&lt;/p&gt;
 &lt;p&gt;El truco consiste en usar &lt;strong&gt;Wetty&lt;/strong&gt;. Si os interesa, podéis encontrar el repositorio de GitHub &lt;a href="https://github.com/krishnasrinivas/wetty"&gt;aquí&lt;/a&gt;.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Terminal over HTTP and HTTPS. Wetty is an alternative to ajaxterm/anyterm but much better than them because wetty uses ChromeOS' terminal emulator (hterm) which is a full fledged implementation of terminal emulation written entirely in Javascript. Also it uses websockets instead of Ajax and hence better response time.&lt;/p&gt;

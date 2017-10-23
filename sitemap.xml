@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/</loc>
-<lastmod>2017-10-16T08:08:37-00:00</lastmod>
+<lastmod>2017-10-23T08:35:42-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2017-10-16T08:08:37-00:00</lastmod>
+<lastmod>2017-10-23T08:35:42-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2017-10-16T08:08:37-00:00</lastmod>
+<lastmod>2017-10-23T08:35:42-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2017-10-16T08:08:37-00:00</lastmod>
+<lastmod>2017-10-23T08:35:42-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2017-10-16T08:08:37-00:00</lastmod>
+<lastmod>2017-10-23T08:35:42-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/2017/10/usar-un-sistema-de-ficheros-de-lectura-y-escritura-en-un-fichero-targz.md.html</loc>
+<lastmod>2017-10-23T10:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -796,7 +803,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/category/operaciones.html</loc>
-<lastmod>2017-09-25T10:00:00-00:15</lastmod>
+<lastmod>2017-10-23T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -865,8 +872,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/wsgi.html</loc>
-<lastmod>2016-03-14T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/gz.html</loc>
+<lastmod>2017-10-23T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1215,8 +1222,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/encriptacion.html</loc>
-<lastmod>2016-08-15T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/targz.html</loc>
+<lastmod>2017-10-23T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1237,7 +1244,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/linux.html</loc>
-<lastmod>2017-07-24T10:00:00-00:15</lastmod>
+<lastmod>2017-10-23T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1308,6 +1315,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/isolinux.html</loc>
 <lastmod>2015-12-02T12:30:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/tag/gpg.html</loc>
+<lastmod>2016-01-11T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1462,6 +1476,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/haproxy.html</loc>
 <lastmod>2016-06-27T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/tag/wsgi.html</loc>
+<lastmod>2016-03-14T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1691,8 +1712,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/gpg.html</loc>
-<lastmod>2016-01-11T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/encriptacion.html</loc>
+<lastmod>2016-08-15T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1742,6 +1763,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/contenedor.html</loc>
 <lastmod>2016-05-23T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/tag/media.html</loc>
+<lastmod>2016-10-17T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1839,7 +1867,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/mount.html</loc>
-<lastmod>2016-03-28T08:00:00-00:15</lastmod>
+<lastmod>2017-10-23T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1922,6 +1950,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.ml/tag/tar.html</loc>
+<lastmod>2017-10-23T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.ml/tag/ansible.html</loc>
 <lastmod>2017-02-27T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1950,8 +1985,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/docker-compose.html</loc>
-<lastmod>2017-07-24T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/archivemount.html</loc>
+<lastmod>2017-10-23T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2202,8 +2237,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/media.html</loc>
-<lastmod>2016-10-17T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/docker-compose.html</loc>
+<lastmod>2017-07-24T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2238,7 +2273,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2017-10-16T10:00:00-00:15</lastmod>
+<lastmod>2017-10-23T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
