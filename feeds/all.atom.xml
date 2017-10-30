@@ -6376,7 +6376,6 @@ gerard@aldebaran:~/workspace$
 &lt;ul&gt;
 &lt;li&gt;Índice -&amp;gt; &lt;a href="http://localhost:2368/"&gt;http://localhost:2368/&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Post -&amp;gt; &lt;a href="http://localhost:2368/welcome-to-ghost/"&gt;http://localhost:2368/welcome-to-ghost/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2&gt;Un tema vacío&lt;/h2&gt;
 &lt;p&gt;Vamos a crear una carpeta local temporal con los ficheros requeridos, que luego vamos a comprimir en fichero &lt;em&gt;.zip&lt;/em&gt; para poder cargarlo en la interfaz de administración. Una vez &lt;strong&gt;Ghost&lt;/strong&gt; ya reconozca nuestro tema, no vamos a tener que reiniciar ningún proceso nunca.&lt;/p&gt;
