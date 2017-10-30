@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Múltiples servicios en un mismo contenedor Docker - Linux Sysadmin</title>
+    <title>cluster - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,26 +9,16 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.ml/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html">
 
-        <meta name="author" content="Gerard" />
-        <meta name="keywords" content="docker,runit,LAMP,apache,mysql,php" />
-        <meta name="description" content="Como ya sabemos, un contenedor docker solo puede ejecutar un proceso, y su finalización implica la parada del contenedor. Sin embargo, a veces nos puede interesar cargar los contenedores con algún servicio más, para hacerlos autosuficientes. Para ello, nos podemos ayudar de un gestor de procesos, como por ejemplo, runit …" />
+    <meta name="author" content="Gerard" />
+    <meta name="keywords" content="cluster" />
 
+    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Múltiples servicios en un mismo contenedor Docker"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.ml/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html"/>
-        <meta property="og:description" content="Como ya sabemos, un contenedor docker solo puede ejecutar un proceso, y su finalización implica la parada del contenedor. Sin embargo, a veces nos puede interesar cargar los contenedores con algún servicio más, para hacerlos autosuficientes. Para ello, nos podemos ayudar de un gestor de procesos, como por ejemplo, runit …"/>
-        <meta property="article:published_time" content="2017-03-06" />
-            <meta property="article:section" content="Sistemas" />
-            <meta property="article:tag" content="docker" />
-            <meta property="article:tag" content="runit" />
-            <meta property="article:tag" content="LAMP" />
-            <meta property="article:tag" content="apache" />
-            <meta property="article:tag" content="mysql" />
-            <meta property="article:tag" content="php" />
-            <meta property="article:author" content="Gerard" />
+        <meta property="og:type" content="website"/>
+        <meta property="og:title" content="Linux Sysadmin"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.ml"/>
+        <meta property="og:description" content="Linux Sysadmin"/>
 
 
     <!-- Bootstrap -->
@@ -44,8 +34,6 @@
 
 
 
-        <link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -87,11 +75,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-            <ol class="breadcrumb">
-                <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.ml/category/sistemas.html" title="Sistemas">Sistemas</a></li>
-                <li class="active">Múltiples servicios en un mismo contenedor Docker</li>
-            </ol>
+    <ol class="breadcrumb">
+        <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+        <li><a href="http://www.linuxsysadmin.ml/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
+        <li class="active">cluster</li>
+    </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -104,194 +92,13 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-    <section id="content">
-        <article>
-            <header class="page-header">
-                <h1>
-                    <a href="http://www.linuxsysadmin.ml/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html"
-                       rel="bookmark"
-                       title="Permalink to Múltiples servicios en un mismo contenedor Docker">
-                        Múltiples servicios en un mismo contenedor Docker
-                    </a>
-                </h1>
-            </header>
-            <div class="entry-content">
-                <div class="panel">
-                    <div class="panel-body">
-<footer class="post-info">
-    <span class="label label-default">Fecha</span>
-    <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2017-03-06T10:00:00+01:00"> 2017-03-06</time>
-    </span>
-
-
-            <span class="label label-default">Autor</span>
-            <a href="http://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
-
-        <span class="label label-default">Tiempo de lectura</span> 5 minutos
-        <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.ml/category/sistemas.html">Sistemas</a>
-
-
-<span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.ml/tag/docker.html">docker</a>
-        /
-	<a href="http://www.linuxsysadmin.ml/tag/runit.html">runit</a>
-        /
-	<a href="http://www.linuxsysadmin.ml/tag/lamp.html">LAMP</a>
-        /
-	<a href="http://www.linuxsysadmin.ml/tag/apache.html">apache</a>
-        /
-	<a href="http://www.linuxsysadmin.ml/tag/mysql.html">mysql</a>
-        /
-	<a href="http://www.linuxsysadmin.ml/tag/php.html">php</a>
-    
-</footer><!-- /.post-info -->                    </div>
+            <article>
+                <h2><a href="http://www.linuxsysadmin.ml/2017/10/montando-un-cluster-de-docker-con-docker-swarm.html">Montando un cluster de docker con docker swarm</a></h2>
+                <div class="summary"><p>Usar <strong>docker</strong> en nuestro dia a dia es muy interesante y tiene un montón de aplicaciones prácticas; sin embargo no es la mejor opción confiar en un único servidor en producción. Para tener alta disponibilidad y alto renidmiento podemos montar un cluster, como por ejemplo su implementación oficial, <strong>docker swarm …</strong></p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/10/montando-un-cluster-de-docker-con-docker-swarm.html">Seguir leyendo</a>
                 </div>
-                <p>Como ya sabemos, un contenedor <strong>docker</strong> solo puede ejecutar un proceso, y su finalización implica la parada del contenedor. Sin embargo, a veces nos puede interesar cargar los contenedores con algún servicio más, para hacerlos autosuficientes. Para ello, nos podemos ayudar de un <em>gestor de procesos</em>, como por ejemplo, <strong>runit</strong>.</p>
-<p>Antes de nada, <a href="https://blog.docker.com/2014/06/why-you-dont-need-to-run-sshd-in-docker/">una referencia en contra</a>; esto complica nuestro contenedor de una forma no recomendad por el propia autor de <strong>docker</strong>.</p>
-<blockquote>
-<p>If you need multiple processes, you need to add one at the top-level to take care of the others. In other words, you’re turning a lean and simple container into something much more complicated.</p>
-</blockquote>
-<p>Avisados quedáis; a partir de aquí, vamos a ver como hacerlo con un ejemplo bastante extendido: un servidor <a href="https://es.wikipedia.org/wiki/LAMP">LAMP</a>. La idea es que usaremos un <em>gestor de procesos</em> llamado <strong>runit</strong> (aunque hay otros candidatos), que me gusta por su simplicidad.</p>
-<h2>Ejemplo: El contenedor LAMP</h2>
-<p>Nuestro contenedor va a ser un servidor muy clásico, con un <strong>apache</strong>, un <strong>mysql</strong>, <strong>php5</strong> y los paquetes que esta configuración requiera, como por ejemplo, el driver de la base de datos <strong>php5-mysql</strong>.</p>
-<p><strong>AVISO</strong>: No voy a añadir las instrucciones de <em>docker build</em> ni de <em>docker run</em> porque no aportan nada nuevo. Mejor centrémonos en las partes importantes.</p>
-<p>Vamos a utilizar la siguiente topología en la carpeta del <em>Dockerfile</em>. La idea es que vamos a alojar el código <strong>php</strong> en la carpeta <em>www</em>, las configuraciones del <strong>apache</strong> en la carpeta <em>apache2</em> y las configuraciones de <strong>runit</strong> en <em>services</em>. No hay configuración específica para el <strong>mysql</strong>.</p>
-<div class="highlight"><pre><span></span>gerard@antares:~/docker/lamp$ tree
-.
-├── apache2
-│   ├── custom.conf
-│   └── site.conf
-├── services
-│   ├── apache2
-│   │   └── run
-│   └── mysql
-│       └── run
-├── www
-│   └── adminer.php
-└── Dockerfile
-
-<span class="m">5</span> directories, <span class="m">6</span> files
-gerard@antares:~/docker/lamp$ 
-</pre></div>
-
-
-<p>Y como no, el <em>Dockerfile</em> usado:</p>
-<div class="highlight"><pre><span></span>gerard@antares:~/docker/lamp$ cat Dockerfile 
-FROM debian:jessie
-ENV DEBIAN_FRONTEND noninteractive
-
-<span class="c1"># Paquetes necesarios</span>
-RUN apt-get update <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    apt-get install -y runit php5 php5-mysql mysql-server <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    rm -rf /var/lib/apt/lists/*
-
-<span class="c1"># Configuracion de runit</span>
-COPY services /etc/service
-
-<span class="c1"># Configuracion de apache</span>
-RUN unlink /etc/apache2/sites-enabled/000-default.conf
-COPY apache2/custom.conf /etc/apache2/conf-enabled
-
-<span class="c1"># Configuracion y contenido del sitio</span>
-COPY apache2/site.conf /etc/apache2/sites-enabled
-COPY www /srv/www
-
-CMD <span class="o">[</span><span class="s2">&quot;/usr/bin/runsvdir&quot;</span>, <span class="s2">&quot;/etc/service&quot;</span><span class="o">]</span>
-gerard@antares:~/docker/lamp$ 
-</pre></div>
-
-
-<h3>Runit</h3>
-<p>El proceso principal, que se va a dedicar a controlar los otros procesos es <strong>runit</strong>, concretamente mediante el binario <em>runsvdir</em>. De acuerdo a nuestro <em>Dockerfile</em>, va a gestionar un proceso por carpeta en <em>/etc/service</em>. Dentro de esta carpeta va a tener información de ejecución e información de estado.</p>
-<p>Es importante poner un <em>script</em> llamado <em>run</em> con permisos de ejecución, que es el <em>script</em> que <strong>runit</strong> va a ejecutar y monitorizar, reiniciándolo en caso de caerse. No hay sorpresas en estos <em>scripts</em>.</p>
-<div class="highlight"><pre><span></span>gerard@antares:~/docker/lamp$ cat services/apache2/run 
-<span class="c1">#!/bin/sh</span>
-
-<span class="nb">exec</span> /usr/sbin/apache2ctl -D FOREGROUND
-gerard@antares:~/docker/lamp$ cat services/mysql/run 
-<span class="c1">#!/bin/sh</span>
-
-<span class="nb">exec</span> /usr/bin/mysqld_safe
-gerard@antares:~/docker/lamp$ 
-</pre></div>
-
-
-<h3>Apache</h3>
-<p>El <strong>apache</strong> necesita la configuración del <em>virtualhost</em> que le indica lo que debe servir, y donde está; esto debe ir en <em>/etc/apache2/sites-enabled</em>, de acuerdo con el <em>layout</em> de directorios que utiliza la distribución usada (<strong>Debian</strong> en este caso). Hemos eliminado el <em>virtualhost</em> que viene por defecto.</p>
-<div class="highlight"><pre><span></span>gerard@antares:~/docker/lamp$ cat apache2/site.conf 
-&lt;VirtualHost *:80&gt;
-    DocumentRoot /srv/www
-    LogLevel info
-    ErrorLog <span class="si">${</span><span class="nv">APACHE_LOG_DIR</span><span class="si">}</span>/error.log
-    CustomLog <span class="si">${</span><span class="nv">APACHE_LOG_DIR</span><span class="si">}</span>/access.log combined
-&lt;/VirtualHost&gt;
-gerard@antares:~/docker/lamp$ 
-</pre></div>
-
-
-<p>El otro punto conflictivo es que el fichero de configuración base no lleva permisos para servir nada en <em>/srv/www</em>, sino en <em>/var/www</em>. Personalmente creo que el contenido debería estar en <em>/srv/www</em>, así que tengo que añadir estos permisos, que se puede hacer cómodamente con un fichero adicional en la carpeta <em>/etc/apache2/conf-enabled</em>, que se incluye desde el fichero <em>/etc/apache2/apache2.conf</em>.</p>
-<div class="highlight"><pre><span></span>gerard@antares:~/docker/lamp$ cat apache2/custom.conf 
-&lt;Directory /srv/&gt;
-    Options Indexes FollowSymLinks
-    AllowOverride None
-    Require all granted
-&lt;/Directory&gt;
-gerard@antares:~/docker/lamp$ 
-</pre></div>
-
-
-<h3>MySQL</h3>
-<p>No hay nada especial para <strong>mysql</strong>. Simplemente dejamos que la variable de entorno <em>DEBIAN_FRONTEND</em> indique a <strong>apt-get</strong> que no pregunte una contraseña para el usuario <em>root</em>, quedando este usuario sin contraseña. Esto debe ser revisado con esmero.</p>
-<h3>Contenido web</h3>
-<p>Para mantener limpia la carpeta de <em>build</em>, he decidido poner el contenido web en una carpeta <em>www</em> aparte. Simplemente se trata del <em>document root</em> de nuestro <em>virtualhost</em>.</p>
-<p>En este caso se ha usado <a href="https://www.adminer.org/">Adminer</a> que es una aplicación prefabricada de un solo fichero para administrar nuestra base de datos. La parte interesante es que se trata de algo hecho en <strong>php</strong> que se conecta a nuestro <strong>mysql</strong>, y nos demuestra que todo funciona. Reemplazad el contenido de esta carpeta por vuestro código final.</p>
-<h3>Más servicios</h3>
-<p>Se necesita subir código mediante un servidor <strong>FTP</strong> o <strong>SFTP</strong>, algún <strong>cron job</strong>, <strong>logrotate</strong> o lo que sea? Pues usad la misma filosofía: instalad, configurad e instruid a <strong>runit</strong> para que levante el proceso. Sin límites.</p>
-<p><strong>RESULTADO</strong>: Tras construir la imagen y ejecutarla, ya tenemos nuestro servidor funcionando en un solo contenedor.</p>
-            </div>
-            <!-- /.entry-content -->
-<section class="well" id="related-posts">
-    <h4>Posts relacionados:</h4>
-    <ul>
-        <li><a href="http://www.linuxsysadmin.ml/2017/07/montando-un-servidor-docker-con-debian-stretch.html">Montando un servidor docker con Debian Stretch</a></li>
-        <li><a href="http://www.linuxsysadmin.ml/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html">Lanzando playbooks de Ansible desde Jenkins</a></li>
-        <li><a href="http://www.linuxsysadmin.ml/2016/05/evolucionando-los-contenedores-docker.html">Evolucionando los contenedores: Docker</a></li>
-    </ul>
-</section>
-    <hr/>
-    <section class="comments" id="comments">
-        <h2>Comments</h2>
-
-        <div id="disqus_thread"></div>
-        <script type="text/javascript">
-            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
-
-                    var disqus_identifier = 'multiples-servicios-en-un-mismo-contenedor-docker';
-                var disqus_url = 'http://www.linuxsysadmin.ml/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html';
-
-            var disqus_config = function () {
-                this.language = "es";
-            };
-
-            /* * * DON'T EDIT BELOW THIS LINE * * */
-            (function () {
-                var dsq = document.createElement('script');
-                dsq.type = 'text/javascript';
-                dsq.async = true;
-                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            })();
-        </script>
-        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
-            Disqus.</a></noscript>
-        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-    </section>
-        </article>
-    </section>
+            </article>
+            <hr/>
 
         </div>
         <div class="col-sm-3" id="sidebar">

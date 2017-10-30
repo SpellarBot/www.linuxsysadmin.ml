@@ -1,5 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-10-23T10:00:00+02:00</updated><entry><title>Usar un sistema de ficheros de lectura y escritura en un fichero .tar.gz</title><link href="http://www.linuxsysadmin.ml/2017/10/usar-un-sistema-de-ficheros-de-lectura-y-escritura-en-un-fichero-targz.md.html" rel="alternate"></link><published>2017-10-23T10:00:00+02:00</published><updated>2017-10-23T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-10-23:/2017/10/usar-un-sistema-de-ficheros-de-lectura-y-escritura-en-un-fichero-targz.md.html</id><summary type="html">&lt;p&gt;¿Alguna vez habéis querido mirar en fichero &lt;em&gt;.tar.gz&lt;/em&gt;, pero sin tener que descomprimirlo? Tal vez te gustaría extraer solo unos pocos ficheros; puede que lo que te interese es trabajar con una carpeta a la que le modificamos los archivos, sin tener que archivar esta carpeta cada cierto tiempo …&lt;/p&gt;</summary><content type="html">&lt;p&gt;¿Alguna vez habéis querido mirar en fichero &lt;em&gt;.tar.gz&lt;/em&gt;, pero sin tener que descomprimirlo? Tal vez te gustaría extraer solo unos pocos ficheros; puede que lo que te interese es trabajar con una carpeta a la que le modificamos los archivos, sin tener que archivar esta carpeta cada cierto tiempo.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-10-30T10:00:00+01:00</updated><entry><title>Montando un cluster de docker con docker swarm</title><link href="http://www.linuxsysadmin.ml/2017/10/montando-un-cluster-de-docker-con-docker-swarm.html" rel="alternate"></link><published>2017-10-30T10:00:00+01:00</published><updated>2017-10-30T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-10-30:/2017/10/montando-un-cluster-de-docker-con-docker-swarm.html</id><summary type="html">&lt;p&gt;Usar &lt;strong&gt;docker&lt;/strong&gt; en nuestro dia a dia es muy interesante y tiene un montón de aplicaciones prácticas; sin embargo no es la mejor opción confiar en un único servidor en producción. Para tener alta disponibilidad y alto renidmiento podemos montar un cluster, como por ejemplo su implementación oficial, &lt;strong&gt;docker swarm …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Usar &lt;strong&gt;docker&lt;/strong&gt; en nuestro dia a dia es muy interesante y tiene un montón de aplicaciones prácticas; sin embargo no es la mejor opción confiar en un único servidor en producción. Para tener alta disponibilidad y alto renidmiento podemos montar un cluster, como por ejemplo su implementación oficial, &lt;strong&gt;docker swarm&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;Preparando los servidores&lt;/h2&gt;
+&lt;p&gt;Vamos a seguir el tutorial mismo de la página de docker, que nos invita a crear 3 servidores, siendo uno el &lt;em&gt;manager&lt;/em&gt; y el resto &lt;em&gt;nodos&lt;/em&gt;. Así pues, nuestro cluster se va a componer inicialmente de 3 servidores:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;shangrila&lt;/strong&gt; &amp;rarr; nuestro manager, con IP 192.168.56.2&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;arcadia&lt;/strong&gt; &amp;rarr; el nodo 1, con IP 192.168.56.3&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;eldorado&lt;/strong&gt; &amp;rarr; el nodo 2, con IP 192.168.56.4&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Para ello vamos a preparar tres máquinas que son las que van a componer el cluster de &lt;strong&gt;Docker&lt;/strong&gt;. Las máquinas solo necesitan &lt;strong&gt;docker&lt;/strong&gt; y me he guiado por &lt;a href="http://www.linuxsysadmin.ml/2017/07/montando-un-servidor-docker-con-debian-stretch.html"&gt;este artículo&lt;/a&gt;. Adicionalmente, he instalado el servicio &lt;strong&gt;NTP&lt;/strong&gt; siguiendo &lt;a href="http://www.linuxsysadmin.ml/2017/10/un-servicio-casi-imprescindible-ntp.html"&gt;este otro artículo&lt;/a&gt;, aunque esto es opcional.&lt;/p&gt;
+&lt;p&gt;Un punto importante a tener en cuenta es que las máquinas deben tener &lt;a href="https://docs.docker.com/engine/swarm/swarm-tutorial/#the-ip-address-of-the-manager-machine"&gt;conectividad con el manager&lt;/a&gt;, y deben poder accederse entre ellas por &lt;a href="https://docs.docker.com/engine/swarm/swarm-tutorial/#open-protocols-and-ports-between-the-hosts"&gt;algunos puertos&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Creando el manager&lt;/h2&gt;
+&lt;p&gt;Entramos por SSH en el manager (en nuestro caso &lt;strong&gt;shangrila&lt;/strong&gt;) y lanzamos el comando &lt;code&gt;docker swarm init&lt;/code&gt;. Esto nos va a crear un cluster con solamente un &lt;em&gt;manager&lt;/em&gt; y sin &lt;em&gt;nodos&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~$ docker swarm init --advertise-addr &lt;span class="m"&gt;192&lt;/span&gt;.168.56.2
+Swarm initialized: current node &lt;span class="o"&gt;(&lt;/span&gt;rtmzvsbndn4ox5mhzsgu2xi81&lt;span class="o"&gt;)&lt;/span&gt; is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-09ebvbcbqjttt3o6ssqfnkb1n4xuzf1e1jildujhkh7dpb6iaq-0i6smvy5g75h2mn82t8kv4ptd &lt;span class="m"&gt;192&lt;/span&gt;.168.56.2:2377
+
+To add a manager to this swarm, run &lt;span class="s1"&gt;&amp;#39;docker swarm join-token manager&amp;#39;&lt;/span&gt; and follow the instructions.
+
+gerard@shangrila:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;También hemos añadido el flag &lt;code&gt;--advertise-addr&lt;/code&gt; para indicar la IP del &lt;em&gt;manager&lt;/em&gt; que se va a usar para las comunicaciones con los diferentes nodos.&lt;/p&gt;
+&lt;p&gt;Ahora ya tenemos un cluster de &lt;em&gt;docker swarm&lt;/em&gt; operativo, aunque al no tener &lt;em&gt;nodos&lt;/em&gt;, no podemos usar algunos de los comandos, que son multinodo.&lt;/p&gt;
+&lt;p&gt;Podemos ver los nodos del cluster y el estado del mismo con unos pocos comandos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~$ docker info
+...
+Swarm: active
+ NodeID: rtmzvsbndn4ox5mhzsgu2xi81
+ Is Manager: &lt;span class="nb"&gt;true&lt;/span&gt;
+ ClusterID: krknl2v0llpyczyqg1ihi250d
+ Managers: &lt;span class="m"&gt;1&lt;/span&gt;
+ Nodes: &lt;span class="m"&gt;1&lt;/span&gt;
+ Orchestration:
+  Task History Retention Limit: &lt;span class="m"&gt;5&lt;/span&gt;
+ Raft:
+  Snapshot Interval: &lt;span class="m"&gt;10000&lt;/span&gt;
+  Number of Old Snapshots to Retain: &lt;span class="m"&gt;0&lt;/span&gt;
+  Heartbeat Tick: &lt;span class="m"&gt;1&lt;/span&gt;
+  Election Tick: &lt;span class="m"&gt;3&lt;/span&gt;
+ Dispatcher:
+  Heartbeat Period: &lt;span class="m"&gt;5&lt;/span&gt; seconds
+ CA Configuration:
+  Expiry Duration: &lt;span class="m"&gt;3&lt;/span&gt; months
+  Force Rotate: &lt;span class="m"&gt;0&lt;/span&gt;
+ Root Rotation In Progress: &lt;span class="nb"&gt;false&lt;/span&gt;
+ Node Address: &lt;span class="m"&gt;192&lt;/span&gt;.168.56.2
+ Manager Addresses:
+  &lt;span class="m"&gt;192&lt;/span&gt;.168.56.2:2377
+...
+gerard@shangrila:~$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS
+rtmzvsbndn4ox5mhzsgu2xi81 *   shangrila           Ready               Active              Leader
+gerard@shangrila:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Añadiendo nodos al cluster&lt;/h2&gt;
+&lt;p&gt;Para añadir un &lt;em&gt;nodo&lt;/em&gt; en el cluster, solo tenemos que entrar en ese nodo y lanzar el comando que nos sugirió el &lt;code&gt;docker init&lt;/code&gt;. Si no nos acordamos, siempre podemos pedir que nos lo repita:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~$ docker swarm join-token worker
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-09ebvbcbqjttt3o6ssqfnkb1n4xuzf1e1jildujhkh7dpb6iaq-0i6smvy5g75h2mn82t8kv4ptd &lt;span class="m"&gt;192&lt;/span&gt;.168.56.2:2377
+
+gerard@shangrila:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Así tal cual, lanzamos el comando en cualquier &lt;em&gt;nodo&lt;/em&gt; que deseemos preparar ahora. No es necesario poner todos los &lt;em&gt;nodos&lt;/em&gt; en este momento, pudiendo añadir &lt;em&gt;nodos&lt;/em&gt; en un futuro, tal como nuestro cluster lo vaya necesitando.&lt;/p&gt;
+&lt;p&gt;Lanzamos en &lt;strong&gt;arcadia&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@arcadia:~$ docker swarm join --token SWMTKN-1-09ebvbcbqjttt3o6ssqfnkb1n4xuzf1e1jildujhkh7dpb6iaq-0i6smvy5g75h2mn82t8kv4ptd &lt;span class="m"&gt;192&lt;/span&gt;.168.56.2:2377
+This node joined a swarm as a worker.
+gerard@arcadia:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y lanzamos en &lt;strong&gt;eldorado&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@eldorado:~$ docker swarm join --token SWMTKN-1-09ebvbcbqjttt3o6ssqfnkb1n4xuzf1e1jildujhkh7dpb6iaq-0i6smvy5g75h2mn82t8kv4ptd &lt;span class="m"&gt;192&lt;/span&gt;.168.56.2:2377
+This node joined a swarm as a worker.
+gerard@eldorado:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y podemos comprobar de nuevo el estado de nuestro cluster:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~$ docker info
+...
+Swarm: active
+ NodeID: rtmzvsbndn4ox5mhzsgu2xi81
+ Is Manager: &lt;span class="nb"&gt;true&lt;/span&gt;
+ ClusterID: krknl2v0llpyczyqg1ihi250d
+ Managers: &lt;span class="m"&gt;1&lt;/span&gt;
+ Nodes: &lt;span class="m"&gt;3&lt;/span&gt;
+ Orchestration:
+  Task History Retention Limit: &lt;span class="m"&gt;5&lt;/span&gt;
+ Raft:
+  Snapshot Interval: &lt;span class="m"&gt;10000&lt;/span&gt;
+  Number of Old Snapshots to Retain: &lt;span class="m"&gt;0&lt;/span&gt;
+  Heartbeat Tick: &lt;span class="m"&gt;1&lt;/span&gt;
+  Election Tick: &lt;span class="m"&gt;3&lt;/span&gt;
+ Dispatcher:
+  Heartbeat Period: &lt;span class="m"&gt;5&lt;/span&gt; seconds
+ CA Configuration:
+  Expiry Duration: &lt;span class="m"&gt;3&lt;/span&gt; months
+  Force Rotate: &lt;span class="m"&gt;0&lt;/span&gt;
+ Root Rotation In Progress: &lt;span class="nb"&gt;false&lt;/span&gt;
+ Node Address: &lt;span class="m"&gt;192&lt;/span&gt;.168.56.2
+ Manager Addresses:
+  &lt;span class="m"&gt;192&lt;/span&gt;.168.56.2:2377
+...
+gerard@shangrila:~$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS
+5p0wbl6rhvs5oo461xsmxhph4     eldorado            Ready               Active
+rtmzvsbndn4ox5mhzsgu2xi81 *   shangrila           Ready               Active              Leader
+su20j7s0itgssfcm8x5whz8o8     arcadia             Ready               Active
+gerard@shangrila:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;AVISO:&lt;/strong&gt; Tened en cuenta que los comandos de estado del cluster solo se pueden lanzar en un &lt;em&gt;manager&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Y con esto tenemos montado nuestro cluster.&lt;/p&gt;</content><category term="docker"></category><category term="swarm"></category><category term="cluster"></category></entry><entry><title>Usar un sistema de ficheros de lectura y escritura en un fichero .tar.gz</title><link href="http://www.linuxsysadmin.ml/2017/10/usar-un-sistema-de-ficheros-de-lectura-y-escritura-en-un-fichero-targz.md.html" rel="alternate"></link><published>2017-10-23T10:00:00+02:00</published><updated>2017-10-23T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-10-23:/2017/10/usar-un-sistema-de-ficheros-de-lectura-y-escritura-en-un-fichero-targz.md.html</id><summary type="html">&lt;p&gt;¿Alguna vez habéis querido mirar en fichero &lt;em&gt;.tar.gz&lt;/em&gt;, pero sin tener que descomprimirlo? Tal vez te gustaría extraer solo unos pocos ficheros; puede que lo que te interese es trabajar con una carpeta a la que le modificamos los archivos, sin tener que archivar esta carpeta cada cierto tiempo …&lt;/p&gt;</summary><content type="html">&lt;p&gt;¿Alguna vez habéis querido mirar en fichero &lt;em&gt;.tar.gz&lt;/em&gt;, pero sin tener que descomprimirlo? Tal vez te gustaría extraer solo unos pocos ficheros; puede que lo que te interese es trabajar con una carpeta a la que le modificamos los archivos, sin tener que archivar esta carpeta cada cierto tiempo.&lt;/p&gt;
 &lt;p&gt;En este caso, tenemos un sistema de ficheros bastante interesante que se llama &lt;strong&gt;archivemount&lt;/strong&gt;, y que nos permite ver un fichero &lt;em&gt;.tar.gz&lt;/em&gt; como si de una carpeta local más se tratara. Al desmontar este sistema de fichero, se crea el mismo fichero de nuevo, de forma automática, y con previa copia del anterior.&lt;/p&gt;
 &lt;p&gt;Según la &lt;a href="https://en.wikipedia.org/wiki/Archivemount"&gt;wikipedia&lt;/a&gt;:&lt;/p&gt;
 &lt;blockquote&gt;
