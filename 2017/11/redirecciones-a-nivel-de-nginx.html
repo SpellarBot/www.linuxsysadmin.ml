@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>root - Linux Sysadmin</title>
+    <title>Redirecciones a nivel de nginx - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,22 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.ml/2017/11/redirecciones-a-nivel-de-nginx.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="root" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="nginx,redirecciones" />
+        <meta name="description" content="No son pocas las veces que queremos hacer una redirección de algunos de nuestros dominios a otros. Puede que queramos añadir el clásico www delante del dominio, o tal vez queramos forzar el uso de https. Hacer copias de nuestro dominio no es viable, pero podemos usar redirecciones fijas 301 …" />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.ml"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Redirecciones a nivel de nginx"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.ml/2017/11/redirecciones-a-nivel-de-nginx.html"/>
+        <meta property="og:description" content="No son pocas las veces que queremos hacer una redirección de algunos de nuestros dominios a otros. Puede que queramos añadir el clásico www delante del dominio, o tal vez queramos forzar el uso de https. Hacer copias de nuestro dominio no es viable, pero podemos usar redirecciones fijas 301 …"/>
+        <meta property="article:published_time" content="2017-11-13" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="nginx" />
+            <meta property="article:tag" content="redirecciones" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,6 +40,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -75,11 +83,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.ml/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
-        <li class="active">root</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.ml/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Redirecciones a nivel de nginx</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -92,13 +100,237 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/06/un-root-shell-en-c.html">Un root shell en C</a></h2>
-                <div class="summary"><p>Cuando operamos un servidor de producción es habitual que no tengamos acceso habitual al usuario <em>root</em>, e incluso lo tengan altamente vigilado. Podemos intentar dejar una puerta trasera, por ejemplo poniendo un binario con el <em>setuid</em> bit activado, te pueden pillar. Sin embargo es posible dejar una puerta abierta oculta …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/06/un-root-shell-en-c.html">Seguir leyendo</a>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.ml/2017/11/redirecciones-a-nivel-de-nginx.html"
+                       rel="bookmark"
+                       title="Permalink to Redirecciones a nivel de nginx">
+                        Redirecciones a nivel de nginx
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2017-11-13T10:00:00+01:00"> 2017-11-13</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 5 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.ml/category/sistemas.html">Sistemas</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.ml/tag/nginx.html">nginx</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/redirecciones.html">redirecciones</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 </div>
-            </article>
-            <hr/>
+                <p>No son pocas las veces que queremos hacer una redirección de algunos de nuestros dominios a otros. Puede que queramos añadir el clásico <code>www</code> delante del dominio, o tal vez queramos forzar el uso de <code>https</code>. Hacer copias de nuestro dominio no es viable, pero podemos usar redirecciones fijas 301.</p>
+<p>Vamos a suponer en este artículo que tenemos un servidor <strong>nginx</strong> configurado para servir <em>virtualhosts</em>. En este ejemplo, vamos a poner uno por defecto y otro de ejemplo.</p>
+<p>Las reglas son simples:</p>
+<ul>
+<li>Serviremos la web de ejemplo para el dominio <em>www.example.com</em></li>
+<li>Queremos ver la misma web para el dominio <em>example.com</em> y no queremos duplicar contenido</li>
+<li>Serviremos una web por defecto en cualquier otro caso, para ver si lo hemos hecho bien</li>
+</ul>
+<h2>Preparación del ejemplo</h2>
+<p>Para que se pueda seguir el artículo, se proporciona el contexto necesario para construir una imagen <strong>docker</strong> en donde probarlo. Empezamos por el <em>Dockerfile</em>:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/nginx_redirects$ cat Dockerfile 
+FROM alpine:3.5
+RUN apk add --no-cache nginx <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    ln -s /dev/stdout /var/log/nginx/access.log <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    ln -s /dev/stderr /var/log/nginx/error.log <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    mkdir /run/nginx <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/
+CMD <span class="o">[</span><span class="s2">&quot;/usr/sbin/nginx&quot;</span>, <span class="s2">&quot;-g&quot;</span>, <span class="s2">&quot;daemon off;&quot;</span><span class="o">]</span>
+COPY conf.d/* /etc/nginx/conf.d/
+COPY www/ /srv/www/
+gerard@aldebaran:~/docker/nginx_redirects$ 
+</pre></div>
+
+
+<p>Y añadimos las configuraciones que <strong>nginx</strong> necesita:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/nginx_redirects$ cat nginx.conf 
+worker_processes <span class="m">1</span><span class="p">;</span>
+events <span class="o">{</span>
+    worker_connections <span class="m">1024</span><span class="p">;</span>
+<span class="o">}</span>
+http <span class="o">{</span>
+    include mime.types<span class="p">;</span>
+    default_type application/octet-stream<span class="p">;</span>
+    sendfile on<span class="p">;</span>
+    keepalive_timeout <span class="m">65</span><span class="p">;</span>
+    include conf.d/*<span class="p">;</span>
+<span class="o">}</span>
+gerard@aldebaran:~/docker/nginx_redirects$ cat conf.d/www 
+server <span class="o">{</span>
+    listen <span class="m">80</span> default<span class="p">;</span>
+    server_name _<span class="p">;</span>
+    root /srv/www/default<span class="p">;</span>
+    index index.html<span class="p">;</span>
+<span class="o">}</span>
+
+server <span class="o">{</span>
+    listen <span class="m">80</span><span class="p">;</span>
+    server_name www.example.com<span class="p">;</span>
+    root /srv/www/www.example.com<span class="p">;</span>
+    index index.html<span class="p">;</span>
+<span class="o">}</span>
+gerard@aldebaran:~/docker/nginx_redirects$ 
+</pre></div>
+
+
+<p>A modo de ejemplo, adjuntamos dos sitios de juguete que nos permitirnán probar nuestros <em>virtualhosts</em>:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/nginx_redirects$ tree www/
+www/
+├── default
+│   └── index.html
+└── www.example.com
+    └── index.html
+
+<span class="m">2</span> directories, <span class="m">2</span> files
+gerard@aldebaran:~/docker/nginx_redirects$ cat www/default/index.html 
+default site
+gerard@aldebaran:~/docker/nginx_redirects$ cat www/www.example.com/index.html 
+example site
+gerard@aldebaran:~/docker/nginx_redirects$ 
+</pre></div>
+
+
+<p>Construid la imagen y ponedla a correr, con los comandos habituales.</p>
+<p><strong>TRUCO</strong>: Como queremos probar <em>virtualhosts</em> y no queremos marear con servidores DNS, podemos tirar del fichero <em>/etc/hosts</em>, para que todos los dominios apunten a nuestro contenedor.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~$ cat /etc/hosts
+...  
+<span class="m">172</span>.17.0.2  example.com www.example.com www.otherdomain.com
+gerard@aldebaran:~$ 
+</pre></div>
+
+
+<h2>Problema y solución</h2>
+<p>Lanzamos una batería de peticiones con <strong>curl</strong> o alguna herramienta similar.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~$ curl http://www.example.com/
+example site
+gerard@aldebaran:~$ curl http://www.otherdomain.com/
+default site
+gerard@aldebaran:~$ curl http://example.com/
+default site
+gerard@aldebaran:~$ 
+</pre></div>
+
+
+<p>Todos los dominios apuntan a la dirección IP del mismo contenedor, y de ello sacamos algunas conclusiones:</p>
+<ul>
+<li>El dominio <em>www.example.com</em> funciona según lo esperado</li>
+<li>El dominio por defecto salta ante las peticiones que no pertenecen al dominio <em>www.example.com</em></li>
+<li>Las peticiones al dominio <em>example.com</em> caen en el <em>virtualhost</em> por defecto</li>
+</ul>
+<p>Podríamos haber creado otro <em>virtualhost</em> que sirviera una copia (o la misma carpeta) del dominio de ejemplo, pero no es elegante y en el caso de querer HTTPS no serviría. En estos casos, el estándar <em>de facto</em> es hacer una redirección al dominio correcto, mediante un código HTTP 301. Esto le indicará al navegador que la redirección es permanente y hará que este "se acuerde" de la redirección.</p>
+<p>Para ello necesitamos un nuevo <em>virtualhost</em>, o adaptar el que tenemos para que acepte expresiones regulares; no vamos a seguir este camino por simplicidad.</p>
+<p>Solo necesitaríamos utilizar el <a href="http://nginx.org/en/docs/http/ngx_http_rewrite_module.html#return">rewrite module</a> de <strong>nginx</strong> para forzar un código de retorno a la URL correcta. Exponemos este ejemplo a continuación:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/docker/nginx_redirects$ cat conf.d/www 
+server <span class="o">{</span>
+    listen <span class="m">80</span> default<span class="p">;</span>
+    server_name _<span class="p">;</span>
+    root /srv/www/default<span class="p">;</span>
+    index index.html<span class="p">;</span>
+<span class="o">}</span>
+
+server <span class="o">{</span>
+    listen <span class="m">80</span><span class="p">;</span>
+    server_name www.example.com<span class="p">;</span>
+    root /srv/www/www.example.com<span class="p">;</span>
+    index index.html<span class="p">;</span>
+<span class="o">}</span>
+
+server <span class="o">{</span>
+    listen <span class="m">80</span><span class="p">;</span>
+    server_name example.com<span class="p">;</span>
+    <span class="k">return</span> <span class="m">301</span> http://www.example.com<span class="nv">$request_uri</span><span class="p">;</span>
+<span class="o">}</span>
+gerard@aldebaran:~/docker/nginx_redirects$ 
+</pre></div>
+
+
+<p>Si recreamos la imagen y la ejecutamos de nuevo, vemos que nuestra web se comporta de la forma especificada al principio del artículo.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~$ curl -I http://example.com/
+HTTP/1.1 <span class="m">301</span> Moved Permanently
+Server: nginx/1.10.3
+Date: Tue, <span class="m">06</span> Jun <span class="m">2017</span> <span class="m">14</span>:47:57 GMT
+Content-Type: text/html
+Content-Length: <span class="m">185</span>
+Connection: keep-alive
+Location: http://www.example.com/
+
+gerard@aldebaran:~$ 
+</pre></div>
+
+
+<p>De esta forma, el navegador buscará la nueva página, de acuerdo a esta respuesta. Se fuerza la opción "follow redirects" en la salida del <strong>curl</strong> para poder observar este comportamiento:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~$ curl http://www.example.com/
+example site
+gerard@aldebaran:~$ curl http://www.otherdomain.com/
+default site
+gerard@aldebaran:~$ curl -L http://example.com/
+example site
+gerard@aldebaran:~$ 
+</pre></div>
+
+
+<p>Y lo mismo sería válido para forzar una redirección a HTTPS, aunque se deja como ejercicio al lector.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.ml/2015/11/restart-automatico-de-servicios-con-systemd.html">Restart automático de servicios con systemd</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2016/01/un-repositorio-de-debian-con-reprepro.html">Un repositorio de Debian con reprepro</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html">Restringiendo accesos web mediante autenticación básica</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'redirecciones-a-nivel-de-nginx';
+                var disqus_url = 'http://www.linuxsysadmin.ml/2017/11/redirecciones-a-nivel-de-nginx.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
 
         </div>
         <div class="col-sm-3" id="sidebar">
@@ -675,7 +907,7 @@ Linux Sysadmin            </a>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2016 Gerard
+         <div class="col-xs-10">&copy; 2017 Gerard
             &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>

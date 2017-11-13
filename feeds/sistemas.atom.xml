@@ -1,5 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-11-06T10:00:00+01:00</updated><entry><title>Uso básico de un cluster Docker Swarm</title><link href="http://www.linuxsysadmin.ml/2017/11/uso-basico-de-un-cluster-docker-swarm.html" rel="alternate"></link><published>2017-11-06T10:00:00+01:00</published><updated>2017-11-06T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-11-06:/2017/11/uso-basico-de-un-cluster-docker-swarm.html</id><summary type="html">&lt;p&gt;Usar un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;docker swarm&lt;/strong&gt; no es transparente para nuestro uso; necesitamos cambiar de mentalidad y tener en cuenta algunos conceptos. Donde antes hablábamos de contenedores, aquí se habla de &lt;strong&gt;servicios&lt;/strong&gt;, que básicamente son un número variable de contenedores repartidos por los diferentes nodos del &lt;em&gt;cluster&lt;/em&gt; de forma balanceada …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Usar un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;docker swarm&lt;/strong&gt; no es transparente para nuestro uso; necesitamos cambiar de mentalidad y tener en cuenta algunos conceptos. Donde antes hablábamos de contenedores, aquí se habla de &lt;strong&gt;servicios&lt;/strong&gt;, que básicamente son un número variable de contenedores repartidos por los diferentes nodos del &lt;em&gt;cluster&lt;/em&gt; de forma balanceada.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-11-13T10:00:00+01:00</updated><entry><title>Redirecciones a nivel de nginx</title><link href="http://www.linuxsysadmin.ml/2017/11/redirecciones-a-nivel-de-nginx.html" rel="alternate"></link><published>2017-11-13T10:00:00+01:00</published><updated>2017-11-13T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-11-13:/2017/11/redirecciones-a-nivel-de-nginx.html</id><summary type="html">&lt;p&gt;No son pocas las veces que queremos hacer una redirección de algunos de nuestros dominios a otros. Puede que queramos añadir el clásico &lt;code&gt;www&lt;/code&gt; delante del dominio, o tal vez queramos forzar el uso de &lt;code&gt;https&lt;/code&gt;. Hacer copias de nuestro dominio no es viable, pero podemos usar redirecciones fijas 301 …&lt;/p&gt;</summary><content type="html">&lt;p&gt;No son pocas las veces que queremos hacer una redirección de algunos de nuestros dominios a otros. Puede que queramos añadir el clásico &lt;code&gt;www&lt;/code&gt; delante del dominio, o tal vez queramos forzar el uso de &lt;code&gt;https&lt;/code&gt;. Hacer copias de nuestro dominio no es viable, pero podemos usar redirecciones fijas 301.&lt;/p&gt;
+&lt;p&gt;Vamos a suponer en este artículo que tenemos un servidor &lt;strong&gt;nginx&lt;/strong&gt; configurado para servir &lt;em&gt;virtualhosts&lt;/em&gt;. En este ejemplo, vamos a poner uno por defecto y otro de ejemplo.&lt;/p&gt;
+&lt;p&gt;Las reglas son simples:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Serviremos la web de ejemplo para el dominio &lt;em&gt;www.example.com&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Queremos ver la misma web para el dominio &lt;em&gt;example.com&lt;/em&gt; y no queremos duplicar contenido&lt;/li&gt;
+&lt;li&gt;Serviremos una web por defecto en cualquier otro caso, para ver si lo hemos hecho bien&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Preparación del ejemplo&lt;/h2&gt;
+&lt;p&gt;Para que se pueda seguir el artículo, se proporciona el contexto necesario para construir una imagen &lt;strong&gt;docker&lt;/strong&gt; en donde probarlo. Empezamos por el &lt;em&gt;Dockerfile&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/nginx_redirects$ cat Dockerfile 
+FROM alpine:3.5
+RUN apk add --no-cache nginx &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    ln -s /dev/stdout /var/log/nginx/access.log &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    ln -s /dev/stderr /var/log/nginx/error.log &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    mkdir /run/nginx &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/sbin/nginx&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-g&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;daemon off;&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+COPY conf.d/* /etc/nginx/conf.d/
+COPY www/ /srv/www/
+gerard@aldebaran:~/docker/nginx_redirects$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y añadimos las configuraciones que &lt;strong&gt;nginx&lt;/strong&gt; necesita:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/nginx_redirects$ cat nginx.conf 
+worker_processes &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+events &lt;span class="o"&gt;{&lt;/span&gt;
+    worker_connections &lt;span class="m"&gt;1024&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+http &lt;span class="o"&gt;{&lt;/span&gt;
+    include mime.types&lt;span class="p"&gt;;&lt;/span&gt;
+    default_type application/octet-stream&lt;span class="p"&gt;;&lt;/span&gt;
+    sendfile on&lt;span class="p"&gt;;&lt;/span&gt;
+    keepalive_timeout &lt;span class="m"&gt;65&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    include conf.d/*&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/docker/nginx_redirects$ cat conf.d/www 
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen &lt;span class="m"&gt;80&lt;/span&gt; default&lt;span class="p"&gt;;&lt;/span&gt;
+    server_name _&lt;span class="p"&gt;;&lt;/span&gt;
+    root /srv/www/default&lt;span class="p"&gt;;&lt;/span&gt;
+    index index.html&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen &lt;span class="m"&gt;80&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    server_name www.example.com&lt;span class="p"&gt;;&lt;/span&gt;
+    root /srv/www/www.example.com&lt;span class="p"&gt;;&lt;/span&gt;
+    index index.html&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/docker/nginx_redirects$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A modo de ejemplo, adjuntamos dos sitios de juguete que nos permitirnán probar nuestros &lt;em&gt;virtualhosts&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/nginx_redirects$ tree www/
+www/
+├── default
+│   └── index.html
+└── www.example.com
+    └── index.html
+
+&lt;span class="m"&gt;2&lt;/span&gt; directories, &lt;span class="m"&gt;2&lt;/span&gt; files
+gerard@aldebaran:~/docker/nginx_redirects$ cat www/default/index.html 
+default site
+gerard@aldebaran:~/docker/nginx_redirects$ cat www/www.example.com/index.html 
+example site
+gerard@aldebaran:~/docker/nginx_redirects$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Construid la imagen y ponedla a correr, con los comandos habituales.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Como queremos probar &lt;em&gt;virtualhosts&lt;/em&gt; y no queremos marear con servidores DNS, podemos tirar del fichero &lt;em&gt;/etc/hosts&lt;/em&gt;, para que todos los dominios apunten a nuestro contenedor.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ cat /etc/hosts
+...  
+&lt;span class="m"&gt;172&lt;/span&gt;.17.0.2  example.com www.example.com www.otherdomain.com
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Problema y solución&lt;/h2&gt;
+&lt;p&gt;Lanzamos una batería de peticiones con &lt;strong&gt;curl&lt;/strong&gt; o alguna herramienta similar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ curl http://www.example.com/
+example site
+gerard@aldebaran:~$ curl http://www.otherdomain.com/
+default site
+gerard@aldebaran:~$ curl http://example.com/
+default site
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Todos los dominios apuntan a la dirección IP del mismo contenedor, y de ello sacamos algunas conclusiones:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;El dominio &lt;em&gt;www.example.com&lt;/em&gt; funciona según lo esperado&lt;/li&gt;
+&lt;li&gt;El dominio por defecto salta ante las peticiones que no pertenecen al dominio &lt;em&gt;www.example.com&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Las peticiones al dominio &lt;em&gt;example.com&lt;/em&gt; caen en el &lt;em&gt;virtualhost&lt;/em&gt; por defecto&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Podríamos haber creado otro &lt;em&gt;virtualhost&lt;/em&gt; que sirviera una copia (o la misma carpeta) del dominio de ejemplo, pero no es elegante y en el caso de querer HTTPS no serviría. En estos casos, el estándar &lt;em&gt;de facto&lt;/em&gt; es hacer una redirección al dominio correcto, mediante un código HTTP 301. Esto le indicará al navegador que la redirección es permanente y hará que este "se acuerde" de la redirección.&lt;/p&gt;
+&lt;p&gt;Para ello necesitamos un nuevo &lt;em&gt;virtualhost&lt;/em&gt;, o adaptar el que tenemos para que acepte expresiones regulares; no vamos a seguir este camino por simplicidad.&lt;/p&gt;
+&lt;p&gt;Solo necesitaríamos utilizar el &lt;a href="http://nginx.org/en/docs/http/ngx_http_rewrite_module.html#return"&gt;rewrite module&lt;/a&gt; de &lt;strong&gt;nginx&lt;/strong&gt; para forzar un código de retorno a la URL correcta. Exponemos este ejemplo a continuación:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/nginx_redirects$ cat conf.d/www 
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen &lt;span class="m"&gt;80&lt;/span&gt; default&lt;span class="p"&gt;;&lt;/span&gt;
+    server_name _&lt;span class="p"&gt;;&lt;/span&gt;
+    root /srv/www/default&lt;span class="p"&gt;;&lt;/span&gt;
+    index index.html&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen &lt;span class="m"&gt;80&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    server_name www.example.com&lt;span class="p"&gt;;&lt;/span&gt;
+    root /srv/www/www.example.com&lt;span class="p"&gt;;&lt;/span&gt;
+    index index.html&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen &lt;span class="m"&gt;80&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    server_name example.com&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="m"&gt;301&lt;/span&gt; http://www.example.com&lt;span class="nv"&gt;$request_uri&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@aldebaran:~/docker/nginx_redirects$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si recreamos la imagen y la ejecutamos de nuevo, vemos que nuestra web se comporta de la forma especificada al principio del artículo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ curl -I http://example.com/
+HTTP/1.1 &lt;span class="m"&gt;301&lt;/span&gt; Moved Permanently
+Server: nginx/1.10.3
+Date: Tue, &lt;span class="m"&gt;06&lt;/span&gt; Jun &lt;span class="m"&gt;2017&lt;/span&gt; &lt;span class="m"&gt;14&lt;/span&gt;:47:57 GMT
+Content-Type: text/html
+Content-Length: &lt;span class="m"&gt;185&lt;/span&gt;
+Connection: keep-alive
+Location: http://www.example.com/
+
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De esta forma, el navegador buscará la nueva página, de acuerdo a esta respuesta. Se fuerza la opción "follow redirects" en la salida del &lt;strong&gt;curl&lt;/strong&gt; para poder observar este comportamiento:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ curl http://www.example.com/
+example site
+gerard@aldebaran:~$ curl http://www.otherdomain.com/
+default site
+gerard@aldebaran:~$ curl -L http://example.com/
+example site
+gerard@aldebaran:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y lo mismo sería válido para forzar una redirección a HTTPS, aunque se deja como ejercicio al lector.&lt;/p&gt;</content><category term="nginx"></category><category term="redirecciones"></category></entry><entry><title>Uso básico de un cluster Docker Swarm</title><link href="http://www.linuxsysadmin.ml/2017/11/uso-basico-de-un-cluster-docker-swarm.html" rel="alternate"></link><published>2017-11-06T10:00:00+01:00</published><updated>2017-11-06T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-11-06:/2017/11/uso-basico-de-un-cluster-docker-swarm.html</id><summary type="html">&lt;p&gt;Usar un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;docker swarm&lt;/strong&gt; no es transparente para nuestro uso; necesitamos cambiar de mentalidad y tener en cuenta algunos conceptos. Donde antes hablábamos de contenedores, aquí se habla de &lt;strong&gt;servicios&lt;/strong&gt;, que básicamente son un número variable de contenedores repartidos por los diferentes nodos del &lt;em&gt;cluster&lt;/em&gt; de forma balanceada …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Usar un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;docker swarm&lt;/strong&gt; no es transparente para nuestro uso; necesitamos cambiar de mentalidad y tener en cuenta algunos conceptos. Donde antes hablábamos de contenedores, aquí se habla de &lt;strong&gt;servicios&lt;/strong&gt;, que básicamente son un número variable de contenedores repartidos por los diferentes nodos del &lt;em&gt;cluster&lt;/em&gt; de forma balanceada.&lt;/p&gt;
 &lt;p&gt;Para trabajar con &lt;strong&gt;docker swarm&lt;/strong&gt; necesitamos trabajar desde un nodo &lt;em&gt;manager&lt;/em&gt;, y no desde los &lt;em&gt;workers&lt;/em&gt;. Por ello, el resto de comandos se van a lanzar en &lt;strong&gt;shangrila&lt;/strong&gt;, a menos que se diga lo contrario. En este artículo vamos a utilizar el que montamos en &lt;a href="http://www.linuxsysadmin.ml/2017/10/montando-un-cluster-de-docker-con-docker-swarm.html"&gt;este otro artículo&lt;/a&gt;.&lt;/p&gt;
 &lt;h2&gt;Un servicio básico&lt;/h2&gt;
 &lt;p&gt;Si queremos crear un servicio, podemos utilizar los subcomandos de &lt;code&gt;docker service&lt;/code&gt;. Una vez creado el servicio podemos trabajar con él sin problemas. Veamos una creación de un servicio básico:&lt;/p&gt;
