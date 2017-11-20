@@ -1,5 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Desarrollo</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-10-16T10:00:00+02:00</updated><entry><title>Los context managers de python</title><link href="http://www.linuxsysadmin.ml/2017/10/los-context-managers-de-python.html" rel="alternate"></link><published>2017-10-16T10:00:00+02:00</published><updated>2017-10-16T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-10-16:/2017/10/los-context-managers-de-python.html</id><summary type="html">&lt;p&gt;Muchas veces nos pasa que necesitamos un objeto de esos que luego necesitan algún tipo de limpieza cuando ya no se necesitan. Cualquier programador avanzado os puede contar lo fácil que es olvidarse de la destrucción del mismo, y de las veces que lo ha hecho, él u otras personas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Muchas veces nos pasa que necesitamos un objeto de esos que luego necesitan algún tipo de limpieza cuando ya no se necesitan. Cualquier programador avanzado os puede contar lo fácil que es olvidarse de la destrucción del mismo, y de las veces que lo ha hecho, él u otras personas.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Desarrollo</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/desarrollo.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-11-20T10:00:00+01:00</updated><entry><title>Ejecutando procesos desde python con popen</title><link href="http://www.linuxsysadmin.ml/2017/11/ejecutando-procesos-desde-python-con-popen.html" rel="alternate"></link><published>2017-11-20T10:00:00+01:00</published><updated>2017-11-20T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-11-20:/2017/11/ejecutando-procesos-desde-python-con-popen.html</id><summary type="html">&lt;p&gt;Algunas veces nos interesa lanzar comandos &lt;em&gt;bash&lt;/em&gt;, pero necesitamos de la potencia de &lt;em&gt;python&lt;/em&gt; para &lt;em&gt;parsear&lt;/em&gt; la salida. En otras ocasiones queremos lanzar los comandos &lt;em&gt;bash&lt;/em&gt; directamente desde &lt;em&gt;python&lt;/em&gt; porque se hace desde una aplicación web. En estos casos nos viene muy bien el módulo &lt;em&gt;subprocess&lt;/em&gt; que nos lo permite …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Algunas veces nos interesa lanzar comandos &lt;em&gt;bash&lt;/em&gt;, pero necesitamos de la potencia de &lt;em&gt;python&lt;/em&gt; para &lt;em&gt;parsear&lt;/em&gt; la salida. En otras ocasiones queremos lanzar los comandos &lt;em&gt;bash&lt;/em&gt; directamente desde &lt;em&gt;python&lt;/em&gt; porque se hace desde una aplicación web. En estos casos nos viene muy bien el módulo &lt;em&gt;subprocess&lt;/em&gt; que nos lo permite.&lt;/p&gt;
+&lt;p&gt;Aunque no quiero dar detalles porque la idea es todavia una prueba de concepto, en mi caso concreto se trataba de hacer una herramienta web muy simple para lanzar &lt;em&gt;backups&lt;/em&gt; y &lt;em&gt;restores&lt;/em&gt; sobre &lt;strong&gt;mongodb&lt;/strong&gt;, usando los comandos &lt;em&gt;mongodump&lt;/em&gt; y &lt;em&gt;mongorestore&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;En este artículo he decidido poner dos ejemplos muy simplificados, de forma que no nos distraigan de lo que relamente es importante; uno es sobre como lanzar comandos y recoger resultados, mientras que el otro es un poco más avanzado y nos permite concatenar varios comandos como haríamos en &lt;em&gt;bash&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo simple&lt;/h2&gt;
+&lt;p&gt;Supongamos que queremos graficar la carga del sistema, tal como nos las da el comando &lt;em&gt;uptime&lt;/em&gt;. Para ello tenemos que &lt;em&gt;parsear&lt;/em&gt; y convertir en números los tres valores que el comando nos da. Por ello tenemos el siguiente &lt;em&gt;script&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/popen$ cat uptimes.py
+&lt;span class="c1"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+from subprocess import Popen, PIPE, STDOUT
+
+&lt;span class="nv"&gt;proc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Popen&lt;span class="o"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;uptime&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;, &lt;span class="nv"&gt;stdout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;PIPE, &lt;span class="nv"&gt;stderr&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;STDOUT&lt;span class="o"&gt;)&lt;/span&gt;
+out, &lt;span class="nv"&gt;err&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; proc.communicate&lt;span class="o"&gt;()&lt;/span&gt;
+
+&lt;span class="nv"&gt;uptimes&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; out.rstrip&lt;span class="o"&gt;()&lt;/span&gt;.split&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;load average: &amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;uptimes&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; uptimes.split&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;, &amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="nv"&gt;uptimes&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;float&lt;span class="o"&gt;(&lt;/span&gt;e.replace&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;,&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;.&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;))&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; e in uptimes&lt;span class="o"&gt;]&lt;/span&gt;
+
+&lt;span class="nb"&gt;times&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;1 minute&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;5 minutes&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;15 minutes&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; i in xrange&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:
+    print &lt;span class="s1"&gt;&amp;#39;Last %s: %s&amp;#39;&lt;/span&gt; % &lt;span class="o"&gt;(&lt;/span&gt;times&lt;span class="o"&gt;[&lt;/span&gt;i&lt;span class="o"&gt;]&lt;/span&gt;, uptimes&lt;span class="o"&gt;[&lt;/span&gt;i&lt;span class="o"&gt;])&lt;/span&gt;
+gerard@atlantis:~/projects/popen$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La parte importante se limita a dos líneas, que son las que crean la variable &lt;code&gt;proc&lt;/code&gt; y la siguiente. Se ejecuta el comando especificado en el &lt;em&gt;array&lt;/em&gt; del primer parámetro de &lt;code&gt;Popen&lt;/code&gt;, sin indicar entrada estándar (no hay por defecto), redirigiendo la salida de error a la salida estándar, y dejando esta como &lt;code&gt;PIPE&lt;/code&gt; la convertimos en un &lt;em&gt;stream&lt;/em&gt;, que luego podemos enchufar a otro proceso o recoger con el método &lt;code&gt;communicate()&lt;/code&gt;, que es el caso.&lt;/p&gt;
+&lt;p&gt;El resto es un mero ejercicio de &lt;em&gt;parsing&lt;/em&gt;; con algunas funciones básicas de la clase &lt;em&gt;string&lt;/em&gt; (&lt;em&gt;strip&lt;/em&gt;, &lt;em&gt;split&lt;/em&gt; y &lt;em&gt;replace&lt;/em&gt;) y algunos &lt;em&gt;castings&lt;/em&gt; a &lt;em&gt;float&lt;/em&gt;, tenemos lo que nos interesa. La parte de graficar queda como ejercicio para el lector.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/popen$ ./uptimes.py
+Last &lt;span class="m"&gt;1&lt;/span&gt; minute: &lt;span class="m"&gt;0&lt;/span&gt;.28
+Last &lt;span class="m"&gt;5&lt;/span&gt; minutes: &lt;span class="m"&gt;0&lt;/span&gt;.09
+Last &lt;span class="m"&gt;15&lt;/span&gt; minutes: &lt;span class="m"&gt;0&lt;/span&gt;.03
+gerard@atlantis:~/projects/popen$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y podemos ver que tenemos la respuesta esperada con los valores pelados, y listos para disponer de ellos como queramos.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo concatenando varios procesos&lt;/h2&gt;
+&lt;p&gt;Este ejemplo es posiblemente uno de los más inútiles que puedo mostrar. Simplemente se trata de hacer algo como &lt;code&gt;seq 1 100 | grep 3 | grep 5&lt;/code&gt;. No es muy útil, pero nos va a ilustrar sobre como se hacen este tipo de cosntrucciones &lt;em&gt;bash&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;El truco consiste en hacer 3 procesos, para cada uno de los comandos, usando los &lt;em&gt;streams&lt;/em&gt; declarados con &lt;code&gt;PIPE&lt;/code&gt; para enchufarlos a la entrada estándar del siguiente comando:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;p1&lt;/strong&gt; ejecutará el &lt;code&gt;seq 1 100&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;p2&lt;/strong&gt; ejecutará un &lt;code&gt;grep 3&lt;/code&gt; sobre la entrada estándar, que será la salida estándar de &lt;strong&gt;p1&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;p3&lt;/strong&gt; ejecutará un &lt;code&gt;grep 5&lt;/code&gt; sobre la entrada estándar, que será la salida estándar de &lt;strong&gt;p2&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Y así queda nuestro &lt;em&gt;script&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/popen$ cat seq.py
+&lt;span class="c1"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+from subprocess import Popen, PIPE
+
+&lt;span class="nv"&gt;p1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Popen&lt;span class="o"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;seq&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;1&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;100&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;, &lt;span class="nv"&gt;stdout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;PIPE&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="nv"&gt;p2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Popen&lt;span class="o"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;grep&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;, &lt;span class="nv"&gt;stdin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;p1.stdout, &lt;span class="nv"&gt;stdout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;PIPE&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="nv"&gt;p3&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Popen&lt;span class="o"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;grep&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;5&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;, &lt;span class="nv"&gt;stdin&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;p2.stdout, &lt;span class="nv"&gt;stdout&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;PIPE&lt;span class="o"&gt;)&lt;/span&gt;
+p1.stdout.close&lt;span class="o"&gt;()&lt;/span&gt;
+p2.stdout.close&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="nv"&gt;out&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; p3.communicate&lt;span class="o"&gt;()[&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;.strip&lt;span class="o"&gt;()&lt;/span&gt;
+
+print out
+gerard@atlantis:~/projects/popen$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Cabe indicar que el método &lt;code&gt;communicate()&lt;/code&gt; se llama solamente en el último comando de la cadena, para esperar que acabe y recoger así su salida estándar y su salida de error, que en este caso, desechamos.&lt;/p&gt;
+&lt;p&gt;Solo queda comentar que los &lt;em&gt;streams&lt;/em&gt; de salida de &lt;strong&gt;p1&lt;/strong&gt; y de &lt;strong&gt;p2&lt;/strong&gt; se cierran después de enchufarlos a &lt;strong&gt;p3&lt;/strong&gt;, tal como sugiere la documentación, para evitar problemas en caso de que &lt;strong&gt;p3&lt;/strong&gt; acabe antes que &lt;strong&gt;p2&lt;/strong&gt;, o este acabe antes que &lt;strong&gt;p1&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;A partir de aquí, solo nos queda comprobar que el resultado es el mismo, tanto en &lt;em&gt;bash&lt;/em&gt;, como en &lt;em&gt;python&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/popen$ seq &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="m"&gt;100&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; grep &lt;span class="m"&gt;3&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; grep &lt;span class="m"&gt;5&lt;/span&gt;
+&lt;span class="m"&gt;35&lt;/span&gt;
+&lt;span class="m"&gt;53&lt;/span&gt;
+gerard@atlantis:~/projects/popen$ ./seq.py
+&lt;span class="m"&gt;35&lt;/span&gt;
+&lt;span class="m"&gt;53&lt;/span&gt;
+gerard@atlantis:~/projects/popen$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto ampliamos nuestra &lt;em&gt;toolbox&lt;/em&gt; de recursos, de forma que podamos encarar futuros retos con nuevas opciones.&lt;/p&gt;</content><category term="python"></category><category term="subprocess"></category><category term="popen"></category></entry><entry><title>Los context managers de python</title><link href="http://www.linuxsysadmin.ml/2017/10/los-context-managers-de-python.html" rel="alternate"></link><published>2017-10-16T10:00:00+02:00</published><updated>2017-10-16T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-10-16:/2017/10/los-context-managers-de-python.html</id><summary type="html">&lt;p&gt;Muchas veces nos pasa que necesitamos un objeto de esos que luego necesitan algún tipo de limpieza cuando ya no se necesitan. Cualquier programador avanzado os puede contar lo fácil que es olvidarse de la destrucción del mismo, y de las veces que lo ha hecho, él u otras personas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Muchas veces nos pasa que necesitamos un objeto de esos que luego necesitan algún tipo de limpieza cuando ya no se necesitan. Cualquier programador avanzado os puede contar lo fácil que es olvidarse de la destrucción del mismo, y de las veces que lo ha hecho, él u otras personas.&lt;/p&gt;
 &lt;p&gt;Por suerte, &lt;strong&gt;python&lt;/strong&gt; nos ofrece una forma de crear objetos con el &lt;em&gt;keyword with&lt;/em&gt;, que nos asegura que el mismo lenguaje de programación llamará a los métodos de creación y destrucción del objeto. Este mecanismo se llama &lt;em&gt;context manager&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Veamos un ejemplo simple de un &lt;em&gt;context manager&lt;/em&gt; muy común y disponible en la biblioteca estándar de &lt;strong&gt;python&lt;/strong&gt;:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/contextmanagers$ cat example.py 
