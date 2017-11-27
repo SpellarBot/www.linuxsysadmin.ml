@@ -1,5 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-11-20T10:00:00+01:00</updated><entry><title>Ejecutando procesos desde python con popen</title><link href="http://www.linuxsysadmin.ml/2017/11/ejecutando-procesos-desde-python-con-popen.html" rel="alternate"></link><published>2017-11-20T10:00:00+01:00</published><updated>2017-11-20T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-11-20:/2017/11/ejecutando-procesos-desde-python-con-popen.html</id><summary type="html">&lt;p&gt;Algunas veces nos interesa lanzar comandos &lt;em&gt;bash&lt;/em&gt;, pero necesitamos de la potencia de &lt;em&gt;python&lt;/em&gt; para &lt;em&gt;parsear&lt;/em&gt; la salida. En otras ocasiones queremos lanzar los comandos &lt;em&gt;bash&lt;/em&gt; directamente desde &lt;em&gt;python&lt;/em&gt; porque se hace desde una aplicación web. En estos casos nos viene muy bien el módulo &lt;em&gt;subprocess&lt;/em&gt; que nos lo permite …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Algunas veces nos interesa lanzar comandos &lt;em&gt;bash&lt;/em&gt;, pero necesitamos de la potencia de &lt;em&gt;python&lt;/em&gt; para &lt;em&gt;parsear&lt;/em&gt; la salida. En otras ocasiones queremos lanzar los comandos &lt;em&gt;bash&lt;/em&gt; directamente desde &lt;em&gt;python&lt;/em&gt; porque se hace desde una aplicación web. En estos casos nos viene muy bien el módulo &lt;em&gt;subprocess&lt;/em&gt; que nos lo permite.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-11-27T10:00:00+01:00</updated><entry><title>Un ODM para mongodb en python: mongoengine</title><link href="http://www.linuxsysadmin.ml/2017/11/un-odm-para-mongodb-en-python-mongoengine.html" rel="alternate"></link><published>2017-11-27T10:00:00+01:00</published><updated>2017-11-27T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-11-27:/2017/11/un-odm-para-mongodb-en-python-mongoengine.html</id><summary type="html">&lt;p&gt;Aquellos que hemos usado &lt;strong&gt;mongodb&lt;/strong&gt; desde &lt;strong&gt;python&lt;/strong&gt;, ya conocemos las virtudes de &lt;strong&gt;pymongo&lt;/strong&gt;. Sin embargo, este lenguaje es orientado a objetos, y trabajar con ellos hace nuestro código más simple y más legible. &lt;strong&gt;Mongoengine&lt;/strong&gt; es un ODM, una librería que se encarga de convertir objetos en documentos &lt;strong&gt;mongodb&lt;/strong&gt; y viceversa …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Aquellos que hemos usado &lt;strong&gt;mongodb&lt;/strong&gt; desde &lt;strong&gt;python&lt;/strong&gt;, ya conocemos las virtudes de &lt;strong&gt;pymongo&lt;/strong&gt;. Sin embargo, este lenguaje es orientado a objetos, y trabajar con ellos hace nuestro código más simple y más legible. &lt;strong&gt;Mongoengine&lt;/strong&gt; es un ODM, una librería que se encarga de convertir objetos en documentos &lt;strong&gt;mongodb&lt;/strong&gt; y viceversa.&lt;/p&gt;
+&lt;p&gt;ODM son las siglas para &lt;em&gt;object to document mapper&lt;/em&gt;, y es el equivalente a un ORM (&lt;em&gt;object to relational mapper&lt;/em&gt;). La diferencia entre ambos conceptos es que los datos van a parar a la base de datos como un documento en contraposición a una base de datos relacional.&lt;/p&gt;
+&lt;p&gt;El objetivo de la librería es convertir nuestros modelos en objetos de &lt;strong&gt;python&lt;/strong&gt; de forma declarativa. Toda la magia del acceso a la base de datos se hace de forma automática.&lt;/p&gt;
+&lt;p&gt;Este ODM está realmente bien hecho; soporta tipos de campos, herencia de clases, referencias a otros documentos e incluso listas en sus campos. Todo ello creando los índices necesarios para los accesos habituales, y la posibilidad de declarar otros índices que creamos necesarios.&lt;/p&gt;
+&lt;h2&gt;Declaración de los modelos&lt;/h2&gt;
+&lt;p&gt;Veamos un ejemplo, con un subconjunto de los datos de un &lt;em&gt;blog&lt;/em&gt; estándar. Para ello, el primer paso es declarar nuestros modelos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/mongoengine$ cat models.py 
+import mongoengine
+
+
+def connect&lt;span class="o"&gt;(&lt;/span&gt;url&lt;span class="o"&gt;)&lt;/span&gt;:
+    mongoengine.connect&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;host&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;url&lt;span class="o"&gt;)&lt;/span&gt;
+
+
+class Author&lt;span class="o"&gt;(&lt;/span&gt;mongoengine.Document&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="nv"&gt;name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; mongoengine.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;meta&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;collection&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;authors&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+
+
+class Page&lt;span class="o"&gt;(&lt;/span&gt;mongoengine.Document&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="nv"&gt;title&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; mongoengine.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;content&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; mongoengine.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;meta&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;collection&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;pages&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;allow_inheritance&amp;#39;&lt;/span&gt;: True&lt;span class="o"&gt;}&lt;/span&gt;
+
+
+class Post&lt;span class="o"&gt;(&lt;/span&gt;Page&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="nv"&gt;author&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; mongoengine.ReferenceField&lt;span class="o"&gt;(&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;Author&amp;#39;&lt;/span&gt;,
+        &lt;span class="nv"&gt;reverse_delete_rule&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;mongoengine.CASCADE
+    &lt;span class="o"&gt;)&lt;/span&gt;
+    &lt;span class="nv"&gt;date&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; mongoengine.DateTimeField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;tags&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; mongoengine.ListField&lt;span class="o"&gt;(&lt;/span&gt;mongoengine.StringField&lt;span class="o"&gt;())&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/mongoengine$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Habéis visto algunas de las funcionalidades más interesantes?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Subclases mediante terminología &lt;strong&gt;python&lt;/strong&gt; habitual.&lt;/li&gt;
+&lt;li&gt;Varios tipos de datos para los campos.&lt;/li&gt;
+&lt;li&gt;Referencias a otros objetos que se cargan de forma &lt;em&gt;lazy&lt;/em&gt;, es decir, cuando se accede al campo se lanza una nueva consulta.&lt;/li&gt;
+&lt;li&gt;Reglas de tratamiento automático de referencias para objetos eliminados.&lt;/li&gt;
+&lt;li&gt;Campos tipo lista, con tipología de los elementos de la misma. En el ejemplo son campos tipo &lt;code&gt;StringField&lt;/code&gt; pero podrían ser cualquiera, como por ejemplo &lt;code&gt;ReferenceField&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Uso de nuestros modelos&lt;/h2&gt;
+&lt;p&gt;Para crear nuestros objetos, basta hacerlo como se haría en &lt;strong&gt;python&lt;/strong&gt; normal. Solo hay que tener en cuenta que los cambios no acabarán en la base de datos hasta que invoquemos el método &lt;code&gt;save&lt;/code&gt; del objeto tipo &lt;code&gt;Document&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/mongoengine$ cat carga.py 
+&lt;span class="c1"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+from models import Author, Page, Post, connect
+from datetime import datetime
+
+connect&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;mongodb://localhost:27017/test&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+Page&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;title&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;About&amp;#39;&lt;/span&gt;, &lt;span class="nv"&gt;content&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;blah&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;.save&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="nv"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Author&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Gerard&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;.save&lt;span class="o"&gt;()&lt;/span&gt;
+Post&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;title&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Hello world&amp;#39;&lt;/span&gt;, &lt;span class="nv"&gt;content&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;lorem ipsum&amp;#39;&lt;/span&gt;, &lt;span class="nv"&gt;author&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;a,
+     &lt;span class="nv"&gt;date&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;datetime.utcnow&lt;span class="o"&gt;()&lt;/span&gt;, &lt;span class="nv"&gt;tags&lt;/span&gt;&lt;span class="o"&gt;=[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;hello&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;world&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;])&lt;/span&gt;.save&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/mongoengine$ ./carga.py 
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/mongoengine$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y el resultado es un esquema de base de datos bastante limpio, y sin ningún tipo de &lt;em&gt;overhead&lt;/em&gt;. Solo hay que cargar con un campo adicional para diferenciar el tipo de objeto en el caso de herencia.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&amp;gt; use &lt;span class="nb"&gt;test&lt;/span&gt;
+switched to db &lt;span class="nb"&gt;test&lt;/span&gt;
+&amp;gt; show collections
+authors
+pages
+&amp;gt; db.authors.find&lt;span class="o"&gt;()&lt;/span&gt;.pretty&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : ObjectId&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;59b1a4bb093f961b0aa6ed00&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;Gerard&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+&amp;gt; db.pages.find&lt;span class="o"&gt;()&lt;/span&gt;.pretty&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : ObjectId&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;59b1a4bb093f961b0aa6ecff&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;_cls&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;Page&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;title&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;About&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;content&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;blah&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : ObjectId&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;59b1a4bc093f961b0aa6ed01&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;_cls&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;Page.Post&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;title&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;Hello world&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;content&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;lorem ipsum&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;author&amp;quot;&lt;/span&gt; : ObjectId&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;59b1a4bb093f961b0aa6ed00&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;date&amp;quot;&lt;/span&gt; : ISODate&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;2017-09-07T19:57:47.993Z&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;tags&amp;quot;&lt;/span&gt; : &lt;span class="o"&gt;[&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;hello&amp;quot;&lt;/span&gt;,
+        &lt;span class="s2"&gt;&amp;quot;world&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Consultar los objetos de la base de datos requiere encontrarlos primero, con el método &lt;code&gt;Document.objects&lt;/code&gt;. Esto nos puede traer un cursor de objetos o podemos invocar el método &lt;code&gt;first&lt;/code&gt; para traer uno solo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/mongoengine$ cat consulta.py 
+&lt;span class="c1"&gt;#!/usr/bin/env python&lt;/span&gt;
+
+from models import Author, Post, connect
+
+connect&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;mongodb://localhost:27017/test&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+&lt;span class="nv"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Author.objects&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Gerard&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;.first&lt;span class="o"&gt;()&lt;/span&gt;
+print &lt;span class="s1"&gt;&amp;#39;Author:&amp;#39;&lt;/span&gt;, a.name
+&lt;span class="k"&gt;for&lt;/span&gt; post in Post.objects&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;author&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;a&lt;span class="o"&gt;)&lt;/span&gt;:
+    print &lt;span class="s1"&gt;&amp;#39;* Post:&amp;#39;&lt;/span&gt;, post.title
+    print &lt;span class="s1"&gt;&amp;#39;  Tags:&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;, &amp;#39;&lt;/span&gt;.join&lt;span class="o"&gt;(&lt;/span&gt;post.tags&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/mongoengine$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver que buscamos un autor por su nombre, asumiendo que el primero nos vale. Una vez tenemos el autor podemos encontrar sus posts y escribir algunos datos en la salida estándar.&lt;/p&gt;
+&lt;p&gt;Ejecutamos y vemos que el resultado es el esperado:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/mongoengine$ ./consulta.py 
+Author: Gerard
+* Post: Hello world
+  Tags: hello, world
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@sirius:~/projects/mongoengine$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para modificar los objetos, tenemos que consultarlos, modificar el objeto e invocar de nuevo el método &lt;code&gt;save&lt;/code&gt;. De la misma manera, para borrarlo necesitamos el objeto en &lt;strong&gt;python&lt;/strong&gt; e invocar a continuación el método &lt;code&gt;delete&lt;/code&gt;.&lt;/p&gt;
+&lt;h2&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Sin duda esta librería es una gran ayuda para hacer un gran desarrollo. Estoy seguro que va a servirme para mi siguiente proyecto personal.&lt;/p&gt;
+&lt;p&gt;Hay muchas más cosas que se pueden hacer con este ODM; simplemente tenemos que ahondar en &lt;a href="http://docs.mongoengine.org/apireference.html"&gt;la documentación&lt;/a&gt;.&lt;/p&gt;</content><category term="python"></category><category term="mongodb"></category><category term="mongoengine"></category><category term="odm"></category></entry><entry><title>Ejecutando procesos desde python con popen</title><link href="http://www.linuxsysadmin.ml/2017/11/ejecutando-procesos-desde-python-con-popen.html" rel="alternate"></link><published>2017-11-20T10:00:00+01:00</published><updated>2017-11-20T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-11-20:/2017/11/ejecutando-procesos-desde-python-con-popen.html</id><summary type="html">&lt;p&gt;Algunas veces nos interesa lanzar comandos &lt;em&gt;bash&lt;/em&gt;, pero necesitamos de la potencia de &lt;em&gt;python&lt;/em&gt; para &lt;em&gt;parsear&lt;/em&gt; la salida. En otras ocasiones queremos lanzar los comandos &lt;em&gt;bash&lt;/em&gt; directamente desde &lt;em&gt;python&lt;/em&gt; porque se hace desde una aplicación web. En estos casos nos viene muy bien el módulo &lt;em&gt;subprocess&lt;/em&gt; que nos lo permite …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Algunas veces nos interesa lanzar comandos &lt;em&gt;bash&lt;/em&gt;, pero necesitamos de la potencia de &lt;em&gt;python&lt;/em&gt; para &lt;em&gt;parsear&lt;/em&gt; la salida. En otras ocasiones queremos lanzar los comandos &lt;em&gt;bash&lt;/em&gt; directamente desde &lt;em&gt;python&lt;/em&gt; porque se hace desde una aplicación web. En estos casos nos viene muy bien el módulo &lt;em&gt;subprocess&lt;/em&gt; que nos lo permite.&lt;/p&gt;
 &lt;p&gt;Aunque no quiero dar detalles porque la idea es todavia una prueba de concepto, en mi caso concreto se trataba de hacer una herramienta web muy simple para lanzar &lt;em&gt;backups&lt;/em&gt; y &lt;em&gt;restores&lt;/em&gt; sobre &lt;strong&gt;mongodb&lt;/strong&gt;, usando los comandos &lt;em&gt;mongodump&lt;/em&gt; y &lt;em&gt;mongorestore&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;En este artículo he decidido poner dos ejemplos muy simplificados, de forma que no nos distraigan de lo que relamente es importante; uno es sobre como lanzar comandos y recoger resultados, mientras que el otro es un poco más avanzado y nos permite concatenar varios comandos como haríamos en &lt;em&gt;bash&lt;/em&gt;.&lt;/p&gt;
 &lt;h2&gt;Un ejemplo simple&lt;/h2&gt;
