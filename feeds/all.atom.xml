@@ -1,5 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-11-27T10:00:00+01:00</updated><entry><title>Un ODM para mongodb en python: mongoengine</title><link href="http://www.linuxsysadmin.ml/2017/11/un-odm-para-mongodb-en-python-mongoengine.html" rel="alternate"></link><published>2017-11-27T10:00:00+01:00</published><updated>2017-11-27T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-11-27:/2017/11/un-odm-para-mongodb-en-python-mongoengine.html</id><summary type="html">&lt;p&gt;Aquellos que hemos usado &lt;strong&gt;mongodb&lt;/strong&gt; desde &lt;strong&gt;python&lt;/strong&gt;, ya conocemos las virtudes de &lt;strong&gt;pymongo&lt;/strong&gt;. Sin embargo, este lenguaje es orientado a objetos, y trabajar con ellos hace nuestro código más simple y más legible. &lt;strong&gt;Mongoengine&lt;/strong&gt; es un ODM, una librería que se encarga de convertir objetos en documentos &lt;strong&gt;mongodb&lt;/strong&gt; y viceversa …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Aquellos que hemos usado &lt;strong&gt;mongodb&lt;/strong&gt; desde &lt;strong&gt;python&lt;/strong&gt;, ya conocemos las virtudes de &lt;strong&gt;pymongo&lt;/strong&gt;. Sin embargo, este lenguaje es orientado a objetos, y trabajar con ellos hace nuestro código más simple y más legible. &lt;strong&gt;Mongoengine&lt;/strong&gt; es un ODM, una librería que se encarga de convertir objetos en documentos &lt;strong&gt;mongodb&lt;/strong&gt; y viceversa.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-12-04T10:00:00+01:00</updated><entry><title>Otro microframework en python: Flask</title><link href="http://www.linuxsysadmin.ml/2017/12/otro-microframework-en-python-flask.html" rel="alternate"></link><published>2017-12-04T10:00:00+01:00</published><updated>2017-12-04T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-12-04:/2017/12/otro-microframework-en-python-flask.html</id><summary type="html">&lt;p&gt;Cuando queremos hacer una nueva aplicación web podemos usar un &lt;em&gt;framework&lt;/em&gt; completo como &lt;strong&gt;django&lt;/strong&gt; o uno minimalista como &lt;strong&gt;bottle&lt;/strong&gt;. Entre ambos existe una amplia variedad de &lt;em&gt;frameworks&lt;/em&gt; que nos pueden aportar variedad y algunas de las funcionalidades más demandadas. En esta categoria podemos encontrar un &lt;em&gt;microframework&lt;/em&gt; muy interesante llamado &lt;strong&gt;Flask …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando queremos hacer una nueva aplicación web podemos usar un &lt;em&gt;framework&lt;/em&gt; completo como &lt;strong&gt;django&lt;/strong&gt; o uno minimalista como &lt;strong&gt;bottle&lt;/strong&gt;. Entre ambos existe una amplia variedad de &lt;em&gt;frameworks&lt;/em&gt; que nos pueden aportar variedad y algunas de las funcionalidades más demandadas. En esta categoria podemos encontrar un &lt;em&gt;microframework&lt;/em&gt; muy interesante llamado &lt;strong&gt;Flask&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;De hecho, este &lt;em&gt;framework&lt;/em&gt; es enormemente similar a &lt;a href="http://www.linuxsysadmin.ml/2017/05/desarrollando-aplicaciones-web-con-python-y-bottle.html"&gt;otro que ya vimos&lt;/a&gt;. Lo único que impide que ambos &lt;em&gt;frameworks&lt;/em&gt; se fusionen es un choque ideológico entre ambos autores, y su forma de afrontar la distribución del código fuente; mientras que el autor de &lt;strong&gt;bottle&lt;/strong&gt; mantiene la idea del fichero único, el de &lt;strong&gt;flask&lt;/strong&gt; cree firmemente en la necesidad de separar las capas dependiendo de su función.&lt;/p&gt;
+&lt;p&gt;De esta forma, &lt;strong&gt;flask&lt;/strong&gt; es solo la unión de 3 grandes librerías del mismo autor:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;flask&lt;/strong&gt;: una librería que funciona como pegamento entre todas las demás&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;werkzeug&lt;/strong&gt;: posiblemente la mejor librería para tratar con el protocolo &lt;strong&gt;WSGI&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;jinja2&lt;/strong&gt;: el mejor motor de plantillas existente para &lt;strong&gt;python&lt;/strong&gt;, muy parecido al de &lt;strong&gt;django&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Este &lt;em&gt;framework&lt;/em&gt; no trabaja con ninguna capa de datos, dándonos la libertad para elegir la que más nos guste, y dándonos libertad para usar cualquier servicio de datos, sea SQL, NoSQL, u otros, incluso ninguno.&lt;/p&gt;
+&lt;p&gt;Sin embargo, lo que realmente hace grande a este &lt;em&gt;framework&lt;/em&gt; son los &lt;strong&gt;blueprints&lt;/strong&gt;, que lo hacen extensible hasta límites insospechados, pero eso lo vermos más adelante. No nos olvidemos de mencionar la &lt;a href="http://flask.pocoo.org/docs/"&gt;magnífica documentación&lt;/a&gt; y estaremos trasteando con el &lt;em&gt;framework&lt;/em&gt; en menos de 2 horas.&lt;/p&gt;
+&lt;p&gt;Y si he conseguido picar tu curiosidad, te recomiendo encarecidamente leerte el libre &lt;em&gt;online&lt;/em&gt; &lt;a href="https://exploreflask.com/en/latest/"&gt;Explore Flask&lt;/a&gt; que es muy interesante y algo más completo que este artículo.&lt;/p&gt;
+&lt;h2&gt;Objetos y métodos básicos&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Flask&lt;/strong&gt;: Objeto principal del &lt;em&gt;framework&lt;/em&gt;, es una forma de aglutinar el &lt;em&gt;callable wsgi&lt;/em&gt; con un conjunto de rutas. Nuestra aplicación va a ser una instancia de este objeto.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;request&lt;/strong&gt;: Objeto que nos permite acceder a los datos referentes a la petición que nos han hecho. Incluye los parámetros GET, las cookies y cabeceras, entre otras cosas.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;response&lt;/strong&gt;: Objeto que nos permite modificar nuestras respuestas, añadiendo cabeceras, códigos de estado, cookies y otros conceptos.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;render_template&lt;/strong&gt;: Método que inyecta nuestro contexto a una plantilla y nos devuelve la respuesta ya formada, lista para devolverla.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;redirect&lt;/strong&gt;: Helper que nos permite devolver una redirección a otra URL en nuestro código.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;abort&lt;/strong&gt;: Helper que nos permite devolver estado de error desde nuestro controlador.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Una aplicación vacía&lt;/h2&gt;
+&lt;p&gt;Vamos a crear una carpeta para contener nuestro proyecto:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects$ mkdir myapp
+gerard@atlantis:~/projects$ &lt;span class="nb"&gt;cd&lt;/span&gt; myapp/
+gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Siguiendo las buenas prácticas, vamos a trabajar con virtualenv, que nos servirá para poner nuestras librerías, que de momento se limitan al &lt;em&gt;framework&lt;/em&gt;. En adelante, es posible poner librerías para acceder a una base de datos, nuevos motores de plantillas y librerías más específicas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/myapp$ virtualenv .venv
+New python executable in /home/gerard/projects/myapp/.venv/bin/python
+Installing setuptools, pip, wheel...done.
+gerard@atlantis:~/projects/myapp$ . .venv/bin/activate
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ pip install flask
+...
+Installing collected packages: itsdangerous, click, Werkzeug, MarkupSafe, Jinja2, flask
+Successfully installed Jinja2-2.9.6 MarkupSafe-1.0 Werkzeug-0.12.2 click-6.7 flask-0.12.2 itsdangerous-0.24
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como queremos poder reproducir nuestro entorno usaremos pip freeze para guardar las dependencias, en vista a poderlas instalar en un futuro entorno real.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ pip freeze &amp;gt; requirements.txt
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lo mínimo para ejecutar una aplicación &lt;em&gt;WSGI compilant&lt;/em&gt; es un servidor WSGI y la aplicación misma. Una aplicación construida con &lt;strong&gt;flask&lt;/strong&gt; es básicamente una instancia del objeto &lt;em&gt;Flask&lt;/em&gt;, a la que iremos registrando rutas. De momento la dejamos vacía, lo que nos va a responder siempre un error 404.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat app.py
+from flask import Flask
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Flask&lt;span class="o"&gt;(&lt;/span&gt;__name__&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En un entorno real, el servidor a usar sería otro, por ejemplo &lt;strong&gt;apache&lt;/strong&gt;, &lt;strong&gt;uwsgi&lt;/strong&gt; o &lt;strong&gt;gunicorn&lt;/strong&gt;, pero para desarrollar, podemos aprovecharnos del servidor integrado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ &lt;span class="nv"&gt;FLASK_DEBUG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="nv"&gt;FLASK_APP&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;app.py flask run
+ * Serving Flask app &lt;span class="s2"&gt;&amp;quot;app&amp;quot;&lt;/span&gt;
+ * Forcing debug mode on
+ * Running on http://127.0.0.1:5000/ &lt;span class="o"&gt;(&lt;/span&gt;Press CTRL+C to quit&lt;span class="o"&gt;)&lt;/span&gt;
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: &lt;span class="m"&gt;579&lt;/span&gt;-205-006
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para nuestra comodidad futura, vamos a poner el comando en un script, en el que podemos definir nuestras propias variables de entorno o aquellas que queramos aplicar estando en nuestro entorno de desarrollo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat server.sh
+&lt;span class="c1"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="nv"&gt;PYTHONDONTWRITEBYTECODE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot; &amp;quot;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+&lt;span class="nv"&gt;FLASK_DEBUG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+&lt;span class="nv"&gt;FLASK_APP&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;app.py &lt;span class="se"&gt;\&lt;/span&gt;
+flask run --host &lt;span class="m"&gt;0&lt;/span&gt;.0.0.0 --port &lt;span class="m"&gt;8080&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ chmod &lt;span class="m"&gt;755&lt;/span&gt; server.sh
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ ./server.sh
+ * Serving Flask app &lt;span class="s2"&gt;&amp;quot;app&amp;quot;&lt;/span&gt;
+ * Forcing debug mode on
+ * Running on http://0.0.0.0:8080/ &lt;span class="o"&gt;(&lt;/span&gt;Press CTRL+C to quit&lt;span class="o"&gt;)&lt;/span&gt;
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: &lt;span class="m"&gt;579&lt;/span&gt;-205-006
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y ya podemos dirigirnos a http://localhost:8080/ para comprobar un bonito error 404.&lt;/p&gt;
+&lt;h2&gt;Registrando rutas a controladores&lt;/h2&gt;
+&lt;p&gt;La idea es muy simple: se registran rutas a funciones que devuelven la respuesta resultado. Hay varias formas de añadir rutas a nuestra aplicación, pero la que más me gusta es el decorador.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat app.py
+from flask import Flask
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Flask&lt;span class="o"&gt;(&lt;/span&gt;__name__&lt;span class="o"&gt;)&lt;/span&gt;
+
+@app.route&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def home&lt;span class="o"&gt;()&lt;/span&gt;:
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;h1&amp;gt;Home page&amp;lt;/h1&amp;gt;&amp;#39;&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De esta forma, todas las peticiones GET a / van a devolver una página HTML con el contenido retornado. El código de retorno es un 200 y el &lt;em&gt;content-type&lt;/em&gt; es &lt;em&gt;text/html&lt;/em&gt; por defecto, aunque se puede cambiar con el objeto &lt;em&gt;response&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Usando plantillas y segmentos de URL&lt;/h2&gt;
+&lt;p&gt;No es una buena práctica poner en el controlador la respuesta HTML. Para eso, &lt;strong&gt;flask&lt;/strong&gt; nos ofrece el motor de plantillas &lt;strong&gt;jinja2&lt;/strong&gt;. También nos permite capturar parte de la URL como parámetros; veamos un ejemplo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat app.py
+from flask import Flask, render_template
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Flask&lt;span class="o"&gt;(&lt;/span&gt;__name__&lt;span class="o"&gt;)&lt;/span&gt;
+
+@app.route&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def home&lt;span class="o"&gt;()&lt;/span&gt;:
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;h1&amp;gt;Home page&amp;lt;/h1&amp;gt;&amp;#39;&lt;/span&gt;
+
+@app.route&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/hello/&amp;lt;name&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def hello&lt;span class="o"&gt;(&lt;/span&gt;name&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="nv"&gt;data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;nombre&amp;#39;&lt;/span&gt;: name,
+    &lt;span class="o"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; render_template&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;hello.html&amp;#39;&lt;/span&gt;, **data&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat templates/hello.html
+&amp;lt;p&amp;gt;Hola &lt;span class="o"&gt;{{&lt;/span&gt; nombre &lt;span class="o"&gt;}}&lt;/span&gt;&amp;lt;/p&amp;gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y de esta forma, todas las URLs de la forma &lt;em&gt;/hello/nombre&lt;/em&gt; capturará el segmento como &lt;em&gt;name&lt;/em&gt; y lo va a pasar a la funcion &lt;em&gt;render_template&lt;/em&gt; que hará lo que tenga que hacer con ella, que en este caso es pintarla.&lt;/p&gt;
+&lt;p&gt;Algunas aplicaciones no necesitan plantillas HTML. Por ejemplo una API solo necesitaría convertir una expresión python en su equivalente JSON, mediante una función adecuada, que podemos ver como un motor de plantillas.&lt;/p&gt;
+&lt;h2&gt;Blueprints&lt;/h2&gt;
+&lt;p&gt;Las aplicaciones web tienden a crecer mucho, especialmente si planificamos funcionalidades de acuerdo a algún método ágil. En estos casos podemos contar con los &lt;strong&gt;blueprints&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Básicamente, un &lt;strong&gt;blueprint&lt;/strong&gt; es una manera de organizar tu aplicación en trozos, más pequeños y reusables. Como toda otra aplicación &lt;strong&gt;Flask&lt;/strong&gt;, es una colección de vistas, plantillas y otros elementos estáticos. A pesar de esto, un &lt;strong&gt;blueprint&lt;/strong&gt; no es una aplicación en sí misma, y debe ser registrado en una aplicación de verdad antes de que se pueda usar.&lt;/p&gt;
+&lt;p&gt;La razón principal por la que deberíamos utilizar &lt;strong&gt;blueprints&lt;/strong&gt; es la de desacoplar nuestra aplicación en componentes más pequeños y reusables, encargándose cada uno de uno solo de los aspectos de la aplicación. Esto los hace mantenibles y más fáciles de &lt;em&gt;debuguear&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;En la práctica, los &lt;strong&gt;blueprints&lt;/strong&gt; han derivado en &lt;em&gt;extensiones&lt;/em&gt; genéricas que nos permiten trabajar con módulos preparados para sacarnos el trabajo duro de encima. Mis favoritos son &lt;strong&gt;Flask-Admin&lt;/strong&gt; y &lt;strong&gt;Flask-Mongoengine&lt;/strong&gt;, pero eso queda para otro artículo.&lt;/p&gt;</content><category term="python"></category><category term="framework"></category><category term="microframework"></category><category term="flask"></category></entry><entry><title>Un ODM para mongodb en python: mongoengine</title><link href="http://www.linuxsysadmin.ml/2017/11/un-odm-para-mongodb-en-python-mongoengine.html" rel="alternate"></link><published>2017-11-27T10:00:00+01:00</published><updated>2017-11-27T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-11-27:/2017/11/un-odm-para-mongodb-en-python-mongoengine.html</id><summary type="html">&lt;p&gt;Aquellos que hemos usado &lt;strong&gt;mongodb&lt;/strong&gt; desde &lt;strong&gt;python&lt;/strong&gt;, ya conocemos las virtudes de &lt;strong&gt;pymongo&lt;/strong&gt;. Sin embargo, este lenguaje es orientado a objetos, y trabajar con ellos hace nuestro código más simple y más legible. &lt;strong&gt;Mongoengine&lt;/strong&gt; es un ODM, una librería que se encarga de convertir objetos en documentos &lt;strong&gt;mongodb&lt;/strong&gt; y viceversa …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Aquellos que hemos usado &lt;strong&gt;mongodb&lt;/strong&gt; desde &lt;strong&gt;python&lt;/strong&gt;, ya conocemos las virtudes de &lt;strong&gt;pymongo&lt;/strong&gt;. Sin embargo, este lenguaje es orientado a objetos, y trabajar con ellos hace nuestro código más simple y más legible. &lt;strong&gt;Mongoengine&lt;/strong&gt; es un ODM, una librería que se encarga de convertir objetos en documentos &lt;strong&gt;mongodb&lt;/strong&gt; y viceversa.&lt;/p&gt;
 &lt;p&gt;ODM son las siglas para &lt;em&gt;object to document mapper&lt;/em&gt;, y es el equivalente a un ORM (&lt;em&gt;object to relational mapper&lt;/em&gt;). La diferencia entre ambos conceptos es que los datos van a parar a la base de datos como un documento en contraposición a una base de datos relacional.&lt;/p&gt;
 &lt;p&gt;El objetivo de la librería es convertir nuestros modelos en objetos de &lt;strong&gt;python&lt;/strong&gt; de forma declarativa. Toda la magia del acceso a la base de datos se hace de forma automática.&lt;/p&gt;
 &lt;p&gt;Este ODM está realmente bien hecho; soporta tipos de campos, herencia de clases, referencias a otros documentos e incluso listas en sus campos. Todo ello creando los índices necesarios para los accesos habituales, y la posibilidad de declarar otros índices que creamos necesarios.&lt;/p&gt;
