@@ -1,5 +1,258 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-12-04T10:00:00+01:00</updated><entry><title>Otro microframework en python: Flask</title><link href="http://www.linuxsysadmin.ml/2017/12/otro-microframework-en-python-flask.html" rel="alternate"></link><published>2017-12-04T10:00:00+01:00</published><updated>2017-12-04T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-12-04:/2017/12/otro-microframework-en-python-flask.html</id><summary type="html">&lt;p&gt;Cuando queremos hacer una nueva aplicación web podemos usar un &lt;em&gt;framework&lt;/em&gt; completo como &lt;strong&gt;django&lt;/strong&gt; o uno minimalista como &lt;strong&gt;bottle&lt;/strong&gt;. Entre ambos existe una amplia variedad de &lt;em&gt;frameworks&lt;/em&gt; que nos pueden aportar variedad y algunas de las funcionalidades más demandadas. En esta categoria podemos encontrar un &lt;em&gt;microframework&lt;/em&gt; muy interesante llamado &lt;strong&gt;Flask …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando queremos hacer una nueva aplicación web podemos usar un &lt;em&gt;framework&lt;/em&gt; completo como &lt;strong&gt;django&lt;/strong&gt; o uno minimalista como &lt;strong&gt;bottle&lt;/strong&gt;. Entre ambos existe una amplia variedad de &lt;em&gt;frameworks&lt;/em&gt; que nos pueden aportar variedad y algunas de las funcionalidades más demandadas. En esta categoria podemos encontrar un &lt;em&gt;microframework&lt;/em&gt; muy interesante llamado &lt;strong&gt;Flask&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-12-11T10:00:00+01:00</updated><entry><title>Creciendo con Flask: los blueprints</title><link href="http://www.linuxsysadmin.ml/2017/12/creciendo-con-flask-los-blueprints.html" rel="alternate"></link><published>2017-12-11T10:00:00+01:00</published><updated>2017-12-11T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-12-11:/2017/12/creciendo-con-flask-los-blueprints.html</id><summary type="html">&lt;p&gt;Ya estuvimos hablando del &lt;em&gt;microframework&lt;/em&gt; &lt;strong&gt;Flask&lt;/strong&gt;, pero no profundizamos en su funcionalidad más avanzada: los &lt;strong&gt;blueprints&lt;/strong&gt;, que son una agrupación de vistas, plantillas y contenido estático similar a las aplicaciones de &lt;strong&gt;django&lt;/strong&gt;. Solamente por esta funcionalidad queda justificado el uso de este &lt;em&gt;framework&lt;/em&gt; para proyectos de tamaños medio o grande …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ya estuvimos hablando del &lt;em&gt;microframework&lt;/em&gt; &lt;strong&gt;Flask&lt;/strong&gt;, pero no profundizamos en su funcionalidad más avanzada: los &lt;strong&gt;blueprints&lt;/strong&gt;, que son una agrupación de vistas, plantillas y contenido estático similar a las aplicaciones de &lt;strong&gt;django&lt;/strong&gt;. Solamente por esta funcionalidad queda justificado el uso de este &lt;em&gt;framework&lt;/em&gt; para proyectos de tamaños medio o grande.&lt;/p&gt;
+&lt;p&gt;Lo primero que tenemos que ver es la necesidad de utilizar &lt;strong&gt;blueprints&lt;/strong&gt;. A medida que nuestra aplicación crece, el código lo hace también. Esto suele hacer código fuente grande e inmantenible. Invariablemente, veremos que nuestra aplicación es una amalgama de partes.&lt;/p&gt;
+&lt;p&gt;En este momento, nos va a interesar trocear en partes aquel fichero con todas nuestras vistas. Y la herramienta para hacer esto son los &lt;strong&gt;blueprints&lt;/strong&gt;, ya sea para partir la aplicación &lt;em&gt;a posteriori&lt;/em&gt; o queremos empezar haciéndolo bien desde el principio.&lt;/p&gt;
+&lt;h2&gt;Divide y vencerás&lt;/h2&gt;
+&lt;p&gt;Os pongo un pequeño ejemplo, con este programa de gestión de hoteles:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Programa modular" src="http://www.linuxsysadmin.ml/images/programa_modular.gif"&gt;&lt;/p&gt;
+&lt;p&gt;¿Verdad que parece grande y descorazonador? &lt;strong&gt;¡Divide y vencerás!&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Si lo troceamos adecuadamente, tenemos varios problemas menores, e incluso podemos poner a trabajar en ellos a un equipo grande, por separado. Incluso podemos añadir más módulos en un futuro; quien sabe, incluso podemos hacerlo genérico suficiente para que los hoteles activen solamente las partes que más falta les hagan.&lt;/p&gt;
+&lt;p&gt;Ese es el modelo de negocio de SAP...&lt;/p&gt;
+&lt;h2&gt;Un caso de uso de ejemplo&lt;/h2&gt;
+&lt;p&gt;Supongamos que una empresa nos paga para hacer una web corporativa, con, de momento, las siguientes opciones:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Una página principal para actuar como su &lt;em&gt;landing page&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Algunas páginas menores, como por ejemplo el apartado legal o la presentación de la empresa, con contenido fijo&lt;/li&gt;
+&lt;li&gt;Un boletín informativo con sus últimas noticias, a modo de rueda de prensa y con una maquetación diferente&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Y cual es nuestra estratégia? &lt;strong&gt;¡Divide y vencerás!&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Hagamos nuestra aplicación, a base de estas mismas 3 partes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Una vista normal para la &lt;em&gt;landing page&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Un &lt;strong&gt;blueprint&lt;/strong&gt; para las páginas menores&lt;/li&gt;
+&lt;li&gt;Un &lt;strong&gt;blueprint&lt;/strong&gt; para las noticias&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Implementación&lt;/h2&gt;
+&lt;p&gt;Vamos a empezar con una aplicación vacía, solo con la página principal. A partir de ahí vamos a registrar las páginas menores y, finalmente, el módulo de notícias.&lt;/p&gt;
+&lt;p&gt;Para simplificar, no vamos a gestionar la capa de persistencia ni un panel de administración; esto queda como ejercicio al lector. Si os interesa mucho, y como veremos en un artículo posterior, podemos utilizar un &lt;strong&gt;blueprint&lt;/strong&gt; prefabricado para ello.&lt;/p&gt;
+&lt;h3&gt;La página principal&lt;/h3&gt;
+&lt;p&gt;Vamos a evitar el uso de &lt;strong&gt;blueprints&lt;/strong&gt;, solo para demostrar que es posible mezclar vistas normales con &lt;strong&gt;blueprints&lt;/strong&gt;. No hay ningún misterio en esto: una vista, una plantilla y un estilo.&lt;/p&gt;
+&lt;p&gt;Así quedaría nuestro proyecto con el primero de los puntos solucionados:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ tree
+.
+├── static
+│   └── style.css
+├── templates
+│   ├── layout.html
+│   └── main.html
+├── app.py
+├── requirements.txt
+└── server.sh
+
+&lt;span class="m"&gt;2&lt;/span&gt; directories, &lt;span class="m"&gt;6&lt;/span&gt; files
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La vista solo renderiza la plantilla que nos interesa, aunque hay la complejidad añadida de que utiliza herencia.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat app.py
+from flask import Flask, render_template
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Flask&lt;span class="o"&gt;(&lt;/span&gt;__name__&lt;span class="o"&gt;)&lt;/span&gt;
+
+@app.route&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def main_page&lt;span class="o"&gt;()&lt;/span&gt;:
+    &lt;span class="k"&gt;return&lt;/span&gt; render_template&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;main.html&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finalmente tenemos las plantillas y algún &lt;em&gt;asset&lt;/em&gt; estático.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat templates/layout.html
+&amp;lt;!DOCTYPE html&amp;gt;
+&amp;lt;html &lt;span class="nv"&gt;lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;es&amp;quot;&lt;/span&gt;&amp;gt;
+&amp;lt;head&amp;gt;
+    &amp;lt;link &lt;span class="nv"&gt;rel&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;stylesheet&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;href&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/static/style.css&amp;quot;&lt;/span&gt; /&amp;gt;
+&amp;lt;/head&amp;gt;
+&amp;lt;body&amp;gt;
+&lt;span class="o"&gt;{&lt;/span&gt;% block content %&lt;span class="o"&gt;}{&lt;/span&gt;% endblock %&lt;span class="o"&gt;}&lt;/span&gt;
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat templates/main.html
+&lt;span class="o"&gt;{&lt;/span&gt;% extends &lt;span class="s2"&gt;&amp;quot;layout.html&amp;quot;&lt;/span&gt; %&lt;span class="o"&gt;}&lt;/span&gt;
+
+&lt;span class="o"&gt;{&lt;/span&gt;% block content %&lt;span class="o"&gt;}&lt;/span&gt;
+    &amp;lt;h1&amp;gt;Main page&amp;lt;/h1&amp;gt;
+&lt;span class="o"&gt;{&lt;/span&gt;% endblock %&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat static/style.css
+html &lt;span class="o"&gt;{&lt;/span&gt; background-color: cyan &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Las páginas secundarias&lt;/h3&gt;
+&lt;p&gt;Vamos a crear una carpeta para contener los recursos del &lt;strong&gt;blueprint&lt;/strong&gt;. Como el &lt;strong&gt;blueprint&lt;/strong&gt; debe ser importado y registrado por la aplicación, vamos a convertirlo en un módulo de &lt;strong&gt;python&lt;/strong&gt; añadiendo un fichero &lt;em&gt;__init__.py&lt;/em&gt;, que de paso servirá para contener el código del &lt;strong&gt;blueprint&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Nótese la aparición de la nueva carpeta &lt;em&gt;pages/&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ tree
+.
+├── pages
+│   ├── templates
+│   │   ├── about.html
+│   │   └── legal.html
+│   └── __init__.py
+├── static
+│   └── style.css
+├── templates
+│   ├── layout.html
+│   └── main.html
+├── app.py
+├── requirements.txt
+└── server.sh
+
+&lt;span class="m"&gt;4&lt;/span&gt; directories, &lt;span class="m"&gt;9&lt;/span&gt; files
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El funcionamiento es el mismo: regitramos vistas que renderizan plantillas y poco más. La parte interesante es que estas vistas se encapsulan en un objeto &lt;em&gt;Blueprint&lt;/em&gt; que luego será registrado en la aplicación base.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat pages/__init__.py
+from flask import Blueprint, render_template
+
+&lt;span class="nv"&gt;pages&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Blueprint&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;pages&amp;#39;&lt;/span&gt;, __name__, &lt;span class="nv"&gt;template_folder&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;templates&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+@pages.route&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/about&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def about_page&lt;span class="o"&gt;()&lt;/span&gt;:
+    &lt;span class="k"&gt;return&lt;/span&gt; render_template&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;about.html&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+@pages.route&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/legal&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def legal_page&lt;span class="o"&gt;()&lt;/span&gt;:
+    &lt;span class="k"&gt;return&lt;/span&gt; render_template&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;legal.html&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat pages/templates/about.html
+&lt;span class="o"&gt;{&lt;/span&gt;% extends &lt;span class="s2"&gt;&amp;quot;layout.html&amp;quot;&lt;/span&gt; %&lt;span class="o"&gt;}&lt;/span&gt;
+
+&lt;span class="o"&gt;{&lt;/span&gt;% block content %&lt;span class="o"&gt;}&lt;/span&gt;
+    &amp;lt;h1&amp;gt;About page&amp;lt;/h1&amp;gt;
+&lt;span class="o"&gt;{&lt;/span&gt;% endblock %&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat pages/templates/legal.html
+&lt;span class="o"&gt;{&lt;/span&gt;% extends &lt;span class="s2"&gt;&amp;quot;layout.html&amp;quot;&lt;/span&gt; %&lt;span class="o"&gt;}&lt;/span&gt;
+
+&lt;span class="o"&gt;{&lt;/span&gt;% block content %&lt;span class="o"&gt;}&lt;/span&gt;
+    &amp;lt;h1&amp;gt;Legal page&amp;lt;/h1&amp;gt;
+&lt;span class="o"&gt;{&lt;/span&gt;% endblock %&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Con esto tenemos el &lt;strong&gt;blueprint&lt;/strong&gt;, que va a haber que registrar en nuestra aplicación para que esta añada sus rutas a una ruta base, que en este caso, no está declarada. Esto hará que se registren en &lt;em&gt;/&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat app.py
+from flask import Flask, render_template
+from pages import pages
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Flask&lt;span class="o"&gt;(&lt;/span&gt;__name__&lt;span class="o"&gt;)&lt;/span&gt;
+
+@app.route&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def main_page&lt;span class="o"&gt;()&lt;/span&gt;:
+    &lt;span class="k"&gt;return&lt;/span&gt; render_template&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;main.html&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+app.register_blueprint&lt;span class="o"&gt;(&lt;/span&gt;pages&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De esta forma tendremos dos nuevas URLs en la aplicación:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://localhost:8080/about"&gt;http://localhost:8080/about&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://localhost:8080/legal"&gt;http://localhost:8080/legal&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Es interesante ver que hay dos nuevas plantillas en el &lt;strong&gt;blueprint&lt;/strong&gt;, pero la plantilla base y la hoja de estilos siguen siendo las de la aplicación principal. Los ficheros del &lt;strong&gt;blueprint&lt;/strong&gt; tienen preferencia sobre el resto, pero no los eclipsan; los anteriores quedan disponibles por si no se sobreescribieran.&lt;/p&gt;
+&lt;h3&gt;El módulo de notícias&lt;/h3&gt;
+&lt;p&gt;Este módulo es prácticamente igual al anterior, con dos sutiles diferencias:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Usaremos otra plantilla base y otra hoja de estilos&lt;/li&gt;
+&lt;li&gt;Nuestras rutas van a ir prefijadas por &lt;em&gt;/news/&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;La primera parte es tan simple como poner los nuevos ficheros para que no utilice los originales como plan B. La segunda se consigue declarando las rutas sin el prefijo y montando el &lt;strong&gt;blueprint&lt;/strong&gt; con un prefijo en la aplicación original. Esto nos da cierta capacidad de recolocar un conjunto de URLs.&lt;/p&gt;
+&lt;p&gt;De nuevo, hacemos aparecer una carpeta nueva. Como las dos carpetas &lt;em&gt;templates/&lt;/em&gt; se "fusionan" a ojos del cargador, me he visto obligado a esconder el segundo &lt;em&gt;layout.html&lt;/em&gt; en una carpeta, para evitar colisiones de nombres.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ tree
+.
+├── news
+│   ├── static
+│   │   └── style.css
+│   ├── templates
+│   │   └── news
+│   │       ├── latest.html
+│   │       └── layout.html
+│   └── __init__.py
+├── pages
+│   ├── templates
+│   │   ├── about.html
+│   │   └── legal.html
+│   └── __init__.py
+├── static
+│   └── style.css
+├── templates
+│   ├── layout.html
+│   └── main.html
+├── app.py
+├── requirements.txt
+└── server.sh
+
+&lt;span class="m"&gt;8&lt;/span&gt; directories, &lt;span class="m"&gt;13&lt;/span&gt; files
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La aplicación ya es repetitiva; se pone solamente por tener el ejemplo completo. Es importante ver que se ha utilizado el &lt;em&gt;helper&lt;/em&gt; &lt;strong&gt;url_for&lt;/strong&gt; para no calcular el &lt;em&gt;path&lt;/em&gt; del fichero de estilos. Pido perdón por la chapuza de no usar una base de datos, y poner las noticias en el código.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat news/__init__.py
+from flask import Blueprint, render_template
+
+&lt;span class="nv"&gt;news&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Blueprint&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;news&amp;#39;&lt;/span&gt;, __name__, &lt;span class="nv"&gt;template_folder&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;templates&amp;#39;&lt;/span&gt;, &lt;span class="nv"&gt;static_folder&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;static&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+@news.route&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/latest&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def latest_news&lt;span class="o"&gt;()&lt;/span&gt;:
+    &lt;span class="nv"&gt;data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;news&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;lorem&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;ipsum&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;,
+    &lt;span class="o"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; render_template&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;news/latest.html&amp;#39;&lt;/span&gt;, **data&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat news/templates/news/layout.html
+&amp;lt;!DOCTYPE html&amp;gt;
+&amp;lt;html &lt;span class="nv"&gt;lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;es&amp;quot;&lt;/span&gt;&amp;gt;
+&amp;lt;head&amp;gt;
+    &amp;lt;link &lt;span class="nv"&gt;rel&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;stylesheet&amp;quot;&lt;/span&gt; &lt;span class="nv"&gt;href&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;{{ url_for(&amp;#39;.static&amp;#39;, filename=&amp;#39;style.css&amp;#39;) }}&amp;quot;&lt;/span&gt; /&amp;gt;
+&amp;lt;/head&amp;gt;
+&amp;lt;body&amp;gt;
+&lt;span class="o"&gt;{&lt;/span&gt;% block content %&lt;span class="o"&gt;}{&lt;/span&gt;% endblock %&lt;span class="o"&gt;}&lt;/span&gt;
+&amp;lt;p&amp;gt;&amp;lt;small&amp;gt;News app&amp;lt;/small&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat news/templates/news/latest.html
+&lt;span class="o"&gt;{&lt;/span&gt;% extends &lt;span class="s2"&gt;&amp;quot;news/layout.html&amp;quot;&lt;/span&gt; %&lt;span class="o"&gt;}&lt;/span&gt;
+
+&lt;span class="o"&gt;{&lt;/span&gt;% block content %&lt;span class="o"&gt;}&lt;/span&gt;
+    &amp;lt;h1&amp;gt;Latest news&amp;lt;/h1&amp;gt;
+    &amp;lt;ul&amp;gt;
+&lt;span class="o"&gt;{&lt;/span&gt;% &lt;span class="k"&gt;for&lt;/span&gt; new in news %&lt;span class="o"&gt;}&lt;/span&gt;
+        &amp;lt;li&amp;gt;&lt;span class="o"&gt;{{&lt;/span&gt; new &lt;span class="o"&gt;}}&lt;/span&gt;&amp;lt;/li&amp;gt;
+&lt;span class="o"&gt;{&lt;/span&gt;% endfor %&lt;span class="o"&gt;}&lt;/span&gt;
+    &amp;lt;/ul&amp;gt;
+&lt;span class="o"&gt;{&lt;/span&gt;% endblock %&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat news/static/style.css
+html &lt;span class="o"&gt;{&lt;/span&gt; background-color: red &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El punto interesante es que quremos mapear el &lt;strong&gt;blueprint&lt;/strong&gt;. Eso significa que la URL &lt;em&gt;/latest&lt;/em&gt; del &lt;strong&gt;blueprint&lt;/strong&gt; tiene que utilizar un prefijo, para que lo veamos en &lt;em&gt;/news/latest&lt;/em&gt;. Es ahora, en el momento de registrar el &lt;strong&gt;blueprint&lt;/strong&gt;, cuando podemos especificar que todas sus URLs cuelguen de un prefijo adicional.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$ cat app.py
+from flask import Flask, render_template
+from pages import pages
+from news import news
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Flask&lt;span class="o"&gt;(&lt;/span&gt;__name__&lt;span class="o"&gt;)&lt;/span&gt;
+
+@app.route&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+def main_page&lt;span class="o"&gt;()&lt;/span&gt;:
+    &lt;span class="k"&gt;return&lt;/span&gt; render_template&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;main.html&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+app.register_blueprint&lt;span class="o"&gt;(&lt;/span&gt;pages&lt;span class="o"&gt;)&lt;/span&gt;
+app.register_blueprint&lt;span class="o"&gt;(&lt;/span&gt;news, &lt;span class="nv"&gt;url_prefix&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/news&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/myapp$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Reflexiones&lt;/h2&gt;
+&lt;p&gt;¿Os habéis fijado lo fácil que seria adoptar el módulo de noticias para otra aplicación?&lt;/p&gt;
+&lt;p&gt;Solo necesitamos tener un repositorio de &lt;strong&gt;blueprints&lt;/strong&gt; listo para ser usado en proyectos nuevos. Si se piensan bien nuestros &lt;strong&gt;blueprints&lt;/strong&gt; serán &lt;strong&gt;reusables&lt;/strong&gt;. Algunos de ellos incluso se podrían convertir en &lt;strong&gt;extensiones&lt;/strong&gt;, pero eso es otra historia.&lt;/p&gt;</content><category term="python"></category><category term="framework"></category><category term="microframework"></category><category term="flask"></category><category term="blueprints"></category></entry><entry><title>Otro microframework en python: Flask</title><link href="http://www.linuxsysadmin.ml/2017/12/otro-microframework-en-python-flask.html" rel="alternate"></link><published>2017-12-04T10:00:00+01:00</published><updated>2017-12-04T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-12-04:/2017/12/otro-microframework-en-python-flask.html</id><summary type="html">&lt;p&gt;Cuando queremos hacer una nueva aplicación web podemos usar un &lt;em&gt;framework&lt;/em&gt; completo como &lt;strong&gt;django&lt;/strong&gt; o uno minimalista como &lt;strong&gt;bottle&lt;/strong&gt;. Entre ambos existe una amplia variedad de &lt;em&gt;frameworks&lt;/em&gt; que nos pueden aportar variedad y algunas de las funcionalidades más demandadas. En esta categoria podemos encontrar un &lt;em&gt;microframework&lt;/em&gt; muy interesante llamado &lt;strong&gt;Flask …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando queremos hacer una nueva aplicación web podemos usar un &lt;em&gt;framework&lt;/em&gt; completo como &lt;strong&gt;django&lt;/strong&gt; o uno minimalista como &lt;strong&gt;bottle&lt;/strong&gt;. Entre ambos existe una amplia variedad de &lt;em&gt;frameworks&lt;/em&gt; que nos pueden aportar variedad y algunas de las funcionalidades más demandadas. En esta categoria podemos encontrar un &lt;em&gt;microframework&lt;/em&gt; muy interesante llamado &lt;strong&gt;Flask&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;De hecho, este &lt;em&gt;framework&lt;/em&gt; es enormemente similar a &lt;a href="http://www.linuxsysadmin.ml/2017/05/desarrollando-aplicaciones-web-con-python-y-bottle.html"&gt;otro que ya vimos&lt;/a&gt;. Lo único que impide que ambos &lt;em&gt;frameworks&lt;/em&gt; se fusionen es un choque ideológico entre ambos autores, y su forma de afrontar la distribución del código fuente; mientras que el autor de &lt;strong&gt;bottle&lt;/strong&gt; mantiene la idea del fichero único, el de &lt;strong&gt;flask&lt;/strong&gt; cree firmemente en la necesidad de separar las capas dependiendo de su función.&lt;/p&gt;
 &lt;p&gt;De esta forma, &lt;strong&gt;flask&lt;/strong&gt; es solo la unión de 3 grandes librerías del mismo autor:&lt;/p&gt;
 &lt;ul&gt;
