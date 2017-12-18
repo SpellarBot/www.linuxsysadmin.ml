@@ -1,5 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-12-11T10:00:00+01:00</updated><entry><title>Creciendo con Flask: los blueprints</title><link href="http://www.linuxsysadmin.ml/2017/12/creciendo-con-flask-los-blueprints.html" rel="alternate"></link><published>2017-12-11T10:00:00+01:00</published><updated>2017-12-11T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-12-11:/2017/12/creciendo-con-flask-los-blueprints.html</id><summary type="html">&lt;p&gt;Ya estuvimos hablando del &lt;em&gt;microframework&lt;/em&gt; &lt;strong&gt;Flask&lt;/strong&gt;, pero no profundizamos en su funcionalidad más avanzada: los &lt;strong&gt;blueprints&lt;/strong&gt;, que son una agrupación de vistas, plantillas y contenido estático similar a las aplicaciones de &lt;strong&gt;django&lt;/strong&gt;. Solamente por esta funcionalidad queda justificado el uso de este &lt;em&gt;framework&lt;/em&gt; para proyectos de tamaños medio o grande …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ya estuvimos hablando del &lt;em&gt;microframework&lt;/em&gt; &lt;strong&gt;Flask&lt;/strong&gt;, pero no profundizamos en su funcionalidad más avanzada: los &lt;strong&gt;blueprints&lt;/strong&gt;, que son una agrupación de vistas, plantillas y contenido estático similar a las aplicaciones de &lt;strong&gt;django&lt;/strong&gt;. Solamente por esta funcionalidad queda justificado el uso de este &lt;em&gt;framework&lt;/em&gt; para proyectos de tamaños medio o grande.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-12-18T10:00:00+01:00</updated><entry><title>Usando extensiones en Flask</title><link href="http://www.linuxsysadmin.ml/2017/12/usando-extensiones-en-flask.html" rel="alternate"></link><published>2017-12-18T10:00:00+01:00</published><updated>2017-12-18T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-12-18:/2017/12/usando-extensiones-en-flask.html</id><summary type="html">&lt;p&gt;Muchos de los &lt;em&gt;microframeworks&lt;/em&gt; que existen en &lt;strong&gt;python&lt;/strong&gt; no ofrecen ninguna ayuda con las tareas más simples que toda aplicación acaba implementando; eso nos hace decantarnos casi siempre por una opción más pesada de &lt;em&gt;framework&lt;/em&gt;, como por ejemplo, &lt;strong&gt;Django&lt;/strong&gt;. Sin embargo, gracias a los &lt;strong&gt;blueprints&lt;/strong&gt; de &lt;strong&gt;Flask&lt;/strong&gt;, esto es innecesario …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Muchos de los &lt;em&gt;microframeworks&lt;/em&gt; que existen en &lt;strong&gt;python&lt;/strong&gt; no ofrecen ninguna ayuda con las tareas más simples que toda aplicación acaba implementando; eso nos hace decantarnos casi siempre por una opción más pesada de &lt;em&gt;framework&lt;/em&gt;, como por ejemplo, &lt;strong&gt;Django&lt;/strong&gt;. Sin embargo, gracias a los &lt;strong&gt;blueprints&lt;/strong&gt; de &lt;strong&gt;Flask&lt;/strong&gt;, esto es innecesario.&lt;/p&gt;
+&lt;p&gt;Ya vimos en &lt;a href="http://www.linuxsysadmin.ml/2017/12/creciendo-con-flask-los-blueprints.html"&gt;otro artículo&lt;/a&gt; que este &lt;em&gt;framework&lt;/em&gt; tiene una funcionalidad llamada &lt;strong&gt;blueprints&lt;/strong&gt;, que nos permiten encapsular un subconjunto de rutas, vistas y contenido estático para mantenibilidad y para su uso en otros proyectos.&lt;/p&gt;
+&lt;p&gt;Este mismo modelo de desarrollo ha permitido que muchas personas desarrollen sus &lt;strong&gt;blueprints&lt;/strong&gt; reusables y, en alguno de los casos, ofrecerlos a cualquiera que los pueda necesitar. Son especialmente interesantes las extensiones oficiales que se ofrecen con &lt;strong&gt;Flask&lt;/strong&gt;, que podemos encontrar en &lt;a href="http://flask.pocoo.org/extensions/"&gt;la página de extensiones&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Hay una lista interesante de extensiones, tanto en la página oficial, como por otros lugares de internet; cualquiera puede ofrecer extensiones. A pesar de ello, hay extensiones de plena confianza que van a servir de base para casi cualquier proyecto que deseemos empezar.&lt;/p&gt;
+&lt;p&gt;En mi caso, mis favoritas son &lt;strong&gt;flask-mongoengine&lt;/strong&gt; y &lt;strong&gt;flask-admin&lt;/strong&gt; y suelen ser motivo suficiente para empezar cada nuevo proyecto en &lt;strong&gt;Flask&lt;/strong&gt;. Vamos a intentar introducir el uso de extensiones con estos dos ejemplos.&lt;/p&gt;
+&lt;h2&gt;Un proyecto vacío&lt;/h2&gt;
+&lt;p&gt;Todas las modificaciones que se van a ir haciendo, se basan en una aplicación básica vacía. Siguiendo nuestra metodología, vamos a utilizar &lt;em&gt;virtualenv&lt;/em&gt;, vamos recoger las dependencias en un fichero &lt;em&gt;requirements.txt&lt;/em&gt; y vamos a disponer de un servidor de desarrollo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$ cat requirements.txt
+&lt;span class="nv"&gt;Flask&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.12.2
+Flask-Admin&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.5.0
+flask-mongoengine&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.9.3
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$ cat server.sh
+&lt;span class="c1"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="nv"&gt;PYTHONDONTWRITEBYTECODE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot; &amp;quot;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+&lt;span class="nv"&gt;FLASK_DEBUG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+&lt;span class="nv"&gt;FLASK_APP&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;app.py &lt;span class="se"&gt;\&lt;/span&gt;
+&lt;span class="nv"&gt;MONGODB_URL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;mongodb://localhost:27017/test&amp;#39;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+&lt;span class="nv"&gt;SECRET_KEY&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;1234567890&amp;#39;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+flask run --host &lt;span class="m"&gt;0&lt;/span&gt;.0.0.0 --port &lt;span class="m"&gt;8080&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$ cat app.py
+from flask import Flask
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Flask&lt;span class="o"&gt;(&lt;/span&gt;__name__&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Sobra decir que tenemos un servidor de &lt;strong&gt;mongodb&lt;/strong&gt; en alguna parte, dispuesto a ser utilizado por nuestra capa de datos. En este caso concreto, el servidor corre en local.&lt;/p&gt;
+&lt;h2&gt;Definiendo el modelo con flask-mongoengine&lt;/h2&gt;
+&lt;p&gt;Esta extensión no añade demasiado valor en sí misma, pero se integra magníficamente con &lt;strong&gt;Flask&lt;/strong&gt;. En esencia se trata de un &lt;strong&gt;blueprint&lt;/strong&gt; que utiliza la misma configuración que nuestra aplicación y se conecta al servidor de acuerdo a esta configuración.&lt;/p&gt;
+&lt;p&gt;Vamos a definir nuestros modelos como lo haríamos en &lt;strong&gt;mongoengine&lt;/strong&gt;, salvo que los tipos declarados en &lt;strong&gt;mongoengine&lt;/strong&gt; también lo están dentro del &lt;strong&gt;blueprint&lt;/strong&gt; que hemos creado. Con un modelo pequeño de demostración nos vale:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$ cat models.py
+from flask_mongoengine import MongoEngine
+
+&lt;span class="nv"&gt;db&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; MongoEngine&lt;span class="o"&gt;()&lt;/span&gt;
+
+
+class User&lt;span class="o"&gt;(&lt;/span&gt;db.Document&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="nv"&gt;username&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; db.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;password&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; db.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;fullname&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; db.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;meta&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;collection&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;users&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+
+
+class Product&lt;span class="o"&gt;(&lt;/span&gt;db.Document&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="nv"&gt;sku&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; db.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;title&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; db.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;description&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; db.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;meta&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;collection&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;products&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a recurrir a la clase principal (que es la que declara el objeto &lt;em&gt;app&lt;/em&gt;) y vamos a importar el &lt;strong&gt;blueprint&lt;/strong&gt;, para registrarlo posteriormente. Como añadido, vamos a sacar la URL de &lt;strong&gt;mongodb&lt;/strong&gt; de una variable de entorno, porque la idea es usar esta aplicación en un contenedor en el futuro; de momento, esta variable queda declarada en el fichero &lt;em&gt;server.sh&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$ cat app.py
+from flask import Flask
+from models import db
+import os
+
+&lt;span class="nv"&gt;MONGODB_URL&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; os.environ.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;MONGODB_URL&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Flask&lt;span class="o"&gt;(&lt;/span&gt;__name__&lt;span class="o"&gt;)&lt;/span&gt;
+app.config&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;MONGODB_SETTINGS&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;host&amp;#39;&lt;/span&gt;: MONGODB_URL&lt;span class="o"&gt;}&lt;/span&gt;
+db.init_app&lt;span class="o"&gt;(&lt;/span&gt;app&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Los modelos definidos con &lt;strong&gt;flask-mongoengine&lt;/strong&gt; disponen de un &lt;em&gt;QuerySet&lt;/em&gt; modificado, que nos permitirá hacer paginación o lanzar automáticamente un error 404 si no se encuentra un elemento, pero eso ya queda como deberes para el lector.&lt;/p&gt;
+&lt;h2&gt;Una interfaz de administración gratuita con flask-admin&lt;/h2&gt;
+&lt;p&gt;Esta extensión trabaja más que la anterior, pero en cierta manera, depende de ella. Se trata de un &lt;strong&gt;blueprint&lt;/strong&gt; que crea un interfaz de administración en base a los modelos y de unas clases &lt;em&gt;ModelView&lt;/em&gt; que son capaces de analizar los mismos y crear automáticamente las listas y formularios necesarios.&lt;/p&gt;
+&lt;p&gt;La idea es la misma: creamos el &lt;strong&gt;blueprint&lt;/strong&gt; y registramos el objeto &lt;em&gt;ModelView&lt;/em&gt; para cada objeto que deseemos en el panel de administración. El objeto básico &lt;em&gt;ModelView&lt;/em&gt; suele ser suficiente para la mayoría de casos, pero en otros vamos a querer personalizar lo que se ve, lo que se puede hacer, y los filtros disponibles.&lt;/p&gt;
+&lt;p&gt;Esto lo dejamos para el lector, y nos vamos a centrar en como se haría. Para ello, imaginemos que queremos ocultar el campo &lt;em&gt;password&lt;/em&gt; en la gestión de usuarios:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$ cat models.py
+from flask_mongoengine import MongoEngine
+
+&lt;span class="nv"&gt;db&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; MongoEngine&lt;span class="o"&gt;()&lt;/span&gt;
+
+
+class User&lt;span class="o"&gt;(&lt;/span&gt;db.Document&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="nv"&gt;username&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; db.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;password&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; db.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;fullname&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; db.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;meta&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;collection&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;users&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+
+
+class Product&lt;span class="o"&gt;(&lt;/span&gt;db.Document&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="nv"&gt;sku&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; db.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;title&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; db.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;description&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; db.StringField&lt;span class="o"&gt;()&lt;/span&gt;
+    &lt;span class="nv"&gt;meta&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;collection&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;products&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$ cat admin.py
+from flask_admin import Admin
+from flask_admin.contrib.mongoengine import ModelView
+from models import User, Product
+
+
+class HidePasswordModelView&lt;span class="o"&gt;(&lt;/span&gt;ModelView&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="nv"&gt;column_exclude_list&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;password&amp;#39;&lt;/span&gt;,&lt;span class="o"&gt;)&lt;/span&gt;
+
+&lt;span class="nv"&gt;admin&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Admin&lt;span class="o"&gt;()&lt;/span&gt;
+admin.add_view&lt;span class="o"&gt;(&lt;/span&gt;HidePasswordModelView&lt;span class="o"&gt;(&lt;/span&gt;User&lt;span class="o"&gt;))&lt;/span&gt;
+admin.add_view&lt;span class="o"&gt;(&lt;/span&gt;ModelView&lt;span class="o"&gt;(&lt;/span&gt;Product&lt;span class="o"&gt;))&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo queda importar el &lt;strong&gt;blueprint&lt;/strong&gt; y registrarlo en nuestra aplicación; esto se consigue en el fichero &lt;em&gt;app.py&lt;/em&gt;. Cabe decir que esta extensión requiere de una configuración &lt;code&gt;SECRET_KEY&lt;/code&gt; para encriptar las &lt;em&gt;cookies&lt;/em&gt; de &lt;strong&gt;Flask&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$ cat app.py
+from flask import Flask
+from models import db
+from admin import admin
+import os
+
+&lt;span class="nv"&gt;SECRET_KEY&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; os.environ.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;SECRET_KEY&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="nv"&gt;MONGODB_URL&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; os.environ.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;MONGODB_URL&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Flask&lt;span class="o"&gt;(&lt;/span&gt;__name__&lt;span class="o"&gt;)&lt;/span&gt;
+app.config&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;SECRET_KEY&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; SECRET_KEY
+app.config&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;MONGODB_SETTINGS&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;host&amp;#39;&lt;/span&gt;: MONGODB_URL&lt;span class="o"&gt;}&lt;/span&gt;
+db.init_app&lt;span class="o"&gt;(&lt;/span&gt;app&lt;span class="o"&gt;)&lt;/span&gt;
+admin.init_app&lt;span class="o"&gt;(&lt;/span&gt;app&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;.venv&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/projects/flask-extensions$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y sin especificar ningún parámetro extra, nuestro panel de administración se va a encontrar por defecto en &lt;a href="http://localhost:8080/admin/"&gt;http://localhost:8080/admin/&lt;/a&gt;. Esto se puede modificar al registrar el &lt;strong&gt;blueprint&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;WARNING&lt;/strong&gt;: El panel de administración solo sirve para administrar. No tiene autenticación integrada y queda como responsabilidad del usuario decidir que hacer. Se puede desactivar antes de ir a producción, se puede limitar el acceso mediante autenticación básica o certificados, e incluso se puede poner una extensión de autenticación como &lt;strong&gt;flask-login&lt;/strong&gt; o &lt;strong&gt;flask-auth&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;En resumen&lt;/h2&gt;
+&lt;p&gt;Con esto tenemos un interesante esqueleto sobre el que crear en un tiempo mínimo cualquier aplicación que nos propongamos. Para acelerar la inicialización de un nuevo proyecto, he creado esta base como un repositorio de &lt;strong&gt;GitHub&lt;/strong&gt;, que podéis clonar en &lt;a href="https://github.com/Sirtea/flask-skel"&gt;https://github.com/Sirtea/flask-skel&lt;/a&gt;.&lt;/p&gt;</content><category term="python"></category><category term="framework"></category><category term="microframework"></category><category term="flask"></category><category term="extensiones"></category></entry><entry><title>Creciendo con Flask: los blueprints</title><link href="http://www.linuxsysadmin.ml/2017/12/creciendo-con-flask-los-blueprints.html" rel="alternate"></link><published>2017-12-11T10:00:00+01:00</published><updated>2017-12-11T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-12-11:/2017/12/creciendo-con-flask-los-blueprints.html</id><summary type="html">&lt;p&gt;Ya estuvimos hablando del &lt;em&gt;microframework&lt;/em&gt; &lt;strong&gt;Flask&lt;/strong&gt;, pero no profundizamos en su funcionalidad más avanzada: los &lt;strong&gt;blueprints&lt;/strong&gt;, que son una agrupación de vistas, plantillas y contenido estático similar a las aplicaciones de &lt;strong&gt;django&lt;/strong&gt;. Solamente por esta funcionalidad queda justificado el uso de este &lt;em&gt;framework&lt;/em&gt; para proyectos de tamaños medio o grande …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ya estuvimos hablando del &lt;em&gt;microframework&lt;/em&gt; &lt;strong&gt;Flask&lt;/strong&gt;, pero no profundizamos en su funcionalidad más avanzada: los &lt;strong&gt;blueprints&lt;/strong&gt;, que son una agrupación de vistas, plantillas y contenido estático similar a las aplicaciones de &lt;strong&gt;django&lt;/strong&gt;. Solamente por esta funcionalidad queda justificado el uso de este &lt;em&gt;framework&lt;/em&gt; para proyectos de tamaños medio o grande.&lt;/p&gt;
 &lt;p&gt;Lo primero que tenemos que ver es la necesidad de utilizar &lt;strong&gt;blueprints&lt;/strong&gt;. A medida que nuestra aplicación crece, el código lo hace también. Esto suele hacer código fuente grande e inmantenible. Invariablemente, veremos que nuestra aplicación es una amalgama de partes.&lt;/p&gt;
 &lt;p&gt;En este momento, nos va a interesar trocear en partes aquel fichero con todas nuestras vistas. Y la herramienta para hacer esto son los &lt;strong&gt;blueprints&lt;/strong&gt;, ya sea para partir la aplicación &lt;em&gt;a posteriori&lt;/em&gt; o queremos empezar haciéndolo bien desde el principio.&lt;/p&gt;
 &lt;h2&gt;Divide y vencerás&lt;/h2&gt;

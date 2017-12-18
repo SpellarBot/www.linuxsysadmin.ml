@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Creando un entorno escalable (I) - Linux Sysadmin</title>
+    <title>Usando extensiones en Flask - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,22 +9,24 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.ml/2016/02/creando-un-entorno-escalable.html">
+<link rel="canonical" href="http://www.linuxsysadmin.ml/2017/12/usando-extensiones-en-flask.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="keywords" content="linux,entorno,escalable" />
-        <meta name="description" content="Mucha gente tiene un servidor único para alojar páginas web dinámicas, por ejemplo con PHP y con MySQL. Sin embargo, a veces esto puede resultar insuficiente; nos puede interesar tener un entorno de bajas especificaciones y de bajo coste, pero preparado crecer al mismo ritmo que lo hacen los usuarios …" />
+        <meta name="keywords" content="python,framework,microframework,flask,extensiones" />
+        <meta name="description" content="Muchos de los microframeworks que existen en python no ofrecen ninguna ayuda con las tareas más simples que toda aplicación acaba implementando; eso nos hace decantarnos casi siempre por una opción más pesada de framework, como por ejemplo, Django. Sin embargo, gracias a los blueprints de Flask, esto es innecesario …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Creando un entorno escalable (I)"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.ml/2016/02/creando-un-entorno-escalable.html"/>
-        <meta property="og:description" content="Mucha gente tiene un servidor único para alojar páginas web dinámicas, por ejemplo con PHP y con MySQL. Sin embargo, a veces esto puede resultar insuficiente; nos puede interesar tener un entorno de bajas especificaciones y de bajo coste, pero preparado crecer al mismo ritmo que lo hacen los usuarios …"/>
-        <meta property="article:published_time" content="2016-02-29" />
-            <meta property="article:section" content="Sistemas" />
-            <meta property="article:tag" content="linux" />
-            <meta property="article:tag" content="entorno" />
-            <meta property="article:tag" content="escalable" />
+        <meta property="og:title" content="Usando extensiones en Flask"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.ml/2017/12/usando-extensiones-en-flask.html"/>
+        <meta property="og:description" content="Muchos de los microframeworks que existen en python no ofrecen ninguna ayuda con las tareas más simples que toda aplicación acaba implementando; eso nos hace decantarnos casi siempre por una opción más pesada de framework, como por ejemplo, Django. Sin embargo, gracias a los blueprints de Flask, esto es innecesario …"/>
+        <meta property="article:published_time" content="2017-12-18" />
+            <meta property="article:section" content="Desarrollo" />
+            <meta property="article:tag" content="python" />
+            <meta property="article:tag" content="framework" />
+            <meta property="article:tag" content="microframework" />
+            <meta property="article:tag" content="flask" />
+            <meta property="article:tag" content="extensiones" />
             <meta property="article:author" content="Gerard" />
 
 
@@ -41,8 +43,8 @@
 
 
 
-        <link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Sistemas ATOM Feed"/>
+        <link href="http://www.linuxsysadmin.ml/feeds/desarrollo.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Desarrollo ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -86,8 +88,8 @@ Linux Sysadmin            </a>
         <div class="col-sm-9">
             <ol class="breadcrumb">
                 <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.ml/category/sistemas.html" title="Sistemas">Sistemas</a></li>
-                <li class="active">Creando un entorno escalable (I)</li>
+                <li><a href="http://www.linuxsysadmin.ml/category/desarrollo.html" title="Desarrollo">Desarrollo</a></li>
+                <li class="active">Usando extensiones en Flask</li>
             </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -105,10 +107,10 @@ Linux Sysadmin            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://www.linuxsysadmin.ml/2016/02/creando-un-entorno-escalable.html"
+                    <a href="http://www.linuxsysadmin.ml/2017/12/usando-extensiones-en-flask.html"
                        rel="bookmark"
-                       title="Permalink to Creando un entorno escalable (I)">
-                        Creando un entorno escalable (I)
+                       title="Permalink to Usando extensiones en Flask">
+                        Usando extensiones en Flask
                     </a>
                 </h1>
             </header>
@@ -118,87 +120,186 @@ Linux Sysadmin            </a>
 <footer class="post-info">
     <span class="label label-default">Fecha</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2016-02-29T08:00:00+01:00"> 2016-02-29</time>
+        <i class="fa fa-calendar"></i><time datetime="2017-12-18T10:00:00+01:00"> 2017-12-18</time>
     </span>
 
 
             <span class="label label-default">Autor</span>
             <a href="http://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
 
-        <span class="label label-default">Tiempo de lectura</span> 3 minutos
+        <span class="label label-default">Tiempo de lectura</span> 6 minutos
         <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.ml/category/sistemas.html">Sistemas</a>
+        <a href="http://www.linuxsysadmin.ml/category/desarrollo.html">Desarrollo</a>
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.ml/tag/linux.html">linux</a>
+	<a href="http://www.linuxsysadmin.ml/tag/python.html">python</a>
         /
-	<a href="http://www.linuxsysadmin.ml/tag/entorno.html">entorno</a>
+	<a href="http://www.linuxsysadmin.ml/tag/framework.html">framework</a>
         /
-	<a href="http://www.linuxsysadmin.ml/tag/escalable.html">escalable</a>
+	<a href="http://www.linuxsysadmin.ml/tag/microframework.html">microframework</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/flask.html">flask</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/extensiones.html">extensiones</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>Mucha gente tiene un servidor único para alojar páginas web dinámicas, por ejemplo con <strong>PHP</strong> y con <strong>MySQL</strong>. Sin embargo, a veces esto puede resultar insuficiente; nos puede interesar tener un entorno de bajas especificaciones y de bajo coste, pero preparado crecer al mismo ritmo que lo hacen los usuarios.</p>
-<p>En este caso, el truco consiste en hacer trabajar a varias máquinas como si fueran una sola, escondidas en una o varias subredes privadas y poniendo un representante único de todo el sistema (que es el que va a recibir <strong>todas</strong> las peticiones).</p>
-<p>Este representante suele ser lo que llamamos un <strong>balanceador de carga</strong>, cuya función es repartir el trabajo entre varios servidores de <strong>backend</strong>. Al tratarse solo de un "policía de tráfico" su rendimiento es elevado con unas especificaciones modestas, mientras que los servidores de <strong>backend</strong> consiguen resolver las mismas peticiones por unidad de tiempo; la mejora reside en que pueden haber varios servidores de <strong>backend</strong> resolviendo peticiones en paralelo.</p>
-<p>Normalmente, estos servidores de <strong>backend</strong> suelen conectarse a otros servicios (idealmente en otros servidores) para cumplir con sus funciones, por ejemplo con un grupo de servidores de <strong>bases de datos</strong> dispuestos como un <em>cluster</em>, que suelen tener una topología propia.</p>
-<p>En este tutorial se va a montar un entorno pequeño de estas características, sirviendo una <em>API</em> pública en servidores de <strong>backend</strong>, una aplicación web de administración de los datos de la <em>API</em> en un servidor de <strong>backoffice</strong>, y un <em>cluster</em> de <strong>bases de datos</strong> representado por una <em>replica set</em> de MongoDB; todo ello oculto en una red privada y un balanceador usando <em>virtualhosts</em> para ir a una aplicación u otra según el protocolo usado.</p>
-<p>Esto es lo que propongo montar:</p>
-<p><img alt="Entorno propuesto" src="http://www.linuxsysadmin.ml/images/entorno_propuesto.png"></p>
-<p>Para ello, vamos a crear las máquinas virtuales necesarias. En este caso, voy a usar mi servidor de <strong>virtualización con LXC</strong>, tal como lo monté en <a href="http://www.linuxsysadmin.ml/2015/11/virtualizando-contenedores-lxc-tras-bridge-interno.html">este artículo</a>.</p>
-<div class="highlight"><pre><span></span>root@lxc:~# lxc-ls -f
-NAME        STATE    IPV4        IPV6  AUTOSTART
-------------------------------------------------
-backend1    RUNNING  <span class="m">10</span>.0.0.3    -     YES
-backend2    RUNNING  <span class="m">10</span>.0.0.4    -     YES
-backoffice  RUNNING  <span class="m">10</span>.0.0.5    -     YES
-frontend    RUNNING  <span class="m">10</span>.0.0.2    -     YES
-mongo1      RUNNING  <span class="m">10</span>.0.0.6    -     YES
-mongo2      RUNNING  <span class="m">10</span>.0.0.7    -     YES
-root@lxc:~#
+                <p>Muchos de los <em>microframeworks</em> que existen en <strong>python</strong> no ofrecen ninguna ayuda con las tareas más simples que toda aplicación acaba implementando; eso nos hace decantarnos casi siempre por una opción más pesada de <em>framework</em>, como por ejemplo, <strong>Django</strong>. Sin embargo, gracias a los <strong>blueprints</strong> de <strong>Flask</strong>, esto es innecesario.</p>
+<p>Ya vimos en <a href="http://www.linuxsysadmin.ml/2017/12/creciendo-con-flask-los-blueprints.html">otro artículo</a> que este <em>framework</em> tiene una funcionalidad llamada <strong>blueprints</strong>, que nos permiten encapsular un subconjunto de rutas, vistas y contenido estático para mantenibilidad y para su uso en otros proyectos.</p>
+<p>Este mismo modelo de desarrollo ha permitido que muchas personas desarrollen sus <strong>blueprints</strong> reusables y, en alguno de los casos, ofrecerlos a cualquiera que los pueda necesitar. Son especialmente interesantes las extensiones oficiales que se ofrecen con <strong>Flask</strong>, que podemos encontrar en <a href="http://flask.pocoo.org/extensions/">la página de extensiones</a>.</p>
+<p>Hay una lista interesante de extensiones, tanto en la página oficial, como por otros lugares de internet; cualquiera puede ofrecer extensiones. A pesar de ello, hay extensiones de plena confianza que van a servir de base para casi cualquier proyecto que deseemos empezar.</p>
+<p>En mi caso, mis favoritas son <strong>flask-mongoengine</strong> y <strong>flask-admin</strong> y suelen ser motivo suficiente para empezar cada nuevo proyecto en <strong>Flask</strong>. Vamos a intentar introducir el uso de extensiones con estos dos ejemplos.</p>
+<h2>Un proyecto vacío</h2>
+<p>Todas las modificaciones que se van a ir haciendo, se basan en una aplicación básica vacía. Siguiendo nuestra metodología, vamos a utilizar <em>virtualenv</em>, vamos recoger las dependencias en un fichero <em>requirements.txt</em> y vamos a disponer de un servidor de desarrollo.</p>
+<div class="highlight"><pre><span></span><span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$ cat requirements.txt
+<span class="nv">Flask</span><span class="o">==</span><span class="m">0</span>.12.2
+Flask-Admin<span class="o">==</span><span class="m">1</span>.5.0
+flask-mongoengine<span class="o">==</span><span class="m">0</span>.9.3
+<span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$
 </pre></div>
 
 
-<p>Para hacer mas fácil las referencias a las diferentes máquinas, vamos a utilizar sus nombres; como no me apetece montar un servidor DNS, vamos a ponerlas en el fichero <em>/etc/hosts</em> en todas las máquinas virtuales.</p>
-<div class="highlight"><pre><span></span>root@mongo1:~# cat /etc/hosts
-...
-10.0.0.2        frontend
-10.0.0.3        backend1
-10.0.0.4        backend2
-10.0.0.5        backoffice
-10.0.0.6        mongo1
-10.0.0.7        mongo2
-...
-root@mongo1:~#
+<div class="highlight"><pre><span></span><span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$ cat server.sh
+<span class="c1">#!/bin/bash</span>
+
+<span class="nv">PYTHONDONTWRITEBYTECODE</span><span class="o">=</span><span class="s2">&quot; &quot;</span> <span class="se">\</span>
+<span class="nv">FLASK_DEBUG</span><span class="o">=</span><span class="m">1</span> <span class="se">\</span>
+<span class="nv">FLASK_APP</span><span class="o">=</span>app.py <span class="se">\</span>
+<span class="nv">MONGODB_URL</span><span class="o">=</span><span class="s1">&#39;mongodb://localhost:27017/test&#39;</span> <span class="se">\</span>
+<span class="nv">SECRET_KEY</span><span class="o">=</span><span class="s1">&#39;1234567890&#39;</span> <span class="se">\</span>
+flask run --host <span class="m">0</span>.0.0.0 --port <span class="m">8080</span>
+<span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$
 </pre></div>
 
 
-<p>Vamos a ir montando todas las máquinas una por una; es laborioso pero no es nada complicado. Las reglas del <em>firewall</em> también las iremos explicando según el rol de cada máquina.</p>
-<p>El orden de montaje no es importante, pero como queremos ir comprobando en cada caso que va funcionando, se montarán de acuerdo al orden de requisitos:</p>
-<ul>
-<li>El <em>cluster</em> de <strong>bases de datos</strong>, que no tiene dependencias.</li>
-<li>Los servidores de <strong>backend</strong> y <strong>backoffice</strong> que dependen del <em>cluster</em> de <strong>bases de datos</strong>.</li>
-<li>Finalmente, pondremos el servidor de <strong>frontend</strong>, con los <em>virtualhosts</em> y el balanceador, lanzando las peticiones contra los <strong>backends</strong> y el <strong>backoffice</strong>.</li>
-</ul>
-<p><strong><em>Sabiendo lo que vamos a montar, solo queda decir: ¡Manos a la obra!</em></strong></p>
+<div class="highlight"><pre><span></span><span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$ cat app.py
+from flask import Flask
+
+<span class="nv">app</span> <span class="o">=</span> Flask<span class="o">(</span>__name__<span class="o">)</span>
+<span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$
+</pre></div>
+
+
+<p>Sobra decir que tenemos un servidor de <strong>mongodb</strong> en alguna parte, dispuesto a ser utilizado por nuestra capa de datos. En este caso concreto, el servidor corre en local.</p>
+<h2>Definiendo el modelo con flask-mongoengine</h2>
+<p>Esta extensión no añade demasiado valor en sí misma, pero se integra magníficamente con <strong>Flask</strong>. En esencia se trata de un <strong>blueprint</strong> que utiliza la misma configuración que nuestra aplicación y se conecta al servidor de acuerdo a esta configuración.</p>
+<p>Vamos a definir nuestros modelos como lo haríamos en <strong>mongoengine</strong>, salvo que los tipos declarados en <strong>mongoengine</strong> también lo están dentro del <strong>blueprint</strong> que hemos creado. Con un modelo pequeño de demostración nos vale:</p>
+<div class="highlight"><pre><span></span><span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$ cat models.py
+from flask_mongoengine import MongoEngine
+
+<span class="nv">db</span> <span class="o">=</span> MongoEngine<span class="o">()</span>
+
+
+class User<span class="o">(</span>db.Document<span class="o">)</span>:
+    <span class="nv">username</span> <span class="o">=</span> db.StringField<span class="o">()</span>
+    <span class="nv">password</span> <span class="o">=</span> db.StringField<span class="o">()</span>
+    <span class="nv">fullname</span> <span class="o">=</span> db.StringField<span class="o">()</span>
+    <span class="nv">meta</span> <span class="o">=</span> <span class="o">{</span><span class="s1">&#39;collection&#39;</span>: <span class="s1">&#39;users&#39;</span><span class="o">}</span>
+
+
+class Product<span class="o">(</span>db.Document<span class="o">)</span>:
+    <span class="nv">sku</span> <span class="o">=</span> db.StringField<span class="o">()</span>
+    <span class="nv">title</span> <span class="o">=</span> db.StringField<span class="o">()</span>
+    <span class="nv">description</span> <span class="o">=</span> db.StringField<span class="o">()</span>
+    <span class="nv">meta</span> <span class="o">=</span> <span class="o">{</span><span class="s1">&#39;collection&#39;</span>: <span class="s1">&#39;products&#39;</span><span class="o">}</span>
+<span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$
+</pre></div>
+
+
+<p>Vamos a recurrir a la clase principal (que es la que declara el objeto <em>app</em>) y vamos a importar el <strong>blueprint</strong>, para registrarlo posteriormente. Como añadido, vamos a sacar la URL de <strong>mongodb</strong> de una variable de entorno, porque la idea es usar esta aplicación en un contenedor en el futuro; de momento, esta variable queda declarada en el fichero <em>server.sh</em>.</p>
+<div class="highlight"><pre><span></span><span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$ cat app.py
+from flask import Flask
+from models import db
+import os
+
+<span class="nv">MONGODB_URL</span> <span class="o">=</span> os.environ.get<span class="o">(</span><span class="s1">&#39;MONGODB_URL&#39;</span><span class="o">)</span>
+
+<span class="nv">app</span> <span class="o">=</span> Flask<span class="o">(</span>__name__<span class="o">)</span>
+app.config<span class="o">[</span><span class="s1">&#39;MONGODB_SETTINGS&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span><span class="s1">&#39;host&#39;</span>: MONGODB_URL<span class="o">}</span>
+db.init_app<span class="o">(</span>app<span class="o">)</span>
+<span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$
+</pre></div>
+
+
+<p>Los modelos definidos con <strong>flask-mongoengine</strong> disponen de un <em>QuerySet</em> modificado, que nos permitirá hacer paginación o lanzar automáticamente un error 404 si no se encuentra un elemento, pero eso ya queda como deberes para el lector.</p>
+<h2>Una interfaz de administración gratuita con flask-admin</h2>
+<p>Esta extensión trabaja más que la anterior, pero en cierta manera, depende de ella. Se trata de un <strong>blueprint</strong> que crea un interfaz de administración en base a los modelos y de unas clases <em>ModelView</em> que son capaces de analizar los mismos y crear automáticamente las listas y formularios necesarios.</p>
+<p>La idea es la misma: creamos el <strong>blueprint</strong> y registramos el objeto <em>ModelView</em> para cada objeto que deseemos en el panel de administración. El objeto básico <em>ModelView</em> suele ser suficiente para la mayoría de casos, pero en otros vamos a querer personalizar lo que se ve, lo que se puede hacer, y los filtros disponibles.</p>
+<p>Esto lo dejamos para el lector, y nos vamos a centrar en como se haría. Para ello, imaginemos que queremos ocultar el campo <em>password</em> en la gestión de usuarios:</p>
+<div class="highlight"><pre><span></span><span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$ cat models.py
+from flask_mongoengine import MongoEngine
+
+<span class="nv">db</span> <span class="o">=</span> MongoEngine<span class="o">()</span>
+
+
+class User<span class="o">(</span>db.Document<span class="o">)</span>:
+    <span class="nv">username</span> <span class="o">=</span> db.StringField<span class="o">()</span>
+    <span class="nv">password</span> <span class="o">=</span> db.StringField<span class="o">()</span>
+    <span class="nv">fullname</span> <span class="o">=</span> db.StringField<span class="o">()</span>
+    <span class="nv">meta</span> <span class="o">=</span> <span class="o">{</span><span class="s1">&#39;collection&#39;</span>: <span class="s1">&#39;users&#39;</span><span class="o">}</span>
+
+
+class Product<span class="o">(</span>db.Document<span class="o">)</span>:
+    <span class="nv">sku</span> <span class="o">=</span> db.StringField<span class="o">()</span>
+    <span class="nv">title</span> <span class="o">=</span> db.StringField<span class="o">()</span>
+    <span class="nv">description</span> <span class="o">=</span> db.StringField<span class="o">()</span>
+    <span class="nv">meta</span> <span class="o">=</span> <span class="o">{</span><span class="s1">&#39;collection&#39;</span>: <span class="s1">&#39;products&#39;</span><span class="o">}</span>
+<span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$ cat admin.py
+from flask_admin import Admin
+from flask_admin.contrib.mongoengine import ModelView
+from models import User, Product
+
+
+class HidePasswordModelView<span class="o">(</span>ModelView<span class="o">)</span>:
+    <span class="nv">column_exclude_list</span> <span class="o">=</span> <span class="o">(</span><span class="s1">&#39;password&#39;</span>,<span class="o">)</span>
+
+<span class="nv">admin</span> <span class="o">=</span> Admin<span class="o">()</span>
+admin.add_view<span class="o">(</span>HidePasswordModelView<span class="o">(</span>User<span class="o">))</span>
+admin.add_view<span class="o">(</span>ModelView<span class="o">(</span>Product<span class="o">))</span>
+<span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$
+</pre></div>
+
+
+<p>Solo queda importar el <strong>blueprint</strong> y registrarlo en nuestra aplicación; esto se consigue en el fichero <em>app.py</em>. Cabe decir que esta extensión requiere de una configuración <code>SECRET_KEY</code> para encriptar las <em>cookies</em> de <strong>Flask</strong>.</p>
+<div class="highlight"><pre><span></span><span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$ cat app.py
+from flask import Flask
+from models import db
+from admin import admin
+import os
+
+<span class="nv">SECRET_KEY</span> <span class="o">=</span> os.environ.get<span class="o">(</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="o">)</span>
+<span class="nv">MONGODB_URL</span> <span class="o">=</span> os.environ.get<span class="o">(</span><span class="s1">&#39;MONGODB_URL&#39;</span><span class="o">)</span>
+
+<span class="nv">app</span> <span class="o">=</span> Flask<span class="o">(</span>__name__<span class="o">)</span>
+app.config<span class="o">[</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="o">]</span> <span class="o">=</span> SECRET_KEY
+app.config<span class="o">[</span><span class="s1">&#39;MONGODB_SETTINGS&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span><span class="s1">&#39;host&#39;</span>: MONGODB_URL<span class="o">}</span>
+db.init_app<span class="o">(</span>app<span class="o">)</span>
+admin.init_app<span class="o">(</span>app<span class="o">)</span>
+<span class="o">(</span>.venv<span class="o">)</span> gerard@atlantis:~/projects/flask-extensions$
+</pre></div>
+
+
+<p>Y sin especificar ningún parámetro extra, nuestro panel de administración se va a encontrar por defecto en <a href="http://localhost:8080/admin/">http://localhost:8080/admin/</a>. Esto se puede modificar al registrar el <strong>blueprint</strong>.</p>
+<p><strong>WARNING</strong>: El panel de administración solo sirve para administrar. No tiene autenticación integrada y queda como responsabilidad del usuario decidir que hacer. Se puede desactivar antes de ir a producción, se puede limitar el acceso mediante autenticación básica o certificados, e incluso se puede poner una extensión de autenticación como <strong>flask-login</strong> o <strong>flask-auth</strong>.</p>
+<h2>En resumen</h2>
+<p>Con esto tenemos un interesante esqueleto sobre el que crear en un tiempo mínimo cualquier aplicación que nos propongamos. Para acelerar la inicialización de un nuevo proyecto, he creado esta base como un repositorio de <strong>GitHub</strong>, que podéis clonar en <a href="https://github.com/Sirtea/flask-skel">https://github.com/Sirtea/flask-skel</a>.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.ml/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html">Dirección IP compartida manualmente entre servidores</a></li>
-        <li><a href="http://www.linuxsysadmin.ml/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
-        <li><a href="http://www.linuxsysadmin.ml/2015/11/liberando-memoria-cache.html">Liberando memoria caché</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2017/12/creciendo-con-flask-los-blueprints.html">Creciendo con Flask: los blueprints</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2017/12/otro-microframework-en-python-flask.html">Otro microframework en python: Flask</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2017/05/desarrollando-aplicaciones-web-con-python-y-bottle.html">Desarrollando aplicaciones web con python y bottle</a></li>
     </ul>
 </section>
 <section class="well" id="related-posts">
-    <h4>Parte 1 de la serie "Creando un entorno escalable"</h4>
-       <h5>Artículos siguientes</h5>
+    <h4>Parte 3 de la serie "Flask framework"</h4>
+       <h5>Artículos anteriores</h5>
        <ul>
-           <li><a href="http://www.linuxsysadmin.ml/2016/03/creando-un-entorno-escalable-2.html">Creando un entorno escalable (II)</a></li>
-           <li><a href="http://www.linuxsysadmin.ml/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></li>
-           <li><a href="http://www.linuxsysadmin.ml/2016/03/creando-un-entorno-escalable-4.html">Creando un entorno escalable (IV)</a></li>
+           <li><a href="http://www.linuxsysadmin.ml/2017/12/otro-microframework-en-python-flask.html">Otro microframework en python: Flask</a></li>
+           <li><a href="http://www.linuxsysadmin.ml/2017/12/creciendo-con-flask-los-blueprints.html">Creciendo con Flask: los blueprints</a></li>
        </ul>
 </section>
     <hr/>
@@ -210,8 +311,8 @@ root@mongo1:~#
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'creando-un-entorno-escalable';
-                var disqus_url = 'http://www.linuxsysadmin.ml/2016/02/creando-un-entorno-escalable.html';
+                    var disqus_identifier = 'usando-extensiones-en-flask';
+                var disqus_url = 'http://www.linuxsysadmin.ml/2017/12/usando-extensiones-en-flask.html';
 
             var disqus_config = function () {
                 this.language = "es";
