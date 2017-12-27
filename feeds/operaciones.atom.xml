@@ -1,5 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-10-23T10:00:00+02:00</updated><entry><title>Usar un sistema de ficheros de lectura y escritura en un fichero .tar.gz</title><link href="http://www.linuxsysadmin.ml/2017/10/usar-un-sistema-de-ficheros-de-lectura-y-escritura-en-un-fichero-targz.md.html" rel="alternate"></link><published>2017-10-23T10:00:00+02:00</published><updated>2017-10-23T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-10-23:/2017/10/usar-un-sistema-de-ficheros-de-lectura-y-escritura-en-un-fichero-targz.md.html</id><summary type="html">&lt;p&gt;¿Alguna vez habéis querido mirar en fichero &lt;em&gt;.tar.gz&lt;/em&gt;, pero sin tener que descomprimirlo? Tal vez te gustaría extraer solo unos pocos ficheros; puede que lo que te interese es trabajar con una carpeta a la que le modificamos los archivos, sin tener que archivar esta carpeta cada cierto tiempo …&lt;/p&gt;</summary><content type="html">&lt;p&gt;¿Alguna vez habéis querido mirar en fichero &lt;em&gt;.tar.gz&lt;/em&gt;, pero sin tener que descomprimirlo? Tal vez te gustaría extraer solo unos pocos ficheros; puede que lo que te interese es trabajar con una carpeta a la que le modificamos los archivos, sin tener que archivar esta carpeta cada cierto tiempo.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-12-26T10:00:00+01:00</updated><entry><title>Manteniendo la versión de paquetes en Debian y Ubuntu</title><link href="http://www.linuxsysadmin.ml/2017/12/manteniendo-la-version-de-paquetes-en-debian-y-ubuntu.html" rel="alternate"></link><published>2017-12-26T10:00:00+01:00</published><updated>2017-12-26T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-12-26:/2017/12/manteniendo-la-version-de-paquetes-en-debian-y-ubuntu.html</id><summary type="html">&lt;p&gt;Una de las operaciones más rutinarias que podemos tener como administradores de sistemas Linux es la actualización de un servidor. Mecánicamente lanzas &lt;strong&gt;apt-get upgrade&lt;/strong&gt; y te quedas tan tranquilo con la tarea completa. Poco después te encuentras con alguien cabreado porque alguna librería o servicio no va adecuadamente como antes …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Una de las operaciones más rutinarias que podemos tener como administradores de sistemas Linux es la actualización de un servidor. Mecánicamente lanzas &lt;strong&gt;apt-get upgrade&lt;/strong&gt; y te quedas tan tranquilo con la tarea completa. Poco después te encuentras con alguien cabreado porque alguna librería o servicio no va adecuadamente como antes.&lt;/p&gt;
+&lt;p&gt;Lo que realmente ha pasado es que hemos cambiado de versión alguna pieza de &lt;em&gt;software&lt;/em&gt;, y la nueva tiene incompatibilidades con lo que hay funcionando. Es un caso raro, pero a veces se da, y muchas veces con previo aviso.&lt;/p&gt;
+&lt;p&gt;¿Como se puede evitar que un servicio cambie de versión cuando actualiza? Muy sencillo: se llama &lt;em&gt;pinning&lt;/em&gt; y es muy fácil de hacer con &lt;strong&gt;Debian&lt;/strong&gt; o &lt;strong&gt;Ubuntu&lt;/strong&gt;. Veamos un ejemplo:&lt;/p&gt;
+&lt;p&gt;Supongamos que tenemos un servidor de contenedores &lt;strong&gt;Docker&lt;/strong&gt;. Por un tema de estabilidad queremos mantener la versión actual. Para ello necesitamos saber el nombre del paquete que queramos congelar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ dpkg -l &lt;span class="p"&gt;|&lt;/span&gt; grep docker
+ii  docker-ce                     &lt;span class="m"&gt;17&lt;/span&gt;.09.0~ce-0~debian            amd64        Docker: the open-source application container engine
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En nuestro caso, el paquete es &lt;strong&gt;docker-ce&lt;/strong&gt;. Solo hace falta utilizar el comando &lt;strong&gt;apt-mark&lt;/strong&gt; para que lo mantenga en la version actual.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ sudo apt-mark hold docker-ce
+docker-ce fijado como retenido.
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A partir de ahora, este paquete &lt;strong&gt;no se va a actualizar&lt;/strong&gt;. Si queremos ver que paquetes tenemos congelados, el mismo comando ofrece la operación &lt;em&gt;showhold&lt;/em&gt; que nos listaría los paquetes en modo &lt;em&gt;pinning&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ sudo apt-mark showhold
+docker-ce
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si en algún momento quisieramos volver a actualizarlo, bastaría con quitarle el &lt;em&gt;hold&lt;/em&gt;, con el mismo comando:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ sudo apt-mark unhold docker-ce
+Se ha cancelado la retención de docker-ce.
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y ahora ya podríamos modificar la versión de &lt;strong&gt;docker-ce&lt;/strong&gt;. Necesitaríamos los comandos habituales &lt;strong&gt;apt-get&lt;/strong&gt;, &lt;strong&gt;aptitude&lt;/strong&gt; u otro frontal gráfico. Podéis verificar que vuestro paquete ya no está en modo &lt;em&gt;hold&lt;/em&gt; listando los paquetes en dicho estado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ sudo apt-mark showhold
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto nos evitamos esos molestos cambios de versión que nos traen incompatibilidades con las aplicaciones que mantenemos.&lt;/p&gt;</content><category term="debian"></category><category term="ubuntu"></category><category term="apt"></category><category term="apt-mark"></category><category term="pinning"></category></entry><entry><title>Usar un sistema de ficheros de lectura y escritura en un fichero .tar.gz</title><link href="http://www.linuxsysadmin.ml/2017/10/usar-un-sistema-de-ficheros-de-lectura-y-escritura-en-un-fichero-targz.md.html" rel="alternate"></link><published>2017-10-23T10:00:00+02:00</published><updated>2017-10-23T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-10-23:/2017/10/usar-un-sistema-de-ficheros-de-lectura-y-escritura-en-un-fichero-targz.md.html</id><summary type="html">&lt;p&gt;¿Alguna vez habéis querido mirar en fichero &lt;em&gt;.tar.gz&lt;/em&gt;, pero sin tener que descomprimirlo? Tal vez te gustaría extraer solo unos pocos ficheros; puede que lo que te interese es trabajar con una carpeta a la que le modificamos los archivos, sin tener que archivar esta carpeta cada cierto tiempo …&lt;/p&gt;</summary><content type="html">&lt;p&gt;¿Alguna vez habéis querido mirar en fichero &lt;em&gt;.tar.gz&lt;/em&gt;, pero sin tener que descomprimirlo? Tal vez te gustaría extraer solo unos pocos ficheros; puede que lo que te interese es trabajar con una carpeta a la que le modificamos los archivos, sin tener que archivar esta carpeta cada cierto tiempo.&lt;/p&gt;
 &lt;p&gt;En este caso, tenemos un sistema de ficheros bastante interesante que se llama &lt;strong&gt;archivemount&lt;/strong&gt;, y que nos permite ver un fichero &lt;em&gt;.tar.gz&lt;/em&gt; como si de una carpeta local más se tratara. Al desmontar este sistema de fichero, se crea el mismo fichero de nuevo, de forma automática, y con previa copia del anterior.&lt;/p&gt;
 &lt;p&gt;Según la &lt;a href="https://en.wikipedia.org/wiki/Archivemount"&gt;wikipedia&lt;/a&gt;:&lt;/p&gt;
 &lt;blockquote&gt;
