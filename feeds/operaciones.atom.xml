@@ -1,5 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-12-26T10:00:00+01:00</updated><entry><title>Manteniendo la versión de paquetes en Debian y Ubuntu</title><link href="http://www.linuxsysadmin.ml/2017/12/manteniendo-la-version-de-paquetes-en-debian-y-ubuntu.html" rel="alternate"></link><published>2017-12-26T10:00:00+01:00</published><updated>2017-12-26T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-12-26:/2017/12/manteniendo-la-version-de-paquetes-en-debian-y-ubuntu.html</id><summary type="html">&lt;p&gt;Una de las operaciones más rutinarias que podemos tener como administradores de sistemas Linux es la actualización de un servidor. Mecánicamente lanzas &lt;strong&gt;apt-get upgrade&lt;/strong&gt; y te quedas tan tranquilo con la tarea completa. Poco después te encuentras con alguien cabreado porque alguna librería o servicio no va adecuadamente como antes …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Una de las operaciones más rutinarias que podemos tener como administradores de sistemas Linux es la actualización de un servidor. Mecánicamente lanzas &lt;strong&gt;apt-get upgrade&lt;/strong&gt; y te quedas tan tranquilo con la tarea completa. Poco después te encuentras con alguien cabreado porque alguna librería o servicio no va adecuadamente como antes.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-01-02T10:00:00+01:00</updated><entry><title>Usando un bastión SSH</title><link href="http://www.linuxsysadmin.ml/2018/01/usando-un-bastion-ssh.html" rel="alternate"></link><published>2018-01-02T10:00:00+01:00</published><updated>2018-01-02T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-01-02:/2018/01/usando-un-bastion-ssh.html</id><summary type="html">&lt;p&gt;Hoy vamos a presentar un patrón de conectividad para acceder a un conjunto de máquinas, exponiendo solamente una de ellas, y aprovechando el protocolo SSH para pasar el tráfico a través, de forma transparente. Eso facilita los casos en los que no podemos tener una VPN o una red dedicada …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hoy vamos a presentar un patrón de conectividad para acceder a un conjunto de máquinas, exponiendo solamente una de ellas, y aprovechando el protocolo SSH para pasar el tráfico a través, de forma transparente. Eso facilita los casos en los que no podemos tener una VPN o una red dedicada.&lt;/p&gt;
+&lt;p&gt;Vamos a suponer que tenemos un entorno con 4 máquinas, una de las cuales tiene el protocolo SSH abierto a una red menos confiable. Por supuesto, en casos así se recomienda encarecidamente no permitir la autenticación por claves, ya que os pueden acabar entrando usando ataques de fuerza bruta o de diccionario.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="SSH bastion host" src="http://www.linuxsysadmin.ml/images/ssh-bastion-host.png"&gt;&lt;/p&gt;
+&lt;p&gt;En nuestro caso vamos a llamar a la primera máquina como &lt;em&gt;bastion&lt;/em&gt; y las otras tres como &lt;em&gt;server1&lt;/em&gt;, &lt;em&gt;server2&lt;/em&gt; y &lt;em&gt;server3&lt;/em&gt; respectivamente. Todas ellas disponen de acceso por claves SSH y un usuario dedicado. No hace falta que ninguna de las máquinas tenga las mismas claves ni los mismos usuarios, pero hacerlo nos va a facilitar bastante la configuración SSH del cliente. En nuestro caso vamos a usar la misma clave para todos y el mismo usuario &lt;em&gt;jump&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;El truco está en usar la directiva &lt;em&gt;ProxyCommand&lt;/em&gt; para que el tráfico hacia los servidores privados se haga &lt;strong&gt;a través&lt;/strong&gt; de una sesión SSH al servidor &lt;em&gt;bastion&lt;/em&gt;. Es importante decir que para que esto pase, el servidor &lt;em&gt;bastion&lt;/em&gt; debe poder resolver el nombre de la máquina que pasemos al comando SSH, ya que es lo que se va a usar para acceder a la misma.&lt;/p&gt;
+&lt;p&gt;Para hacerme la vida más fácil he creado los usuarios mediante un &lt;em&gt;playbook&lt;/em&gt; de &lt;strong&gt;ansible&lt;/strong&gt;, aunque esto es opcional. Basta con crear los usuarios y poner la clave SSH pública en el fichero &lt;em&gt;authorized_keys&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@purgatory:~$ cat create_users.yml 
+- hosts: all
+  gather_facts: no
+  tasks:
+    - user: &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;jump &lt;span class="nv"&gt;shell&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/bin/bash &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;present
+    - file: &lt;span class="nv"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/home/jump/.ssh &lt;span class="nv"&gt;owner&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;jump &lt;span class="nv"&gt;group&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;jump &lt;span class="nv"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;directory
+    - copy: &lt;span class="nv"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;../keys/id_jump.pub &lt;span class="nv"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/home/jump/.ssh/authorized_keys &lt;span class="nv"&gt;owner&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;jump &lt;span class="nv"&gt;group&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;jump
+gerard@purgatory:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A partir de aquí definimos dos reglas en nuestra configuración SSH cliente; una para el servidor &lt;em&gt;bastion&lt;/em&gt; (que no necesita de un &lt;em&gt;proxy&lt;/em&gt; SSH) y otra serie de reglas para las que sí necesitan del &lt;em&gt;proxy&lt;/em&gt;. Fijaos que cuentan cada una con su propio usuario y su clave SSH, que son la misma, pero podrían ser diferentes. Además, como la configuración de los servidores privados coincide, podemos acortar usando las mismas directivas para los 3 &lt;em&gt;hosts&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@purgatory:~$ cat .ssh/config 
+...
+Host bastion
+    HostName &lt;span class="m"&gt;172&lt;/span&gt;.20.0.4
+    User jump
+    IdentityFile ~/.ssh/id_jump
+
+Host server1 server2 server3
+    User jump
+    IdentityFile ~/.ssh/id_jump
+    ProxyCommand ssh -F ssh_config -W %h:%p bastion
+gerard@purgatory:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos queda comprobar que podemos acceder a la máquina &lt;em&gt;bastion&lt;/em&gt; sin problemas:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@purgatory:~$ ssh bastion uname -a
+Linux bastion &lt;span class="m"&gt;3&lt;/span&gt;.16.0-4-amd64 &lt;span class="c1"&gt;#1 SMP Debian 3.16.36-1+deb8u2 (2016-10-19) x86_64 GNU/Linux&lt;/span&gt;
+gerard@purgatory:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y también podemos comprobar que llegamos a las máquinas a las que de otra forma no llegaríamos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@purgatory:~$ ssh server1 uname -a
+Linux server1 &lt;span class="m"&gt;3&lt;/span&gt;.16.0-4-amd64 &lt;span class="c1"&gt;#1 SMP Debian 3.16.36-1+deb8u2 (2016-10-19) x86_64 GNU/Linux&lt;/span&gt;
+gerard@purgatory:~$ ssh server2 uname -a
+Linux server2 &lt;span class="m"&gt;3&lt;/span&gt;.16.0-4-amd64 &lt;span class="c1"&gt;#1 SMP Debian 3.16.36-1+deb8u2 (2016-10-19) x86_64 GNU/Linux&lt;/span&gt;
+gerard@purgatory:~$ ssh server3 uname -a
+Linux server3 &lt;span class="m"&gt;3&lt;/span&gt;.16.0-4-amd64 &lt;span class="c1"&gt;#1 SMP Debian 3.16.36-1+deb8u2 (2016-10-19) x86_64 GNU/Linux&lt;/span&gt;
+gerard@purgatory:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es interesante comprobar que tras acceder desde nuestra máquina, la segunda sesión nos informa que la anterior se realizó desde &lt;em&gt;bastion&lt;/em&gt;, y no desde la nuestra; la nuestra se conecta a &lt;em&gt;bastion&lt;/em&gt; que es la que se conecta al resto, llegando a servidores en los que no habríamos llegado de otra manera.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~$ ssh server1
+...  
+Last login: Thu Nov &lt;span class="m"&gt;17&lt;/span&gt; &lt;span class="m"&gt;14&lt;/span&gt;:35:30 &lt;span class="m"&gt;2016&lt;/span&gt; from bastion
+jump@server1:~$ 
+&lt;/pre&gt;&lt;/div&gt;</content><category term="ssh"></category><category term="bastion"></category><category term="pubkey"></category></entry><entry><title>Manteniendo la versión de paquetes en Debian y Ubuntu</title><link href="http://www.linuxsysadmin.ml/2017/12/manteniendo-la-version-de-paquetes-en-debian-y-ubuntu.html" rel="alternate"></link><published>2017-12-26T10:00:00+01:00</published><updated>2017-12-26T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-12-26:/2017/12/manteniendo-la-version-de-paquetes-en-debian-y-ubuntu.html</id><summary type="html">&lt;p&gt;Una de las operaciones más rutinarias que podemos tener como administradores de sistemas Linux es la actualización de un servidor. Mecánicamente lanzas &lt;strong&gt;apt-get upgrade&lt;/strong&gt; y te quedas tan tranquilo con la tarea completa. Poco después te encuentras con alguien cabreado porque alguna librería o servicio no va adecuadamente como antes …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Una de las operaciones más rutinarias que podemos tener como administradores de sistemas Linux es la actualización de un servidor. Mecánicamente lanzas &lt;strong&gt;apt-get upgrade&lt;/strong&gt; y te quedas tan tranquilo con la tarea completa. Poco después te encuentras con alguien cabreado porque alguna librería o servicio no va adecuadamente como antes.&lt;/p&gt;
 &lt;p&gt;Lo que realmente ha pasado es que hemos cambiado de versión alguna pieza de &lt;em&gt;software&lt;/em&gt;, y la nueva tiene incompatibilidades con lo que hay funcionando. Es un caso raro, pero a veces se da, y muchas veces con previo aviso.&lt;/p&gt;
 &lt;p&gt;¿Como se puede evitar que un servicio cambie de versión cuando actualiza? Muy sencillo: se llama &lt;em&gt;pinning&lt;/em&gt; y es muy fácil de hacer con &lt;strong&gt;Debian&lt;/strong&gt; o &lt;strong&gt;Ubuntu&lt;/strong&gt;. Veamos un ejemplo:&lt;/p&gt;
 &lt;p&gt;Supongamos que tenemos un servidor de contenedores &lt;strong&gt;Docker&lt;/strong&gt;. Por un tema de estabilidad queremos mantener la versión actual. Para ello necesitamos saber el nombre del paquete que queramos congelar.&lt;/p&gt;

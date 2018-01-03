@@ -95,6 +95,13 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
+                <h2><a href="http://www.linuxsysadmin.ml/2018/01/usando-un-bastion-ssh.html">Usando un bastión SSH</a></h2>
+                <div class="summary"><p>Hoy vamos a presentar un patrón de conectividad para acceder a un conjunto de máquinas, exponiendo solamente una de ellas, y aprovechando el protocolo SSH para pasar el tráfico a través, de forma transparente. Eso facilita los casos en los que no podemos tener una VPN o una red dedicada …</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/01/usando-un-bastion-ssh.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://www.linuxsysadmin.ml/2017/12/manteniendo-la-version-de-paquetes-en-debian-y-ubuntu.html">Manteniendo la versión de paquetes en Debian y Ubuntu</a></h2>
                 <div class="summary"><p>Una de las operaciones más rutinarias que podemos tener como administradores de sistemas Linux es la actualización de un servidor. Mecánicamente lanzas <strong>apt-get upgrade</strong> y te quedas tan tranquilo con la tarea completa. Poco después te encuentras con alguien cabreado porque alguna librería o servicio no va adecuadamente como antes …</p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/12/manteniendo-la-version-de-paquetes-en-debian-y-ubuntu.html">Seguir leyendo</a>
@@ -154,13 +161,6 @@ Linux Sysadmin            </a>
                 <h2><a href="http://www.linuxsysadmin.ml/2017/05/docker-1705-con-multi-stage-build.html">Docker 17.05 con multi-stage build</a></h2>
                 <div class="summary"><p>Hacía tiempo que esperaba ansiosamente la nueva versión de <strong>docker</strong>. La raíz de tanta expectación son las mejoras que la versión candidata anunciaba, especialmente el nuevo modelo de <em>build</em>. Se ha modificado los <em>Dockerfile</em> para que puedan generar varias imágenes en un solo fichero, algunas de ellas partiendo de otras …</p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/05/docker-1705-con-multi-stage-build.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/05/reduciendo-el-tiempo-de-build-con-docker-y-su-cache.html">Reduciendo el tiempo de build con Docker y su caché</a></h2>
-                <div class="summary"><p>Cuando construimos imágenes <strong>docker</strong>, muchas veces no somos conscientes del poder de la caché integrada. Si reordenamos algunas instrucciones y aplicamos algún truco, podemos evitarnos el hecho de reconstruir muchas de esas capas, llegando a reducir el tiempo de <em>rebuild</em> a prácticamente cero, siempre y cuando no hayan grandes cambios …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/05/reduciendo-el-tiempo-de-build-con-docker-y-su-cache.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
@@ -274,6 +274,11 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.ml/tag/balanceador.html">
                             balanceador
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.ml/tag/bastion.html">
+                            bastion
                         </a>
                     </li>
                     <li class="list-group-item tag-3">
@@ -461,11 +466,6 @@ Linux Sysadmin            </a>
                             linux
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.ml/tag/livecd.html">
-                            livecd
-                        </a>
-                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.ml/tag/logical-volume-manager.html">
                             logical volume manager
@@ -569,6 +569,11 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.ml/tag/proxy-http.html">
                             proxy http
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.ml/tag/pubkey.html">
+                            pubkey
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -696,11 +701,6 @@ Linux Sysadmin            </a>
                             tmpfs
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.ml/tag/toolbox.html">
-                            toolbox
-                        </a>
-                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.ml/tag/tunel.html">
                             túnel
@@ -755,7 +755,7 @@ Linux Sysadmin            </a>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2017 Gerard
+         <div class="col-xs-10">&copy; 2018 Gerard
             &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>

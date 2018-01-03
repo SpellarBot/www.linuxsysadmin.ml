@@ -5,35 +5,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/</loc>
-<lastmod>2017-12-27T13:42:23-00:00</lastmod>
+<lastmod>2018-01-03T08:53:34-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2017-12-27T13:42:23-00:00</lastmod>
+<lastmod>2018-01-03T08:53:34-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2017-12-27T13:42:23-00:00</lastmod>
+<lastmod>2018-01-03T08:53:34-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2017-12-27T13:42:23-00:00</lastmod>
+<lastmod>2018-01-03T08:53:34-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2017-12-27T13:42:23-00:00</lastmod>
+<lastmod>2018-01-03T08:53:34-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/2018/01/usando-un-bastion-ssh.html</loc>
+<lastmod>2018-01-02T10:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -866,7 +873,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/category/operaciones.html</loc>
-<lastmod>2017-12-26T10:00:00-00:15</lastmod>
+<lastmod>2018-01-02T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1054,8 +1061,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/archlinux.html</loc>
-<lastmod>2016-07-25T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/bastion.html</loc>
+<lastmod>2018-01-02T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1082,8 +1089,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/dockerfile.html</loc>
-<lastmod>2017-09-11T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/pubkey.html</loc>
+<lastmod>2018-01-02T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1628,8 +1635,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/popen.html</loc>
-<lastmod>2017-11-20T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/openssl.html</loc>
+<lastmod>2017-05-29T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1866,6 +1873,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.ml/tag/archlinux.html</loc>
+<lastmod>2016-07-25T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.ml/tag/editor.html</loc>
 <lastmod>2017-01-02T12:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -2006,6 +2020,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.ml/tag/dockerfile.html</loc>
+<lastmod>2017-09-11T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.ml/tag/mount.html</loc>
 <lastmod>2017-10-23T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -2097,8 +2118,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/openssl.html</loc>
-<lastmod>2017-05-29T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/popen.html</loc>
+<lastmod>2017-11-20T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2427,14 +2448,14 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/ssh.html</loc>
-<lastmod>2017-09-25T10:00:00-00:15</lastmod>
+<lastmod>2018-01-02T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2017-12-26T10:00:00-00:15</lastmod>
+<lastmod>2018-01-02T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

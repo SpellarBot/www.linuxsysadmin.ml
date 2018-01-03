@@ -93,6 +93,13 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
+                <h2><a href="http://www.linuxsysadmin.ml/2018/01/usando-un-bastion-ssh.html">Usando un bastión SSH</a></h2>
+                <div class="summary"><p>Hoy vamos a presentar un patrón de conectividad para acceder a un conjunto de máquinas, exponiendo solamente una de ellas, y aprovechando el protocolo SSH para pasar el tráfico a través, de forma transparente. Eso facilita los casos en los que no podemos tener una VPN o una red dedicada …</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/01/usando-un-bastion-ssh.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://www.linuxsysadmin.ml/2017/09/un-terminal-ssh-en-nuestro-navegador-web-usando-wetty.html">Un terminal SSH en nuestro navegador web usando Wetty</a></h2>
                 <div class="summary"><p>No siempre tenemos acceso a nuestro terminal SSH favorito para acceder a nuestros entornos en caso de emergencia. De hecho, en muchas redes suelen prohibir el tráfico por otros puertos ajenos a la navegación web. Para estos casos podemos tener un terminal SSH a través de una página web propia …</p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/09/un-terminal-ssh-en-nuestro-navegador-web-usando-wetty.html">Seguir leyendo</a>
@@ -152,13 +159,6 @@ Linux Sysadmin            </a>
                 <h2><a href="http://www.linuxsysadmin.ml/2016/06/preparando-un-servidor-de-repositorios-git.html">Preparando un servidor de repositorios GIT</a></h2>
                 <div class="summary"><p>Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando <strong>git</strong> y <strong>ssh …</strong></p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/06/preparando-un-servidor-de-repositorios-git.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/05/autenticacion-ssh-por-claves.html">Autenticación SSH por claves</a></h2>
-                <div class="summary"><p>A pesar de que el protocolo <strong>SSH</strong> es lo que mas seguridad ofrece hoy en día, un servidor rápido puede probar gran cantidad de contraseñas generadas mediante un generador por fuerza bruta. Para añadir mas seguridad podemos autenticar mediante claves en vez de usar contraseña, opcionalmente protegidos con una <em>passphrase …</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/05/autenticacion-ssh-por-claves.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
@@ -266,6 +266,11 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.ml/tag/balanceador.html">
                             balanceador
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.ml/tag/bastion.html">
+                            bastion
                         </a>
                     </li>
                     <li class="list-group-item tag-3">
@@ -453,11 +458,6 @@ Linux Sysadmin            </a>
                             linux
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.ml/tag/livecd.html">
-                            livecd
-                        </a>
-                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.ml/tag/logical-volume-manager.html">
                             logical volume manager
@@ -561,6 +561,11 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.ml/tag/proxy-http.html">
                             proxy http
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.ml/tag/pubkey.html">
+                            pubkey
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
@@ -688,11 +693,6 @@ Linux Sysadmin            </a>
                             tmpfs
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.ml/tag/toolbox.html">
-                            toolbox
-                        </a>
-                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.ml/tag/tunel.html">
                             túnel
@@ -747,7 +747,7 @@ Linux Sysadmin            </a>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2017 Gerard
+         <div class="col-xs-10">&copy; 2018 Gerard
             &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
