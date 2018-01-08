@@ -1,5 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Miscelánea</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/miscelanea.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-10-09T16:30:00+02:00</updated><entry><title>Esta semana no hay artículo</title><link href="http://www.linuxsysadmin.ml/2017/10/esta-semana-no-hay-articulo.html" rel="alternate"></link><published>2017-10-09T16:30:00+02:00</published><updated>2017-10-09T16:30:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-10-09:/2017/10/esta-semana-no-hay-articulo.html</id><summary type="html">&lt;p&gt;Como algunos habreis podido comprobar, me he visto obligado a cambiar el dominio, de &lt;a href="http://www.linuxsysadmin.ml"&gt;www.linuxsysadmin.tk&lt;/a&gt; a &lt;a href="http://www.linuxsysadmin.ml"&gt;www.linuxsysadmin.ml&lt;/a&gt;. Este cambio viene motivado por la interrupción del dominio, que pude disfrutar de forma gratuita hasta la fecha de caducidad. Ahora me veo obligado a un cambio muy forzado …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Como algunos habreis podido comprobar, me he visto obligado a cambiar el dominio, de &lt;a href="http://www.linuxsysadmin.ml"&gt;www.linuxsysadmin.tk&lt;/a&gt; a &lt;a href="http://www.linuxsysadmin.ml"&gt;www.linuxsysadmin.ml&lt;/a&gt;. Este cambio viene motivado por la interrupción del dominio, que pude disfrutar de forma gratuita hasta la fecha de caducidad. Ahora me veo obligado a un cambio muy forzado.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Miscelánea</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/miscelanea.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-01-08T10:00:00+01:00</updated><entry><title>Aplicaciones gráficas en un contenedor</title><link href="http://www.linuxsysadmin.ml/2018/01/aplicaciones-graficas-en-un-contenedor.html" rel="alternate"></link><published>2018-01-08T10:00:00+01:00</published><updated>2018-01-08T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-01-08:/2018/01/aplicaciones-graficas-en-un-contenedor.html</id><summary type="html">&lt;p&gt;A veces nos encontramos en un ordenador que no tenemos preparado para usar nuestras aplicaciones habituales, o simplemente no es el nuestro, o no queremos ensuciarlo para probar aplicaciones nuevas. Si disponemos de &lt;strong&gt;docker&lt;/strong&gt;, es posible ejecutarlas compartiendo solamente el &lt;em&gt;unix socket&lt;/em&gt; del servidor gráfico para verlas en nuestra pantalla …&lt;/p&gt;</summary><content type="html">&lt;p&gt;A veces nos encontramos en un ordenador que no tenemos preparado para usar nuestras aplicaciones habituales, o simplemente no es el nuestro, o no queremos ensuciarlo para probar aplicaciones nuevas. Si disponemos de &lt;strong&gt;docker&lt;/strong&gt;, es posible ejecutarlas compartiendo solamente el &lt;em&gt;unix socket&lt;/em&gt; del servidor gráfico para verlas en nuestra pantalla.&lt;/p&gt;
+&lt;p&gt;El fichero &lt;em&gt;Dockerfile&lt;/em&gt; no es distinto del que usaríamos para una aplicación sin entorno gráfico, bastando instalar el programa que queramos y confiando en que el sistema de dependencias del gestor de paquetes consiga lo que este necesite.&lt;/p&gt;
+&lt;p&gt;En este caso pongo un editor de lenguaje de marcado &lt;em&gt;markdown&lt;/em&gt;, pero se podría poner un navegador, un juego o lo que queramos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/retext$ cat Dockerfile 
+FROM debian:jessie
+RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    apt-get install -y retext &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm -rf /var/lib/apt/lists/*
+RUN useradd gerard
+USER gerard
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/bin/retext&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/docker/retext$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Construimos la imagen de la misma forma en la que lo hacemos habitualmente, con el mismo comando &lt;em&gt;docker build&lt;/em&gt; habitual:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/retext$ docker build -t retext .
+Sending build context to Docker daemon &lt;span class="m"&gt;2&lt;/span&gt;.048 kB
+Step &lt;span class="m"&gt;1&lt;/span&gt; : FROM debian:jessie
+ ---&amp;gt; 19134a8202e7
+Step &lt;span class="m"&gt;2&lt;/span&gt; : RUN apt-get update &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     apt-get install -y retext &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt;     rm -rf /var/lib/apt/lists/*
+ ---&amp;gt; Running in bb0cdc51af3e
+...
+ ---&amp;gt; 1150d6a6a3e2
+Removing intermediate container bb0cdc51af3e
+Step &lt;span class="m"&gt;3&lt;/span&gt; : RUN useradd gerard
+ ---&amp;gt; Running in 97e1de7b50d3
+ ---&amp;gt; 4d8f69d5f570
+Removing intermediate container 97e1de7b50d3
+Step &lt;span class="m"&gt;4&lt;/span&gt; : USER gerard
+ ---&amp;gt; Running in 29bb618fc788
+ ---&amp;gt; 1a7388f29cda
+Removing intermediate container 29bb618fc788
+Step &lt;span class="m"&gt;5&lt;/span&gt; : CMD /usr/bin/retext
+ ---&amp;gt; Running in fefaa04ee25e
+ ---&amp;gt; af856bcf0c49
+Removing intermediate container fefaa04ee25e
+Successfully built af856bcf0c49
+gerard@sirius:~/docker/retext$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si intentamos ejecutar esta imagen, veremos que falla; el contenedor no tiene acceso a los dispositivos, ni al &lt;em&gt;unix socket&lt;/em&gt; en donde este se ejecuta. Tampoco tenemos definida la variable de sistema &lt;em&gt;DISPLAY&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/retext$ docker run --rm retext
+QXcbConnection: Could not connect to display 
+gerard@sirius:~/docker/retext$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Por suerte podemos añadir ambos mediante &lt;em&gt;flags&lt;/em&gt; durante la ejecución del contenedor. Vamos a añadir el &lt;em&gt;unix socket&lt;/em&gt; del servidor gráfico mediante un volumen, y vamos a definir la variable &lt;em&gt;DISPLAY&lt;/em&gt; en función de la que tengamos en la máquina anfitrión.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/retext$ docker run --rm -e &lt;span class="s2"&gt;&amp;quot;DISPLAY=&lt;/span&gt;&lt;span class="nv"&gt;$DISPLAY&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; -v /tmp/.X11-unix:/tmp/.X11-unix retext
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y ya podremos ver la aplicación corriendo como una ventana más en nuestra pantalla, sin problemas ni complicaciones.&lt;/p&gt;</content><category term="docker"></category><category term="escritorio"></category></entry><entry><title>Esta semana no hay artículo</title><link href="http://www.linuxsysadmin.ml/2017/10/esta-semana-no-hay-articulo.html" rel="alternate"></link><published>2017-10-09T16:30:00+02:00</published><updated>2017-10-09T16:30:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-10-09:/2017/10/esta-semana-no-hay-articulo.html</id><summary type="html">&lt;p&gt;Como algunos habreis podido comprobar, me he visto obligado a cambiar el dominio, de &lt;a href="http://www.linuxsysadmin.ml"&gt;www.linuxsysadmin.tk&lt;/a&gt; a &lt;a href="http://www.linuxsysadmin.ml"&gt;www.linuxsysadmin.ml&lt;/a&gt;. Este cambio viene motivado por la interrupción del dominio, que pude disfrutar de forma gratuita hasta la fecha de caducidad. Ahora me veo obligado a un cambio muy forzado …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Como algunos habreis podido comprobar, me he visto obligado a cambiar el dominio, de &lt;a href="http://www.linuxsysadmin.ml"&gt;www.linuxsysadmin.tk&lt;/a&gt; a &lt;a href="http://www.linuxsysadmin.ml"&gt;www.linuxsysadmin.ml&lt;/a&gt;. Este cambio viene motivado por la interrupción del dominio, que pude disfrutar de forma gratuita hasta la fecha de caducidad. Ahora me veo obligado a un cambio muy forzado.&lt;/p&gt;
 &lt;p&gt;El principio de este &lt;em&gt;blog&lt;/em&gt; era el de publicar artículos que sirvan como tutoriales a todo el que los pudiera necesitar, y para ello se ideó una solución sin coste basándose en un generador de contenido estático, alojamiento en github y un dominio gratuito.&lt;/p&gt;
 &lt;p&gt;Este dominio gratuito ha expirado y ahora cuesta dinero, concretamente más de la miseria que entra en concepto publicidad. Así pues, la única opción viable ha sido usar otro dominio, por supuesto, gratuito tambien.&lt;/p&gt;
 &lt;p&gt;&lt;img alt="Un haiku sobre problemas de DNS" src="http://www.linuxsysadmin.ml/images/haiku_dns.jpg"&gt;&lt;/p&gt;
