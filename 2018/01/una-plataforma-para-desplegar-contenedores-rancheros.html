@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Ejecutando procesos desde python con popen - Linux Sysadmin</title>
+    <title>Una plataforma para desplegar contenedores: RancherOS - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,22 +9,22 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.ml/2017/11/ejecutando-procesos-desde-python-con-popen.html">
+<link rel="canonical" href="http://www.linuxsysadmin.ml/2018/01/una-plataforma-para-desplegar-contenedores-rancheros.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="keywords" content="python,subprocess,popen" />
-        <meta name="description" content="Algunas veces nos interesa lanzar comandos bash, pero necesitamos de la potencia de python para parsear la salida. En otras ocasiones queremos lanzar los comandos bash directamente desde python porque se hace desde una aplicación web. En estos casos nos viene muy bien el módulo subprocess que nos lo permite …" />
+        <meta name="keywords" content="docker,cluster,rancher" />
+        <meta name="description" content="Aquellos que seguís este blog de forma regular, habréis notado mi predilección por los contenedores docker, en gran parte porque es con lo que trabajo en mi día a día. Hartos de usar la plataforma custom que tenemos en la compañía buscamos una nueva, que simplifique el trabajo que hacemos …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Ejecutando procesos desde python con popen"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.ml/2017/11/ejecutando-procesos-desde-python-con-popen.html"/>
-        <meta property="og:description" content="Algunas veces nos interesa lanzar comandos bash, pero necesitamos de la potencia de python para parsear la salida. En otras ocasiones queremos lanzar los comandos bash directamente desde python porque se hace desde una aplicación web. En estos casos nos viene muy bien el módulo subprocess que nos lo permite …"/>
-        <meta property="article:published_time" content="2017-11-20" />
-            <meta property="article:section" content="Desarrollo" />
-            <meta property="article:tag" content="python" />
-            <meta property="article:tag" content="subprocess" />
-            <meta property="article:tag" content="popen" />
+        <meta property="og:title" content="Una plataforma para desplegar contenedores: RancherOS"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.ml/2018/01/una-plataforma-para-desplegar-contenedores-rancheros.html"/>
+        <meta property="og:description" content="Aquellos que seguís este blog de forma regular, habréis notado mi predilección por los contenedores docker, en gran parte porque es con lo que trabajo en mi día a día. Hartos de usar la plataforma custom que tenemos en la compañía buscamos una nueva, que simplifique el trabajo que hacemos …"/>
+        <meta property="article:published_time" content="2018-01-15" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:tag" content="cluster" />
+            <meta property="article:tag" content="rancher" />
             <meta property="article:author" content="Gerard" />
 
 
@@ -41,8 +41,8 @@
 
 
 
-        <link href="http://www.linuxsysadmin.ml/feeds/desarrollo.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Desarrollo ATOM Feed"/>
+        <link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -86,8 +86,8 @@ Linux Sysadmin            </a>
         <div class="col-sm-9">
             <ol class="breadcrumb">
                 <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.ml/category/desarrollo.html" title="Desarrollo">Desarrollo</a></li>
-                <li class="active">Ejecutando procesos desde python con popen</li>
+                <li><a href="http://www.linuxsysadmin.ml/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Una plataforma para desplegar contenedores: RancherOS</li>
             </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -105,10 +105,10 @@ Linux Sysadmin            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://www.linuxsysadmin.ml/2017/11/ejecutando-procesos-desde-python-con-popen.html"
+                    <a href="http://www.linuxsysadmin.ml/2018/01/una-plataforma-para-desplegar-contenedores-rancheros.html"
                        rel="bookmark"
-                       title="Permalink to Ejecutando procesos desde python con popen">
-                        Ejecutando procesos desde python con popen
+                       title="Permalink to Una plataforma para desplegar contenedores: RancherOS">
+                        Una plataforma para desplegar contenedores: RancherOS
                     </a>
                 </h1>
             </header>
@@ -118,110 +118,81 @@ Linux Sysadmin            </a>
 <footer class="post-info">
     <span class="label label-default">Fecha</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2017-11-20T10:00:00+01:00"> 2017-11-20</time>
+        <i class="fa fa-calendar"></i><time datetime="2018-01-15T10:00:00+01:00"> 2018-01-15</time>
     </span>
 
 
             <span class="label label-default">Autor</span>
             <a href="http://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
 
-        <span class="label label-default">Tiempo de lectura</span> 4 minutos
+        <span class="label label-default">Tiempo de lectura</span> 6 minutos
         <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.ml/category/desarrollo.html">Desarrollo</a>
+        <a href="http://www.linuxsysadmin.ml/category/sistemas.html">Sistemas</a>
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.ml/tag/python.html">python</a>
+	<a href="http://www.linuxsysadmin.ml/tag/docker.html">docker</a>
         /
-	<a href="http://www.linuxsysadmin.ml/tag/subprocess.html">subprocess</a>
+	<a href="http://www.linuxsysadmin.ml/tag/cluster.html">cluster</a>
         /
-	<a href="http://www.linuxsysadmin.ml/tag/popen.html">popen</a>
+	<a href="http://www.linuxsysadmin.ml/tag/rancher.html">rancher</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>Algunas veces nos interesa lanzar comandos <em>bash</em>, pero necesitamos de la potencia de <em>python</em> para <em>parsear</em> la salida. En otras ocasiones queremos lanzar los comandos <em>bash</em> directamente desde <em>python</em> porque se hace desde una aplicación web. En estos casos nos viene muy bien el módulo <em>subprocess</em> que nos lo permite.</p>
-<p>Aunque no quiero dar detalles porque la idea es todavia una prueba de concepto, en mi caso concreto se trataba de hacer una herramienta web muy simple para lanzar <em>backups</em> y <em>restores</em> sobre <strong>mongodb</strong>, usando los comandos <em>mongodump</em> y <em>mongorestore</em>.</p>
-<p>En este artículo he decidido poner dos ejemplos muy simplificados, de forma que no nos distraigan de lo que relamente es importante; uno es sobre como lanzar comandos y recoger resultados, mientras que el otro es un poco más avanzado y nos permite concatenar varios comandos como haríamos en <em>bash</em>.</p>
-<h2>Un ejemplo simple</h2>
-<p>Supongamos que queremos graficar la carga del sistema, tal como nos las da el comando <em>uptime</em>. Para ello tenemos que <em>parsear</em> y convertir en números los tres valores que el comando nos da. Por ello tenemos el siguiente <em>script</em>:</p>
-<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/popen$ cat uptimes.py
-<span class="c1">#!/usr/bin/env python</span>
-
-from subprocess import Popen, PIPE, STDOUT
-
-<span class="nv">proc</span> <span class="o">=</span> Popen<span class="o">([</span><span class="s1">&#39;uptime&#39;</span><span class="o">]</span>, <span class="nv">stdout</span><span class="o">=</span>PIPE, <span class="nv">stderr</span><span class="o">=</span>STDOUT<span class="o">)</span>
-out, <span class="nv">err</span> <span class="o">=</span> proc.communicate<span class="o">()</span>
-
-<span class="nv">uptimes</span> <span class="o">=</span> out.rstrip<span class="o">()</span>.split<span class="o">(</span><span class="s1">&#39;load average: &#39;</span><span class="o">)[</span><span class="m">1</span><span class="o">]</span>
-<span class="nv">uptimes</span> <span class="o">=</span> uptimes.split<span class="o">(</span><span class="s1">&#39;, &#39;</span><span class="o">)</span>
-<span class="nv">uptimes</span> <span class="o">=</span> <span class="o">[</span>float<span class="o">(</span>e.replace<span class="o">(</span><span class="s1">&#39;,&#39;</span>, <span class="s1">&#39;.&#39;</span><span class="o">))</span> <span class="k">for</span> e in uptimes<span class="o">]</span>
-
-<span class="nb">times</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;1 minute&#39;</span>, <span class="s1">&#39;5 minutes&#39;</span>, <span class="s1">&#39;15 minutes&#39;</span><span class="o">]</span>
-<span class="k">for</span> i in xrange<span class="o">(</span><span class="m">3</span><span class="o">)</span>:
-    print <span class="s1">&#39;Last %s: %s&#39;</span> % <span class="o">(</span>times<span class="o">[</span>i<span class="o">]</span>, uptimes<span class="o">[</span>i<span class="o">])</span>
-gerard@atlantis:~/projects/popen$
+                <p>Aquellos que seguís este <em>blog</em> de forma regular, habréis notado mi predilección por los contenedores <strong>docker</strong>, en gran parte porque es con lo que trabajo en mi día a día. Hartos de usar la plataforma <em>custom</em> que tenemos en la compañía buscamos una nueva, que simplifique el trabajo que hacemos.</p>
+<p>Lo que tenemos actualmente es una amalgama de <em>hosts</em> en donde desplegamos contenedores, en algunos servicios, y en otros los servicios que nos permiten hacer un <em>routing</em> adecuado, por ejemplo, <em>proxies</em> reversos, balanceadores y <em>firewalls</em>.</p>
+<p>Sin embargo, estos contenedores se ven entre sí, así como a los <em>hosts</em> que los levantan. A todo esto, el conjunto de servicios desplegados empezaba a impactar en la capacidad de mantenerla. En especial, la demanda de segregación de red de algún cliente nos hizo buscar alternativas de forma acelerada.</p>
+<p>Aunque no es nuestro futuro inmediato, salimos del paso con una solución completa que se llama <a href="http://rancher.com/">Rancher</a>. Su filosofía es muy simple: necesitamos un servidor de control que tenga una foto del <em>cluster</em> (por supuesto un contenedor <strong>docker</strong>, y un conjunto de servidores que añadan recursos al mismo (mediante otro servidor <strong>docker</strong> que corre un agente). De hecho, en el <em>deploy</em> más simple, basta con tener ambas cosas en la misma máquina.</p>
+<p>Para despliegues mas profesionales, disponen de un fichero <em>.iso</em> para instalar un sistema operativo para ejecutar solamente <strong>Rancher</strong>, que tiene lo básico para ejecutar <strong>Docker</strong> y levanta sus servicios como contenedores.</p>
+<h2>Instalación de Rancher</h2>
+<h3>Servidor</h3>
+<p>Para levantar el servidor de <strong>Rancher</strong> vamos a seguir los pasos de <a href="http://docs.rancher.com/rancher/latest/en/installing-rancher/installing-server/">la instalación</a>. Tan simple como levantar un contenedor.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~$ docker run -d --restart<span class="o">=</span>unless-stopped -p <span class="m">8080</span>:8080 rancher/server
 </pre></div>
 
 
-<p>La parte importante se limita a dos líneas, que son las que crean la variable <code>proc</code> y la siguiente. Se ejecuta el comando especificado en el <em>array</em> del primer parámetro de <code>Popen</code>, sin indicar entrada estándar (no hay por defecto), redirigiendo la salida de error a la salida estándar, y dejando esta como <code>PIPE</code> la convertimos en un <em>stream</em>, que luego podemos enchufar a otro proceso o recoger con el método <code>communicate()</code>, que es el caso.</p>
-<p>El resto es un mero ejercicio de <em>parsing</em>; con algunas funciones básicas de la clase <em>string</em> (<em>strip</em>, <em>split</em> y <em>replace</em>) y algunos <em>castings</em> a <em>float</em>, tenemos lo que nos interesa. La parte de graficar queda como ejercicio para el lector.</p>
-<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/popen$ ./uptimes.py
-Last <span class="m">1</span> minute: <span class="m">0</span>.28
-Last <span class="m">5</span> minutes: <span class="m">0</span>.09
-Last <span class="m">15</span> minutes: <span class="m">0</span>.03
-gerard@atlantis:~/projects/popen$
-</pre></div>
-
-
-<p>Y podemos ver que tenemos la respuesta esperada con los valores pelados, y listos para disponer de ellos como queramos.</p>
-<h2>Un ejemplo concatenando varios procesos</h2>
-<p>Este ejemplo es posiblemente uno de los más inútiles que puedo mostrar. Simplemente se trata de hacer algo como <code>seq 1 100 | grep 3 | grep 5</code>. No es muy útil, pero nos va a ilustrar sobre como se hacen este tipo de cosntrucciones <em>bash</em>.</p>
-<p>El truco consiste en hacer 3 procesos, para cada uno de los comandos, usando los <em>streams</em> declarados con <code>PIPE</code> para enchufarlos a la entrada estándar del siguiente comando:</p>
+<p>Este contenedor nos ofrece la base de datos de control y una bonita interfaz de usuario en el puerto 8080 para administrar nuestro <em>cluster</em>.</p>
+<p>Solo nos queda ver la interfaz de administración para comprobar que funciona, en <a href="http://localhost:8080/">http://localhost:8080/</a>.</p>
+<p><img alt="Rancher panel" src="http://www.linuxsysadmin.ml/images/rancher-panel.png"></p>
+<h3>Hosts</h3>
+<p>En la interfaz de administración vemos una pestaña "Infraestructure" en donde podemos seleccionar "Hosts". Si le damos al botón "Add Host", veremos que añadir un <em>host</em> es trivial; a la larga todo se reduce en levantar otro contenedor <em>rancher/agent</em> en ese <em>host</em>, para que nuestro servidor lo reconozca y le pueda enviar órdenes.</p>
+<h2>Conceptos básicos de Rancher</h2>
+<p>Si jugamos un rato con la interfaz, vamos a ver varios conceptos, que aquí se resumen:</p>
 <ul>
-<li><strong>p1</strong> ejecutará el <code>seq 1 100</code></li>
-<li><strong>p2</strong> ejecutará un <code>grep 3</code> sobre la entrada estándar, que será la salida estándar de <strong>p1</strong></li>
-<li><strong>p3</strong> ejecutará un <code>grep 5</code> sobre la entrada estándar, que será la salida estándar de <strong>p2</strong></li>
+<li><strong>Entornos</strong>: Agrupaciones lógicas de recursos (<em>hosts</em>). Cada entorno tiene sus propios <em>hosts</em>. Solo hay conectividad de contenedores cuando están en el mismo entorno, dentro de <strong>Rancher</strong>.</li>
+<li><strong>Stacks</strong>: Agrupaciones lógicas de servicios, se despliegan en un entorno concreto.</li>
+<li><strong>Servicios</strong>: Un servicio es la unidad mínima escalable, y se compone de un <em>primary service</em> (un contenedor) y de cualquier número de <em>sidekick containers</em>. Esta es la unidad mínima escalable. Se garantiza que todos los contenedores de este servicio se van a desplegar en un solo <em>host</em>, y en caso de escalarlo, este <em>pack</em> se repite en otros <em>hosts</em> de acuerdo con las leyes de afinidad. Solo se pueden usar volúmenes de un contenedor en el mismo servicio.</li>
+<li><strong>Balanceadores</strong>: Básicamente se trata de contenedores <em>haproxy</em> que nos permiten poner un balanceador sin tener que crear nosotros un servicio especializado.</li>
+<li><strong>Catálogo</strong>: Es un conjunto de plantillas de servicios prefabricados que podemos usar para crear nuestras propias <em>stacks</em>. Podemos añadir nuestra <em>stack</em> para el fácil despliegue de <em>stacks</em> genéricas, por ejemplo bases de datos o herramientas de monitorización.</li>
 </ul>
-<p>Y así queda nuestro <em>script</em>:</p>
-<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/popen$ cat seq.py
-<span class="c1">#!/usr/bin/env python</span>
-
-from subprocess import Popen, PIPE
-
-<span class="nv">p1</span> <span class="o">=</span> Popen<span class="o">([</span><span class="s1">&#39;seq&#39;</span>, <span class="s1">&#39;1&#39;</span>, <span class="s1">&#39;100&#39;</span><span class="o">]</span>, <span class="nv">stdout</span><span class="o">=</span>PIPE<span class="o">)</span>
-<span class="nv">p2</span> <span class="o">=</span> Popen<span class="o">([</span><span class="s1">&#39;grep&#39;</span>, <span class="s1">&#39;3&#39;</span><span class="o">]</span>, <span class="nv">stdin</span><span class="o">=</span>p1.stdout, <span class="nv">stdout</span><span class="o">=</span>PIPE<span class="o">)</span>
-<span class="nv">p3</span> <span class="o">=</span> Popen<span class="o">([</span><span class="s1">&#39;grep&#39;</span>, <span class="s1">&#39;5&#39;</span><span class="o">]</span>, <span class="nv">stdin</span><span class="o">=</span>p2.stdout, <span class="nv">stdout</span><span class="o">=</span>PIPE<span class="o">)</span>
-p1.stdout.close<span class="o">()</span>
-p2.stdout.close<span class="o">()</span>
-<span class="nv">out</span> <span class="o">=</span> p3.communicate<span class="o">()[</span><span class="m">0</span><span class="o">]</span>.strip<span class="o">()</span>
-
-print out
-gerard@atlantis:~/projects/popen$
-</pre></div>
-
-
-<p>Cabe indicar que el método <code>communicate()</code> se llama solamente en el último comando de la cadena, para esperar que acabe y recoger así su salida estándar y su salida de error, que en este caso, desechamos.</p>
-<p>Solo queda comentar que los <em>streams</em> de salida de <strong>p1</strong> y de <strong>p2</strong> se cierran después de enchufarlos a <strong>p3</strong>, tal como sugiere la documentación, para evitar problemas en caso de que <strong>p3</strong> acabe antes que <strong>p2</strong>, o este acabe antes que <strong>p1</strong>.</p>
-<p>A partir de aquí, solo nos queda comprobar que el resultado es el mismo, tanto en <em>bash</em>, como en <em>python</em>:</p>
-<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/popen$ seq <span class="m">1</span> <span class="m">100</span> <span class="p">|</span> grep <span class="m">3</span> <span class="p">|</span> grep <span class="m">5</span>
-<span class="m">35</span>
-<span class="m">53</span>
-gerard@atlantis:~/projects/popen$ ./seq.py
-<span class="m">35</span>
-<span class="m">53</span>
-gerard@atlantis:~/projects/popen$
-</pre></div>
-
-
-<p>Y con esto ampliamos nuestra <em>toolbox</em> de recursos, de forma que podamos encarar futuros retos con nuevas opciones.</p>
+<p>La parte importante es que podemos declarar nuestros contenedores dentro de los servicios de la misma forma que lo hacemos en <strong>docker</strong>, pero con un bonito formulario web.</p>
+<p><strong>TRUCO</strong>: Los servicios se pueden actualizar usando nuevas versiones de nuestros contenedores. <strong>Rancher</strong> va a crear un nuevo conjunto de servicios sin eliminar los antiguos. A <em>posteriori</em> podemos hacer un "Finish upgrade", que eliminaría los viejos contenedores asumiendo que nos gusta el resultado, o podemos hacer un "Rollback", que eliminaría los contenedores nuevos para dejar los viejos, en caso de que la nueva versión no nos satisfaga.</p>
+<h2>Un caso práctico</h2>
+<p>Supongamos que tenemos una web con datos financieros, con acceso por parte de muchos visitantes y con un entrada de nuevos datos a la base de datos mediante carga de ficheros por SFTP.</p>
+<p>Vamos a suponer que trabajamos en un entorno de test, específico para este proyecto por aislamiento de red; eso nos simplifica las decisiones. En un futuro se podría crear otro entorno para producción o para otro proyecto, pero de momento nos vale. También es posible hacer entornos compartidos para varios proyectos.</p>
+<p>Algunas decisiones de diseño:</p>
+<ul>
+<li>Nuestra aplicación es un solo contenedor, que vamos a escalar para soportar la carga.</li>
+<li>Vamos a balancear la carga entre todos los contenedores de aplicación.</li>
+<li>La base de datos va a ir separada en otro contenedor, que todas las instancias de la aplicación puedan ver.</li>
+<li>El sistema de inyección de datos se va a componer de 3 contenedores: uno para el SFTP, uno para el volumen de datos y otro para el procesador de dichos datos.</li>
+</ul>
+<p>Y con este <em>setup</em>, podemos empezar a construir nuestro entorno. no importa cuantos <em>stacks</em> hagamos, pero seguramente, la base de datos tendrá su propio <em>stack</em> porque lo pondremos directamente del catálogo. Podemos poner todo el resto en un solo <em>stack</em> o separarlos por subsistemas (web balanceada, bases de datos, inyector de datos).</p>
+<ol>
+<li>La parte mas fácil es la base de datos. Creamos un servicio simple para que todos lo utilicen.</li>
+<li>Los contenedores de aplicación van a ser otro servicio. Que sean servicios individuales nos permite escalarlos individualmente del resto de componentes.</li>
+<li>Creamos un balanceador para el servicio de aplicación. En este punto ya deberíamos poder acceder al entorno, aunque sin la entrada de datos.</li>
+<li>Los contenedores del sistema de inyección de datos deben formar parte de un único servicio, porque es la única forma de que puedan montar los volúmenes del contenedor de datos. Dejaremos este servicio escalado a 1, que nos va a poner un contenedor de cada en una sola de las máquinas. No es importante que contenedor es el primario, pero vamos a poner el SFTP por un sencillo motivo: solo los contenedores primarios pueden ser el objetivo del balanceador, que de momento no pondremos, pero tal vez algún día lo queramos.</li>
+</ol>
+<p>Y con esto tendremos nuestro proyecto corriendo. Es el momento de guardar las <em>stacks</em> en el catálogo, ya que eso va a simplificar el <em>deploy</em> cuando creemos otro entorno.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.ml/2017/09/introduccion-a-los-decoradores-de-python.html">Introducción a los decoradores de python</a></li>
-        <li><a href="http://www.linuxsysadmin.ml/2017/09/escribiendo-servicios-web-con-python-y-falcon.html">Escribiendo servicios web con python y falcon</a></li>
-        <li><a href="http://www.linuxsysadmin.ml/2017/11/un-odm-para-mongodb-en-python-mongoengine.html">Un ODM para mongodb en python: mongoengine</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2017/10/montando-un-cluster-de-docker-con-docker-swarm.html">Montando un cluster de docker con docker swarm</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2017/11/uso-basico-de-un-cluster-docker-swarm.html">Uso básico de un cluster Docker Swarm</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2017/08/creando-imagenes-con-estilo-la-instruccion-onbuild.html">Creando imágenes con estilo: la instrucción ONBUILD</a></li>
     </ul>
 </section>
     <hr/>
@@ -233,8 +204,8 @@ gerard@atlantis:~/projects/popen$
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'ejecutando-procesos-desde-python-con-popen';
-                var disqus_url = 'http://www.linuxsysadmin.ml/2017/11/ejecutando-procesos-desde-python-con-popen.html';
+                    var disqus_identifier = 'una-plataforma-para-desplegar-contenedores-rancheros';
+                var disqus_url = 'http://www.linuxsysadmin.ml/2018/01/una-plataforma-para-desplegar-contenedores-rancheros.html';
 
             var disqus_config = function () {
                 this.language = "es";
