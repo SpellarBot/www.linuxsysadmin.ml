@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Liberando memoria caché - Linux Sysadmin</title>
+    <title>Evitando usar virtualenv mediante el uso de PYTHONPATH - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,23 +9,22 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.ml/2015/11/liberando-memoria-cache.html">
+<link rel="canonical" href="http://www.linuxsysadmin.ml/2018/01/evitando-usar-virtualenv-mediante-el-uso-de-pythonpath.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="keywords" content="linux,kernel,memory manager,drop caches" />
-        <meta name="description" content="A veces nos encontramos que nuestro sistema linux parece tener la memoria virtual ocupada, cuando no tenemos nada de memoria RSS; esto no es un problema, ya que por la forma de funcionar del memory manager de linux, se conserva &#34;por si acaso&#34; y se libera cuando realmente se necesita …" />
+        <meta name="keywords" content="python,virtualenv,pip" />
+        <meta name="description" content="Soy un gran fan de python y siempre ando trasteando con alguna librería nueva, en vistas a un script para simplificar mi trabajo, o simplemente como un wekeend project. Me es infinitamente útil usar virtualenv, pero genera una carpeta que ocupa demasiado y contiene algo más que solamente las librerías …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Liberando memoria caché"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.ml/2015/11/liberando-memoria-cache.html"/>
-        <meta property="og:description" content="A veces nos encontramos que nuestro sistema linux parece tener la memoria virtual ocupada, cuando no tenemos nada de memoria RSS; esto no es un problema, ya que por la forma de funcionar del memory manager de linux, se conserva &#34;por si acaso&#34; y se libera cuando realmente se necesita …"/>
-        <meta property="article:published_time" content="2015-11-02" />
+        <meta property="og:title" content="Evitando usar virtualenv mediante el uso de PYTHONPATH"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.ml/2018/01/evitando-usar-virtualenv-mediante-el-uso-de-pythonpath.html"/>
+        <meta property="og:description" content="Soy un gran fan de python y siempre ando trasteando con alguna librería nueva, en vistas a un script para simplificar mi trabajo, o simplemente como un wekeend project. Me es infinitamente útil usar virtualenv, pero genera una carpeta que ocupa demasiado y contiene algo más que solamente las librerías …"/>
+        <meta property="article:published_time" content="2018-01-22" />
             <meta property="article:section" content="Operaciones" />
-            <meta property="article:tag" content="linux" />
-            <meta property="article:tag" content="kernel" />
-            <meta property="article:tag" content="memory manager" />
-            <meta property="article:tag" content="drop caches" />
+            <meta property="article:tag" content="python" />
+            <meta property="article:tag" content="virtualenv" />
+            <meta property="article:tag" content="pip" />
             <meta property="article:author" content="Gerard" />
 
 
@@ -88,7 +87,7 @@ Linux Sysadmin            </a>
             <ol class="breadcrumb">
                 <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
                 <li><a href="http://www.linuxsysadmin.ml/category/operaciones.html" title="Operaciones">Operaciones</a></li>
-                <li class="active">Liberando memoria caché</li>
+                <li class="active">Evitando usar virtualenv mediante el uso de PYTHONPATH</li>
             </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -106,10 +105,10 @@ Linux Sysadmin            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://www.linuxsysadmin.ml/2015/11/liberando-memoria-cache.html"
+                    <a href="http://www.linuxsysadmin.ml/2018/01/evitando-usar-virtualenv-mediante-el-uso-de-pythonpath.html"
                        rel="bookmark"
-                       title="Permalink to Liberando memoria caché">
-                        Liberando memoria caché
+                       title="Permalink to Evitando usar virtualenv mediante el uso de PYTHONPATH">
+                        Evitando usar virtualenv mediante el uso de PYTHONPATH
                     </a>
                 </h1>
             </header>
@@ -119,95 +118,145 @@ Linux Sysadmin            </a>
 <footer class="post-info">
     <span class="label label-default">Fecha</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2015-11-02T14:00:00+01:00"> 2015-11-02</time>
+        <i class="fa fa-calendar"></i><time datetime="2018-01-22T10:00:00+01:00"> 2018-01-22</time>
     </span>
 
 
             <span class="label label-default">Autor</span>
             <a href="http://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
 
-        <span class="label label-default">Tiempo de lectura</span> 3 minutos
+        <span class="label label-default">Tiempo de lectura</span> 5 minutos
         <span class="label label-default">Categoría</span>
         <a href="http://www.linuxsysadmin.ml/category/operaciones.html">Operaciones</a>
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.ml/tag/linux.html">linux</a>
+	<a href="http://www.linuxsysadmin.ml/tag/python.html">python</a>
         /
-	<a href="http://www.linuxsysadmin.ml/tag/kernel.html">kernel</a>
+	<a href="http://www.linuxsysadmin.ml/tag/virtualenv.html">virtualenv</a>
         /
-	<a href="http://www.linuxsysadmin.ml/tag/memory-manager.html">memory manager</a>
-        /
-	<a href="http://www.linuxsysadmin.ml/tag/drop-caches.html">drop caches</a>
+	<a href="http://www.linuxsysadmin.ml/tag/pip.html">pip</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>A veces nos encontramos que nuestro sistema linux parece tener la memoria <em>virtual</em> ocupada, cuando no tenemos nada de memoria <em>RSS</em>; esto no es un problema, ya que por la forma de funcionar del <em>memory manager</em> de linux, se conserva "por si acaso" y se libera cuando realmente se necesita.</p>
-<div class="highlight"><pre><span></span>gerard@desktop:~$ free -m
-             total       used       free     shared    buffers     cached
-Mem:          <span class="m">3858</span>       <span class="m">3226</span>        <span class="m">632</span>          <span class="m">0</span>        <span class="m">114</span>       <span class="m">2545</span>
--/+ buffers/cache:        <span class="m">566</span>       <span class="m">3291</span>
-Swap:         <span class="m">2381</span>          <span class="m">0</span>       <span class="m">2381</span>
-gerard@desktop:~$ 
+                <p>Soy un gran fan de <strong>python</strong> y siempre ando trasteando con alguna librería nueva, en vistas a un <em>script</em> para simplificar mi trabajo, o simplemente como un <em>wekeend project</em>. Me es infinitamente útil usar <strong>virtualenv</strong>, pero genera una carpeta que ocupa demasiado y contiene algo más que solamente las librerías.</p>
+<p>De hecho, solo tenemos que comprobar lo que ocupa un <em>virtualenv</em> vacío:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/test$ virtualenv env
+New python executable in /home/gerard/test/env/bin/python
+Installing setuptools, pip, wheel...done.
+gerard@aldebaran:~/test$ du -sh env/
+16M env/
+gerard@aldebaran:~/test$ 
 </pre></div>
 
 
-<p>Sin embargo este detalle nos puede resultar molesto y puede que queramos <strong>liberar</strong> esa memoria de verdad, por ejemplo, para comparar memoria real ocupada por el sistema o sencillamente porque así lo queremos.</p>
-<p>En este caso no tenemos mas remedio que solicitar el <em>memory manager</em> que la libere, escribiendo en el fichero de control habilitado para ello, de acuerdo a la <a href="https://www.kernel.org/doc/Documentation/sysctl/vm.txt">documentación del <em>kernel</em> de linux</a>.</p>
-<div class="highlight"><pre><span></span>drop_caches
-
-Writing to this will cause the kernel to drop clean caches, as well as
-reclaimable slab objects like dentries and inodes.  Once dropped, their
-memory becomes free.
-
-To free pagecache:
-    <span class="nb">echo</span> <span class="m">1</span> &gt; /proc/sys/vm/drop_caches
-To free reclaimable slab objects <span class="o">(</span>includes dentries and inodes<span class="o">)</span>:
-    <span class="nb">echo</span> <span class="m">2</span> &gt; /proc/sys/vm/drop_caches
-To free slab objects and pagecache:
-    <span class="nb">echo</span> <span class="m">3</span> &gt; /proc/sys/vm/drop_caches
-
-This is a non-destructive operation and will not free any dirty objects.
-To increase the number of objects freed by this operation, the user may run
-<span class="sb">`</span>sync<span class="err">&#39;</span> prior to writing to /proc/sys/vm/drop_caches.  This will minimize the
-number of dirty objects on the system and create more candidates to be
-dropped.
+<p>Por el propio funcionamiento de <strong>python</strong>, las carpetas de librerías son relativas al binario del mismo lenguaje, así que no es de extrañar que <em>virtualenv</em> ponga un binario en cada entorno; activar este entorno se limita a poner la carpeta <em>bin/</em> del <em>virtualenv</em> en el <em>PATH</em>. A esto le añadimos las herramientas <em>pip</em> y <em>easy_install</em>, y tenemos un montón de espacio desperdiciado.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/test$ find env/ -type f <span class="p">|</span> xargs ls -lrSh <span class="m">2</span>&gt;/dev/null <span class="p">|</span> tail
+-rw-r--r-- <span class="m">1</span> gerard gerard 114K mar <span class="m">22</span> <span class="m">15</span>:13 env/lib/python2.7/site-packages/pkg_resources/__init__.pyc
+-rw-r--r-- <span class="m">1</span> gerard gerard 114K mar <span class="m">22</span> <span class="m">15</span>:13 env/lib/python2.7/site-packages/pip/_vendor/pkg_resources/__init__.pyc
+-rw-r--r-- <span class="m">1</span> gerard gerard 115K mar <span class="m">22</span> <span class="m">15</span>:13 env/lib/python2.7/site-packages/pip/_vendor/html5lib/html5parser.py
+-rw-r--r-- <span class="m">1</span> gerard gerard 119K mar <span class="m">22</span> <span class="m">15</span>:13 env/lib/python2.7/site-packages/pip/_vendor/html5lib/html5parser.pyc
+-rw-r--r-- <span class="m">1</span> gerard gerard 219K mar <span class="m">22</span> <span class="m">15</span>:13 env/lib/python2.7/site-packages/pip/_vendor/pyparsing.py
+-rw-r--r-- <span class="m">1</span> gerard gerard 221K mar <span class="m">22</span> <span class="m">15</span>:13 env/lib/python2.7/site-packages/pyparsing.pyc
+-rw-r--r-- <span class="m">1</span> gerard gerard 222K mar <span class="m">22</span> <span class="m">15</span>:13 env/lib/python2.7/site-packages/pip/_vendor/pyparsing.pyc
+-rw-r--r-- <span class="m">1</span> gerard gerard 226K mar <span class="m">22</span> <span class="m">15</span>:13 env/lib/python2.7/site-packages/pyparsing.py
+-rw-r--r-- <span class="m">1</span> gerard gerard 337K mar <span class="m">22</span> <span class="m">15</span>:13 env/lib/python2.7/site-packages/pip/_vendor/requests/cacert.pem
+-rwxr-xr-x <span class="m">1</span> gerard gerard <span class="m">3</span>,7M mar <span class="m">22</span> <span class="m">15</span>:13 env/bin/python
+gerard@aldebaran:~/test$ 
 </pre></div>
 
 
-<p>Este fichero viene por defecto con permisos de escritura solamente para el usuario <strong>root</strong> y no se puede escribir sin el mismo. Como no queremos trabajar con el usuario <strong>root</strong>, vamos a usar el comando <em>sudo</em> con un usuario normal:</p>
-<div class="highlight"><pre><span></span>gerard@desktop:~$ sudo bash -c <span class="s2">&quot;echo 3 &gt; /proc/sys/vm/drop_caches&quot;</span>
-gerard@desktop:~$ 
+<p>Las carpetas desde las que se cargan los módulos y librerías de <strong>python</strong> no son inmutables; se pueden añadir en <em>runtime</em> a la lista <em>sys.path</em> o se puede indicar en las variables de entorno del sistema, como podemos ver en <a href="https://docs.python.org/2/using/cmdline.html#envvar-PYTHONPATH">la documentación</a>. Solo necesitamos una manera de instalarlas en una carpeta propia, y esto es precisamente lo que nos permite el <em>flag --target</em> de <em>pip</em>.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/test$ pip install -t libs mongoengine
+Collecting mongoengine
+Collecting six <span class="o">(</span>from mongoengine<span class="o">)</span>
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Collecting pymongo&gt;<span class="o">=</span><span class="m">2</span>.7.1 <span class="o">(</span>from mongoengine<span class="o">)</span>
+  Using cached pymongo-3.4.0-cp27-cp27mu-manylinux1_x86_64.whl
+Installing collected packages: six, pymongo, mongoengine
+Successfully installed mongoengine-0.11.0 pymongo-3.4.0 six-1.10.0
+gerard@aldebaran:~/test$ 
 </pre></div>
 
 
-<p>Alternativamente, podemos utilizar el comando <em>tee</em> para realizar la misma operación, sin el envoltorio de <em>bash</em>:</p>
-<div class="highlight"><pre><span></span>gerard@desktop:~$ <span class="nb">echo</span> <span class="m">3</span> <span class="p">|</span> sudo tee /proc/sys/vm/drop_caches
-<span class="m">3</span>
-gerard@desktop:~$ 
+<p>Y eso nos instala las librerías con sus dependencias en la carpeta <em>libs/</em>, que va a crear si hace falta.</p>
+<p><strong>NOTA</strong>: Si el paquete instalaba binarios, no va a hacerlo, ya que no dispone de tal carpeta para dejarlo; este método no sería posible.</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/test$ tree -d libs/
+libs/
+├── bson
+├── gridfs
+├── mongoengine
+│   ├── base
+│   └── queryset
+├── mongoengine-0.11.0.dist-info
+├── pymongo
+├── pymongo-3.4.0.dist-info
+└── six-1.10.0.dist-info
+
+<span class="m">9</span> directories
+gerard@aldebaran:~/test$ du -sh libs/
+<span class="m">3</span>,2M    libs/
+gerard@aldebaran:~/test$ 
 </pre></div>
 
 
-<p>Y finalmente nuestra memoria queda vacía de todo aquello que no era indispensable para la ejecución del sistema.</p>
-<div class="highlight"><pre><span></span>gerard@desktop:~$ free -m
-             total       used       free     shared    buffers     cached
-Mem:          <span class="m">3858</span>        <span class="m">752</span>       <span class="m">3105</span>          <span class="m">0</span>          <span class="m">2</span>        <span class="m">207</span>
--/+ buffers/cache:        <span class="m">542</span>       <span class="m">3315</span>
-Swap:         <span class="m">2381</span>          <span class="m">0</span>       <span class="m">2381</span>
-gerard@desktop:~$ 
+<p>A pesar de la reducción de tamaño en disco, esto por sí solo no nos sirve de nada; si no le indicamos donde tiene que buscar <strong>mongoengine</strong>, el intérprete va a fallar importándolo:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/test$ python
+Python <span class="m">2</span>.7.9 <span class="o">(</span>default, Jun <span class="m">29</span> <span class="m">2016</span>, <span class="m">13</span>:08:31<span class="o">)</span> 
+<span class="o">[</span>GCC <span class="m">4</span>.9.2<span class="o">]</span> on linux2
+Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for</span> more information.
+&gt;&gt;&gt; import mongoengine
+Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+  File <span class="s2">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in &lt;module&gt;
+ImportError: No module named mongoengine
+&gt;&gt;&gt; 
 </pre></div>
 
 
-<p>¡Acabamos de liberar 2 gigabytes de memoria!</p>
-<p><strong>CUIDADO</strong>: Esta operación puede afectar el rendimiento puntual del sistema, ya que en caso de volver a necesitar la información <em>cacheada</em>, deberá volver a recargar la memoria, probablemente desde disco.</p>
+<p>Para usar esa carpeta de librerías, solo necesitamos que el intérprete de <strong>python</strong> sepa donde están, sea por la variable de entorno o modificando la lista de carpetas <em>sys.path</em> en <em>runtime</em>.</p>
+<p>Veamos ambos casos, empezando con la opción en <em>runtime</em>:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/test$ python
+Python <span class="m">2</span>.7.9 <span class="o">(</span>default, Jun <span class="m">29</span> <span class="m">2016</span>, <span class="m">13</span>:08:31<span class="o">)</span> 
+<span class="o">[</span>GCC <span class="m">4</span>.9.2<span class="o">]</span> on linux2
+Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for</span> more information.
+&gt;&gt;&gt; import mongoengine
+Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+  File <span class="s2">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in &lt;module&gt;
+ImportError: No module named mongoengine
+&gt;&gt;&gt; import sys
+&gt;&gt;&gt; sys.path.append<span class="o">(</span><span class="s1">&#39;libs&#39;</span><span class="o">)</span>
+&gt;&gt;&gt; import mongoengine
+&gt;&gt;&gt; 
+</pre></div>
+
+
+<p>Y solo queda hacerlo mediante el uso de la variable de entorno <em>PYTHONPATH</em>, sea exportándola para su uso futuro, o modificándola solo para el proceso acompañante:</p>
+<div class="highlight"><pre><span></span>gerard@aldebaran:~/test$ <span class="nv">PYTHONPATH</span><span class="o">=</span>libs python
+Python <span class="m">2</span>.7.9 <span class="o">(</span>default, Jun <span class="m">29</span> <span class="m">2016</span>, <span class="m">13</span>:08:31<span class="o">)</span> 
+<span class="o">[</span>GCC <span class="m">4</span>.9.2<span class="o">]</span> on linux2
+Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for</span> more information.
+&gt;&gt;&gt; import mongoengine
+&gt;&gt;&gt; 
+&gt;&gt;&gt; exit<span class="o">()</span>
+gerard@aldebaran:~/test$ <span class="nb">export</span> <span class="nv">PYTHONPATH</span><span class="o">=</span>libs
+gerard@aldebaran:~/test$ python
+Python <span class="m">2</span>.7.9 <span class="o">(</span>default, Jun <span class="m">29</span> <span class="m">2016</span>, <span class="m">13</span>:08:31<span class="o">)</span> 
+<span class="o">[</span>GCC <span class="m">4</span>.9.2<span class="o">]</span> on linux2
+Type <span class="s2">&quot;help&quot;</span>, <span class="s2">&quot;copyright&quot;</span>, <span class="s2">&quot;credits&quot;</span> or <span class="s2">&quot;license&quot;</span> <span class="k">for</span> more information.
+&gt;&gt;&gt; import mongoengine
+&gt;&gt;&gt; 
+</pre></div>
+
+
+<p>Ahora toca elegir cual de las dos formas os gusta más. Yo suelo utilizar la variable de entorno cuando ejecuto un <em>script</em> de <em>bash</em>, sino lo hago mediante <em>python</em>.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.ml/2016/05/autenticacion-ssh-por-claves.html">Autenticación SSH por claves</a></li>
-        <li><a href="http://www.linuxsysadmin.ml/2016/01/un-repositorio-de-debian-con-reprepro.html">Un repositorio de Debian con reprepro</a></li>
-        <li><a href="http://www.linuxsysadmin.ml/2016/06/controlando-contenedores-docker-con-ansible.html">Controlando contenedores docker con ansible</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2016/09/un-servidor-pypi-local.html">Un servidor pypi local</a></li>
     </ul>
 </section>
     <hr/>
@@ -219,8 +268,8 @@ gerard@desktop:~$
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'liberando-memoria-cache';
-                var disqus_url = 'http://www.linuxsysadmin.ml/2015/11/liberando-memoria-cache.html';
+                    var disqus_identifier = 'evitando-usar-virtualenv-mediante-el-uso-de-pythonpath';
+                var disqus_url = 'http://www.linuxsysadmin.ml/2018/01/evitando-usar-virtualenv-mediante-el-uso-de-pythonpath.html';
 
             var disqus_config = function () {
                 this.language = "es";

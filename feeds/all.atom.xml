@@ -1,5 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-01-15T10:00:00+01:00</updated><entry><title>Una plataforma para desplegar contenedores: RancherOS</title><link href="http://www.linuxsysadmin.ml/2018/01/una-plataforma-para-desplegar-contenedores-rancheros.html" rel="alternate"></link><published>2018-01-15T10:00:00+01:00</published><updated>2018-01-15T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-01-15:/2018/01/una-plataforma-para-desplegar-contenedores-rancheros.html</id><summary type="html">&lt;p&gt;Aquellos que seguís este &lt;em&gt;blog&lt;/em&gt; de forma regular, habréis notado mi predilección por los contenedores &lt;strong&gt;docker&lt;/strong&gt;, en gran parte porque es con lo que trabajo en mi día a día. Hartos de usar la plataforma &lt;em&gt;custom&lt;/em&gt; que tenemos en la compañía buscamos una nueva, que simplifique el trabajo que hacemos …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Aquellos que seguís este &lt;em&gt;blog&lt;/em&gt; de forma regular, habréis notado mi predilección por los contenedores &lt;strong&gt;docker&lt;/strong&gt;, en gran parte porque es con lo que trabajo en mi día a día. Hartos de usar la plataforma &lt;em&gt;custom&lt;/em&gt; que tenemos en la compañía buscamos una nueva, que simplifique el trabajo que hacemos.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-01-22T10:00:00+01:00</updated><entry><title>Evitando usar virtualenv mediante el uso de PYTHONPATH</title><link href="http://www.linuxsysadmin.ml/2018/01/evitando-usar-virtualenv-mediante-el-uso-de-pythonpath.html" rel="alternate"></link><published>2018-01-22T10:00:00+01:00</published><updated>2018-01-22T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-01-22:/2018/01/evitando-usar-virtualenv-mediante-el-uso-de-pythonpath.html</id><summary type="html">&lt;p&gt;Soy un gran fan de &lt;strong&gt;python&lt;/strong&gt; y siempre ando trasteando con alguna librería nueva, en vistas a un &lt;em&gt;script&lt;/em&gt; para simplificar mi trabajo, o simplemente como un &lt;em&gt;wekeend project&lt;/em&gt;. Me es infinitamente útil usar &lt;strong&gt;virtualenv&lt;/strong&gt;, pero genera una carpeta que ocupa demasiado y contiene algo más que solamente las librerías …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Soy un gran fan de &lt;strong&gt;python&lt;/strong&gt; y siempre ando trasteando con alguna librería nueva, en vistas a un &lt;em&gt;script&lt;/em&gt; para simplificar mi trabajo, o simplemente como un &lt;em&gt;wekeend project&lt;/em&gt;. Me es infinitamente útil usar &lt;strong&gt;virtualenv&lt;/strong&gt;, pero genera una carpeta que ocupa demasiado y contiene algo más que solamente las librerías.&lt;/p&gt;
+&lt;p&gt;De hecho, solo tenemos que comprobar lo que ocupa un &lt;em&gt;virtualenv&lt;/em&gt; vacío:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/test$ virtualenv env
+New python executable in /home/gerard/test/env/bin/python
+Installing setuptools, pip, wheel...done.
+gerard@aldebaran:~/test$ du -sh env/
+16M env/
+gerard@aldebaran:~/test$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Por el propio funcionamiento de &lt;strong&gt;python&lt;/strong&gt;, las carpetas de librerías son relativas al binario del mismo lenguaje, así que no es de extrañar que &lt;em&gt;virtualenv&lt;/em&gt; ponga un binario en cada entorno; activar este entorno se limita a poner la carpeta &lt;em&gt;bin/&lt;/em&gt; del &lt;em&gt;virtualenv&lt;/em&gt; en el &lt;em&gt;PATH&lt;/em&gt;. A esto le añadimos las herramientas &lt;em&gt;pip&lt;/em&gt; y &lt;em&gt;easy_install&lt;/em&gt;, y tenemos un montón de espacio desperdiciado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/test$ find env/ -type f &lt;span class="p"&gt;|&lt;/span&gt; xargs ls -lrSh &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;/dev/null &lt;span class="p"&gt;|&lt;/span&gt; tail
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; gerard gerard 114K mar &lt;span class="m"&gt;22&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;:13 env/lib/python2.7/site-packages/pkg_resources/__init__.pyc
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; gerard gerard 114K mar &lt;span class="m"&gt;22&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;:13 env/lib/python2.7/site-packages/pip/_vendor/pkg_resources/__init__.pyc
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; gerard gerard 115K mar &lt;span class="m"&gt;22&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;:13 env/lib/python2.7/site-packages/pip/_vendor/html5lib/html5parser.py
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; gerard gerard 119K mar &lt;span class="m"&gt;22&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;:13 env/lib/python2.7/site-packages/pip/_vendor/html5lib/html5parser.pyc
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; gerard gerard 219K mar &lt;span class="m"&gt;22&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;:13 env/lib/python2.7/site-packages/pip/_vendor/pyparsing.py
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; gerard gerard 221K mar &lt;span class="m"&gt;22&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;:13 env/lib/python2.7/site-packages/pyparsing.pyc
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; gerard gerard 222K mar &lt;span class="m"&gt;22&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;:13 env/lib/python2.7/site-packages/pip/_vendor/pyparsing.pyc
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; gerard gerard 226K mar &lt;span class="m"&gt;22&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;:13 env/lib/python2.7/site-packages/pyparsing.py
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; gerard gerard 337K mar &lt;span class="m"&gt;22&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;:13 env/lib/python2.7/site-packages/pip/_vendor/requests/cacert.pem
+-rwxr-xr-x &lt;span class="m"&gt;1&lt;/span&gt; gerard gerard &lt;span class="m"&gt;3&lt;/span&gt;,7M mar &lt;span class="m"&gt;22&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;:13 env/bin/python
+gerard@aldebaran:~/test$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Las carpetas desde las que se cargan los módulos y librerías de &lt;strong&gt;python&lt;/strong&gt; no son inmutables; se pueden añadir en &lt;em&gt;runtime&lt;/em&gt; a la lista &lt;em&gt;sys.path&lt;/em&gt; o se puede indicar en las variables de entorno del sistema, como podemos ver en &lt;a href="https://docs.python.org/2/using/cmdline.html#envvar-PYTHONPATH"&gt;la documentación&lt;/a&gt;. Solo necesitamos una manera de instalarlas en una carpeta propia, y esto es precisamente lo que nos permite el &lt;em&gt;flag --target&lt;/em&gt; de &lt;em&gt;pip&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/test$ pip install -t libs mongoengine
+Collecting mongoengine
+Collecting six &lt;span class="o"&gt;(&lt;/span&gt;from mongoengine&lt;span class="o"&gt;)&lt;/span&gt;
+  Using cached six-1.10.0-py2.py3-none-any.whl
+Collecting pymongo&amp;gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.7.1 &lt;span class="o"&gt;(&lt;/span&gt;from mongoengine&lt;span class="o"&gt;)&lt;/span&gt;
+  Using cached pymongo-3.4.0-cp27-cp27mu-manylinux1_x86_64.whl
+Installing collected packages: six, pymongo, mongoengine
+Successfully installed mongoengine-0.11.0 pymongo-3.4.0 six-1.10.0
+gerard@aldebaran:~/test$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y eso nos instala las librerías con sus dependencias en la carpeta &lt;em&gt;libs/&lt;/em&gt;, que va a crear si hace falta.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: Si el paquete instalaba binarios, no va a hacerlo, ya que no dispone de tal carpeta para dejarlo; este método no sería posible.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/test$ tree -d libs/
+libs/
+├── bson
+├── gridfs
+├── mongoengine
+│   ├── base
+│   └── queryset
+├── mongoengine-0.11.0.dist-info
+├── pymongo
+├── pymongo-3.4.0.dist-info
+└── six-1.10.0.dist-info
+
+&lt;span class="m"&gt;9&lt;/span&gt; directories
+gerard@aldebaran:~/test$ du -sh libs/
+&lt;span class="m"&gt;3&lt;/span&gt;,2M    libs/
+gerard@aldebaran:~/test$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A pesar de la reducción de tamaño en disco, esto por sí solo no nos sirve de nada; si no le indicamos donde tiene que buscar &lt;strong&gt;mongoengine&lt;/strong&gt;, el intérprete va a fallar importándolo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/test$ python
+Python &lt;span class="m"&gt;2&lt;/span&gt;.7.9 &lt;span class="o"&gt;(&lt;/span&gt;default, Jun &lt;span class="m"&gt;29&lt;/span&gt; &lt;span class="m"&gt;2016&lt;/span&gt;, &lt;span class="m"&gt;13&lt;/span&gt;:08:31&lt;span class="o"&gt;)&lt;/span&gt; 
+&lt;span class="o"&gt;[&lt;/span&gt;GCC &lt;span class="m"&gt;4&lt;/span&gt;.9.2&lt;span class="o"&gt;]&lt;/span&gt; on linux2
+Type &lt;span class="s2"&gt;&amp;quot;help&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;copyright&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;credits&amp;quot;&lt;/span&gt; or &lt;span class="s2"&gt;&amp;quot;license&amp;quot;&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; more information.
+&amp;gt;&amp;gt;&amp;gt; import mongoengine
+Traceback &lt;span class="o"&gt;(&lt;/span&gt;most recent call last&lt;span class="o"&gt;)&lt;/span&gt;:
+  File &lt;span class="s2"&gt;&amp;quot;&amp;lt;stdin&amp;gt;&amp;quot;&lt;/span&gt;, line &lt;span class="m"&gt;1&lt;/span&gt;, in &amp;lt;module&amp;gt;
+ImportError: No module named mongoengine
+&amp;gt;&amp;gt;&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para usar esa carpeta de librerías, solo necesitamos que el intérprete de &lt;strong&gt;python&lt;/strong&gt; sepa donde están, sea por la variable de entorno o modificando la lista de carpetas &lt;em&gt;sys.path&lt;/em&gt; en &lt;em&gt;runtime&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Veamos ambos casos, empezando con la opción en &lt;em&gt;runtime&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/test$ python
+Python &lt;span class="m"&gt;2&lt;/span&gt;.7.9 &lt;span class="o"&gt;(&lt;/span&gt;default, Jun &lt;span class="m"&gt;29&lt;/span&gt; &lt;span class="m"&gt;2016&lt;/span&gt;, &lt;span class="m"&gt;13&lt;/span&gt;:08:31&lt;span class="o"&gt;)&lt;/span&gt; 
+&lt;span class="o"&gt;[&lt;/span&gt;GCC &lt;span class="m"&gt;4&lt;/span&gt;.9.2&lt;span class="o"&gt;]&lt;/span&gt; on linux2
+Type &lt;span class="s2"&gt;&amp;quot;help&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;copyright&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;credits&amp;quot;&lt;/span&gt; or &lt;span class="s2"&gt;&amp;quot;license&amp;quot;&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; more information.
+&amp;gt;&amp;gt;&amp;gt; import mongoengine
+Traceback &lt;span class="o"&gt;(&lt;/span&gt;most recent call last&lt;span class="o"&gt;)&lt;/span&gt;:
+  File &lt;span class="s2"&gt;&amp;quot;&amp;lt;stdin&amp;gt;&amp;quot;&lt;/span&gt;, line &lt;span class="m"&gt;1&lt;/span&gt;, in &amp;lt;module&amp;gt;
+ImportError: No module named mongoengine
+&amp;gt;&amp;gt;&amp;gt; import sys
+&amp;gt;&amp;gt;&amp;gt; sys.path.append&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;libs&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&amp;gt;&amp;gt;&amp;gt; import mongoengine
+&amp;gt;&amp;gt;&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y solo queda hacerlo mediante el uso de la variable de entorno &lt;em&gt;PYTHONPATH&lt;/em&gt;, sea exportándola para su uso futuro, o modificándola solo para el proceso acompañante:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/test$ &lt;span class="nv"&gt;PYTHONPATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;libs python
+Python &lt;span class="m"&gt;2&lt;/span&gt;.7.9 &lt;span class="o"&gt;(&lt;/span&gt;default, Jun &lt;span class="m"&gt;29&lt;/span&gt; &lt;span class="m"&gt;2016&lt;/span&gt;, &lt;span class="m"&gt;13&lt;/span&gt;:08:31&lt;span class="o"&gt;)&lt;/span&gt; 
+&lt;span class="o"&gt;[&lt;/span&gt;GCC &lt;span class="m"&gt;4&lt;/span&gt;.9.2&lt;span class="o"&gt;]&lt;/span&gt; on linux2
+Type &lt;span class="s2"&gt;&amp;quot;help&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;copyright&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;credits&amp;quot;&lt;/span&gt; or &lt;span class="s2"&gt;&amp;quot;license&amp;quot;&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; more information.
+&amp;gt;&amp;gt;&amp;gt; import mongoengine
+&amp;gt;&amp;gt;&amp;gt; 
+&amp;gt;&amp;gt;&amp;gt; exit&lt;span class="o"&gt;()&lt;/span&gt;
+gerard@aldebaran:~/test$ &lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;PYTHONPATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;libs
+gerard@aldebaran:~/test$ python
+Python &lt;span class="m"&gt;2&lt;/span&gt;.7.9 &lt;span class="o"&gt;(&lt;/span&gt;default, Jun &lt;span class="m"&gt;29&lt;/span&gt; &lt;span class="m"&gt;2016&lt;/span&gt;, &lt;span class="m"&gt;13&lt;/span&gt;:08:31&lt;span class="o"&gt;)&lt;/span&gt; 
+&lt;span class="o"&gt;[&lt;/span&gt;GCC &lt;span class="m"&gt;4&lt;/span&gt;.9.2&lt;span class="o"&gt;]&lt;/span&gt; on linux2
+Type &lt;span class="s2"&gt;&amp;quot;help&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;copyright&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;credits&amp;quot;&lt;/span&gt; or &lt;span class="s2"&gt;&amp;quot;license&amp;quot;&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; more information.
+&amp;gt;&amp;gt;&amp;gt; import mongoengine
+&amp;gt;&amp;gt;&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora toca elegir cual de las dos formas os gusta más. Yo suelo utilizar la variable de entorno cuando ejecuto un &lt;em&gt;script&lt;/em&gt; de &lt;em&gt;bash&lt;/em&gt;, sino lo hago mediante &lt;em&gt;python&lt;/em&gt;.&lt;/p&gt;</content><category term="python"></category><category term="virtualenv"></category><category term="pip"></category></entry><entry><title>Una plataforma para desplegar contenedores: RancherOS</title><link href="http://www.linuxsysadmin.ml/2018/01/una-plataforma-para-desplegar-contenedores-rancheros.html" rel="alternate"></link><published>2018-01-15T10:00:00+01:00</published><updated>2018-01-15T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-01-15:/2018/01/una-plataforma-para-desplegar-contenedores-rancheros.html</id><summary type="html">&lt;p&gt;Aquellos que seguís este &lt;em&gt;blog&lt;/em&gt; de forma regular, habréis notado mi predilección por los contenedores &lt;strong&gt;docker&lt;/strong&gt;, en gran parte porque es con lo que trabajo en mi día a día. Hartos de usar la plataforma &lt;em&gt;custom&lt;/em&gt; que tenemos en la compañía buscamos una nueva, que simplifique el trabajo que hacemos …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Aquellos que seguís este &lt;em&gt;blog&lt;/em&gt; de forma regular, habréis notado mi predilección por los contenedores &lt;strong&gt;docker&lt;/strong&gt;, en gran parte porque es con lo que trabajo en mi día a día. Hartos de usar la plataforma &lt;em&gt;custom&lt;/em&gt; que tenemos en la compañía buscamos una nueva, que simplifique el trabajo que hacemos.&lt;/p&gt;
 &lt;p&gt;Lo que tenemos actualmente es una amalgama de &lt;em&gt;hosts&lt;/em&gt; en donde desplegamos contenedores, en algunos servicios, y en otros los servicios que nos permiten hacer un &lt;em&gt;routing&lt;/em&gt; adecuado, por ejemplo, &lt;em&gt;proxies&lt;/em&gt; reversos, balanceadores y &lt;em&gt;firewalls&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Sin embargo, estos contenedores se ven entre sí, así como a los &lt;em&gt;hosts&lt;/em&gt; que los levantan. A todo esto, el conjunto de servicios desplegados empezaba a impactar en la capacidad de mantenerla. En especial, la demanda de segregación de red de algún cliente nos hizo buscar alternativas de forma acelerada.&lt;/p&gt;
 &lt;p&gt;Aunque no es nuestro futuro inmediato, salimos del paso con una solución completa que se llama &lt;a href="http://rancher.com/"&gt;Rancher&lt;/a&gt;. Su filosofía es muy simple: necesitamos un servidor de control que tenga una foto del &lt;em&gt;cluster&lt;/em&gt; (por supuesto un contenedor &lt;strong&gt;docker&lt;/strong&gt;, y un conjunto de servidores que añadan recursos al mismo (mediante otro servidor &lt;strong&gt;docker&lt;/strong&gt; que corre un agente). De hecho, en el &lt;em&gt;deploy&lt;/em&gt; más simple, basta con tener ambas cosas en la misma máquina.&lt;/p&gt;
