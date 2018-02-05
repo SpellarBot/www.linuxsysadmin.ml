@@ -1,5 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Seguridad</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/seguridad.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2017-01-30T10:00:00+01:00</updated><entry><title>Un escáner SSL con sslyze</title><link href="http://www.linuxsysadmin.ml/2017/01/un-escaner-ssl-con-sslyze.html" rel="alternate"></link><published>2017-01-30T10:00:00+01:00</published><updated>2017-01-30T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-01-30:/2017/01/un-escaner-ssl-con-sslyze.html</id><summary type="html">&lt;p&gt;El otro día cayó en mis manos un escaneo de la plataforma para uno de los servicios que gestiono. No voy a dar detalles al respecto en virtud del acuerdo de confidencialidad que mantengo con ellos, pero consideré interesante una de las herramientas que usaron para testear el dominio SSL …&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día cayó en mis manos un escaneo de la plataforma para uno de los servicios que gestiono. No voy a dar detalles al respecto en virtud del acuerdo de confidencialidad que mantengo con ellos, pero consideré interesante una de las herramientas que usaron para testear el dominio SSL.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Seguridad</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/seguridad.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-02-05T10:00:00+01:00</updated><entry><title>Un almacén de passwords web seguro con vaultier</title><link href="http://www.linuxsysadmin.ml/2018/02/un-almacen-de-passwords-web-seguro-con-vaultier.html" rel="alternate"></link><published>2018-02-05T10:00:00+01:00</published><updated>2018-02-05T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-02-05:/2018/02/un-almacen-de-passwords-web-seguro-con-vaultier.html</id><summary type="html">&lt;p&gt;Cada vez que trabajo en un cliente me pasa lo mismo; las claves de acceso y las contraseñas de las diferentes herramientas y de los diferentes servidores están guardadas de forma caótica e inaccesible. Puesto que trabajamos en un equipo distribuido, me gusta tener esto publicado en remoto pero seguro …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cada vez que trabajo en un cliente me pasa lo mismo; las claves de acceso y las contraseñas de las diferentes herramientas y de los diferentes servidores están guardadas de forma caótica e inaccesible. Puesto que trabajamos en un equipo distribuido, me gusta tener esto publicado en remoto pero seguro.&lt;/p&gt;
+&lt;p&gt;Como reto personal, me he propuesto dar a conocer una de esas herramientas, con la esperanza de que la acaben adoptando por su genialidad.&lt;/p&gt;
+&lt;p&gt;Los requisitos son bastante simples:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Debe permitir un control de acceso granular a usuarios y a grupos&lt;/li&gt;
+&lt;li&gt;Debe poder clasificar nuestros secretos por algún criterio (por ejemplo por proyecto)&lt;/li&gt;
+&lt;li&gt;Debe asegurar la confidencialidad de los secretos guardados&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Tras un poco de búsqueda por internet, acabé encontrando una muy interesante llamada &lt;a href="http://www.vaultier.org/"&gt;Vaultier&lt;/a&gt;. Como plus extra, se nos ofrece la aplicación como una imagen de &lt;strong&gt;docker&lt;/strong&gt;, lo que me permite hacer una instalación de usar y tirar.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Panel de Vaultier" src="http://www.linuxsysadmin.ml/images/vaultier.jpg"&gt;&lt;/p&gt;
+&lt;h2&gt;Instalación&lt;/h2&gt;
+&lt;p&gt;Podemos hacer un &lt;em&gt;pull&lt;/em&gt; de la imagen directamente desde &lt;a href="https://hub.docker.com/r/rclick/vaultier/"&gt;DockerHub&lt;/a&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/vaultier$ docker pull rclick/vaultier
+Using default tag: latest
+latest: Pulling from rclick/vaultier
+...
+Digest: sha256:624a1191c55e149ef77aa567b739297df4843342ba267660e59cf1610b163202
+Status: Downloaded newer image &lt;span class="k"&gt;for&lt;/span&gt; rclick/vaultier:latest
+gerard@aldebaran:~/docker/vaultier$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y la levantamos con un simple &lt;em&gt;docker run&lt;/em&gt;, con la precaución de exponer su puerto 80 para poder acceder cómodamente a la dirección IP de nuestra máquina servidora; se puede hacer en &lt;em&gt;background&lt;/em&gt; con el &lt;em&gt;flag -d&lt;/em&gt;, aunque de momento, así se queda.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/docker/vaultier$ docker run -ti --rm -p &lt;span class="m"&gt;80&lt;/span&gt;:80 rclick/vaultier
+/usr/lib/python2.7/dist-packages/supervisor/options.py:295: UserWarning: Supervisord is running as root and it is searching &lt;span class="k"&gt;for&lt;/span&gt; its configuration file in default locations &lt;span class="o"&gt;(&lt;/span&gt;including its current working directory&lt;span class="o"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; you probably want to specify a &lt;span class="s2"&gt;&amp;quot;-c&amp;quot;&lt;/span&gt; argument specifying an absolute path to a configuration file &lt;span class="k"&gt;for&lt;/span&gt; improved security.
+  &lt;span class="s1"&gt;&amp;#39;Supervisord is running as root and it is searching &amp;#39;&lt;/span&gt;
+&lt;span class="m"&gt;2017&lt;/span&gt;-06-15 &lt;span class="m"&gt;10&lt;/span&gt;:58:30,155 CRIT Supervisor running as root &lt;span class="o"&gt;(&lt;/span&gt;no user in config file&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="m"&gt;2017&lt;/span&gt;-06-15 &lt;span class="m"&gt;10&lt;/span&gt;:58:30,173 INFO RPC interface &lt;span class="s1"&gt;&amp;#39;supervisor&amp;#39;&lt;/span&gt; initialized
+&lt;span class="m"&gt;2017&lt;/span&gt;-06-15 &lt;span class="m"&gt;10&lt;/span&gt;:58:30,173 CRIT Server &lt;span class="s1"&gt;&amp;#39;unix_http_server&amp;#39;&lt;/span&gt; running without any HTTP authentication checking
+&lt;span class="m"&gt;2017&lt;/span&gt;-06-15 &lt;span class="m"&gt;10&lt;/span&gt;:58:30,173 INFO supervisord started with pid &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="m"&gt;2017&lt;/span&gt;-06-15 &lt;span class="m"&gt;10&lt;/span&gt;:58:31,175 INFO spawned: &lt;span class="s1"&gt;&amp;#39;vaultier-celerybeat&amp;#39;&lt;/span&gt; with pid &lt;span class="m"&gt;9&lt;/span&gt;
+&lt;span class="m"&gt;2017&lt;/span&gt;-06-15 &lt;span class="m"&gt;10&lt;/span&gt;:58:31,176 INFO spawned: &lt;span class="s1"&gt;&amp;#39;nginx&amp;#39;&lt;/span&gt; with pid &lt;span class="m"&gt;10&lt;/span&gt;
+&lt;span class="m"&gt;2017&lt;/span&gt;-06-15 &lt;span class="m"&gt;10&lt;/span&gt;:58:31,177 INFO spawned: &lt;span class="s1"&gt;&amp;#39;vaultier-worker&amp;#39;&lt;/span&gt; with pid &lt;span class="m"&gt;11&lt;/span&gt;
+&lt;span class="m"&gt;2017&lt;/span&gt;-06-15 &lt;span class="m"&gt;10&lt;/span&gt;:58:31,179 INFO spawned: &lt;span class="s1"&gt;&amp;#39;postgresql&amp;#39;&lt;/span&gt; with pid &lt;span class="m"&gt;12&lt;/span&gt;
+&lt;span class="m"&gt;2017&lt;/span&gt;-06-15 &lt;span class="m"&gt;10&lt;/span&gt;:58:31,186 INFO spawned: &lt;span class="s1"&gt;&amp;#39;uwsgi&amp;#39;&lt;/span&gt; with pid &lt;span class="m"&gt;13&lt;/span&gt;
+&lt;span class="m"&gt;2017&lt;/span&gt;-06-15 &lt;span class="m"&gt;10&lt;/span&gt;:58:32,988 INFO success: vaultier-celerybeat entered RUNNING state, process has stayed up &lt;span class="k"&gt;for&lt;/span&gt; &amp;gt; than &lt;span class="m"&gt;1&lt;/span&gt; seconds &lt;span class="o"&gt;(&lt;/span&gt;startsecs&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="m"&gt;2017&lt;/span&gt;-06-15 &lt;span class="m"&gt;10&lt;/span&gt;:58:32,988 INFO success: nginx entered RUNNING state, process has stayed up &lt;span class="k"&gt;for&lt;/span&gt; &amp;gt; than &lt;span class="m"&gt;1&lt;/span&gt; seconds &lt;span class="o"&gt;(&lt;/span&gt;startsecs&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="m"&gt;2017&lt;/span&gt;-06-15 &lt;span class="m"&gt;10&lt;/span&gt;:58:32,988 INFO success: vaultier-worker entered RUNNING state, process has stayed up &lt;span class="k"&gt;for&lt;/span&gt; &amp;gt; than &lt;span class="m"&gt;1&lt;/span&gt; seconds &lt;span class="o"&gt;(&lt;/span&gt;startsecs&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="m"&gt;2017&lt;/span&gt;-06-15 &lt;span class="m"&gt;10&lt;/span&gt;:58:32,989 INFO success: postgresql entered RUNNING state, process has stayed up &lt;span class="k"&gt;for&lt;/span&gt; &amp;gt; than &lt;span class="m"&gt;1&lt;/span&gt; seconds &lt;span class="o"&gt;(&lt;/span&gt;startsecs&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="m"&gt;2017&lt;/span&gt;-06-15 &lt;span class="m"&gt;10&lt;/span&gt;:58:32,989 INFO success: uwsgi entered RUNNING state, process has stayed up &lt;span class="k"&gt;for&lt;/span&gt; &amp;gt; than &lt;span class="m"&gt;1&lt;/span&gt; seconds &lt;span class="o"&gt;(&lt;/span&gt;startsecs&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vemos que la imagen dispone de varios servicios, que se manejan con &lt;strong&gt;supervisor&lt;/strong&gt;. Esto nos levanta la aplicación entera y la base de datos que necesita para funcionar.&lt;/p&gt;
+&lt;p&gt;Solo nos queda dirigirnos a &lt;a href="http://localhost/"&gt;http://localhost/&lt;/a&gt; y ver nuestro nuevo servidor de secretos en funcionamiento.&lt;/p&gt;
+&lt;h2&gt;Conceptos básicos&lt;/h2&gt;
+&lt;p&gt;La mecánica básica es muy simple; basta con perder un poco de tiempo jugando con al interfaz. Hay que tener en cuenta lo siguiente:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Existen usuarios autenticados con certificados&lt;/li&gt;
+&lt;li&gt;Estos usuarios pueden pertenecer a grupos&lt;/li&gt;
+&lt;li&gt;Los secretos pueden ser contraseñas, notas o ficheros&lt;/li&gt;
+&lt;li&gt;Los secretos se agrupan en &lt;em&gt;cards&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Los &lt;em&gt;cards&lt;/em&gt; se agrupan en &lt;em&gt;vaults&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Los &lt;em&gt;vaults&lt;/em&gt; se agrupan en &lt;em&gt;workspaces&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Un &lt;em&gt;workspace&lt;/em&gt; es creado por un usuario que es su administrador&lt;/li&gt;
+&lt;li&gt;Usuarios y grupos se pueden invitar para compartir acceso a &lt;em&gt;cards&lt;/em&gt;, a &lt;em&gt;vaults&lt;/em&gt; y a &lt;em&gt;workspaces&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A partir de aquí, solo es necesario poner un sistema de niveles inteligentes que nos permitan compartir lo que necesitemos con los diferentes grupos que necesitamos.&lt;/p&gt;</content><category term="vaultier"></category><category term="password"></category></entry><entry><title>Un escáner SSL con sslyze</title><link href="http://www.linuxsysadmin.ml/2017/01/un-escaner-ssl-con-sslyze.html" rel="alternate"></link><published>2017-01-30T10:00:00+01:00</published><updated>2017-01-30T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2017-01-30:/2017/01/un-escaner-ssl-con-sslyze.html</id><summary type="html">&lt;p&gt;El otro día cayó en mis manos un escaneo de la plataforma para uno de los servicios que gestiono. No voy a dar detalles al respecto en virtud del acuerdo de confidencialidad que mantengo con ellos, pero consideré interesante una de las herramientas que usaron para testear el dominio SSL …&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día cayó en mis manos un escaneo de la plataforma para uno de los servicios que gestiono. No voy a dar detalles al respecto en virtud del acuerdo de confidencialidad que mantengo con ellos, pero consideré interesante una de las herramientas que usaron para testear el dominio SSL.&lt;/p&gt;
 &lt;p&gt;Se trata de una herramienta llamada &lt;strong&gt;sslyze&lt;/strong&gt; y hecha en &lt;strong&gt;python&lt;/strong&gt;, que podemos encontrar en &lt;a href="https://pypi.python.org/pypi/SSLyze"&gt;PyPI&lt;/a&gt; y que podemos instalar con un simple &lt;code&gt;pip install sslyze&lt;/code&gt;. La parte mala es que tiene extensiones escritas en lenguaje C, que necesitan compilarse y requieren de otras librerías, además del compilador.&lt;/p&gt;
 &lt;p&gt;Como me gusta mantener mi entorno minimalista, decidí crear una imagen con &lt;strong&gt;Docker&lt;/strong&gt;, para disponer de ella cuando la necesite y poder deshacerme de ella cuando no. Este es el &lt;em&gt;Dockerfile&lt;/em&gt; que he usado:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@marcopolo:~$ cat sslyze/Dockerfile 
