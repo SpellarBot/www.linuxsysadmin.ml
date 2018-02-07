@@ -61,6 +61,9 @@ Linux Sysadmin            </a>
                          <li><a href="http://www.linuxsysadmin.ml/about.html">
                              Sobre mí
                           </a></li>
+                         <li><a href="http://www.linuxsysadmin.ml/curriculum.html">
+                             Curriculum Vitae
+                          </a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="http://www.linuxsysadmin.ml/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archivos</span></a></li>
@@ -91,6 +94,13 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
+            <article>
+                <h2><a href="http://www.linuxsysadmin.ml/2017/05/reduciendo-el-tiempo-de-build-con-docker-y-su-cache.html">Reduciendo el tiempo de build con Docker y su caché</a></h2>
+                <div class="summary"><p>Cuando construimos imágenes <strong>docker</strong>, muchas veces no somos conscientes del poder de la caché integrada. Si reordenamos algunas instrucciones y aplicamos algún truco, podemos evitarnos el hecho de reconstruir muchas de esas capas, llegando a reducir el tiempo de <em>rebuild</em> a prácticamente cero, siempre y cuando no hayan grandes cambios …</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/05/reduciendo-el-tiempo-de-build-con-docker-y-su-cache.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
             <article>
                 <h2><a href="http://www.linuxsysadmin.ml/2017/05/problemas-de-log-con-docker-y-python.html">Problemas de log con docker y python</a></h2>
                 <div class="summary"><p>El otro día estaba haciendo un <em>script</em> de <strong>python</strong> que debía ejecutarse en un contenedor <strong>docker</strong>. A pesar de la cantidad de <em>verbose</em> que le puse, no era capaz de ver ningún texto cuando miraba los <em>logs</em>. Tras mucha búsqueda, finalmente encontré el culpable en la variable de entorno <strong>PYTHONUNBUFFERED …</strong></p>
@@ -151,13 +161,6 @@ Linux Sysadmin            </a>
                 <h2><a href="http://www.linuxsysadmin.ml/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html">Múltiples servicios en un mismo contenedor Docker</a></h2>
                 <div class="summary"><p>Como ya sabemos, un contenedor <strong>docker</strong> solo puede ejecutar un proceso, y su finalización implica la parada del contenedor. Sin embargo, a veces nos puede interesar cargar los contenedores con algún servicio más, para hacerlos autosuficientes. Para ello, nos podemos ayudar de un <em>gestor de procesos</em>, como por ejemplo, <strong>runit …</strong></p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/02/alta-disponibilidad-con-keepalived.html">Alta disponibilidad con Keepalived</a></h2>
-                <div class="summary"><p>Cuando tenemos un servicio balanceado, los <em>backends</em> no tienen relación entre sí y podemos poner tantos como queramos, sin miedo a que alguno se caiga. Sin embargo, para los servicios tipo "ventanilla única" interesa tener varios dispuestos a dar un servicio <em>failover</em>; si uno se cae, otro asume la carga …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/02/alta-disponibilidad-con-keepalived.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
@@ -715,7 +718,7 @@ Linux Sysadmin            </a>
                             tmpfs
                         </a>
                     </li>
-                    <li class="list-group-item tag-3">
+                    <li class="list-group-item tag-2">
                         <a href="http://www.linuxsysadmin.ml/tag/tunel.html">
                             túnel
                         </a>

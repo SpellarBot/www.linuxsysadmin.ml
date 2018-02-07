@@ -1,5 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-01-22T10:00:00+01:00</updated><entry><title>Evitando usar virtualenv mediante el uso de PYTHONPATH</title><link href="http://www.linuxsysadmin.ml/2018/01/evitando-usar-virtualenv-mediante-el-uso-de-pythonpath.html" rel="alternate"></link><published>2018-01-22T10:00:00+01:00</published><updated>2018-01-22T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-01-22:/2018/01/evitando-usar-virtualenv-mediante-el-uso-de-pythonpath.html</id><summary type="html">&lt;p&gt;Soy un gran fan de &lt;strong&gt;python&lt;/strong&gt; y siempre ando trasteando con alguna librería nueva, en vistas a un &lt;em&gt;script&lt;/em&gt; para simplificar mi trabajo, o simplemente como un &lt;em&gt;wekeend project&lt;/em&gt;. Me es infinitamente útil usar &lt;strong&gt;virtualenv&lt;/strong&gt;, pero genera una carpeta que ocupa demasiado y contiene algo más que solamente las librerías …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Soy un gran fan de &lt;strong&gt;python&lt;/strong&gt; y siempre ando trasteando con alguna librería nueva, en vistas a un &lt;em&gt;script&lt;/em&gt; para simplificar mi trabajo, o simplemente como un &lt;em&gt;wekeend project&lt;/em&gt;. Me es infinitamente útil usar &lt;strong&gt;virtualenv&lt;/strong&gt;, pero genera una carpeta que ocupa demasiado y contiene algo más que solamente las librerías.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-02-12T10:00:00+01:00</updated><entry><title>Túneles SSH con reinicio automático con Docker</title><link href="http://www.linuxsysadmin.ml/2018/02/tuneles-ssh-con-reinicio-automatico-con-docker.html" rel="alternate"></link><published>2018-02-12T10:00:00+01:00</published><updated>2018-02-12T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-02-12:/2018/02/tuneles-ssh-con-reinicio-automatico-con-docker.html</id><summary type="html">&lt;p&gt;Ya vimos en &lt;a href="http://www.linuxsysadmin.ml/2016/11/levantando-tuneles-ssh-con-systemd.html"&gt;un artículo anterior&lt;/a&gt; como delegar en &lt;strong&gt;SystemD&lt;/strong&gt; la persistencia de túneles SSH. El otro día intenté reproducirlo sin éxito en un servidor con una versión baja de &lt;strong&gt;SystemD&lt;/strong&gt;; finalmente me di cuenta de que había otra herramienta en el servidor capaz de reiniciar un túnel caído: &lt;strong&gt;Docker …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ya vimos en &lt;a href="http://www.linuxsysadmin.ml/2016/11/levantando-tuneles-ssh-con-systemd.html"&gt;un artículo anterior&lt;/a&gt; como delegar en &lt;strong&gt;SystemD&lt;/strong&gt; la persistencia de túneles SSH. El otro día intenté reproducirlo sin éxito en un servidor con una versión baja de &lt;strong&gt;SystemD&lt;/strong&gt;; finalmente me di cuenta de que había otra herramienta en el servidor capaz de reiniciar un túnel caído: &lt;strong&gt;Docker&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;El problema&lt;/h2&gt;
+&lt;p&gt;El contexto no cambia respecto al citado artículo: tengo un servidor ejecutando los servicios de &lt;strong&gt;MongoDB&lt;/strong&gt; y &lt;strong&gt;SSH&lt;/strong&gt;, pero no puedo acceder a la base de datos porque expone su &lt;em&gt;socket&lt;/em&gt; solo a &lt;em&gt;localhost&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;En circunstancias normales, el túnel es trivial:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;ssh -L &lt;span class="m"&gt;9999&lt;/span&gt;:localhost:27017 usuario@servidor -Nf
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Pero en mi entorno de trabajo, debido a directivas de seguridad arbitrarias, ese túnel se caía demasiado a menudo, y levantarlo manualmente era muy pesado.&lt;/p&gt;
+&lt;h2&gt;La solución&lt;/h2&gt;
+&lt;p&gt;Fallado el intento con &lt;strong&gt;SystemD&lt;/strong&gt;, decidí dar un intento a &lt;strong&gt;Docker&lt;/strong&gt;, y este es el resultado; se trata solamente de una imagen con el cliente &lt;strong&gt;SSH&lt;/strong&gt; que más nos convenga, con una distribución base de nuestro agrado, por ejemplo, &lt;strong&gt;Alpine Linux&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/tunnelmaker$ cat context/Dockerfile 
+FROM alpine:3.6
+RUN apk add --no-cache openssh-client
+gerard@sirius:~/docker/tunnelmaker$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Con estas herramientas, nos valdría con lanzar el comando del túnel, pero habrá que acompañar el contenedor hecho a partir de esta imagen de varias cosas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;La clave &lt;strong&gt;SSH&lt;/strong&gt; para levantar el túnel sin contraseña, evitando una intervención manual o el fallo directo del &lt;code&gt;docker run&lt;/code&gt;. Por supuesto, el servidor destino debe aceptar la clave para el usuario indicado en el comando del túnel.&lt;/li&gt;
+&lt;li&gt;Una configuración &lt;strong&gt;SSH&lt;/strong&gt; cliente que impida detenernos en el momento de aceptar el &lt;em&gt;fingerprint&lt;/em&gt; del servidor destino.&lt;/li&gt;
+&lt;li&gt;El propio comando del túnel &lt;strong&gt;SSH&lt;/strong&gt;, que no hemos puesto en el &lt;em&gt;Dockerfile&lt;/em&gt; para poder levantar diferentes túneles con la misma imagen.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Es especialmente importante respetar el usuario y los permisos de los fichero &lt;em&gt;id_rsa&lt;/em&gt; y &lt;em&gt;config&lt;/em&gt;, siendo &lt;code&gt;root:root:600&lt;/code&gt; para el primero y &lt;code&gt;root:root:644&lt;/code&gt; para el segundo.&lt;/p&gt;
+&lt;p&gt;Podemos levantar esta imagen con el comando &lt;code&gt;docker run&lt;/code&gt; habitual, pero como tiene varios añadidos, y por comodidad, usaremos &lt;strong&gt;docker-compose&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/tunnelmaker$ cat docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;
+services:
+  mongotunnel:
+    build: context
+    volumes:
+      - ./id_rsa:/root/.ssh/id_rsa
+      - ./config:/root/.ssh/config
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;27777:9999&amp;quot;&lt;/span&gt;
+    extra_hosts:
+      - &lt;span class="s2"&gt;&amp;quot;mongoserver:192.168.1.135&amp;quot;&lt;/span&gt;
+    command: ssh -L &lt;span class="m"&gt;0&lt;/span&gt;.0.0.0:9999:localhost:27017 jump@mongoserver -N
+    stdin_open: &lt;span class="nb"&gt;true&lt;/span&gt;
+    restart: always
+gerard@sirius:~/docker/tunnelmaker$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos observar el el fichero &lt;em&gt;docker-compose.yml&lt;/em&gt; otras varias anomalías:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;restart: always&lt;/strong&gt; &amp;rarr; Este es el punto de todo el artículo; queremos que cuando el túnel se caiga, el mismo demonio de &lt;strong&gt;Docker&lt;/strong&gt; se ocupe de levantarlo de nuevo.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt; stdin_open: true&lt;/strong&gt; &amp;rarr; Sin este parámetro, el túnel se cerraba nada más establecerse; sospecho que esta era la causa de que no funcionara la solución con &lt;strong&gt;SystemD&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;extra_hosts&lt;/strong&gt; &amp;rarr; No es indispensable, pero he querido utilizar nombres de servidor por claridad, aunque no dispongo de resolución de nombres para mis servidores locales. Esto añade la correspondiente entrada en &lt;em&gt;/etc/hosts&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ports&lt;/strong&gt; &amp;rarr; Nuestro contenedor va a levantar el túnel en el puerto arbitrario 9999; lo mapeamos en cualquier puerto que tengamos libre en nuestro ordenador.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Adjunto la configuración &lt;strong&gt;SSH&lt;/strong&gt; para tener el ejemplo completo. No pongo la clave privada &lt;strong&gt;SSH&lt;/strong&gt; por razones de seguridad obvias; tendréis que generar vuestro propio par con el comando &lt;strong&gt;ssh-keygen&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/tunnelmaker$ cat config 
+Host *
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ServerAliveInterval &lt;span class="m"&gt;60&lt;/span&gt;
+gerard@sirius:~/docker/tunnelmaker$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;El resultado&lt;/h2&gt;
+&lt;p&gt;Solo necesitamos levantar el contenedor usando &lt;strong&gt;docker-compose&lt;/strong&gt; para poder observar el resultado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker/tunnelmaker$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;tunnelmaker_default&amp;quot;&lt;/span&gt; with the default driver
+Creating tunnelmaker_mongotunnel_1
+gerard@sirius:~/docker/tunnelmaker$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora podremos acceder sin problemas a dicho servidor de bases de datos como si se encontrase en el puerto 27777 local; solo hace falta comprobarlo usando, por ejemplo, el mismo cliente de &lt;strong&gt;MongoDB&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/docker$ mongo --port &lt;span class="m"&gt;27777&lt;/span&gt;
+MongoDB shell version v3.4.7
+connecting to: mongodb://127.0.0.1:27777/
+MongoDB server version: &lt;span class="m"&gt;3&lt;/span&gt;.4.4
+...  
+&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;No importa cuantas veces se caiga el túnel; cuando eso pase, el contenedor acabará y el demonio de &lt;strong&gt;Docker&lt;/strong&gt; lo va a volver a levantar.&lt;/p&gt;</content><category term="ssh"></category><category term="túnel"></category><category term="docker"></category><category term="docker-compose"></category></entry><entry><title>Evitando usar virtualenv mediante el uso de PYTHONPATH</title><link href="http://www.linuxsysadmin.ml/2018/01/evitando-usar-virtualenv-mediante-el-uso-de-pythonpath.html" rel="alternate"></link><published>2018-01-22T10:00:00+01:00</published><updated>2018-01-22T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-01-22:/2018/01/evitando-usar-virtualenv-mediante-el-uso-de-pythonpath.html</id><summary type="html">&lt;p&gt;Soy un gran fan de &lt;strong&gt;python&lt;/strong&gt; y siempre ando trasteando con alguna librería nueva, en vistas a un &lt;em&gt;script&lt;/em&gt; para simplificar mi trabajo, o simplemente como un &lt;em&gt;wekeend project&lt;/em&gt;. Me es infinitamente útil usar &lt;strong&gt;virtualenv&lt;/strong&gt;, pero genera una carpeta que ocupa demasiado y contiene algo más que solamente las librerías …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Soy un gran fan de &lt;strong&gt;python&lt;/strong&gt; y siempre ando trasteando con alguna librería nueva, en vistas a un &lt;em&gt;script&lt;/em&gt; para simplificar mi trabajo, o simplemente como un &lt;em&gt;wekeend project&lt;/em&gt;. Me es infinitamente útil usar &lt;strong&gt;virtualenv&lt;/strong&gt;, pero genera una carpeta que ocupa demasiado y contiene algo más que solamente las librerías.&lt;/p&gt;
 &lt;p&gt;De hecho, solo tenemos que comprobar lo que ocupa un &lt;em&gt;virtualenv&lt;/em&gt; vacío:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@aldebaran:~/test$ virtualenv env
 New python executable in /home/gerard/test/env/bin/python
