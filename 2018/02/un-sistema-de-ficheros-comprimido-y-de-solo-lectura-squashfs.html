@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Preparando un servidor de repositorios GIT - Linux Sysadmin</title>
+    <title>Un sistema de ficheros comprimido y de solo lectura: squashfs - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,23 +9,22 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.ml/2016/06/preparando-un-servidor-de-repositorios-git.html">
+<link rel="canonical" href="http://www.linuxsysadmin.ml/2018/02/un-sistema-de-ficheros-comprimido-y-de-solo-lectura-squashfs.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="keywords" content="linux,git,ssh,docker" />
-        <meta name="description" content="Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando git y ssh …" />
+        <meta name="keywords" content="squashfs,mount,filesystem" />
+        <meta name="description" content="Cuando trabajamos con tamaños de disco muy limitados, como por ejemplo en dispositivos embedded o pendrives, nos vemos obligados a reducir nuestros sistemas de ficheros. Algunos de estos sistemas de ficheros son de solo lectura, y vienen comprimidos, lo que nos permite ahorrar en espacio de disco, no en funcionalidades …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Preparando un servidor de repositorios GIT"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.ml/2016/06/preparando-un-servidor-de-repositorios-git.html"/>
-        <meta property="og:description" content="Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando git y ssh …"/>
-        <meta property="article:published_time" content="2016-06-20" />
-            <meta property="article:section" content="Sistemas" />
-            <meta property="article:tag" content="linux" />
-            <meta property="article:tag" content="git" />
-            <meta property="article:tag" content="ssh" />
-            <meta property="article:tag" content="docker" />
+        <meta property="og:title" content="Un sistema de ficheros comprimido y de solo lectura: squashfs"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.ml/2018/02/un-sistema-de-ficheros-comprimido-y-de-solo-lectura-squashfs.html"/>
+        <meta property="og:description" content="Cuando trabajamos con tamaños de disco muy limitados, como por ejemplo en dispositivos embedded o pendrives, nos vemos obligados a reducir nuestros sistemas de ficheros. Algunos de estos sistemas de ficheros son de solo lectura, y vienen comprimidos, lo que nos permite ahorrar en espacio de disco, no en funcionalidades …"/>
+        <meta property="article:published_time" content="2018-02-19" />
+            <meta property="article:section" content="Operaciones" />
+            <meta property="article:tag" content="squashfs" />
+            <meta property="article:tag" content="mount" />
+            <meta property="article:tag" content="filesystem" />
             <meta property="article:author" content="Gerard" />
 
 
@@ -42,8 +41,8 @@
 
 
 
-        <link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Sistemas ATOM Feed"/>
+        <link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -90,8 +89,8 @@ Linux Sysadmin            </a>
         <div class="col-sm-9">
             <ol class="breadcrumb">
                 <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.ml/category/sistemas.html" title="Sistemas">Sistemas</a></li>
-                <li class="active">Preparando un servidor de repositorios GIT</li>
+                <li><a href="http://www.linuxsysadmin.ml/category/operaciones.html" title="Operaciones">Operaciones</a></li>
+                <li class="active">Un sistema de ficheros comprimido y de solo lectura: squashfs</li>
             </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -109,10 +108,10 @@ Linux Sysadmin            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://www.linuxsysadmin.ml/2016/06/preparando-un-servidor-de-repositorios-git.html"
+                    <a href="http://www.linuxsysadmin.ml/2018/02/un-sistema-de-ficheros-comprimido-y-de-solo-lectura-squashfs.html"
                        rel="bookmark"
-                       title="Permalink to Preparando un servidor de repositorios GIT">
-                        Preparando un servidor de repositorios GIT
+                       title="Permalink to Un sistema de ficheros comprimido y de solo lectura: squashfs">
+                        Un sistema de ficheros comprimido y de solo lectura: squashfs
                     </a>
                 </h1>
             </header>
@@ -122,288 +121,157 @@ Linux Sysadmin            </a>
 <footer class="post-info">
     <span class="label label-default">Fecha</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2016-06-20T08:30:00+02:00"> 2016-06-20</time>
+        <i class="fa fa-calendar"></i><time datetime="2018-02-19T10:00:00+01:00"> 2018-02-19</time>
     </span>
 
 
             <span class="label label-default">Autor</span>
             <a href="http://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
 
-        <span class="label label-default">Tiempo de lectura</span> 9 minutos
+        <span class="label label-default">Tiempo de lectura</span> 6 minutos
         <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.ml/category/sistemas.html">Sistemas</a>
+        <a href="http://www.linuxsysadmin.ml/category/operaciones.html">Operaciones</a>
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.ml/tag/linux.html">linux</a>
+	<a href="http://www.linuxsysadmin.ml/tag/squashfs.html">squashfs</a>
         /
-	<a href="http://www.linuxsysadmin.ml/tag/git.html">git</a>
+	<a href="http://www.linuxsysadmin.ml/tag/mount.html">mount</a>
         /
-	<a href="http://www.linuxsysadmin.ml/tag/ssh.html">ssh</a>
-        /
-	<a href="http://www.linuxsysadmin.ml/tag/docker.html">docker</a>
+	<a href="http://www.linuxsysadmin.ml/tag/filesystem.html">filesystem</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando <strong>git</strong> y <strong>ssh</strong>.</p>
-<p>La idea es muy simple; solo se necesita un servidor de <strong>ssh</strong>, que es la forma de transportar los datos, y los binarios de <strong>git</strong> para que los organice a placer. También vamos a necesitar un usuario <strong>git</strong>, que es el que vamos a usar para entrar, ya sea para crear y borrar repositorios, como para las operaciones remotas recibidas por el repositorio.</p>
-<p><strong>TRUCO</strong>: Podemos eliminar la petición de <em>password</em> para todos los accesos que se hagan por <strong>SSH</strong>, sean para entrar en las máquinas por <strong>SSH</strong> mediante cualquier <em>shell</em> de este artículo, o como resultado de una operación remota de <strong>git</strong>. Esto se puede hacer usando autenticación <strong>SSH</strong> por claves, como se explica en un <a href="http://www.linuxsysadmin.ml/2016/05/autenticacion-ssh-por-claves.html">artículo anterior</a>.</p>
-<h2>Montando el servidor</h2>
-<p>Para crear la máquina base, vamos a utilizar <strong>Docker</strong> por comodidad. Aprovechando esta tecnología, podemos crear el contenedor partiendo de una imagen creada con un <em>Dockerfile</em>.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ cat Dockerfile
-FROM debian:jessie
-RUN apt-get update <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    apt-get install -y git openssh-server <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    mkdir /var/run/sshd
-RUN useradd git -G sudo -s /bin/bash -m <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    <span class="nb">echo</span> <span class="s2">&quot;git:git&quot;</span> <span class="p">|</span> chpasswd
-CMD <span class="o">[</span><span class="s2">&quot;/usr/sbin/sshd&quot;</span>, <span class="s2">&quot;-D&quot;</span><span class="o">]</span>
-gerard@sirius:~/build$ 
-</pre></div>
-
-
-<p>Construimos la imagen, basándonos en el anterior <em>Dockerfile</em>, y le añadimos el <em>tag</em> "gitserver".</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker build -t gitserver .
-Sending build context to Docker daemon <span class="m">5</span>.632 kB
-Step <span class="m">1</span> : FROM debian:jessie
- ---&gt; bb5d89f9b6cb
-Step <span class="m">2</span> : RUN apt-get update <span class="o">&amp;&amp;</span>     apt-get install -y git openssh-server <span class="o">&amp;&amp;</span>     mkdir /var/run/sshd
- ---&gt; Running in 6b612781b788
+                <p>Cuando trabajamos con tamaños de disco muy limitados, como por ejemplo en dispositivos <em>embedded</em> o <em>pendrives</em>, nos vemos obligados a reducir nuestros sistemas de ficheros. Algunos de estos sistemas de ficheros son de solo lectura, y vienen comprimidos, lo que nos permite ahorrar en espacio de disco, no en funcionalidades.</p>
+<p>En este campo aparece el nombre de <em>squashfs</em>, que es básicamente un sistema de ficheros <em>ext2</em> comprimido. La única diferencia entre <em>ext2</em>, <em>ext3</em> y <em>ext4</em> es el <em>journal</em>, que es el registro encargado de que no se pierdan las escrituras hechas en el disco en caso de fallo antes de <em>flushear</em> lo <em>bufferes</em>, así que la version <em>ext2</em> no es ni un atraso ni un impedimento.</p>
+<h2>Creación del sistema de ficheros</h2>
+<p>Para crear un sistema de ficheros nos hacen falta las herramientas <strong>mksquashfs</strong> y posiblemente el decompresor <strong>unsquashfs</strong>. En <em>Debian</em> se pueden obtener instalando el paquete <strong>squashfs-tools</strong>.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~$ sudo apt-get install squashfs-tools
+<span class="o">[</span>sudo<span class="o">]</span> password <span class="k">for</span> gerard:
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes adicionales:
+  liblzo2-2
+Se instalarán los siguientes paquetes NUEVOS:
+  liblzo2-2 squashfs-tools
+<span class="m">0</span> actualizados, <span class="m">2</span> nuevos se instalarán, <span class="m">0</span> para eliminar y <span class="m">0</span> no actualizados.
+Se necesita descargar <span class="m">179</span> kB de archivos.
+Se utilizarán <span class="m">488</span> kB de espacio de disco adicional después de esta operación.
+¿Desea continuar? <span class="o">[</span>S/n<span class="o">]</span> s
 ...
- ---&gt; e88e644b0a53
-Removing intermediate container 6b612781b788
-Step <span class="m">3</span> : RUN useradd git -G sudo -s /bin/bash -m <span class="o">&amp;&amp;</span>     <span class="nb">echo</span> <span class="s2">&quot;git:git&quot;</span> <span class="p">|</span> chpasswd
- ---&gt; Running in 0e865bda447e
- ---&gt; 81d111c19c71
-Removing intermediate container 0e865bda447e
-Step <span class="m">4</span> : CMD /usr/sbin/sshd -D
- ---&gt; Running in 67bbebe61c74
- ---&gt; 81c2dd7b156a
-Removing intermediate container 67bbebe61c74
-Successfully built 81c2dd7b156a
-gerard@sirius:~/build$ 
+gerard@atlantis:~$
 </pre></div>
 
 
-<p>Lanzamos una instancia del contenedor para que podamos utilizarla. La parte importante es el <em>flag</em> <strong>-d</strong> para ejecutar el contenedor en <em>background</em>, y el <em>flag</em> <strong>-p</strong> que nos permite publicar el puerto 22 del contenedor en el puerto 22222 de la máquina <em>host</em>.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker run -d --name gitserver1 -h gitserver1 -p <span class="m">22222</span>:22 gitserver
-c26f30a94bb75b35c6d6cfe6a6bc5b1ef6929aafe1b5636acd207e019743540b
-gerard@sirius:~/build$ 
+<p>Vamos a crear un sistema de ficheros normal en un carpeta, que luego vamos a comprimir. Hoy, y a modo de ejemplo, vamos a crearlos con ficheros de contenido aleatorio; normalmente suelo poner jaulas o partes del sistema operativo.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/squashtest$ mkdir rootfs
+gerard@atlantis:~/squashtest$ dd <span class="k">if</span><span class="o">=</span>/dev/urandom <span class="nv">of</span><span class="o">=</span>/dev/stdout <span class="nv">bs</span><span class="o">=</span>1K <span class="nv">count</span><span class="o">=</span><span class="m">10</span> <span class="p">|</span> base64 &gt; rootfs/file1
+<span class="m">10</span>+0 registros leídos
+<span class="m">10</span>+0 registros escritos
+<span class="m">10240</span> bytes <span class="o">(</span><span class="m">10</span> kB, <span class="m">10</span> KiB<span class="o">)</span> copied, <span class="m">0</span>,000641935 s, <span class="m">16</span>,0 MB/s
+gerard@atlantis:~/squashtest$ dd <span class="k">if</span><span class="o">=</span>/dev/urandom <span class="nv">of</span><span class="o">=</span>/dev/stdout <span class="nv">bs</span><span class="o">=</span>1K <span class="nv">count</span><span class="o">=</span><span class="m">10</span> <span class="p">|</span> base64 &gt; rootfs/file2
+<span class="m">10</span>+0 registros leídos
+<span class="m">10</span>+0 registros escritos
+<span class="m">10240</span> bytes <span class="o">(</span><span class="m">10</span> kB, <span class="m">10</span> KiB<span class="o">)</span> copied, <span class="m">0</span>,000119261 s, <span class="m">85</span>,9 MB/s
+gerard@atlantis:~/squashtest$
 </pre></div>
 
 
-<p>Vamos a entrar en el servidor <strong>SSH</strong> para crear el repositorio <em>myrepo.git</em> que nos va a servir de ejemplo.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ ssh git@localhost -p <span class="m">22222</span>
-git@localhost<span class="err">&#39;</span>s password: 
+<p>Si miramos lo que nos ha quedado, vemos que el resultado es el correcto. Tened en cuenta que la carpeta contenedora <em>rootfs</em> se considerará la raíz del sistema de ficheros.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/squashtest$ tree -h
+.
+└── <span class="o">[</span><span class="m">4</span>.0K<span class="o">]</span>  rootfs
+    ├── <span class="o">[</span> 14K<span class="o">]</span>  file1
+    └── <span class="o">[</span> 14K<span class="o">]</span>  file2
 
-The programs included with the Debian GNU/Linux system are free software<span class="p">;</span>
-the exact distribution terms <span class="k">for</span> each program are described in the
-individual files in /usr/share/doc/*/copyright.
-
-Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-permitted by applicable law.
-git@gitserver1:~$ git init --bare myrepo.git
-Initialized empty Git repository in /home/git/myrepo.git/
-git@gitserver1:~$ <span class="nb">exit</span>
-<span class="nb">logout</span>
-Connection to localhost closed.
-gerard@sirius:~/build$ 
+<span class="m">1</span> directory, <span class="m">2</span> files
+gerard@atlantis:~/squashtest$
 </pre></div>
 
 
-<p>Desde la máquina <em>host</em> (o desde cualquier otra), podemos clonar el repositorio. Como tenemos el puerto del contenedor publicado en el puerto 22222 de la máquina <em>host</em> (la de trabajo, en este caso), la usamos tal cual para clonar.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ git clone ssh://git@localhost:22222/home/git/myrepo.git
-Cloning into <span class="s1">&#39;myrepo&#39;</span>...
-git@localhost<span class="err">&#39;</span>s password: 
-warning: You appear to have cloned an empty repository.
-Checking connectivity... <span class="k">done</span>.
-gerard@sirius:~/build$ 
+<p>Solo nos queda lanzar el comando <strong>mksquashfs</strong> que se encargará de comprimir el conjunto de carpetas que indiquemos y creará el fichero que declaremos en el último parámetro.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/squashtest$ mksquashfs rootfs/ rootfs.sqsh
+Parallel mksquashfs: Using <span class="m">1</span> processor
+Creating <span class="m">4</span>.0 filesystem on rootfs.sqsh, block size <span class="m">131072</span>.
+<span class="o">[==================================================================================================================================================================================================</span><span class="p">|</span><span class="o">]</span> <span class="m">2</span>/2 <span class="m">100</span>%
+
+Exportable Squashfs <span class="m">4</span>.0 filesystem, gzip compressed, data block size <span class="m">131072</span>
+        compressed data, compressed metadata, compressed fragments, compressed xattrs
+        duplicates are removed
+Filesystem size <span class="m">20</span>.80 Kbytes <span class="o">(</span><span class="m">0</span>.02 Mbytes<span class="o">)</span>
+        <span class="m">76</span>.13% of uncompressed filesystem size <span class="o">(</span><span class="m">27</span>.32 Kbytes<span class="o">)</span>
+Inode table size <span class="m">53</span> bytes <span class="o">(</span><span class="m">0</span>.05 Kbytes<span class="o">)</span>
+        <span class="m">54</span>.08% of uncompressed inode table size <span class="o">(</span><span class="m">98</span> bytes<span class="o">)</span>
+Directory table size <span class="m">30</span> bytes <span class="o">(</span><span class="m">0</span>.03 Kbytes<span class="o">)</span>
+        <span class="m">75</span>.00% of uncompressed directory table size <span class="o">(</span><span class="m">40</span> bytes<span class="o">)</span>
+Number of duplicate files found <span class="m">0</span>
+Number of inodes <span class="m">3</span>
+Number of files <span class="m">2</span>
+Number of fragments <span class="m">1</span>
+Number of symbolic links  <span class="m">0</span>
+Number of device nodes <span class="m">0</span>
+Number of fifo nodes <span class="m">0</span>
+Number of socket nodes <span class="m">0</span>
+Number of directories <span class="m">1</span>
+Number of ids <span class="o">(</span>unique uids + gids<span class="o">)</span> <span class="m">1</span>
+Number of uids <span class="m">1</span>
+        gerard <span class="o">(</span><span class="m">1000</span><span class="o">)</span>
+Number of gids <span class="m">1</span>
+        gerard <span class="o">(</span><span class="m">1000</span><span class="o">)</span>
+gerard@atlantis:~/squashtest$
 </pre></div>
 
 
-<p>Hacemos un poco de trabajo local, con sus respectivos <em>commits</em>. Finalmente podemos hacer un <em>push</em> a nuestro repositorio remoto, siguiendo el <em>workflow</em> de trabajo que queramos seguir.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ <span class="nb">cd</span> myrepo/
-gerard@sirius:~/build/myrepo$ <span class="nb">echo</span> <span class="m">0</span>.0.1 &gt; VERSION
-gerard@sirius:~/build/myrepo$ git add VERSION 
-gerard@sirius:~/build/myrepo$ git commit -m <span class="s2">&quot;Initial commit&quot;</span>
-<span class="o">[</span>master <span class="o">(</span>root-commit<span class="o">)</span> f30b82a<span class="o">]</span> Initial commit
- <span class="m">1</span> file changed, <span class="m">1</span> insertion<span class="o">(</span>+<span class="o">)</span>
- create mode <span class="m">100644</span> VERSION
-gerard@sirius:~/build/myrepo$ git push -u origin master
-git@localhost<span class="err">&#39;</span>s password: 
-Counting objects: <span class="m">3</span>, <span class="k">done</span>.
-Writing objects: <span class="m">100</span>% <span class="o">(</span><span class="m">3</span>/3<span class="o">)</span>, <span class="m">222</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
-Total <span class="m">3</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>
-To ssh://git@localhost:22222/home/git/myrepo.git
- * <span class="o">[</span>new branch<span class="o">]</span>      master -&gt; master
-Branch master <span class="nb">set</span> up to track remote branch master from origin.
-gerard@sirius:~/build/myrepo$ <span class="nb">cd</span> ..
-gerard@sirius:~/build$ 
+<p>Podemos ver en este caso que el tamaño del sistema de ficheros final es solamente el 76.13% de lo que era antes de comprimir. No es mucho, pero con ficheros más realistas suele comprimir más, pero de momento nos vale. Veamos el tamaño final del sistema de ficheros, que se queda en 24kb:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/squashtest$ ls -lh
+total 28K
+drwxr-xr-x <span class="m">2</span> gerard gerard <span class="m">4</span>,0K sep <span class="m">20</span> <span class="m">10</span>:43 rootfs
+-rw-r--r-- <span class="m">1</span> gerard gerard  24K sep <span class="m">20</span> <span class="m">10</span>:44 rootfs.sqsh
+gerard@atlantis:~/squashtest$
 </pre></div>
 
 
-<h2>Añadiendo restricciones a la sesión SSH</h2>
-<p>Es un poco peligroso permitir que el usuario <em>git</em> entre mediante una sesión <strong>SSH</strong> para hacer lo que le parezca.</p>
-<p>Los mismos binarios de <strong>git</strong> incluyen <strong>git-shell</strong>, que es un <em>shell</em> que limita lo que puede hacer el usuario, aunque solo permitiría hacer las operaciones <em>push</em> y <em>pull</em> propias del trabajo remoto con <strong>git</strong>.</p>
-<p>¿Y como podemos crear y destruir repositorios? En principio, no se puede. Sin embargo, si creamos una carpeta <em>/home/git/git-shell-commands/</em>, el usuario va a poder ejecutar los <em>scripts</em> que allí pongamos.</p>
-<p>Siguiendo esta idea, vamos a mejorar el <em>Dockerfile</em> para asignar <strong>git-shell</strong> al usuario <em>git</em> y para ponerle un par de comandos.</p>
-<p>Vamos a crear dos <em>scripts</em> que nos permitan crear y destruir repositorios, que son los siguientes:</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ cat create 
-<span class="c1">#!/bin/bash</span>
-
-<span class="k">if</span> <span class="o">[</span> <span class="si">${#}</span> -ne <span class="m">1</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-    <span class="nb">echo</span> <span class="s2">&quot;[ERROR] Syntax: create &lt;repository&gt;&quot;</span>
-    <span class="nb">exit</span> -1
-<span class="k">fi</span>
-
-<span class="k">if</span> <span class="o">[</span> -e <span class="si">${</span><span class="nv">1</span><span class="si">}</span>.git <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-    <span class="nb">echo</span> <span class="s2">&quot;[ERROR] Repository </span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2"> exists&quot;</span>
-    <span class="nb">exit</span> -1
-<span class="k">fi</span>
-
-git init --bare <span class="si">${</span><span class="nv">1</span><span class="si">}</span>.git
-<span class="nb">echo</span> <span class="s2">&quot;[OK] Repository </span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2"> created&quot;</span>
-<span class="nb">exit</span> <span class="m">0</span>
-gerard@sirius:~/build$ cat destroy 
-<span class="c1">#!/bin/bash</span>
-
-<span class="k">if</span> <span class="o">[</span> <span class="si">${#}</span> -ne <span class="m">1</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-    <span class="nb">echo</span> <span class="s2">&quot;[ERROR] Syntax: destroy &lt;repository&gt;&quot;</span>
-    <span class="nb">exit</span> -1
-<span class="k">fi</span>
-
-<span class="k">if</span> <span class="o">[</span> -e <span class="si">${</span><span class="nv">1</span><span class="si">}</span>.git <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-    rm -Rf <span class="si">${</span><span class="nv">1</span><span class="si">}</span>.git
-    <span class="nb">echo</span> <span class="s2">&quot;[OK] Repository </span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2"> deleted&quot;</span>
-    <span class="nb">exit</span> <span class="m">0</span>
-<span class="k">fi</span>
-
-<span class="nb">echo</span> <span class="s2">&quot;[ERROR] Repository </span><span class="si">${</span><span class="nv">1</span><span class="si">}</span><span class="s2"> does not exist&quot;</span>
-<span class="nb">exit</span> -1
-gerard@sirius:~/build$ 
+<h2>Uso del sistema de ficheros</h2>
+<p>Para montar el sistema de ficheros no nos hace falta nada especial, ni ninguna de las <strong>squashfs-tools</strong>, al menos en <em>Debian</em>, que ya incluye el módulo de <em>squashfs</em> en el <em>kernel</em>.</p>
+<p>El fichero <em>rootfs.sqsh</em> no sirve por si solo; hay que montarlo. Supongamos que queremos montar nuestro nuevo sistema de ficheros en la carpeta <em>mount/</em>, que al no existir, crearemos.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/squashtest$ mkdir mount
+gerard@atlantis:~/squashtest$
 </pre></div>
 
 
-<p>También vamos a reescribir el <em>Dockerfile</em> con las nuevas modificaciones.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ cat Dockerfile.shell 
-FROM debian:jessie
-RUN apt-get update <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    apt-get install -y git openssh-server <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    mkdir /var/run/sshd
-RUN useradd git -G sudo -s /usr/bin/git-shell -m <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    <span class="nb">echo</span> <span class="s2">&quot;git:git&quot;</span> <span class="p">|</span> chpasswd <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    mkdir /home/git/git-shell-commands
-COPY create destroy /home/git/git-shell-commands/
-RUN cp /usr/share/doc/git/contrib/git-shell-commands/help /home/git/git-shell-commands/ <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    cp /usr/share/doc/git/contrib/git-shell-commands/list /home/git/git-shell-commands/ <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    chmod <span class="m">755</span> /home/git/git-shell-commands/*
-CMD <span class="o">[</span><span class="s2">&quot;/usr/sbin/sshd&quot;</span>, <span class="s2">&quot;-D&quot;</span><span class="o">]</span>
-gerard@sirius:~/build$ 
+<p>El comando de montaje no es diferente de cualquier otro, y lo podríamos poner en el <em>/etc/fstab</em> para que se monte solo en cada reinicio. De momento os paso el comando de <em>mount</em> básico, que demuestra lo fácil que es de hacer:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/squashtest$ sudo mount rootfs.sqsh mount/
+<span class="o">[</span>sudo<span class="o">]</span> password <span class="k">for</span> gerard:
+gerard@atlantis:~/squashtest$ tree mount/
+mount/
+├── file1
+└── file2
+
+<span class="m">0</span> directories, <span class="m">2</span> files
+gerard@atlantis:~/squashtest$
 </pre></div>
 
 
-<p>Creamos la imagen usando el <em>Dockerfile</em> antes mencionado, siguiendo el mismo procedimiento de la versión básica. Le ponemos un <em>tag</em> distinto para tener ambas imágenes funcionales.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker build -f Dockerfile.shell -t gitserver:shell .
-Sending build context to Docker daemon <span class="m">53</span>.25 kB
-Step <span class="m">1</span> : FROM debian:jessie
- ---&gt; bb5d89f9b6cb
-Step <span class="m">2</span> : RUN apt-get update <span class="o">&amp;&amp;</span>     apt-get install -y git openssh-server <span class="o">&amp;&amp;</span>     mkdir /var/run/sshd
- ---&gt; Using cache
- ---&gt; e88e644b0a53
-Step <span class="m">3</span> : RUN useradd git -G sudo -s /usr/bin/git-shell -m <span class="o">&amp;&amp;</span>     <span class="nb">echo</span> <span class="s2">&quot;git:git&quot;</span> <span class="p">|</span> chpasswd <span class="o">&amp;&amp;</span>     mkdir /home/git/git-shell-commands
- ---&gt; Running in 387d2791d63f
- ---&gt; 0ab419cdfc2d
-Removing intermediate container 387d2791d63f
-Step <span class="m">4</span> : COPY create destroy /home/git/git-shell-commands/
- ---&gt; e1aa5fa9cb44
-Removing intermediate container 92fd282c6979
-Step <span class="m">5</span> : RUN cp /usr/share/doc/git/contrib/git-shell-commands/help /home/git/git-shell-commands/ <span class="o">&amp;&amp;</span>     cp /usr/share/doc/git/contrib/git-shell-commands/list /home/git/git-shell-commands/ <span class="o">&amp;&amp;</span>     chmod <span class="m">755</span> /home/git/git-shell-commands/*
- ---&gt; Running in 45ed8f24a547
- ---&gt; 2237b87165bc
-Removing intermediate container 45ed8f24a547
-Step <span class="m">6</span> : CMD /usr/sbin/sshd -D
- ---&gt; Running in b94b8c1ddf8a
- ---&gt; e484e1465480
-Removing intermediate container b94b8c1ddf8a
-Successfully built e484e1465480
-gerard@sirius:~/build$ 
+<p>Como todo sistema de ficheros montado en <em>linux</em>, queda accesible en la carpeta de montaje. Para acceder a los ficheros solo necesitamos hacerlo de la forma habitual, aunque por tratarse de un sistema de ficheros de solo lectura, solo podemos leerlo, pero no escribirlo.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/squashtest$ touch mount/hello
+touch: no se puede efectuar <span class="sb">`</span>touch<span class="s1">&#39; sobre &#39;</span>mount/hello<span class="err">&#39;</span>: Sistema de ficheros de sólo lectura
+gerard@atlantis:~/squashtest$
 </pre></div>
 
 
-<p>Lanzamos una instancia de la imagen creada. Es importante cambiar el puerto; puesto que el 22222 está ocupado por la instancia anterior, usaré el siguiente.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ docker run -d --name gitserver2 -h gitserver2 -p <span class="m">22223</span>:22 gitserver:shell
-e732027d11b90657ff109a455f032327f0e24eebe54a7e121d86eff6eab1bc4b
-gerard@sirius:~/build$ 
-</pre></div>
-
-
-<p>Entramos por <strong>SSH</strong>. Nos podemos dar cuenta de que el <em>prompt</em> ha cambiado; estamos en el <strong>git-shell</strong> y tenemos limitados los comandos a los que añadimos en el <em>Dockerfile</em>.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ ssh git@localhost -p <span class="m">22223</span>
-git@localhost<span class="s1">&#39;s password: </span>
-
-<span class="s1">The programs included with the Debian GNU/Linux system are free software;</span>
-<span class="s1">the exact distribution terms for each program are described in the</span>
-<span class="s1">individual files in /usr/share/doc/*/copyright.</span>
-
-<span class="s1">Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent</span>
-<span class="s1">permitted by applicable law.</span>
-<span class="s1">Run &#39;</span>help<span class="s1">&#39; for help, or &#39;</span>exit<span class="err">&#39;</span> to leave.  Available commands:
-create
-destroy
-list
-git&gt; 
-</pre></div>
-
-
-<p>Usamos el comando <em>create</em> para crear el repositorio y verificamos que está usando el comando <em>list</em>. Tendríamos disponible el comando <em>destroy</em>, pero de momento no lo vamos a utilizar.</p>
-<div class="highlight"><pre><span></span>git&gt; create myrepo2
-Initialized empty Git repository in /home/git/myrepo2.git/
-<span class="o">[</span>OK<span class="o">]</span> Repository myrepo2 created
-git&gt; list
-myrepo2.git
-git&gt; <span class="nb">exit</span>
-Connection to localhost closed.
-gerard@sirius:~/build$ 
-</pre></div>
-
-
-<p>Verificamos que funciona, clonando el repositorio como hemos hecho antes.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ git clone ssh://git@localhost:22223/home/git/myrepo2.git
-Cloning into <span class="s1">&#39;myrepo2&#39;</span>...
-git@localhost<span class="err">&#39;</span>s password: 
-warning: You appear to have cloned an empty repository.
-Checking connectivity... <span class="k">done</span>.
-gerard@sirius:~/build$ 
-</pre></div>
-
-
-<p>Hacemos algunos <em>commits</em> locales y finalmente los pasamos al repositorio remoto mediante un <em>push</em>.</p>
-<div class="highlight"><pre><span></span>gerard@sirius:~/build$ <span class="nb">cd</span> myrepo2/
-gerard@sirius:~/build/myrepo2$ <span class="nb">echo</span> <span class="m">0</span>.0.1 &gt; VERSION
-gerard@sirius:~/build/myrepo2$ git add VERSION
-gerard@sirius:~/build/myrepo2$ git commit -m <span class="s2">&quot;Initial commit&quot;</span>
-<span class="o">[</span>master <span class="o">(</span>root-commit<span class="o">)</span> fd40f39<span class="o">]</span> Initial commit
- <span class="m">1</span> file changed, <span class="m">1</span> insertion<span class="o">(</span>+<span class="o">)</span>
- create mode <span class="m">100644</span> VERSION
-gerard@sirius:~/build/myrepo2$ git push -u origin master
-git@localhost<span class="err">&#39;</span>s password: 
-Counting objects: <span class="m">3</span>, <span class="k">done</span>.
-Writing objects: <span class="m">100</span>% <span class="o">(</span><span class="m">3</span>/3<span class="o">)</span>, <span class="m">222</span> bytes <span class="p">|</span> <span class="m">0</span> bytes/s, <span class="k">done</span>.
-Total <span class="m">3</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta <span class="m">0</span><span class="o">)</span>
-To ssh://git@localhost:22223/home/git/myrepo2.git
- * <span class="o">[</span>new branch<span class="o">]</span>      master -&gt; master
-Branch master <span class="nb">set</span> up to track remote branch master from origin.
-gerard@sirius:~/build/myrepo2$ <span class="nb">cd</span> ..
-gerard@sirius:~/build$ 
-</pre></div>
+<h2>Añadiendo una capa de lectura y escritura</h2>
+<p>Un sistema de ficheros de lectura solo no tiene mucha utilidad en sí misma; aunque es verdad que podemos poner la jaula como solo lectura y montar una carpeta de trabajo solamente. Sin embargo hay otro método ámpliamente utilizado para hacer que parezca de lectura y escritura.</p>
+<p>Se trata del método que utiliza la distribución <a href="https://www.slax.org/es/">Slax</a>. La idea es que el sistema de ficheros "final" es una carpeta en la que se montan varias capas de sistema de ficheros. Esto se consigue con sistemas de ficheros tipo <em>UnionFS</em>, <em>AUFS</em> o <em>overlayfs</em>.</p>
+<p>De esta forma podemos tener la imagen base, posiblemente compartida por varios montajes distintos, y luego disponer de varias capas de diferencias respecto al original. Estas capas de diferencias suelen ser más pequeñas que la imagen base y se pueden descartar para volver a la versíon original de lo que teníamos en la carpeta.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.ml/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></li>
-        <li><a href="http://www.linuxsysadmin.ml/2018/02/tuneles-ssh-con-reinicio-automatico-con-docker.html">Túneles SSH con reinicio automático con Docker</a></li>
-        <li><a href="http://www.linuxsysadmin.ml/2016/05/evolucionando-los-contenedores-docker.html">Evolucionando los contenedores: Docker</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">Sistemas de ficheros multicapa con aufs</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2015/12/creacion-de-un-livecd-con-debian.html">Creación de un livecd con Debian</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2017/10/usar-un-sistema-de-ficheros-de-lectura-y-escritura-en-un-fichero-targz.md.html">Usar un sistema de ficheros de lectura y escritura en un fichero .tar.gz</a></li>
     </ul>
 </section>
     <hr/>
@@ -415,8 +283,8 @@ gerard@sirius:~/build$
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'preparando-un-servidor-de-repositorios-git';
-                var disqus_url = 'http://www.linuxsysadmin.ml/2016/06/preparando-un-servidor-de-repositorios-git.html';
+                    var disqus_identifier = 'un-sistema-de-ficheros-comprimido-y-de-solo-lectura-squashfs';
+                var disqus_url = 'http://www.linuxsysadmin.ml/2018/02/un-sistema-de-ficheros-comprimido-y-de-solo-lectura-squashfs.html';
 
             var disqus_config = function () {
                 this.language = "es";

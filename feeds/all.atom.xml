@@ -1,5 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-02-12T10:00:00+01:00</updated><entry><title>Túneles SSH con reinicio automático con Docker</title><link href="http://www.linuxsysadmin.ml/2018/02/tuneles-ssh-con-reinicio-automatico-con-docker.html" rel="alternate"></link><published>2018-02-12T10:00:00+01:00</published><updated>2018-02-12T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-02-12:/2018/02/tuneles-ssh-con-reinicio-automatico-con-docker.html</id><summary type="html">&lt;p&gt;Ya vimos en &lt;a href="http://www.linuxsysadmin.ml/2016/11/levantando-tuneles-ssh-con-systemd.html"&gt;un artículo anterior&lt;/a&gt; como delegar en &lt;strong&gt;SystemD&lt;/strong&gt; la persistencia de túneles SSH. El otro día intenté reproducirlo sin éxito en un servidor con una versión baja de &lt;strong&gt;SystemD&lt;/strong&gt;; finalmente me di cuenta de que había otra herramienta en el servidor capaz de reiniciar un túnel caído: &lt;strong&gt;Docker …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ya vimos en &lt;a href="http://www.linuxsysadmin.ml/2016/11/levantando-tuneles-ssh-con-systemd.html"&gt;un artículo anterior&lt;/a&gt; como delegar en &lt;strong&gt;SystemD&lt;/strong&gt; la persistencia de túneles SSH. El otro día intenté reproducirlo sin éxito en un servidor con una versión baja de &lt;strong&gt;SystemD&lt;/strong&gt;; finalmente me di cuenta de que había otra herramienta en el servidor capaz de reiniciar un túnel caído: &lt;strong&gt;Docker&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-02-19T10:00:00+01:00</updated><entry><title>Un sistema de ficheros comprimido y de solo lectura: squashfs</title><link href="http://www.linuxsysadmin.ml/2018/02/un-sistema-de-ficheros-comprimido-y-de-solo-lectura-squashfs.html" rel="alternate"></link><published>2018-02-19T10:00:00+01:00</published><updated>2018-02-19T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-02-19:/2018/02/un-sistema-de-ficheros-comprimido-y-de-solo-lectura-squashfs.html</id><summary type="html">&lt;p&gt;Cuando trabajamos con tamaños de disco muy limitados, como por ejemplo en dispositivos &lt;em&gt;embedded&lt;/em&gt; o &lt;em&gt;pendrives&lt;/em&gt;, nos vemos obligados a reducir nuestros sistemas de ficheros. Algunos de estos sistemas de ficheros son de solo lectura, y vienen comprimidos, lo que nos permite ahorrar en espacio de disco, no en funcionalidades …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando trabajamos con tamaños de disco muy limitados, como por ejemplo en dispositivos &lt;em&gt;embedded&lt;/em&gt; o &lt;em&gt;pendrives&lt;/em&gt;, nos vemos obligados a reducir nuestros sistemas de ficheros. Algunos de estos sistemas de ficheros son de solo lectura, y vienen comprimidos, lo que nos permite ahorrar en espacio de disco, no en funcionalidades.&lt;/p&gt;
+&lt;p&gt;En este campo aparece el nombre de &lt;em&gt;squashfs&lt;/em&gt;, que es básicamente un sistema de ficheros &lt;em&gt;ext2&lt;/em&gt; comprimido. La única diferencia entre &lt;em&gt;ext2&lt;/em&gt;, &lt;em&gt;ext3&lt;/em&gt; y &lt;em&gt;ext4&lt;/em&gt; es el &lt;em&gt;journal&lt;/em&gt;, que es el registro encargado de que no se pierdan las escrituras hechas en el disco en caso de fallo antes de &lt;em&gt;flushear&lt;/em&gt; lo &lt;em&gt;bufferes&lt;/em&gt;, así que la version &lt;em&gt;ext2&lt;/em&gt; no es ni un atraso ni un impedimento.&lt;/p&gt;
+&lt;h2&gt;Creación del sistema de ficheros&lt;/h2&gt;
+&lt;p&gt;Para crear un sistema de ficheros nos hacen falta las herramientas &lt;strong&gt;mksquashfs&lt;/strong&gt; y posiblemente el decompresor &lt;strong&gt;unsquashfs&lt;/strong&gt;. En &lt;em&gt;Debian&lt;/em&gt; se pueden obtener instalando el paquete &lt;strong&gt;squashfs-tools&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ sudo apt-get install squashfs-tools
+&lt;span class="o"&gt;[&lt;/span&gt;sudo&lt;span class="o"&gt;]&lt;/span&gt; password &lt;span class="k"&gt;for&lt;/span&gt; gerard:
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes adicionales:
+  liblzo2-2
+Se instalarán los siguientes paquetes NUEVOS:
+  liblzo2-2 squashfs-tools
+&lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;2&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
+Se necesita descargar &lt;span class="m"&gt;179&lt;/span&gt; kB de archivos.
+Se utilizarán &lt;span class="m"&gt;488&lt;/span&gt; kB de espacio de disco adicional después de esta operación.
+¿Desea continuar? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
+...
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a crear un sistema de ficheros normal en un carpeta, que luego vamos a comprimir. Hoy, y a modo de ejemplo, vamos a crearlos con ficheros de contenido aleatorio; normalmente suelo poner jaulas o partes del sistema operativo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/squashtest$ mkdir rootfs
+gerard@atlantis:~/squashtest$ dd &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/dev/urandom &lt;span class="nv"&gt;of&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/dev/stdout &lt;span class="nv"&gt;bs&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1K &lt;span class="nv"&gt;count&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; base64 &amp;gt; rootfs/file1
+&lt;span class="m"&gt;10&lt;/span&gt;+0 registros leídos
+&lt;span class="m"&gt;10&lt;/span&gt;+0 registros escritos
+&lt;span class="m"&gt;10240&lt;/span&gt; bytes &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt; kB, &lt;span class="m"&gt;10&lt;/span&gt; KiB&lt;span class="o"&gt;)&lt;/span&gt; copied, &lt;span class="m"&gt;0&lt;/span&gt;,000641935 s, &lt;span class="m"&gt;16&lt;/span&gt;,0 MB/s
+gerard@atlantis:~/squashtest$ dd &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/dev/urandom &lt;span class="nv"&gt;of&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/dev/stdout &lt;span class="nv"&gt;bs&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1K &lt;span class="nv"&gt;count&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; base64 &amp;gt; rootfs/file2
+&lt;span class="m"&gt;10&lt;/span&gt;+0 registros leídos
+&lt;span class="m"&gt;10&lt;/span&gt;+0 registros escritos
+&lt;span class="m"&gt;10240&lt;/span&gt; bytes &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt; kB, &lt;span class="m"&gt;10&lt;/span&gt; KiB&lt;span class="o"&gt;)&lt;/span&gt; copied, &lt;span class="m"&gt;0&lt;/span&gt;,000119261 s, &lt;span class="m"&gt;85&lt;/span&gt;,9 MB/s
+gerard@atlantis:~/squashtest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si miramos lo que nos ha quedado, vemos que el resultado es el correcto. Tened en cuenta que la carpeta contenedora &lt;em&gt;rootfs&lt;/em&gt; se considerará la raíz del sistema de ficheros.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/squashtest$ tree -h
+.
+└── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;.0K&lt;span class="o"&gt;]&lt;/span&gt;  rootfs
+    ├── &lt;span class="o"&gt;[&lt;/span&gt; 14K&lt;span class="o"&gt;]&lt;/span&gt;  file1
+    └── &lt;span class="o"&gt;[&lt;/span&gt; 14K&lt;span class="o"&gt;]&lt;/span&gt;  file2
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;2&lt;/span&gt; files
+gerard@atlantis:~/squashtest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos queda lanzar el comando &lt;strong&gt;mksquashfs&lt;/strong&gt; que se encargará de comprimir el conjunto de carpetas que indiquemos y creará el fichero que declaremos en el último parámetro.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/squashtest$ mksquashfs rootfs/ rootfs.sqsh
+Parallel mksquashfs: Using &lt;span class="m"&gt;1&lt;/span&gt; processor
+Creating &lt;span class="m"&gt;4&lt;/span&gt;.0 filesystem on rootfs.sqsh, block size &lt;span class="m"&gt;131072&lt;/span&gt;.
+&lt;span class="o"&gt;[==================================================================================================================================================================================================&lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt;/2 &lt;span class="m"&gt;100&lt;/span&gt;%
+
+Exportable Squashfs &lt;span class="m"&gt;4&lt;/span&gt;.0 filesystem, gzip compressed, data block size &lt;span class="m"&gt;131072&lt;/span&gt;
+        compressed data, compressed metadata, compressed fragments, compressed xattrs
+        duplicates are removed
+Filesystem size &lt;span class="m"&gt;20&lt;/span&gt;.80 Kbytes &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.02 Mbytes&lt;span class="o"&gt;)&lt;/span&gt;
+        &lt;span class="m"&gt;76&lt;/span&gt;.13% of uncompressed filesystem size &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;27&lt;/span&gt;.32 Kbytes&lt;span class="o"&gt;)&lt;/span&gt;
+Inode table size &lt;span class="m"&gt;53&lt;/span&gt; bytes &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.05 Kbytes&lt;span class="o"&gt;)&lt;/span&gt;
+        &lt;span class="m"&gt;54&lt;/span&gt;.08% of uncompressed inode table size &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;98&lt;/span&gt; bytes&lt;span class="o"&gt;)&lt;/span&gt;
+Directory table size &lt;span class="m"&gt;30&lt;/span&gt; bytes &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.03 Kbytes&lt;span class="o"&gt;)&lt;/span&gt;
+        &lt;span class="m"&gt;75&lt;/span&gt;.00% of uncompressed directory table size &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;40&lt;/span&gt; bytes&lt;span class="o"&gt;)&lt;/span&gt;
+Number of duplicate files found &lt;span class="m"&gt;0&lt;/span&gt;
+Number of inodes &lt;span class="m"&gt;3&lt;/span&gt;
+Number of files &lt;span class="m"&gt;2&lt;/span&gt;
+Number of fragments &lt;span class="m"&gt;1&lt;/span&gt;
+Number of symbolic links  &lt;span class="m"&gt;0&lt;/span&gt;
+Number of device nodes &lt;span class="m"&gt;0&lt;/span&gt;
+Number of fifo nodes &lt;span class="m"&gt;0&lt;/span&gt;
+Number of socket nodes &lt;span class="m"&gt;0&lt;/span&gt;
+Number of directories &lt;span class="m"&gt;1&lt;/span&gt;
+Number of ids &lt;span class="o"&gt;(&lt;/span&gt;unique uids + gids&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;
+Number of uids &lt;span class="m"&gt;1&lt;/span&gt;
+        gerard &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1000&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+Number of gids &lt;span class="m"&gt;1&lt;/span&gt;
+        gerard &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1000&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+gerard@atlantis:~/squashtest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver en este caso que el tamaño del sistema de ficheros final es solamente el 76.13% de lo que era antes de comprimir. No es mucho, pero con ficheros más realistas suele comprimir más, pero de momento nos vale. Veamos el tamaño final del sistema de ficheros, que se queda en 24kb:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/squashtest$ ls -lh
+total 28K
+drwxr-xr-x &lt;span class="m"&gt;2&lt;/span&gt; gerard gerard &lt;span class="m"&gt;4&lt;/span&gt;,0K sep &lt;span class="m"&gt;20&lt;/span&gt; &lt;span class="m"&gt;10&lt;/span&gt;:43 rootfs
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; gerard gerard  24K sep &lt;span class="m"&gt;20&lt;/span&gt; &lt;span class="m"&gt;10&lt;/span&gt;:44 rootfs.sqsh
+gerard@atlantis:~/squashtest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Uso del sistema de ficheros&lt;/h2&gt;
+&lt;p&gt;Para montar el sistema de ficheros no nos hace falta nada especial, ni ninguna de las &lt;strong&gt;squashfs-tools&lt;/strong&gt;, al menos en &lt;em&gt;Debian&lt;/em&gt;, que ya incluye el módulo de &lt;em&gt;squashfs&lt;/em&gt; en el &lt;em&gt;kernel&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;El fichero &lt;em&gt;rootfs.sqsh&lt;/em&gt; no sirve por si solo; hay que montarlo. Supongamos que queremos montar nuestro nuevo sistema de ficheros en la carpeta &lt;em&gt;mount/&lt;/em&gt;, que al no existir, crearemos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/squashtest$ mkdir mount
+gerard@atlantis:~/squashtest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El comando de montaje no es diferente de cualquier otro, y lo podríamos poner en el &lt;em&gt;/etc/fstab&lt;/em&gt; para que se monte solo en cada reinicio. De momento os paso el comando de &lt;em&gt;mount&lt;/em&gt; básico, que demuestra lo fácil que es de hacer:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/squashtest$ sudo mount rootfs.sqsh mount/
+&lt;span class="o"&gt;[&lt;/span&gt;sudo&lt;span class="o"&gt;]&lt;/span&gt; password &lt;span class="k"&gt;for&lt;/span&gt; gerard:
+gerard@atlantis:~/squashtest$ tree mount/
+mount/
+├── file1
+└── file2
+
+&lt;span class="m"&gt;0&lt;/span&gt; directories, &lt;span class="m"&gt;2&lt;/span&gt; files
+gerard@atlantis:~/squashtest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como todo sistema de ficheros montado en &lt;em&gt;linux&lt;/em&gt;, queda accesible en la carpeta de montaje. Para acceder a los ficheros solo necesitamos hacerlo de la forma habitual, aunque por tratarse de un sistema de ficheros de solo lectura, solo podemos leerlo, pero no escribirlo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/squashtest$ touch mount/hello
+touch: no se puede efectuar &lt;span class="sb"&gt;`&lt;/span&gt;touch&lt;span class="s1"&gt;&amp;#39; sobre &amp;#39;&lt;/span&gt;mount/hello&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;: Sistema de ficheros de sólo lectura
+gerard@atlantis:~/squashtest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Añadiendo una capa de lectura y escritura&lt;/h2&gt;
+&lt;p&gt;Un sistema de ficheros de lectura solo no tiene mucha utilidad en sí misma; aunque es verdad que podemos poner la jaula como solo lectura y montar una carpeta de trabajo solamente. Sin embargo hay otro método ámpliamente utilizado para hacer que parezca de lectura y escritura.&lt;/p&gt;
+&lt;p&gt;Se trata del método que utiliza la distribución &lt;a href="https://www.slax.org/es/"&gt;Slax&lt;/a&gt;. La idea es que el sistema de ficheros "final" es una carpeta en la que se montan varias capas de sistema de ficheros. Esto se consigue con sistemas de ficheros tipo &lt;em&gt;UnionFS&lt;/em&gt;, &lt;em&gt;AUFS&lt;/em&gt; o &lt;em&gt;overlayfs&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;De esta forma podemos tener la imagen base, posiblemente compartida por varios montajes distintos, y luego disponer de varias capas de diferencias respecto al original. Estas capas de diferencias suelen ser más pequeñas que la imagen base y se pueden descartar para volver a la versíon original de lo que teníamos en la carpeta.&lt;/p&gt;</content><category term="squashfs"></category><category term="mount"></category><category term="filesystem"></category></entry><entry><title>Túneles SSH con reinicio automático con Docker</title><link href="http://www.linuxsysadmin.ml/2018/02/tuneles-ssh-con-reinicio-automatico-con-docker.html" rel="alternate"></link><published>2018-02-12T10:00:00+01:00</published><updated>2018-02-12T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-02-12:/2018/02/tuneles-ssh-con-reinicio-automatico-con-docker.html</id><summary type="html">&lt;p&gt;Ya vimos en &lt;a href="http://www.linuxsysadmin.ml/2016/11/levantando-tuneles-ssh-con-systemd.html"&gt;un artículo anterior&lt;/a&gt; como delegar en &lt;strong&gt;SystemD&lt;/strong&gt; la persistencia de túneles SSH. El otro día intenté reproducirlo sin éxito en un servidor con una versión baja de &lt;strong&gt;SystemD&lt;/strong&gt;; finalmente me di cuenta de que había otra herramienta en el servidor capaz de reiniciar un túnel caído: &lt;strong&gt;Docker …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ya vimos en &lt;a href="http://www.linuxsysadmin.ml/2016/11/levantando-tuneles-ssh-con-systemd.html"&gt;un artículo anterior&lt;/a&gt; como delegar en &lt;strong&gt;SystemD&lt;/strong&gt; la persistencia de túneles SSH. El otro día intenté reproducirlo sin éxito en un servidor con una versión baja de &lt;strong&gt;SystemD&lt;/strong&gt;; finalmente me di cuenta de que había otra herramienta en el servidor capaz de reiniciar un túnel caído: &lt;strong&gt;Docker&lt;/strong&gt;.&lt;/p&gt;
 &lt;h2&gt;El problema&lt;/h2&gt;
 &lt;p&gt;El contexto no cambia respecto al citado artículo: tengo un servidor ejecutando los servicios de &lt;strong&gt;MongoDB&lt;/strong&gt; y &lt;strong&gt;SSH&lt;/strong&gt;, pero no puedo acceder a la base de datos porque expone su &lt;em&gt;socket&lt;/em&gt; solo a &lt;em&gt;localhost&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;En circunstancias normales, el túnel es trivial:&lt;/p&gt;
