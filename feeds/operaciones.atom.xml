@@ -1,5 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-02-19T10:00:00+01:00</updated><entry><title>Un sistema de ficheros comprimido y de solo lectura: squashfs</title><link href="http://www.linuxsysadmin.ml/2018/02/un-sistema-de-ficheros-comprimido-y-de-solo-lectura-squashfs.html" rel="alternate"></link><published>2018-02-19T10:00:00+01:00</published><updated>2018-02-19T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-02-19:/2018/02/un-sistema-de-ficheros-comprimido-y-de-solo-lectura-squashfs.html</id><summary type="html">&lt;p&gt;Cuando trabajamos con tamaños de disco muy limitados, como por ejemplo en dispositivos &lt;em&gt;embedded&lt;/em&gt; o &lt;em&gt;pendrives&lt;/em&gt;, nos vemos obligados a reducir nuestros sistemas de ficheros. Algunos de estos sistemas de ficheros son de solo lectura, y vienen comprimidos, lo que nos permite ahorrar en espacio de disco, no en funcionalidades …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando trabajamos con tamaños de disco muy limitados, como por ejemplo en dispositivos &lt;em&gt;embedded&lt;/em&gt; o &lt;em&gt;pendrives&lt;/em&gt;, nos vemos obligados a reducir nuestros sistemas de ficheros. Algunos de estos sistemas de ficheros son de solo lectura, y vienen comprimidos, lo que nos permite ahorrar en espacio de disco, no en funcionalidades.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-02-26T10:00:00+01:00</updated><entry><title>Configurando servidores con first time boot scripts</title><link href="http://www.linuxsysadmin.ml/2018/02/configurando-servidores-con-first-time-boot-scripts.html" rel="alternate"></link><published>2018-02-26T10:00:00+01:00</published><updated>2018-02-26T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-02-26:/2018/02/configurando-servidores-con-first-time-boot-scripts.html</id><summary type="html">&lt;p&gt;Configurar servidores desde cero es una tarea muy pesada, una fuente de errores innecesaria y hace nuestros servidores difícilmente reproducibles. Los &lt;em&gt;setups&lt;/em&gt; más básicos son siempre los mismos, y podemos configurar nuestros servidores para que ejecuten un &lt;em&gt;script&lt;/em&gt; la primera vez que se (re)inicien, a falta de mejores herramientas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Configurar servidores desde cero es una tarea muy pesada, una fuente de errores innecesaria y hace nuestros servidores difícilmente reproducibles. Los &lt;em&gt;setups&lt;/em&gt; más básicos son siempre los mismos, y podemos configurar nuestros servidores para que ejecuten un &lt;em&gt;script&lt;/em&gt; la primera vez que se (re)inicien, a falta de mejores herramientas.&lt;/p&gt;
+&lt;p&gt;De esta forma, podemos disponer fácilmente de un servidor de un tipo predefinido, especialmente en aquellos &lt;em&gt;hostings&lt;/em&gt; que nos permitan &lt;em&gt;scripts&lt;/em&gt; de inicialización, como por ejemplo, &lt;a href="https://www.vultr.com/?ref=7251515"&gt;Vultr&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;El truco consiste en hacer que nuestro sistema de &lt;em&gt;init&lt;/em&gt; ejecute nuestro &lt;em&gt;script&lt;/em&gt;, solamente en el caso de que no se haya ejecutado ya. Para ello podemos usar el mismo fichero de &lt;em&gt;log&lt;/em&gt; de la ejecución efectuada.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo con systemd&lt;/h2&gt;
+&lt;p&gt;De acuerdo a la documentación de &lt;strong&gt;systemd&lt;/strong&gt;, existe un fichero que se ejecuta en cada &lt;em&gt;boot&lt;/em&gt;, suponiendo que exista y que tenga los permisos adecuados. Se trata de &lt;em&gt;/etc/rc.local&lt;/em&gt;. Nos bastaría con crearlo y asignarle permisos de ejecución, y tendríamos el &lt;em&gt;script&lt;/em&gt; ejecutándose en cada &lt;em&gt;boot&lt;/em&gt;.&lt;/p&gt;
+&lt;h3&gt;El lanzador&lt;/h3&gt;
+&lt;p&gt;Con un poco de lógica, podemos hacer lo sugerido: un &lt;em&gt;script&lt;/em&gt; que ejecute algo y genere el &lt;em&gt;log&lt;/em&gt; para que no se vuelva a ejecutar de nuevo. Sin embargo, parece adecuado disponer de un &lt;em&gt;framework&lt;/em&gt; que separe la lógica de ejecución, del &lt;em&gt;script&lt;/em&gt; ejecutado.&lt;/p&gt;
+&lt;p&gt;Esto nos permite distribuir nuestras imágenes base con el &lt;em&gt;script&lt;/em&gt; y dejar al usuario la opción de poner o no un &lt;em&gt;script&lt;/em&gt; de inicialización, y de que poner en él. Así pues, un posible ejemplo sería este:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@firstboot:~# cat /etc/rc.local
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class="nv"&gt;SCRIPT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/root/firstboot.sh
+&lt;span class="nv"&gt;LOG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/root/firstboot.log
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; -x &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;SCRIPT&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; ! -e &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;LOG&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+        &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;SCRIPT&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &amp;gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;LOG&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;&lt;span class="p"&gt;&amp;amp;&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;
+    &lt;span class="k"&gt;fi&lt;/span&gt;
+&lt;span class="k"&gt;fi&lt;/span&gt;
+root@firstboot:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Básicamente, preguntamos si el &lt;em&gt;script&lt;/em&gt; existe y es ejecutable, y en ese caso, si no existe el log previamente generado. En caso afirmativo, ejecutamos el script y recogemos la salida, a modo de &lt;em&gt;log&lt;/em&gt; y a modo de marca para no volver a lanzarlo.&lt;/p&gt;
+&lt;p&gt;Solo nos queda pendiente darle permisos de ejecución, porque sino, &lt;strong&gt;systemd&lt;/strong&gt; lo ignoraría.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@firstboot:~# chmod a+x /etc/rc.local
+root@firstboot:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Usando la plantilla&lt;/h3&gt;
+&lt;p&gt;Hemos llegado a ese momento en el que clonamos la plantilla y tenemos que poner el &lt;em&gt;script&lt;/em&gt; de inicialización. Siguiendo el &lt;em&gt;script&lt;/em&gt; arriba mencionado, solo tenemos que poner un &lt;em&gt;script&lt;/em&gt; que haga lo que nos interese. En este caso, con un &lt;em&gt;log&lt;/em&gt; para ver que funciona, nos vale.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@firstboot:~# cat firstboot.sh
+&lt;span class="c1"&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;First time boot. Running as:&amp;quot;&lt;/span&gt;
+id
+root@firstboot:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;No os olvidéis de darle permisos de ejecución:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@firstboot:~# chmod a+x firstboot.sh
+root@firstboot:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si reiniciamos el servidor podremos ver la magia: como hay un script y no hay &lt;em&gt;log&lt;/em&gt;, se va a ejecutar, generando el &lt;em&gt;log&lt;/em&gt;. Solo nos queda verlo en directo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@firstboot:~# cat firstboot.log
+First &lt;span class="nb"&gt;time&lt;/span&gt; boot. Running as:
+&lt;span class="nv"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;root&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;root&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;grupos&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;root&lt;span class="o"&gt;)&lt;/span&gt;
+root@firstboot:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y por mucho que reiniciéis, no se va a volver a ejecutar, a menos claro, que eliminéis el fichero de &lt;em&gt;log&lt;/em&gt;, dejando el &lt;em&gt;script&lt;/em&gt; en su sitio.&lt;/p&gt;
+&lt;h3&gt;Uso práctico&lt;/h3&gt;
+&lt;p&gt;En mi caso concreto, he creado &lt;em&gt;scripts&lt;/em&gt; genéricos para instalar:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Un servidor de &lt;strong&gt;mongodb&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Un servidor &lt;strong&gt;uwsgi&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Un frontal &lt;strong&gt;nginx&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Un balanceador &lt;strong&gt;haproxy&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Así pues, cuando creo un proyecto nuevo, solo tengo que asignar los &lt;em&gt;script&lt;/em&gt; correspondientes a cada instancia de mi &lt;em&gt;hosting&lt;/em&gt;. Con algunas modificaciones a los ficheros de configuración y la aplicación propiamente dicha, tengo un entorno corriendo en tiempo record.&lt;/p&gt;</content><category term="systemd"></category><category term="script"></category></entry><entry><title>Un sistema de ficheros comprimido y de solo lectura: squashfs</title><link href="http://www.linuxsysadmin.ml/2018/02/un-sistema-de-ficheros-comprimido-y-de-solo-lectura-squashfs.html" rel="alternate"></link><published>2018-02-19T10:00:00+01:00</published><updated>2018-02-19T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-02-19:/2018/02/un-sistema-de-ficheros-comprimido-y-de-solo-lectura-squashfs.html</id><summary type="html">&lt;p&gt;Cuando trabajamos con tamaños de disco muy limitados, como por ejemplo en dispositivos &lt;em&gt;embedded&lt;/em&gt; o &lt;em&gt;pendrives&lt;/em&gt;, nos vemos obligados a reducir nuestros sistemas de ficheros. Algunos de estos sistemas de ficheros son de solo lectura, y vienen comprimidos, lo que nos permite ahorrar en espacio de disco, no en funcionalidades …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando trabajamos con tamaños de disco muy limitados, como por ejemplo en dispositivos &lt;em&gt;embedded&lt;/em&gt; o &lt;em&gt;pendrives&lt;/em&gt;, nos vemos obligados a reducir nuestros sistemas de ficheros. Algunos de estos sistemas de ficheros son de solo lectura, y vienen comprimidos, lo que nos permite ahorrar en espacio de disco, no en funcionalidades.&lt;/p&gt;
 &lt;p&gt;En este campo aparece el nombre de &lt;em&gt;squashfs&lt;/em&gt;, que es básicamente un sistema de ficheros &lt;em&gt;ext2&lt;/em&gt; comprimido. La única diferencia entre &lt;em&gt;ext2&lt;/em&gt;, &lt;em&gt;ext3&lt;/em&gt; y &lt;em&gt;ext4&lt;/em&gt; es el &lt;em&gt;journal&lt;/em&gt;, que es el registro encargado de que no se pierdan las escrituras hechas en el disco en caso de fallo antes de &lt;em&gt;flushear&lt;/em&gt; lo &lt;em&gt;bufferes&lt;/em&gt;, así que la version &lt;em&gt;ext2&lt;/em&gt; no es ni un atraso ni un impedimento.&lt;/p&gt;
 &lt;h2&gt;Creación del sistema de ficheros&lt;/h2&gt;
 &lt;p&gt;Para crear un sistema de ficheros nos hacen falta las herramientas &lt;strong&gt;mksquashfs&lt;/strong&gt; y posiblemente el decompresor &lt;strong&gt;unsquashfs&lt;/strong&gt;. En &lt;em&gt;Debian&lt;/em&gt; se pueden obtener instalando el paquete &lt;strong&gt;squashfs-tools&lt;/strong&gt;.&lt;/p&gt;
