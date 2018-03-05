@@ -5,42 +5,49 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/</loc>
-<lastmod>2018-02-26T10:02:20-00:00</lastmod>
+<lastmod>2018-03-05T10:35:52-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2018-02-26T10:02:20-00:00</lastmod>
+<lastmod>2018-03-05T10:35:52-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2018-02-26T10:02:20-00:00</lastmod>
+<lastmod>2018-03-05T10:35:52-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2018-02-26T10:02:20-00:00</lastmod>
+<lastmod>2018-03-05T10:35:52-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2018-02-26T10:02:20-00:00</lastmod>
+<lastmod>2018-03-05T10:35:52-00:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/curriculum.html</loc>
-<lastmod>2018-02-26T10:02:20-00:00</lastmod>
+<lastmod>2018-03-05T10:35:52-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/2018/03/entornos-de-trabajo-en-contenedores-docker.html</loc>
+<lastmod>2018-03-05T10:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -929,7 +936,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/category/miscelanea.html</loc>
-<lastmod>2018-01-08T10:00:00-00:15</lastmod>
+<lastmod>2018-03-05T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1159,8 +1166,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/sysbench.html</loc>
-<lastmod>2017-04-10T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/herramientas.html</loc>
+<lastmod>2018-03-05T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2153,6 +2160,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.ml/tag/sysbench.html</loc>
+<lastmod>2017-04-10T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.ml/tag/certificado.html</loc>
 <lastmod>2017-05-29T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -2356,6 +2370,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.ml/tag/bottle.html</loc>
+<lastmod>2017-05-15T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.ml/tag/ip-flotante.html</loc>
 <lastmod>2017-02-27T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -2503,8 +2524,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/bottle.html</loc>
-<lastmod>2017-05-15T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/workspace.html</loc>
+<lastmod>2018-03-05T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2525,7 +2546,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/docker.html</loc>
-<lastmod>2018-02-12T10:00:00-00:15</lastmod>
+<lastmod>2018-03-05T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2546,7 +2567,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2018-02-26T10:00:00-00:15</lastmod>
+<lastmod>2018-03-05T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
