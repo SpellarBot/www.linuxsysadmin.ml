@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>release - Linux Sysadmin</title>
+    <title>Un gateway con Debian, iptables y dnsmasq - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,26 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.ml/2018/03/un-gateway-con-debian-iptables-y-dnsmasq.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="release" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="linux,debian,stretch,gateway,iptables,dnsmasq" />
+        <meta name="description" content="En algunas ocasiones no nos basta con tener un servidor único. Queremos tener un conjunto de servidores que se comuniquen abiertamente entre ellos usando una red privada, pero solo queremos exponer al mundo una sola dirección IP. El resto de servidores necesitan acceso a internet a través de un representante …" />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.ml"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Un gateway con Debian, iptables y dnsmasq"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.ml/2018/03/un-gateway-con-debian-iptables-y-dnsmasq.html"/>
+        <meta property="og:description" content="En algunas ocasiones no nos basta con tener un servidor único. Queremos tener un conjunto de servidores que se comuniquen abiertamente entre ellos usando una red privada, pero solo queremos exponer al mundo una sola dirección IP. El resto de servidores necesitan acceso a internet a través de un representante …"/>
+        <meta property="article:published_time" content="2018-03-12" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="debian" />
+            <meta property="article:tag" content="stretch" />
+            <meta property="article:tag" content="gateway" />
+            <meta property="article:tag" content="iptables" />
+            <meta property="article:tag" content="dnsmasq" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,6 +44,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -78,11 +90,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.ml/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
-        <li class="active">release</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.ml/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Un gateway con Debian, iptables y dnsmasq</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -95,13 +107,201 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html">Separando el build y el runtime con contenedores Docker</a></h2>
-                <div class="summary"><p>Cuando montamos un contenedor <strong>Docker</strong> para servir una aplicación cualquiera, solemos poner un montón de dependencias necesarias solamente para compilar el paquete o para empaquetar sus librerías. Esto supone un gasto innecesario en espacio y en tiempo de ejecución; usando contenedores desechables podemos agilizar este proceso de forma altamente considerable …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html">Seguir leyendo</a>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.ml/2018/03/un-gateway-con-debian-iptables-y-dnsmasq.html"
+                       rel="bookmark"
+                       title="Permalink to Un gateway con Debian, iptables y dnsmasq">
+                        Un gateway con Debian, iptables y dnsmasq
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2018-03-12T10:00:00+01:00"> 2018-03-12</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 6 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.ml/category/sistemas.html">Sistemas</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.ml/tag/linux.html">linux</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/debian.html">debian</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/stretch.html">stretch</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/gateway.html">gateway</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/iptables.html">iptables</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/dnsmasq.html">dnsmasq</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 </div>
-            </article>
-            <hr/>
+                <p>En algunas ocasiones no nos basta con tener un servidor único. Queremos tener un conjunto de servidores que se comuniquen abiertamente entre ellos usando una red privada, pero solo queremos exponer al mundo una sola dirección IP. El resto de servidores necesitan acceso a internet a través de un representante.</p>
+<p>Este representante, llamando <em>gateway</em>, es un servidor con una interfaz en la red privada y una en la red pública, de forma que los paquetes de red puedan fluir desde cualquier servidor hasta internet a través de este representante.</p>
+<p>De forma obligatoria, un <em>gateway</em> solo necesita hacer dos cosas:</p>
+<ul>
+<li>Permitir el reenvío (o <em>forward</em>) de paquetes a través del servidor <em>gateway</em>.</li>
+<li>Enmascarar la dirección de origen mediante NAT para que los paquetes sepan como volver desde internet.</li>
+</ul>
+<p>Idealmente, suelen hacer otras funciones y ofrecer servicios a sus servidores protegidos, como por ejemplo:</p>
+<ul>
+<li>Funciones de <em>firewall</em> para proteger de accesos no autorizados contra la red protegida.</li>
+<li>Servidor DHCP para asignar direcciones IP a los servidores de la red interna.</li>
+<li>Servidor DNS para que los servidores de la red interna se conozcan entre ellos.</li>
+</ul>
+<p>Las 3 primeras funciones quedan fácilmente cubiertas en el mismo <em>kernel</em> de un sistema <em>linux</em>; los servidores DHCP y DNS se pueden añadir fácilmente con un servicio adicional llamado <strong>dnsmasq</strong>.</p>
+<h2>El servidor base</h2>
+<p>Partimos de un servidor <strong>Debian stretch</strong> con dos direcciones asignadas, una en cada red.</p>
+<ul>
+<li><strong>enp0s3</strong>: La interfaz que da al exterior, configurada como nos sea conveniente.</li>
+<li><strong>enp0s8</strong>: Esta es la interfaz que da a la red interna, con una dirección IP estática (en este caso 10.0.0.1/24).</li>
+</ul>
+<p><strong>NOTA</strong>: Vamos a retrasar la aplicación de todas las configuraciones hasta el final, momento en el que reiniciaremos el servidor.</p>
+<h2>Las funciones básicas: forward, masquerade y firewall</h2>
+<p>El primer paso es permitir el paso de paquetes de red a través de nuestro <em>gateway</em>. Ello se consigue configurando los parámetros del sistema.</p>
+<div class="highlight"><pre><span></span>root@gateway:~# tail -1 /etc/sysctl.conf
+net.ipv4.ip_forward <span class="o">=</span> <span class="m">1</span>
+root@gateway:~#
+</pre></div>
+
+
+<p>El resto se consigue mediante el módulo del <em>kernel</em> llamado <em>netfilter</em>. La herramienta que modifican <em>netfilter</em> se llama <strong>iptables</strong>, y por comodidad, vamos a utilizar el paquete <strong>iptables-persistent</strong>.</p>
+<div class="highlight"><pre><span></span>root@gateway:~# apt-get install iptables-persistent
+...
+root@gateway:~#
+</pre></div>
+
+
+<p>Ahora nos falta crear el fichero de reglas que será cargado en cada reinicio:</p>
+<div class="highlight"><pre><span></span>root@gateway:~# cat /etc/iptables/rules.v4
+*nat
+-A POSTROUTING -o enp0s3 -j MASQUERADE
+COMMIT
+
+*filter
+-A INPUT -i lo -j ACCEPT
+-A INPUT -i enp0s3 -p tcp -m tcp --dport <span class="m">22</span> -j ACCEPT
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -i enp0s3 -j DROP
+COMMIT
+root@gateway:~#
+</pre></div>
+
+
+<p>La regla de la tabla <em>nat</em> es la que enmascara la dirección origen y pone la de salida del <em>gateway</em>, para que los paquetes sepan volver.</p>
+<p>El resto de reglas en la tabla de <em>filter</em> hacen la función de un <em>firewall</em> básico, que acepta conexiones que vengan del mismo servidor, las conexiones SSH, las conexiones que ya estén establecidas o estén pasando a través y descarta todo el resto.</p>
+<p><strong>NOTA</strong>: Ahora solo haría falta reiniciar el servidor, pero lo retrasamos para instalar el resto de servicios.</p>
+<h2>Algunos servicios útiles: DHCP y DNS</h2>
+<p>Todos los servicios que queramos ofrecer en la red interna se hacen igual: instalar el paquete que lo proporciona y configurarlo. En este caso, el paquete <strong>dnsmasq</strong> ofrece ambos servicios.</p>
+<div class="highlight"><pre><span></span>root@gateway:~# apt-get install dnsmasq
+...
+root@gateway:~#
+</pre></div>
+
+
+<p>La configuración del servicio se hace en el fichero <em>/etc/dnsmasq.conf</em>. Sin embargo es un fichero muy largo; vamos a beneficiarnos de la carpeta <em>/etc/dnsmasq.d/</em> para añadir nuestras configuraciones. Lo hago en dos ficheros, de forma que tengamos la configuración organizada en dos ficheros, en función de la frecuencia de modificación.</p>
+<div class="highlight"><pre><span></span>root@gateway:~# cat /etc/dnsmasq.d/00-base
+<span class="nv">interface</span><span class="o">=</span>enp0s8
+dhcp-range<span class="o">=</span><span class="m">10</span>.0.0.200,10.0.0.250,1h
+root@gateway:~# cat /etc/dnsmasq.d/01-hosts
+<span class="c1">#dhcp-host=server,10.0.0.2,1h</span>
+root@gateway:~#
+</pre></div>
+
+
+<p>De esta forma, cuando queramos añadir un nuevo servidor en la red interna con dirección fija, podemos configurarlo para usar DHCP, poner una nueva línea en el fichero <em>/etc/dnsmasq.d/01-hosts</em> similar a la de comentada de arriba, y reinicar el servicio <strong>dnsmasq</strong>.</p>
+<p>Como <em>bonus</em>, el servidor <em>gateway</em> va a poder resolver por DNS el nombre declarado por el servidor protegido, al que ya dio dirección por DHCP. Para que los servidores de la red interna puedan resolver por nombre la máquina <em>gateway</em>, solo necesitamos añadir esa relación en el fichero <em>/etc/hosts</em> del <em>gateway</em>:</p>
+<div class="highlight"><pre><span></span>root@gateway:~# grep gateway /etc/hosts
+<span class="m">10</span>.0.0.1        gateway
+root@gateway:~#
+</pre></div>
+
+
+<p>Es importante que nuestro servidor <em>gateway</em> utilice <em>localhost</em> como primer DNS, de forma que se beneficie de las funciones <em>DNS cache</em> y pueda resolver los servidores de la red interna por su nombre. Esto se hace poniendo <em>127.0.0.1</em> en el fichero <em>/etc/resolv.conf</em>.</p>
+<p><strong>TRUCO</strong>: Como configuré la interfaz principal por DHCP y el fichero <em>/etc/resolv.conf</em> se sobreescribe de forma automática, podemos instruir el cliente DHCP para que lo incluya antes de los que reciba por DHCP.</p>
+<div class="highlight"><pre><span></span>root@gateway:~# tail -1 /etc/dhcp/dhclient.conf
+prepend domain-name-servers <span class="m">127</span>.0.0.1<span class="p">;</span>
+root@gateway:~#
+</pre></div>
+
+
+<h2>Aplicar los cambios</h2>
+<p>En este punto podemos reiniciar el servidor, para que apliquen todos los cambios.</p>
+<div class="highlight"><pre><span></span>root@gateway:~# reboot
+...
+</pre></div>
+
+
+<h2>Añadir un servidor en la red interna</h2>
+<p>Un servidor que se quiera unir a la red puede hacerlo con una dirección estática, pero es mas fácil hacerlo por DHCP; basta con tenerlo configurado para usar DHCP.</p>
+<p><strong>TRUCO</strong>: Si clonamos una máquina virtual, es necesario asegurarse que la dirección MAC de la interfaz cambia, ya que la relación entre el servidor y su IP se guarda usando la dirección MAC, y por lo tanto, no deben haber dos iguales.</p>
+<p><strong>TRUCO</strong>: Podemos eliminar la relación <em>localhost</em> del servidor con su nombre en <em>/etc/hosts</em>; <strong>dnsmasq</strong> resuelve eso por nosotros y para otros servidores de la red.</p>
+<p>Si queremos que tenga una dirección fija, se puede hacer fácilmente. Necesitamos configurar el servidor DHCP para que asigne una IP concreta basándonos en el nombre del servidor, y recargar este servicio.</p>
+<div class="highlight"><pre><span></span>root@gateway:~# cat /etc/dnsmasq.d/01-hosts
+dhcp-host<span class="o">=</span>database,10.0.0.5,1h
+root@gateway:~# service dnsmasq restart
+root@gateway:~#
+</pre></div>
+
+
+<p>Solo faltará darle un nombre al servidor candidato en en <em>/etc/hostname</em> y reiniciarlo. Tanto la dirección IP, el <em>gateway</em> por defecto y el servidor DNS se cargan en la resolución DHCP.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.ml/2016/02/un-proxy-dns-con-dnsmasq.html">Un proxy DNS con dnsmasq</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2017/07/montando-un-servidor-docker-con-debian-stretch.html">Montando un servidor docker con Debian Stretch</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2016/02/restringiendo-accesos-web-mediante-autenticacion-basica.html">Restringiendo accesos web mediante autenticación básica</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'un-gateway-con-debian-iptables-y-dnsmasq';
+                var disqus_url = 'http://www.linuxsysadmin.ml/2018/03/un-gateway-con-debian-iptables-y-dnsmasq.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
 
         </div>
         <div class="col-sm-3" id="sidebar">
@@ -678,7 +878,7 @@ Linux Sysadmin            </a>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2016 Gerard
+         <div class="col-xs-10">&copy; 2018 Gerard
             &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
