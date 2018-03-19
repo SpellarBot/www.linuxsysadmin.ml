@@ -5,42 +5,49 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/</loc>
-<lastmod>2018-03-12T08:47:31-00:00</lastmod>
+<lastmod>2018-03-19T09:16:49-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2018-03-12T08:47:31-00:00</lastmod>
+<lastmod>2018-03-19T09:16:49-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2018-03-12T08:47:31-00:00</lastmod>
+<lastmod>2018-03-19T09:16:49-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2018-03-12T08:47:31-00:00</lastmod>
+<lastmod>2018-03-19T09:16:49-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2018-03-12T08:47:31-00:00</lastmod>
+<lastmod>2018-03-19T09:16:49-00:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/curriculum.html</loc>
-<lastmod>2018-03-12T08:47:31-00:00</lastmod>
+<lastmod>2018-03-19T09:16:49-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/2018/03/los-sidekick-containers-en-docker.html</loc>
+<lastmod>2018-03-19T10:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -964,7 +971,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/category/sistemas.html</loc>
-<lastmod>2018-03-12T10:00:00-00:15</lastmod>
+<lastmod>2018-03-19T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1243,8 +1250,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/ssh.html</loc>
-<lastmod>2018-02-12T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/socks.html</loc>
+<lastmod>2017-07-31T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1495,8 +1502,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/socks.html</loc>
-<lastmod>2017-07-31T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/rsync.html</loc>
+<lastmod>2017-03-27T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2419,13 +2426,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/rsync.html</loc>
-<lastmod>2017-03-27T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
 <loc>http://www.linuxsysadmin.ml/tag/microservicios.html</loc>
 <lastmod>2016-10-24T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -2503,6 +2503,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.ml/tag/sidekick.html</loc>
+<lastmod>2018-03-19T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.ml/tag/sftp.html</loc>
 <lastmod>2017-04-03T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -2560,14 +2567,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/docker.html</loc>
-<lastmod>2018-03-05T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>http://www.linuxsysadmin.ml/tag/nikto.html</loc>
-<lastmod>2017-04-10T10:00:00-00:15</lastmod>
+<lastmod>2018-03-19T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2580,8 +2580,22 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.ml/tag/nikto.html</loc>
+<lastmod>2017-04-10T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/tag/ssh.html</loc>
+<lastmod>2018-02-12T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2018-03-12T10:00:00-00:15</lastmod>
+<lastmod>2018-03-19T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

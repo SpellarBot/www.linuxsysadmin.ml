@@ -1,5 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-03-12T10:00:00+01:00</updated><entry><title>Un gateway con Debian, iptables y dnsmasq</title><link href="http://www.linuxsysadmin.ml/2018/03/un-gateway-con-debian-iptables-y-dnsmasq.html" rel="alternate"></link><published>2018-03-12T10:00:00+01:00</published><updated>2018-03-12T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-03-12:/2018/03/un-gateway-con-debian-iptables-y-dnsmasq.html</id><summary type="html">&lt;p&gt;En algunas ocasiones no nos basta con tener un servidor único. Queremos tener un conjunto de servidores que se comuniquen abiertamente entre ellos usando una red privada, pero solo queremos exponer al mundo una sola dirección IP. El resto de servidores necesitan acceso a internet a través de un representante …&lt;/p&gt;</summary><content type="html">&lt;p&gt;En algunas ocasiones no nos basta con tener un servidor único. Queremos tener un conjunto de servidores que se comuniquen abiertamente entre ellos usando una red privada, pero solo queremos exponer al mundo una sola dirección IP. El resto de servidores necesitan acceso a internet a través de un representante.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-03-19T10:00:00+01:00</updated><entry><title>Los sidekick containers en Docker</title><link href="http://www.linuxsysadmin.ml/2018/03/los-sidekick-containers-en-docker.html" rel="alternate"></link><published>2018-03-19T10:00:00+01:00</published><updated>2018-03-19T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-03-19:/2018/03/los-sidekick-containers-en-docker.html</id><summary type="html">&lt;p&gt;Algunas veces nos hemos encontrado que necesitamos ejecutar dos procesos o más para un servicio, aunque uno de ellos es el servicio principal y el otro se limita a ayudar al otro de alguna manera. Mejor que ponerlos en el mismo contenedor, podemos limitarnos a usar el patrón &lt;em&gt;sidekick containers …&lt;/em&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Algunas veces nos hemos encontrado que necesitamos ejecutar dos procesos o más para un servicio, aunque uno de ellos es el servicio principal y el otro se limita a ayudar al otro de alguna manera. Mejor que ponerlos en el mismo contenedor, podemos limitarnos a usar el patrón &lt;em&gt;sidekick containers&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;En vez de utilizar un gestor de procesos para levantar ambas funciones, lo que añade complejidad a la imagen global, podemos utilizar dos contenedores que se comuniquen mediante volúmenes.&lt;/p&gt;
+&lt;p&gt;En estos casos, debemos ver ambos contenedores como un &lt;em&gt;pack&lt;/em&gt; indivisible, que deben ser desplegados en el mismo servidor, y se escalan a la vez. Para asegurar ese despliegue condicionado, cada orquestador tiene su método, como por ejemplo, los &lt;strong&gt;pods&lt;/strong&gt; de &lt;strong&gt;kubernetes&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Llamaremos al contenedor inicial como &lt;em&gt;principal&lt;/em&gt; y el resto, de apoyo, son los &lt;em&gt;sidekick&lt;/em&gt; containers. Las funciones de estos últimos son muy variopintas; por nombrar algunas, podemos decir:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Envío de logs a un servidor centralizado&lt;/li&gt;
+&lt;li&gt;Hacer backups de la base de datos del contenedor principal&lt;/li&gt;
+&lt;li&gt;Actualizar contenido para otro servicio de forma automática&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Con un poco de imaginación se os ocurrirán muchas más.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo: un servidor web con contenido en git&lt;/h2&gt;
+&lt;p&gt;Tenemos un servidor web que sirve un contenido concreto. Tal como escalamos, necesitamos más copias del mismo y hay que sincronizarlo. Podríamos poner el contenido en la imagen, pero al cambiar este, habría que hacer un redespliegue masivo&lt;/p&gt;
+&lt;p&gt;Entonces podemos utilizar el patrón &lt;em&gt;sidekick&lt;/em&gt; containers para hacer lo siguiente:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Un contenedor principal con el servidor web que elijamos, sirviendo desde un volumen.&lt;/li&gt;
+&lt;li&gt;Un contenedor &lt;em&gt;sidekick&lt;/em&gt; que exporta el volumen del contenedor principal y lo va actualizando.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;De esta forma, no importa cuantas replicas tengamos de este par, ni tampoco si cambia el contenido de la fuente; cada &lt;em&gt;sidekick&lt;/em&gt; se dedicará mantener actualizado el contenido de su contenedor principal, por supesto sin intervención manual.&lt;/p&gt;
+&lt;p&gt;Hay muchas formas de sincronizar el contenido desde una fuente, pero por decisión de diseño, vamos a suponer que tenemos la fuente en un repositori &lt;strong&gt;git&lt;/strong&gt;, que gestiona las copias incrementales y nos aligera la transferencia.&lt;/p&gt;
+&lt;h3&gt;El servidor web&lt;/h3&gt;
+&lt;p&gt;Se trata de un servidor web normal y corriente, sirviendo un &lt;em&gt;document root&lt;/em&gt; cualquiera. Para agilizar, voy a utilizar una imagen prefabricada de &lt;strong&gt;nginx&lt;/strong&gt;, con una configuración para servir &lt;em&gt;/srv/www/&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/sidekick$ cat web/Dockerfile
+FROM sirrtea/nginx:alpine
+COPY web.conf /etc/nginx/conf.d/
+gerard@atlantis:~/projects/sidekick$ cat web/web.conf
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    server_name _&lt;span class="p"&gt;;&lt;/span&gt;
+    listen &lt;span class="m"&gt;80&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    root /srv/www&lt;span class="p"&gt;;&lt;/span&gt;
+    index index.html&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@atlantis:~/projects/sidekick$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a construir la imagen con los comandos habituales, y le vamos a poner el &lt;em&gt;tag&lt;/em&gt; &lt;strong&gt;web&lt;/strong&gt;, para usar en el resto del artículo.&lt;/p&gt;
+&lt;h3&gt;El clonador de git&lt;/h3&gt;
+&lt;p&gt;Básicamente se trata de un contenedor que ejecute periodicamente un &lt;code&gt;git pull&lt;/code&gt;, o un &lt;code&gt;git clone&lt;/code&gt; si la carpeta estaba vacía. Para poder reutilizar la imagen, voy a parametrizar el repositorio a usar, la carpeta en donde clonarlo y el tiempo de espera entre actualizaciones.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/sidekick$ cat updater/Dockerfile
+FROM alpine:3.7
+RUN apk add --no-cache git
+COPY run.sh /
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/run.sh&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@atlantis:~/projects/sidekick$ cat updater/run.sh
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class="nb"&gt;cd&lt;/span&gt; &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;DESTINATION&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
+&lt;span class="k"&gt;while&lt;/span&gt; true&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; -e .git &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+        git pull
+    &lt;span class="k"&gt;else&lt;/span&gt;
+        git clone &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;REPOSITORY&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; .
+    &lt;span class="k"&gt;fi&lt;/span&gt;
+    sleep &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;DELAY&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
+&lt;span class="k"&gt;done&lt;/span&gt;
+gerard@atlantis:~/projects/sidekick$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Construiremos la imagen como siempre y vamos a ponerle el &lt;em&gt;tag&lt;/em&gt; &lt;strong&gt;updater&lt;/strong&gt;, para referencia del resto del artículo.&lt;/p&gt;
+&lt;h3&gt;Juntando los contenedores&lt;/h3&gt;
+&lt;p&gt;La idea es que el contenedor tipo &lt;strong&gt;web&lt;/strong&gt; sirva la carpeta &lt;em&gt;/srv/www/&lt;/em&gt;, que es un volumen. El contenedor tipo &lt;strong&gt;updater&lt;/strong&gt; va a exportar el volumen, y va a actualizar la carpeta del mismo, para que las peticiones al contenedor &lt;strong&gt;web&lt;/strong&gt; se encuentren con el contenido actalizado periodicamente.&lt;/p&gt;
+&lt;p&gt;Vamos a utilizar &lt;strong&gt;docker-compose&lt;/strong&gt; para agilizar el levantamiento de ambos contenedores:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/sidekick$ cat docker-compose.yml
+version: &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;
+services:
+  web:
+    image: web
+    volumes:
+      - /srv/www
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;8080:80&amp;quot;&lt;/span&gt;
+  web_sidekick:
+    image: updater
+    environment:
+      DESTINATION: /srv/www
+      REPOSITORY: https://github.com/Sirtea/sidekick-example.git
+      DELAY: &lt;span class="m"&gt;60&lt;/span&gt;
+    volumes_from:
+      - web
+gerard@atlantis:~/projects/sidekick$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso configuramos el contenedor &lt;strong&gt;web_sidekick&lt;/strong&gt; para clonar el repositorio &lt;code&gt;sidekick-example.git&lt;/code&gt;, en la carpeta &lt;code&gt;/srv/www&lt;/code&gt; y actualizarlo cada minuto.&lt;/p&gt;
+&lt;p&gt;El truco reside en los volúmenes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;web&lt;/strong&gt; sirve la carpeta &lt;code&gt;/srv/www&lt;/code&gt;, que es un volumen&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;web_sidekick&lt;/strong&gt; hace dos cosas:&lt;ul&gt;
+&lt;li&gt;Exporta los volúmenes de &lt;strong&gt;web&lt;/strong&gt;, de forma que la carpeta &lt;code&gt;/srv/www&lt;/code&gt; es la misma que sirve &lt;strong&gt;web&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Actualiza el contenido de la carpeta &lt;code&gt;/srv/www&lt;/code&gt; con lo que tengamos en el repositorio de &lt;strong&gt;git&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Y de esta forma, el contenedor &lt;strong&gt;web&lt;/strong&gt; sirve un contenido que va a ir cambiando tal como el desarrollador haga los correspondientes &lt;em&gt;commits&lt;/em&gt; en el repositorio.&lt;/p&gt;
+&lt;h2&gt;Escalando el servicio&lt;/h2&gt;
+&lt;p&gt;Si queremos poner más servidores web, la ecuación es simple: un contenedor &lt;em&gt;sidekick&lt;/em&gt; por cada contenedor principal.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Cada servidor web tiene un volumen&lt;/li&gt;
+&lt;li&gt;Hace falta un contenedor &lt;em&gt;sidekick&lt;/em&gt; para actualizar un volumen&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Eso convierte el contenedor principal y el contenedor &lt;em&gt;sidekick&lt;/em&gt; en un par indivisible, que actuan juntos en una relacion de simbiosis. En caso de que lo hagamos mal y no haya contenedor &lt;em&gt;sidekick&lt;/em&gt; para algún contenedor web, su contenido no se actualizaría y obtendríamos un error 404 en las páginas de ese servidor.&lt;/p&gt;</content><category term="docker"></category><category term="sidekick"></category></entry><entry><title>Un gateway con Debian, iptables y dnsmasq</title><link href="http://www.linuxsysadmin.ml/2018/03/un-gateway-con-debian-iptables-y-dnsmasq.html" rel="alternate"></link><published>2018-03-12T10:00:00+01:00</published><updated>2018-03-12T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-03-12:/2018/03/un-gateway-con-debian-iptables-y-dnsmasq.html</id><summary type="html">&lt;p&gt;En algunas ocasiones no nos basta con tener un servidor único. Queremos tener un conjunto de servidores que se comuniquen abiertamente entre ellos usando una red privada, pero solo queremos exponer al mundo una sola dirección IP. El resto de servidores necesitan acceso a internet a través de un representante …&lt;/p&gt;</summary><content type="html">&lt;p&gt;En algunas ocasiones no nos basta con tener un servidor único. Queremos tener un conjunto de servidores que se comuniquen abiertamente entre ellos usando una red privada, pero solo queremos exponer al mundo una sola dirección IP. El resto de servidores necesitan acceso a internet a través de un representante.&lt;/p&gt;
 &lt;p&gt;Este representante, llamando &lt;em&gt;gateway&lt;/em&gt;, es un servidor con una interfaz en la red privada y una en la red pública, de forma que los paquetes de red puedan fluir desde cualquier servidor hasta internet a través de este representante.&lt;/p&gt;
 &lt;p&gt;De forma obligatoria, un &lt;em&gt;gateway&lt;/em&gt; solo necesita hacer dos cosas:&lt;/p&gt;
 &lt;ul&gt;
