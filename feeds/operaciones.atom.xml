@@ -1,5 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-02-26T10:00:00+01:00</updated><entry><title>Configurando servidores con first time boot scripts</title><link href="http://www.linuxsysadmin.ml/2018/02/configurando-servidores-con-first-time-boot-scripts.html" rel="alternate"></link><published>2018-02-26T10:00:00+01:00</published><updated>2018-02-26T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-02-26:/2018/02/configurando-servidores-con-first-time-boot-scripts.html</id><summary type="html">&lt;p&gt;Configurar servidores desde cero es una tarea muy pesada, una fuente de errores innecesaria y hace nuestros servidores difícilmente reproducibles. Los &lt;em&gt;setups&lt;/em&gt; más básicos son siempre los mismos, y podemos configurar nuestros servidores para que ejecuten un &lt;em&gt;script&lt;/em&gt; la primera vez que se (re)inicien, a falta de mejores herramientas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Configurar servidores desde cero es una tarea muy pesada, una fuente de errores innecesaria y hace nuestros servidores difícilmente reproducibles. Los &lt;em&gt;setups&lt;/em&gt; más básicos son siempre los mismos, y podemos configurar nuestros servidores para que ejecuten un &lt;em&gt;script&lt;/em&gt; la primera vez que se (re)inicien, a falta de mejores herramientas.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-04-03T10:00:00+02:00</updated><entry><title>Compartiendo Docker namespaces</title><link href="http://www.linuxsysadmin.ml/2018/04/compartiendo-docker-namespaces.html" rel="alternate"></link><published>2018-04-03T10:00:00+02:00</published><updated>2018-04-03T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-04-03:/2018/04/compartiendo-docker-namespaces.html</id><summary type="html">&lt;p&gt;Como ya sabéis, la tecnología &lt;strong&gt;docker&lt;/strong&gt; me encanta; seguía con mi cruzada para &lt;em&gt;dockerizar&lt;/em&gt; todos mis sistemas, cuando me topé con &lt;a href="http://www.linuxsysadmin.ml/2017/02/alta-disponibilidad-con-keepalived.html"&gt;un artículo antiguo&lt;/a&gt;. En este artículo os contaré los problemas con los que me enfrenté en esta tarea y como los pude superar, explicando lo aprendido en el proceso …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Como ya sabéis, la tecnología &lt;strong&gt;docker&lt;/strong&gt; me encanta; seguía con mi cruzada para &lt;em&gt;dockerizar&lt;/em&gt; todos mis sistemas, cuando me topé con &lt;a href="http://www.linuxsysadmin.ml/2017/02/alta-disponibilidad-con-keepalived.html"&gt;un artículo antiguo&lt;/a&gt;. En este artículo os contaré los problemas con los que me enfrenté en esta tarea y como los pude superar, explicando lo aprendido en el proceso.&lt;/p&gt;
+&lt;p&gt;No soy fan de meter varios procesos en el mismo contenedor, así que quise intentar una aproximación de varios contenedores, uno por proceso, levantados mediante &lt;strong&gt;docker-compose&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;El proceso &lt;em&gt;keepalived&lt;/em&gt; en si mismo no tiene mucha complicación, solo hay que tener en cuenta dos cosas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Al gestionar una IP flotante del &lt;em&gt;host&lt;/em&gt; el contenedor debe estar en su misma red, con la que vamos a necesitar el &lt;em&gt;flag&lt;/em&gt; &lt;code&gt;--net=host&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;El otro asunto peliagudo es que un contenedor no puede manejar la parte de redes por permisos, y por lo tanto debe lanzarse con el &lt;em&gt;flag&lt;/em&gt; &lt;code&gt;--privileged&lt;/code&gt; o con la &lt;em&gt;capability&lt;/em&gt; &lt;code&gt;NET_ADMIN&lt;/code&gt;, que es lo mínimo necesario.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;El problema lo tenemos cuando queremos ejecutar el &lt;em&gt;check&lt;/em&gt; de &lt;em&gt;keepalived&lt;/em&gt; referente al proceso hermano &lt;strong&gt;nginx&lt;/strong&gt; o &lt;strong&gt;haproxy&lt;/strong&gt;. Solamente la idea de tener que hacer un &lt;strong&gt;kill&lt;/strong&gt; a un proceso de otro contenedor era suficiente para desistir, ya que los procesos de un contenedor no se ven con los de otro. &lt;strong&gt;¿O si?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;El truco está en el &lt;em&gt;flag&lt;/em&gt; &lt;code&gt;--pid&lt;/code&gt; que como indica la página de ayuda, gestiona el "PID namespace to use". Esto nos permite ejecutar un contenedor en el espacio de PIDs de otro, de forma que los procesos de ambos contenedores se ven entre sí, aunque solo uno de ellos puede ser el proceso 1 inicial, y la caída de este ocasiona la parada de ambos contenedores.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo práctico: keepalived y haproxy&lt;/h2&gt;
+&lt;p&gt;Vamos a hacer un par de instancias de &lt;strong&gt;keepalived&lt;/strong&gt; en dos &lt;em&gt;hosts&lt;/em&gt; distintos, y cada uno de ellos también va a tener un &lt;strong&gt;haproxy&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3&gt;Las imágenes&lt;/h3&gt;
+&lt;p&gt;La imagen de &lt;strong&gt;keepalived&lt;/strong&gt; no tiene misterios; cualquier sistema operativo con &lt;strong&gt;keepalived&lt;/strong&gt; instalado nos vale. Adicionalmente, lo vamos a iniciar mediante un &lt;em&gt;script&lt;/em&gt; que va a generar la configuración, en base a unas variables de entorno, que nos van a servir para discernir entre las configuraciones del &lt;em&gt;master&lt;/em&gt; y del &lt;em&gt;slave&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/ha-loadbalancer$ cat keepalived/Dockerfile
+FROM alpine:3.7
+RUN apk add --no-cache keepalived
+COPY start.sh /
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/start.sh&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@atlantis:~/projects/ha-loadbalancer$ cat keepalived/start.sh
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&amp;quot;&amp;quot;\&lt;/span&gt;
+&lt;span class="s2"&gt;vrrp_script chk_&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;SERVICE&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; {&lt;/span&gt;
+&lt;span class="s2"&gt;      script \&amp;quot;/bin/busybox killall -0 &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;SERVICE&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;\&amp;quot;&lt;/span&gt;
+&lt;span class="s2"&gt;      interval &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;CHECK_INTERVAL&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&lt;/span&gt;
+&lt;span class="s2"&gt;      weight &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;CHECK_WEIGHT&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&lt;/span&gt;
+&lt;span class="s2"&gt;}&lt;/span&gt;
+
+&lt;span class="s2"&gt;vrrp_instance VI_1 {&lt;/span&gt;
+&lt;span class="s2"&gt;      interface &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;INTERFACE&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&lt;/span&gt;
+&lt;span class="s2"&gt;      state &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;STATE&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&lt;/span&gt;
+&lt;span class="s2"&gt;      virtual_router_id &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;VIRTUAL_ROUTER&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&lt;/span&gt;
+&lt;span class="s2"&gt;      priority &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;PRIORITY&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&lt;/span&gt;
+&lt;span class="s2"&gt;      virtual_ipaddress {&lt;/span&gt;
+&lt;span class="s2"&gt;           &lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;VIP&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&lt;/span&gt;
+&lt;span class="s2"&gt;      }&lt;/span&gt;
+&lt;span class="s2"&gt;      track_script {&lt;/span&gt;
+&lt;span class="s2"&gt;           chk_&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;SERVICE&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&lt;/span&gt;
+&lt;span class="s2"&gt;      }&lt;/span&gt;
+&lt;span class="s2"&gt;}&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt; &amp;gt; /etc/keepalived/keepalived.conf
+
+&lt;span class="nb"&gt;exec&lt;/span&gt; /usr/sbin/keepalived -l -n
+gerard@atlantis:~/projects/ha-loadbalancer$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Construiremos la imagen bajo el &lt;em&gt;tag&lt;/em&gt; &lt;code&gt;sirrtea/keepalived:alpine&lt;/code&gt; para su uso futuro.&lt;/p&gt;
+&lt;p&gt;La imagen de &lt;strong&gt;haproxy&lt;/strong&gt; no es especial, y podemos utilizar cualquiera que ya tengamos, por ejemplo, &lt;a href="https://hub.docker.com/r/sirrtea/haproxy/"&gt;esta&lt;/a&gt;.&lt;/p&gt;
+&lt;h3&gt;Desplegando las imágenes&lt;/h3&gt;
+&lt;p&gt;Por comodidad, vamos a utilizar &lt;strong&gt;docker-compose&lt;/strong&gt; que levante el conjunto de &lt;strong&gt;kepalived&lt;/strong&gt; y &lt;strong&gt;haproxy&lt;/strong&gt;, uno en cada &lt;em&gt;host&lt;/em&gt;. Es importante recalcar que la directiva &lt;code&gt;pid&lt;/code&gt; solo funciona con la versión 2.1 o superior de &lt;strong&gt;docker-compose&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Vamos a levantar el &lt;strong&gt;nginx&lt;/strong&gt; en el &lt;em&gt;namespace&lt;/em&gt; de &lt;strong&gt;keepalived&lt;/strong&gt;. esto se hace así porque &lt;strong&gt;keepalived&lt;/strong&gt; no se va a caer y puede comprobar si el &lt;strong&gt;haproxy&lt;/strong&gt; está corriendo o no. De hacerlo al revés, la caída del &lt;strong&gt;haproxy&lt;/strong&gt; (que sería el PID 1), causaría el fin del contenedor, y la parada de todos los procesos del &lt;em&gt;namespace&lt;/em&gt;, incluyendo &lt;strong&gt;keepalived&lt;/strong&gt;. Esto que haría que el &lt;em&gt;check&lt;/em&gt; del servicio &lt;strong&gt;haproxy&lt;/strong&gt; no sirviera de nada.&lt;/p&gt;
+&lt;h4&gt;El host master&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/ha-loadbalancer$ cat master/docker-compose.yml
+version: &lt;span class="s1"&gt;&amp;#39;2.1&amp;#39;&lt;/span&gt;
+services:
+  keepalived:
+    image: sirrtea/keepalived:alpine
+    container_name: keepalived
+    hostname: keepalived
+    environment:
+      SERVICE: haproxy
+      CHECK_INTERVAL: &lt;span class="m"&gt;2&lt;/span&gt;
+      CHECK_WEIGHT: &lt;span class="m"&gt;2&lt;/span&gt;
+      INTERFACE: enp0s3
+      STATE: MASTER
+      VIRTUAL_ROUTER: &lt;span class="m"&gt;51&lt;/span&gt;
+      PRIORITY: &lt;span class="m"&gt;11&lt;/span&gt;
+      VIP: &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+  haproxy:
+    image: sirrtea/haproxy:alpine
+    container_name: haproxy
+    hostname: haproxy
+    pid: &lt;span class="s2"&gt;&amp;quot;service:keepalived&amp;quot;&lt;/span&gt;
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;80:8080&amp;quot;&lt;/span&gt;
+    depends_on:
+      - keepalived
+gerard@atlantis:~/projects/ha-loadbalancer$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este &lt;em&gt;docker-compose.yml&lt;/em&gt; podemos ver varias cosas interesantes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;En el servicio &lt;em&gt;keepalived&lt;/em&gt;:&lt;ul&gt;
+&lt;li&gt;Unas variables de entorno que solo sirven para generar la configuración de &lt;strong&gt;keepalived&lt;/strong&gt;, tal como se hace en el &lt;em&gt;script&lt;/em&gt; &lt;code&gt;start.sh&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;La directiva &lt;code&gt;network_mode: host&lt;/code&gt; que sirve para que el contenedor use la red del &lt;em&gt;host&lt;/em&gt;, pudiendo manejar sus direcciones IP&lt;/li&gt;
+&lt;li&gt;La directiva &lt;code&gt;cap_add: NET_ADMIN&lt;/code&gt;, que es la &lt;em&gt;capability&lt;/em&gt; mínima y necesaria para que el contenedor pueda modificar las configuraciones de red&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;En el servicio &lt;em&gt;haproxy&lt;/em&gt;:&lt;ul&gt;
+&lt;li&gt;La directiva &lt;code&gt;pid&lt;/code&gt; que nos permite estar en el &lt;em&gt;namespace&lt;/em&gt; de &lt;em&gt;keepalived&lt;/em&gt;, para que sus procesos se vean entre sí&lt;/li&gt;
+&lt;li&gt;La directiva &lt;code&gt;depends_on&lt;/code&gt;, de forma que se tenga que levantar primero &lt;em&gt;keepalived&lt;/em&gt;; de lo contrario, no podríamos estar en su &lt;em&gt;namespace&lt;/em&gt;...&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;El host slave&lt;/h4&gt;
+&lt;p&gt;El truco es el mismo, pero teniendo en cuenta que la configuración de &lt;strong&gt;keepalived&lt;/strong&gt; es un poco distinta. Eso lo conseguimos cambiando las variables de entorno que la genera.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/ha-loadbalancer$ cat slave/docker-compose.yml
+version: &lt;span class="s1"&gt;&amp;#39;2.1&amp;#39;&lt;/span&gt;
+services:
+  keepalived:
+    image: sirrtea/keepalived:alpine
+    container_name: keepalived
+    hostname: keepalived
+    environment:
+      SERVICE: haproxy
+      CHECK_INTERVAL: &lt;span class="m"&gt;2&lt;/span&gt;
+      CHECK_WEIGHT: &lt;span class="m"&gt;2&lt;/span&gt;
+      INTERFACE: enp0s3
+      STATE: BACKUP
+      VIRTUAL_ROUTER: &lt;span class="m"&gt;51&lt;/span&gt;
+      PRIORITY: &lt;span class="m"&gt;10&lt;/span&gt;
+      VIP: &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+  haproxy:
+    image: sirrtea/haproxy:alpine
+    container_name: haproxy
+    hostname: haproxy
+    pid: &lt;span class="s2"&gt;&amp;quot;service:keepalived&amp;quot;&lt;/span&gt;
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;80:8080&amp;quot;&lt;/span&gt;
+    depends_on:
+      - keepalived
+gerard@atlantis:~/projects/ha-loadbalancer$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Los cambios son las variables de entorno &lt;code&gt;STATE&lt;/code&gt; y &lt;code&gt;PRIORITY&lt;/code&gt; en el servicio &lt;em&gt;keepalived&lt;/em&gt;; el resto se mantiene igual.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/ha-loadbalancer$ diff master/docker-compose.yml slave/docker-compose.yml
+12c12
+&amp;lt;       STATE: MASTER
+---
+&amp;gt;       STATE: BACKUP
+14c14
+&amp;lt;       PRIORITY: &lt;span class="m"&gt;11&lt;/span&gt;
+---
+&amp;gt;       PRIORITY: &lt;span class="m"&gt;10&lt;/span&gt;
+gerard@atlantis:~/projects/ha-loadbalancer$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos faltaría desplegar ambos &lt;em&gt;docker-compose.yml&lt;/em&gt; cada uno en un &lt;em&gt;host&lt;/em&gt; distinto y ver que funciona como debe.&lt;/p&gt;</content><category term="docker"></category><category term="namespaces"></category><category term="keepalived"></category><category term="haproxy"></category></entry><entry><title>Configurando servidores con first time boot scripts</title><link href="http://www.linuxsysadmin.ml/2018/02/configurando-servidores-con-first-time-boot-scripts.html" rel="alternate"></link><published>2018-02-26T10:00:00+01:00</published><updated>2018-02-26T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-02-26:/2018/02/configurando-servidores-con-first-time-boot-scripts.html</id><summary type="html">&lt;p&gt;Configurar servidores desde cero es una tarea muy pesada, una fuente de errores innecesaria y hace nuestros servidores difícilmente reproducibles. Los &lt;em&gt;setups&lt;/em&gt; más básicos son siempre los mismos, y podemos configurar nuestros servidores para que ejecuten un &lt;em&gt;script&lt;/em&gt; la primera vez que se (re)inicien, a falta de mejores herramientas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Configurar servidores desde cero es una tarea muy pesada, una fuente de errores innecesaria y hace nuestros servidores difícilmente reproducibles. Los &lt;em&gt;setups&lt;/em&gt; más básicos son siempre los mismos, y podemos configurar nuestros servidores para que ejecuten un &lt;em&gt;script&lt;/em&gt; la primera vez que se (re)inicien, a falta de mejores herramientas.&lt;/p&gt;
 &lt;p&gt;De esta forma, podemos disponer fácilmente de un servidor de un tipo predefinido, especialmente en aquellos &lt;em&gt;hostings&lt;/em&gt; que nos permitan &lt;em&gt;scripts&lt;/em&gt; de inicialización, como por ejemplo, &lt;a href="https://www.vultr.com/?ref=7251515"&gt;Vultr&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;El truco consiste en hacer que nuestro sistema de &lt;em&gt;init&lt;/em&gt; ejecute nuestro &lt;em&gt;script&lt;/em&gt;, solamente en el caso de que no se haya ejecutado ya. Para ello podemos usar el mismo fichero de &lt;em&gt;log&lt;/em&gt; de la ejecución efectuada.&lt;/p&gt;
 &lt;h2&gt;Un ejemplo con systemd&lt;/h2&gt;
