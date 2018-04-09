@@ -1,5 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-03-26T10:00:00+02:00</updated><entry><title>Usando autenticación en MongoDB</title><link href="http://www.linuxsysadmin.ml/2018/03/usando-autenticacion-en-mongodb.html" rel="alternate"></link><published>2018-03-26T10:00:00+02:00</published><updated>2018-03-26T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-03-26:/2018/03/usando-autenticacion-en-mongodb.html</id><summary type="html">&lt;p&gt;Usar autenticación en las bases de datos de nuestros entornos, por muy privados que sean, suele ser una buena idea. Nos sirve para separar los accesos a un servicio compartido y evitar sobreescrituras cuando accidentalmente dos servicios usan la misma base de datos por un error de algún usuario despistado …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Usar autenticación en las bases de datos de nuestros entornos, por muy privados que sean, suele ser una buena idea. Nos sirve para separar los accesos a un servicio compartido y evitar sobreescrituras cuando accidentalmente dos servicios usan la misma base de datos por un error de algún usuario despistado.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-04-09T10:00:00+02:00</updated><entry><title>Alta disponibilidad con Docker Swarm</title><link href="http://www.linuxsysadmin.ml/2018/04/alta-disponibilidad-con-docker-swarm.html" rel="alternate"></link><published>2018-04-09T10:00:00+02:00</published><updated>2018-04-09T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-04-09:/2018/04/alta-disponibilidad-con-docker-swarm.html</id><summary type="html">&lt;p&gt;He visto muchos artículos por internet que hacen maravillas para tener un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;Docker Swarm&lt;/strong&gt; funcional. Puede que en versiones anteriores fuera así, pero cada vez se ha simplificado más el &lt;em&gt;setup&lt;/em&gt; para alinearse con la filosofía de la simplicidad, frente a otras soluciones más completas, pero más complejas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;He visto muchos artículos por internet que hacen maravillas para tener un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;Docker Swarm&lt;/strong&gt; funcional. Puede que en versiones anteriores fuera así, pero cada vez se ha simplificado más el &lt;em&gt;setup&lt;/em&gt; para alinearse con la filosofía de la simplicidad, frente a otras soluciones más completas, pero más complejas.&lt;/p&gt;
+&lt;p&gt;Hoy vamos a mostrar como conseguir alta disponibilidad en un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;docker swarm&lt;/strong&gt;, de forma que si se cae un &lt;em&gt;manager&lt;/em&gt;, otro asume su lugar y reestructura los servicios para continuar cumpliendo las especificaciones indicadas.&lt;/p&gt;
+&lt;p&gt;Para hacerlo, vamos a disponer de 5 máquinas, todas con &lt;strong&gt;Docker&lt;/strong&gt; instalado, siendo irrelevante el sistema operativo, incluso mezclado:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;swarm1&lt;/strong&gt; &amp;rarr; 10.0.0.2 (será un &lt;em&gt;manager&lt;/em&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;swarm2&lt;/strong&gt; &amp;rarr; 10.0.0.3 (será un &lt;em&gt;manager&lt;/em&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;swarm3&lt;/strong&gt; &amp;rarr; 10.0.0.4 (será un &lt;em&gt;manager&lt;/em&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;swarm4&lt;/strong&gt; &amp;rarr; 10.0.0.5 (será un &lt;em&gt;worker&lt;/em&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;swarm5&lt;/strong&gt; &amp;rarr; 10.0.0.6 (será un &lt;em&gt;worker&lt;/em&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Es importante recalcar que el &lt;em&gt;cluster&lt;/em&gt; se rige por un protocolo de &lt;em&gt;gossip&lt;/em&gt; tipo &lt;strong&gt;Raft&lt;/strong&gt;, lo que significa que necesita que más de la mitad de los &lt;em&gt;managers&lt;/em&gt; estén funcionales, con lo que un número impar de ellos es lo ideal; pondremos 3 para este ejemplo.&lt;/p&gt;
+&lt;h2&gt;Creación del cluster&lt;/h2&gt;
+&lt;p&gt;Como todo &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;Docker Swarm&lt;/strong&gt;, empezamos inicializando un solo nodo, que va a ser el &lt;em&gt;manager&lt;/em&gt; y de paso, el &lt;em&gt;leader&lt;/em&gt; (el &lt;em&gt;manager&lt;/em&gt; que manda).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@swarm1:~$ docker swarm init
+Swarm initialized: current node &lt;span class="o"&gt;(&lt;/span&gt;t2x1d9ep99ff5o7ggf0f7dgzh&lt;span class="o"&gt;)&lt;/span&gt; is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-221kzb5ajbg3p9cu7cnxj0zp8fper4dbnzn9ntjkjxrs0mamoz-avftdi8c5t7l4y59zcjq4k6r4 &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2:2377
+
+To add a manager to this swarm, run &lt;span class="s1"&gt;&amp;#39;docker swarm join-token manager&amp;#39;&lt;/span&gt; and follow the instructions.
+
+gerard@swarm1:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos comprobar que ya tenemos un &lt;em&gt;cluster&lt;/em&gt; con un solo nodo, que es &lt;em&gt;manager&lt;/em&gt; y &lt;em&gt;leader&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@swarm1:~$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS
+t2x1d9ep99ff5o7ggf0f7dgzh *   swarm1              Ready               Active              Leader
+gerard@swarm1:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para añadir nodos, solo hace falta hacer un &lt;code&gt;docker swarm join&lt;/code&gt;, y su rol va a depender del &lt;em&gt;token&lt;/em&gt; con el que nos unamos. El comando &lt;code&gt;docker swarm init&lt;/code&gt; ya nos indicó el &lt;em&gt;token&lt;/em&gt; para un &lt;em&gt;worker&lt;/em&gt; y como sacar el &lt;em&gt;token&lt;/em&gt; para un &lt;em&gt;manager&lt;/em&gt;. Saquemos los dos de nuevo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@swarm1:~$ docker swarm join-token manager
+To add a manager to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-221kzb5ajbg3p9cu7cnxj0zp8fper4dbnzn9ntjkjxrs0mamoz-agq9fp4a86ahs8ll7oa2z56j7 &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2:2377
+
+gerard@swarm1:~$ docker swarm join-token worker
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-221kzb5ajbg3p9cu7cnxj0zp8fper4dbnzn9ntjkjxrs0mamoz-avftdi8c5t7l4y59zcjq4k6r4 &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2:2377
+
+gerard@swarm1:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo necesitamos entrar en cada uno de los nodos y lanzar el comando suministrado. En este caso vamos a lanzar el comando para crear un &lt;em&gt;manager&lt;/em&gt; en &lt;strong&gt;swarm2&lt;/strong&gt; y &lt;strong&gt;swarm3&lt;/strong&gt;, mientras que haremos &lt;em&gt;workers&lt;/em&gt; de &lt;strong&gt;swarm4&lt;/strong&gt; y &lt;strong&gt;swarm5&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@swarm2:~$ docker swarm join --token SWMTKN-1-221kzb5ajbg3p9cu7cnxj0zp8fper4dbnzn9ntjkjxrs0mamoz-agq9fp4a86ahs8ll7oa2z56j7 &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2:2377
+This node joined a swarm as a manager.
+gerard@swarm2:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@swarm3:~$ docker swarm join --token SWMTKN-1-221kzb5ajbg3p9cu7cnxj0zp8fper4dbnzn9ntjkjxrs0mamoz-agq9fp4a86ahs8ll7oa2z56j7 &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2:2377
+This node joined a swarm as a manager.
+gerard@swarm3:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@swarm4:~$ docker swarm join --token SWMTKN-1-221kzb5ajbg3p9cu7cnxj0zp8fper4dbnzn9ntjkjxrs0mamoz-avftdi8c5t7l4y59zcjq4k6r4 &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2:2377
+This node joined a swarm as a worker.
+gerard@swarm4:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@swarm5:~$ docker swarm join --token SWMTKN-1-221kzb5ajbg3p9cu7cnxj0zp8fper4dbnzn9ntjkjxrs0mamoz-avftdi8c5t7l4y59zcjq4k6r4 &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2:2377
+This node joined a swarm as a worker.
+gerard@swarm5:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos el &lt;em&gt;cluster&lt;/em&gt; completo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@swarm1:~$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS
+t2x1d9ep99ff5o7ggf0f7dgzh *   swarm1              Ready               Active              Leader
+p8td0udza1chfy3ehb01wkm7p     swarm2              Ready               Active              Reachable
+st9wv2k1fdmocam3dpmnas20c     swarm3              Ready               Active              Reachable
+0t7m80of6t0nwo8zwn7vupwix     swarm4              Ready               Active
+8sl99fhp1hnc3bt620fxdnn6y     swarm5              Ready               Active
+gerard@swarm1:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es importante recalcar que, aunque hay 3 &lt;em&gt;managers&lt;/em&gt;, solo uno es &lt;em&gt;leader&lt;/em&gt;, y es el que lleva la voz cantante del &lt;em&gt;cluster&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Pruebas de alta disponibilidad&lt;/h2&gt;
+&lt;p&gt;Ya vimos en &lt;a href="http://www.linuxsysadmin.ml/2017/11/uso-basico-de-un-cluster-docker-swarm.html"&gt;otro artículo&lt;/a&gt; que en caso de caída de un &lt;em&gt;worker&lt;/em&gt;, el &lt;em&gt;manager&lt;/em&gt; se encarga de recolocar los contenedores para seguir ofreciendo el servicio. Así que nos vamos a limitar a tirar &lt;em&gt;managers&lt;/em&gt;, que es lo que era vulnerable en el &lt;em&gt;cluster&lt;/em&gt; anterior.&lt;/p&gt;
+&lt;p&gt;Empezaremos tirando &lt;strong&gt;swarm1&lt;/strong&gt; que es un &lt;em&gt;manager&lt;/em&gt; y un &lt;em&gt;leader&lt;/em&gt;; esto es lo que queda:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@swarm2:~$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS
+t2x1d9ep99ff5o7ggf0f7dgzh     swarm1              Unknown             Active              Unreachable
+p8td0udza1chfy3ehb01wkm7p *   swarm2              Ready               Active              Reachable
+st9wv2k1fdmocam3dpmnas20c     swarm3              Ready               Active              Leader
+0t7m80of6t0nwo8zwn7vupwix     swarm4              Ready               Active
+8sl99fhp1hnc3bt620fxdnn6y     swarm5              Ready               Active
+gerard@swarm2:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Sin sorpresas, &lt;strong&gt;swarm1&lt;/strong&gt; es dado por &lt;em&gt;unreachable&lt;/em&gt; y no pasa nada, más allá de elegir otro &lt;em&gt;leader&lt;/em&gt; para que siga manteniendo el estado del &lt;em&gt;cluster&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Intentemos ahora quitar otro de los &lt;em&gt;managers&lt;/em&gt;, lo que haría que solo quedara uno:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@swarm3:~$ docker swarm leave
+Error response from daemon: You are attempting to leave the swarm on a node that is participating as a manager. Removing this node leaves &lt;span class="m"&gt;1&lt;/span&gt; managers out of &lt;span class="m"&gt;3&lt;/span&gt;. Without a Raft quorum your swarm will be inaccessible. The only way to restore a swarm that has lost consensus is to reinitialize it with &lt;span class="sb"&gt;`&lt;/span&gt;--force-new-cluster&lt;span class="sb"&gt;`&lt;/span&gt;. Use &lt;span class="sb"&gt;`&lt;/span&gt;--force&lt;span class="sb"&gt;`&lt;/span&gt; to suppress this message.
+gerard@swarm3:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Eso no nos lo deja hacer, ya que entonces no tendríamos &lt;em&gt;quorum&lt;/em&gt; y meteríamos la pata a lo grande. Eso es lo mismo que va a pasar si apagamos el servidor.&lt;/p&gt;
+&lt;p&gt;Para tener &lt;em&gt;quorum&lt;/em&gt; con 3 &lt;em&gt;managers&lt;/em&gt;, necesitamos que &lt;strong&gt;más de la mitad&lt;/strong&gt; estén funcionales; esto nos obliga a mantener más de 1.5 funcionales, dos en este caso. Si hay previsiones de que se caigan o se paren más, habría que tener más &lt;em&gt;managers&lt;/em&gt;, para que la tolerancia a nodos caídos fuera superior.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;1 manager&lt;/strong&gt; &amp;rarr; quorum &amp;gt; 0.5, necesitamos = 1, tolerancia = 0&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;2 managers&lt;/strong&gt; &amp;rarr; quorum &amp;gt; 1, necesitamos = 2, tolerancia = 0&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;3 managers&lt;/strong&gt; &amp;rarr; quorum &amp;gt; 1.5, necesitamos = 2, tolerancia = 1&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;5 managers&lt;/strong&gt; &amp;rarr; quorum &amp;gt; 2.5, necesitamos = 3, tolerancia = 2&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Solo nos queda ver que en caso de recuperación del nodo &lt;strong&gt;swarm1&lt;/strong&gt;, el &lt;em&gt;cluster&lt;/em&gt; lo reconoce y todo vuelve a la normalidad, excepto que no se desbanca al nuevo &lt;em&gt;leader&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@swarm2:~$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS
+t2x1d9ep99ff5o7ggf0f7dgzh     swarm1              Ready               Active              Reachable
+p8td0udza1chfy3ehb01wkm7p *   swarm2              Ready               Active              Reachable
+st9wv2k1fdmocam3dpmnas20c     swarm3              Ready               Active              Leader
+0t7m80of6t0nwo8zwn7vupwix     swarm4              Ready               Active
+8sl99fhp1hnc3bt620fxdnn6y     swarm5              Ready               Active
+gerard@swarm2:~$
+&lt;/pre&gt;&lt;/div&gt;</content><category term="docker"></category><category term="swarm"></category><category term="cluster"></category><category term="alta disponibilidad"></category></entry><entry><title>Usando autenticación en MongoDB</title><link href="http://www.linuxsysadmin.ml/2018/03/usando-autenticacion-en-mongodb.html" rel="alternate"></link><published>2018-03-26T10:00:00+02:00</published><updated>2018-03-26T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-03-26:/2018/03/usando-autenticacion-en-mongodb.html</id><summary type="html">&lt;p&gt;Usar autenticación en las bases de datos de nuestros entornos, por muy privados que sean, suele ser una buena idea. Nos sirve para separar los accesos a un servicio compartido y evitar sobreescrituras cuando accidentalmente dos servicios usan la misma base de datos por un error de algún usuario despistado …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Usar autenticación en las bases de datos de nuestros entornos, por muy privados que sean, suele ser una buena idea. Nos sirve para separar los accesos a un servicio compartido y evitar sobreescrituras cuando accidentalmente dos servicios usan la misma base de datos por un error de algún usuario despistado.&lt;/p&gt;
 &lt;p&gt;No es la primera vez que un &lt;em&gt;cluster&lt;/em&gt; compartido entre varios proyectos acaba con la destrucción de datos accidental; el uso habitual de &lt;em&gt;copy-paste&lt;/em&gt; en nuestros &lt;em&gt;docker-compose.yml&lt;/em&gt; o en otros ficheros de configuración, nos plantea un posible riesgo cuando alguien se olvida de cambiar el nombre de la base de datos.&lt;/p&gt;
 &lt;p&gt;Estos casos son fácilmente evitables si las plantillas contienen unos parámetros de &lt;strong&gt;usuario&lt;/strong&gt; y &lt;strong&gt;password&lt;/strong&gt; no usables, y solamente la correcta combinación de ambos con la base de datos dan acceso a los datos. De esta forma, las diferentes bases de datos serian accesibles por diferentes usuarios y haría falta conocer todos los datos de acceso para usar la base de datos de otra aplicación.&lt;/p&gt;
 &lt;h2&gt;Preparación&lt;/h2&gt;
