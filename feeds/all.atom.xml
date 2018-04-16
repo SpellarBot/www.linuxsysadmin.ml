@@ -1,5 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-04-09T10:00:00+02:00</updated><entry><title>Alta disponibilidad con Docker Swarm</title><link href="http://www.linuxsysadmin.ml/2018/04/alta-disponibilidad-con-docker-swarm.html" rel="alternate"></link><published>2018-04-09T10:00:00+02:00</published><updated>2018-04-09T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-04-09:/2018/04/alta-disponibilidad-con-docker-swarm.html</id><summary type="html">&lt;p&gt;He visto muchos artículos por internet que hacen maravillas para tener un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;Docker Swarm&lt;/strong&gt; funcional. Puede que en versiones anteriores fuera así, pero cada vez se ha simplificado más el &lt;em&gt;setup&lt;/em&gt; para alinearse con la filosofía de la simplicidad, frente a otras soluciones más completas, pero más complejas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;He visto muchos artículos por internet que hacen maravillas para tener un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;Docker Swarm&lt;/strong&gt; funcional. Puede que en versiones anteriores fuera así, pero cada vez se ha simplificado más el &lt;em&gt;setup&lt;/em&gt; para alinearse con la filosofía de la simplicidad, frente a otras soluciones más completas, pero más complejas.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-04-16T10:00:00+02:00</updated><entry><title>Controlando Docker desde un contenedor</title><link href="http://www.linuxsysadmin.ml/2018/04/controlando-docker-desde-un-contenedor.html" rel="alternate"></link><published>2018-04-16T10:00:00+02:00</published><updated>2018-04-16T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-04-16:/2018/04/controlando-docker-desde-un-contenedor.html</id><summary type="html">&lt;p&gt;Curioso de ver como mucho contenedores eran capaces de ver el contenido &lt;strong&gt;Docker&lt;/strong&gt; de mi servidor, he decidido aprender como se hace, por si me hiciera falta en un futuro. En este artículo intento explicar las lecciones aprendidas, de forma que sean una futura referencia en caso de ser necesario …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Curioso de ver como mucho contenedores eran capaces de ver el contenido &lt;strong&gt;Docker&lt;/strong&gt; de mi servidor, he decidido aprender como se hace, por si me hiciera falta en un futuro. En este artículo intento explicar las lecciones aprendidas, de forma que sean una futura referencia en caso de ser necesario.&lt;/p&gt;
+&lt;p&gt;El primer paso para conseguir mi objetivo era tener el binario &lt;code&gt;docker&lt;/code&gt; en un contenedor. Una opción es copiarlo de mi servidor, junto con todas las dependencias; una opción más cuerda es aprovecharme de los paquetes existentes para ello.&lt;/p&gt;
+&lt;p&gt;Así pues, vamos a partir de un &lt;em&gt;Alpine Linux&lt;/em&gt;, que por su tamaño, su seguridad y su magnífico gestor de paquetes, se hace el candidato ideal:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/docker-client$ cat Dockerfile
+FROM alpine:3.7
+RUN apk add --no-cache docker &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm /usr/bin/docker-proxy &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm /usr/bin/docker-containerd-shim &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm /usr/bin/docker-runc &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm /usr/bin/docker-containerd-ctr &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm /usr/bin/docker-containerd &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm /usr/bin/dockerd
+gerard@atlantis:~/projects/docker-client$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: El paquete &lt;em&gt;docker&lt;/em&gt; en &lt;em&gt;Alpine Linux&lt;/em&gt; ocupa mucho espacio. Esto es debido a que incluye todos los binarios necesarios para ejecutar también el servidor. Como no nos interesa el servidor en un contenedor, los he eliminado.&lt;/p&gt;
+&lt;p&gt;Lo construímos para llegar a una imagen adecuada, que vamos a etiquetar &lt;em&gt;docker-client&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/docker-client$ docker build -t docker-client .
+Sending build context to Docker daemon  &lt;span class="m"&gt;2&lt;/span&gt;.048kB
+...
+Successfully built 583d47952c7a
+Successfully tagged docker-client:latest
+gerard@atlantis:~/projects/docker-client$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+docker-client       latest              583d47952c7a        &lt;span class="m"&gt;7&lt;/span&gt; seconds ago       &lt;span class="m"&gt;30&lt;/span&gt;.2MB
+alpine              &lt;span class="m"&gt;3&lt;/span&gt;.7                 3fd9065eaf02        &lt;span class="m"&gt;4&lt;/span&gt; weeks ago         &lt;span class="m"&gt;4&lt;/span&gt;.15MB
+gerard@atlantis:~/projects/docker-client$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La ejecución de un contenedor desde la nueva imagen nos permite usar el comando &lt;code&gt;docker&lt;/code&gt;, aunque los resultados no son los esperados.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/docker-client$ docker run -ti --rm docker-client
+/ &lt;span class="c1"&gt;# docker images&lt;/span&gt;
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+/ &lt;span class="c1"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esto es debido a que el cliente de &lt;strong&gt;Docker&lt;/strong&gt; se comunica con el servidor mediante un &lt;em&gt;unix socket&lt;/em&gt; que, al no tener el servicio corriendo, no está creado.&lt;/p&gt;
+&lt;p&gt;Como sabemos, &lt;strong&gt;absolutamente todo&lt;/strong&gt; en &lt;em&gt;Linux&lt;/em&gt; es un fichero, y podemos montar ficheros desde el servidor como &lt;em&gt;host volumes&lt;/em&gt;. Por ejemplo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/docker-client$ docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock docker-client
+/ &lt;span class="c1"&gt;# docker images&lt;/span&gt;
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+docker-client       latest              583d47952c7a        &lt;span class="m"&gt;5&lt;/span&gt; minutes ago       &lt;span class="m"&gt;30&lt;/span&gt;.2MB
+alpine              &lt;span class="m"&gt;3&lt;/span&gt;.7                 3fd9065eaf02        &lt;span class="m"&gt;4&lt;/span&gt; weeks ago         &lt;span class="m"&gt;4&lt;/span&gt;.15MB
+/ &lt;span class="c1"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El resultado es que vemos el contenido del servidor &lt;strong&gt;Docker&lt;/strong&gt; del &lt;em&gt;host&lt;/em&gt;, justo como queríamos. Cabe decir que no solo podemos listar las imágenes del &lt;em&gt;host&lt;/em&gt;, sino que podemos controlar el ciclo de vida de un contenedor (&lt;code&gt;docker run&lt;/code&gt;, &lt;code&gt;docker start&lt;/code&gt;, &lt;code&gt;docker restart&lt;/code&gt;, &lt;code&gt;docker stop&lt;/code&gt;) e incluso ejecutar en ellos cosas (&lt;code&gt;docker exec&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;Esto va a tener muchas aplicaciones prácticas en el futuro, seguro...&lt;/p&gt;</content><category term="docker"></category><category term="cliente"></category><category term="contenedor"></category></entry><entry><title>Alta disponibilidad con Docker Swarm</title><link href="http://www.linuxsysadmin.ml/2018/04/alta-disponibilidad-con-docker-swarm.html" rel="alternate"></link><published>2018-04-09T10:00:00+02:00</published><updated>2018-04-09T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-04-09:/2018/04/alta-disponibilidad-con-docker-swarm.html</id><summary type="html">&lt;p&gt;He visto muchos artículos por internet que hacen maravillas para tener un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;Docker Swarm&lt;/strong&gt; funcional. Puede que en versiones anteriores fuera así, pero cada vez se ha simplificado más el &lt;em&gt;setup&lt;/em&gt; para alinearse con la filosofía de la simplicidad, frente a otras soluciones más completas, pero más complejas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;He visto muchos artículos por internet que hacen maravillas para tener un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;Docker Swarm&lt;/strong&gt; funcional. Puede que en versiones anteriores fuera así, pero cada vez se ha simplificado más el &lt;em&gt;setup&lt;/em&gt; para alinearse con la filosofía de la simplicidad, frente a otras soluciones más completas, pero más complejas.&lt;/p&gt;
 &lt;p&gt;Hoy vamos a mostrar como conseguir alta disponibilidad en un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;docker swarm&lt;/strong&gt;, de forma que si se cae un &lt;em&gt;manager&lt;/em&gt;, otro asume su lugar y reestructura los servicios para continuar cumpliendo las especificaciones indicadas.&lt;/p&gt;
 &lt;p&gt;Para hacerlo, vamos a disponer de 5 máquinas, todas con &lt;strong&gt;Docker&lt;/strong&gt; instalado, siendo irrelevante el sistema operativo, incluso mezclado:&lt;/p&gt;
 &lt;ul&gt;

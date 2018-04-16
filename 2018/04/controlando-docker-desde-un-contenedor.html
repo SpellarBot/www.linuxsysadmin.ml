@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>python - Linux Sysadmin</title>
+    <title>Controlando Docker desde un contenedor - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,23 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.ml/2018/04/controlando-docker-desde-un-contenedor.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="python" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="docker,cliente,contenedor" />
+        <meta name="description" content="Curioso de ver como mucho contenedores eran capaces de ver el contenido Docker de mi servidor, he decidido aprender como se hace, por si me hiciera falta en un futuro. En este artículo intento explicar las lecciones aprendidas, de forma que sean una futura referencia en caso de ser necesario …" />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.ml"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Controlando Docker desde un contenedor"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.ml/2018/04/controlando-docker-desde-un-contenedor.html"/>
+        <meta property="og:description" content="Curioso de ver como mucho contenedores eran capaces de ver el contenido Docker de mi servidor, he decidido aprender como se hace, por si me hiciera falta en un futuro. En este artículo intento explicar las lecciones aprendidas, de forma que sean una futura referencia en caso de ser necesario …"/>
+        <meta property="article:published_time" content="2018-04-16" />
+            <meta property="article:section" content="Operaciones" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:tag" content="cliente" />
+            <meta property="article:tag" content="contenedor" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,6 +41,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -78,11 +87,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.ml/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
-        <li class="active">python</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.ml/category/operaciones.html" title="Operaciones">Operaciones</a></li>
+                <li class="active">Controlando Docker desde un contenedor</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -95,46 +104,139 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></h2>
-                <div class="summary"><p>El otro día estuve optimizando unos <em>scripts</em> hechos en <em>bash</em> que había hecho otro. Como resultado del lenguaje usado era un caos de comandos, muchos de ellos para limpiar la salida y darle la forma adecuada. Los reescribí en <em>python</em> usando la librería <strong>cx_Oracle</strong>, que compilé en un fichero <em>wheel …</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/04/instalando-ansible-para-gestionar-servidores.html">Instalando ansible para gestionar servidores</a></h2>
-                <div class="summary"><p>Cuando nos encontramos delante de servidores únicos, es bastante fácil su gestión. Sin embargo, cuando tenemos 8 instancias de cada tipo de servidor, las tareas se vuelven lentas y repetitivas. Podemos incluso automatizar la gestión de una sola máquina para hacer su entorno fácilmente reproducible, en vistas a su reconstrucción …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/04/instalando-ansible-para-gestionar-servidores.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/04/compilando-python-desde-cero.html">Compilando python desde cero</a></h2>
-                <div class="summary"><p>Siempre que estoy trabajando en un servidor CentOS o RedHat, veo que las versiones de <em>python</em> que usan son bastante viejas. De hecho, hay una gran mejora de <em>python</em> entre las versiones 2.4, 2.6 y 2.7; así que es frecuente compilar una versión superior para nuestro uso …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/04/compilando-python-desde-cero.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/03/creando-un-entorno-escalable-3.html">Creando un entorno escalable (III)</a></h2>
-                <div class="summary"><p>En el artículo anterior de esta serie montamos el cluster de la base de datos que íbamos a necesitar para las aplicaciones que conformaban este entorno de ejemplo. Ahora que tenemos la base de datos, falta poner los servidores de aplicaciones que sirven nuestras aplicaciones y que usan el cluster …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/03/creando-un-entorno-escalable-3.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.ml/2018/04/controlando-docker-desde-un-contenedor.html"
+                       rel="bookmark"
+                       title="Permalink to Controlando Docker desde un contenedor">
+                        Controlando Docker desde un contenedor
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2018-04-16T10:00:00+02:00"> 2018-04-16</time>
+    </span>
 
-        <ul class="pagination">
-                <li class="prev"><a href="http://www.linuxsysadmin.ml/tag/python2.html">&laquo;</a>
-                </li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/tag/python.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/tag/python2.html">2</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.ml/tag/python3.html">3</a></li>
-                <li class="next disabled"><a href="#">&raquo;</a></li>
-        </ul>
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 3 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.ml/category/operaciones.html">Operaciones</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.ml/tag/docker.html">docker</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/cliente.html">cliente</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/contenedor.html">contenedor</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>Curioso de ver como mucho contenedores eran capaces de ver el contenido <strong>Docker</strong> de mi servidor, he decidido aprender como se hace, por si me hiciera falta en un futuro. En este artículo intento explicar las lecciones aprendidas, de forma que sean una futura referencia en caso de ser necesario.</p>
+<p>El primer paso para conseguir mi objetivo era tener el binario <code>docker</code> en un contenedor. Una opción es copiarlo de mi servidor, junto con todas las dependencias; una opción más cuerda es aprovecharme de los paquetes existentes para ello.</p>
+<p>Así pues, vamos a partir de un <em>Alpine Linux</em>, que por su tamaño, su seguridad y su magnífico gestor de paquetes, se hace el candidato ideal:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/docker-client$ cat Dockerfile
+FROM alpine:3.7
+RUN apk add --no-cache docker <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/docker-proxy <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/docker-containerd-shim <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/docker-runc <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/docker-containerd-ctr <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/docker-containerd <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/dockerd
+gerard@atlantis:~/projects/docker-client$
+</pre></div>
+
+
+<p><strong>TRUCO</strong>: El paquete <em>docker</em> en <em>Alpine Linux</em> ocupa mucho espacio. Esto es debido a que incluye todos los binarios necesarios para ejecutar también el servidor. Como no nos interesa el servidor en un contenedor, los he eliminado.</p>
+<p>Lo construímos para llegar a una imagen adecuada, que vamos a etiquetar <em>docker-client</em>:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/docker-client$ docker build -t docker-client .
+Sending build context to Docker daemon  <span class="m">2</span>.048kB
+...
+Successfully built 583d47952c7a
+Successfully tagged docker-client:latest
+gerard@atlantis:~/projects/docker-client$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+docker-client       latest              583d47952c7a        <span class="m">7</span> seconds ago       <span class="m">30</span>.2MB
+alpine              <span class="m">3</span>.7                 3fd9065eaf02        <span class="m">4</span> weeks ago         <span class="m">4</span>.15MB
+gerard@atlantis:~/projects/docker-client$
+</pre></div>
+
+
+<p>La ejecución de un contenedor desde la nueva imagen nos permite usar el comando <code>docker</code>, aunque los resultados no son los esperados.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/docker-client$ docker run -ti --rm docker-client
+/ <span class="c1"># docker images</span>
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+/ <span class="c1">#</span>
+</pre></div>
+
+
+<p>Esto es debido a que el cliente de <strong>Docker</strong> se comunica con el servidor mediante un <em>unix socket</em> que, al no tener el servicio corriendo, no está creado.</p>
+<p>Como sabemos, <strong>absolutamente todo</strong> en <em>Linux</em> es un fichero, y podemos montar ficheros desde el servidor como <em>host volumes</em>. Por ejemplo:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/docker-client$ docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock docker-client
+/ <span class="c1"># docker images</span>
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+docker-client       latest              583d47952c7a        <span class="m">5</span> minutes ago       <span class="m">30</span>.2MB
+alpine              <span class="m">3</span>.7                 3fd9065eaf02        <span class="m">4</span> weeks ago         <span class="m">4</span>.15MB
+/ <span class="c1">#</span>
+</pre></div>
+
+
+<p>El resultado es que vemos el contenido del servidor <strong>Docker</strong> del <em>host</em>, justo como queríamos. Cabe decir que no solo podemos listar las imágenes del <em>host</em>, sino que podemos controlar el ciclo de vida de un contenedor (<code>docker run</code>, <code>docker start</code>, <code>docker restart</code>, <code>docker stop</code>) e incluso ejecutar en ellos cosas (<code>docker exec</code>).</p>
+<p>Esto va a tener muchas aplicaciones prácticas en el futuro, seguro...</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.ml/2016/05/evolucionando-los-contenedores-docker.html">Evolucionando los contenedores: Docker</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html">Lanzando playbooks de Ansible desde Jenkins</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2017/11/uso-basico-de-un-cluster-docker-swarm.html">Uso básico de un cluster Docker Swarm</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'controlando-docker-desde-un-contenedor';
+                var disqus_url = 'http://www.linuxsysadmin.ml/2018/04/controlando-docker-desde-un-contenedor.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
