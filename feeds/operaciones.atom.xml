@@ -1,5 +1,226 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-04-16T10:00:00+02:00</updated><entry><title>Controlando Docker desde un contenedor</title><link href="http://www.linuxsysadmin.ml/2018/04/controlando-docker-desde-un-contenedor.html" rel="alternate"></link><published>2018-04-16T10:00:00+02:00</published><updated>2018-04-16T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-04-16:/2018/04/controlando-docker-desde-un-contenedor.html</id><summary type="html">&lt;p&gt;Curioso de ver como mucho contenedores eran capaces de ver el contenido &lt;strong&gt;Docker&lt;/strong&gt; de mi servidor, he decidido aprender como se hace, por si me hiciera falta en un futuro. En este artículo intento explicar las lecciones aprendidas, de forma que sean una futura referencia en caso de ser necesario …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Curioso de ver como mucho contenedores eran capaces de ver el contenido &lt;strong&gt;Docker&lt;/strong&gt; de mi servidor, he decidido aprender como se hace, por si me hiciera falta en un futuro. En este artículo intento explicar las lecciones aprendidas, de forma que sean una futura referencia en caso de ser necesario.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-04-23T10:00:00+02:00</updated><entry><title>Monitorización y service discovery con Consul</title><link href="http://www.linuxsysadmin.ml/2018/04/monitorizacion-y-service-discovery-con-consul.html" rel="alternate"></link><published>2018-04-23T10:00:00+02:00</published><updated>2018-04-23T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-04-23:/2018/04/monitorizacion-y-service-discovery-con-consul.html</id><summary type="html">&lt;p&gt;Hace poco me topé con una excelente pieza de &lt;em&gt;software&lt;/em&gt; llamada &lt;strong&gt;Consul&lt;/strong&gt;. Se trata de un binario que proporciona varios servicios: &lt;em&gt;node autodiscovery&lt;/em&gt;, &lt;em&gt;service autodiscovery&lt;/em&gt;, &lt;em&gt;health checking&lt;/em&gt; y almacén de valores &lt;em&gt;key-value&lt;/em&gt;. Todo ello mostrado en una interfaz web y suministrando un servidor DNS y una API que podemos usar …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hace poco me topé con una excelente pieza de &lt;em&gt;software&lt;/em&gt; llamada &lt;strong&gt;Consul&lt;/strong&gt;. Se trata de un binario que proporciona varios servicios: &lt;em&gt;node autodiscovery&lt;/em&gt;, &lt;em&gt;service autodiscovery&lt;/em&gt;, &lt;em&gt;health checking&lt;/em&gt; y almacén de valores &lt;em&gt;key-value&lt;/em&gt;. Todo ello mostrado en una interfaz web y suministrando un servidor DNS y una API que podemos usar.&lt;/p&gt;
+&lt;p&gt;La idea es que todo servidor de tu infraestructura ejecuta un agente de &lt;strong&gt;Consul&lt;/strong&gt;, y tras un protocolo de &lt;em&gt;gossip&lt;/em&gt;, todos saben el estado general de nuestra infraestructura.&lt;/p&gt;
+&lt;p&gt;Aunque es muy interesante tener uno o varios &lt;em&gt;server nodes&lt;/em&gt; y varios &lt;em&gt;client nodes&lt;/em&gt;, esto queda abierto para un artículo posterior. De momento nos vamos a limitar a tener un &lt;em&gt;server node&lt;/em&gt; para demostración y desarrollo local.&lt;/p&gt;
+&lt;h2&gt;Instalación&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Consul&lt;/strong&gt; no necesita instalación; es un solo binario estático que solo tenemos que descargar de la &lt;a href="https://www.consul.io/downloads.html"&gt;página de descargas&lt;/a&gt; y ejecutar.&lt;/p&gt;
+&lt;p&gt;En mi caso, y dada mi arquitectura &lt;strong&gt;Linux&lt;/strong&gt; de 64 bits, me descargo el apropiado:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/consul$ wget https://releases.hashicorp.com/consul/1.0.3/consul_1.0.3_linux_amd64.zip
+--2018-02-02 &lt;span class="m"&gt;13&lt;/span&gt;:29:34--  https://releases.hashicorp.com/consul/1.0.3/consul_1.0.3_linux_amd64.zip
+Conectando con &lt;span class="m"&gt;192&lt;/span&gt;.168.62.4:3128... conectado.
+Petición Proxy enviada, esperando respuesta... &lt;span class="m"&gt;200&lt;/span&gt; OK
+Longitud: &lt;span class="m"&gt;11102212&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;11M&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;application/zip&lt;span class="o"&gt;]&lt;/span&gt;
+Grabando a: “consul_1.0.3_linux_amd64.zip”
+
+consul_1.0.3_linux_amd64.zip    &lt;span class="m"&gt;100&lt;/span&gt;%&lt;span class="o"&gt;[=======================================================&lt;/span&gt;&amp;gt;&lt;span class="o"&gt;]&lt;/span&gt;  &lt;span class="m"&gt;10&lt;/span&gt;,59M  &lt;span class="m"&gt;1&lt;/span&gt;,29MB/s    in &lt;span class="m"&gt;6&lt;/span&gt;,4s
+
+&lt;span class="m"&gt;2018&lt;/span&gt;-02-02 &lt;span class="m"&gt;13&lt;/span&gt;:29:41 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;,66 MB/s&lt;span class="o"&gt;)&lt;/span&gt; - “consul_1.0.3_linux_amd64.zip” guardado &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;11102212&lt;/span&gt;/11102212&lt;span class="o"&gt;]&lt;/span&gt;
+
+gerard@atlantis:~/projects/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es un fichero &lt;em&gt;.zip&lt;/em&gt; que solamente contiene el binario indicado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/consul$ unzip -l consul_1.0.3_linux_amd64.zip
+Archive:  consul_1.0.3_linux_amd64.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+ &lt;span class="m"&gt;46660030&lt;/span&gt;  &lt;span class="m"&gt;2018&lt;/span&gt;-01-24 &lt;span class="m"&gt;16&lt;/span&gt;:06   consul
+---------                     -------
+ &lt;span class="m"&gt;46660030&lt;/span&gt;                     &lt;span class="m"&gt;1&lt;/span&gt; file
+gerard@atlantis:~/projects/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo necesitamos extraer el contenido del fichero &lt;em&gt;.zip&lt;/em&gt; y ponerlo en algún lugar del &lt;em&gt;path&lt;/em&gt;, o simplemente ejecutarlo con el formato &lt;code&gt;./consul&lt;/code&gt; que es lo que yo voy a hacer.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: El binario viene con los símbolos de &lt;em&gt;debug&lt;/em&gt;. Se puede reducir de 45mb a 26mb haciendo un &lt;code&gt;strip consul&lt;/code&gt;.&lt;/p&gt;
+&lt;h2&gt;Ejecución en modo de desarrollo&lt;/h2&gt;
+&lt;p&gt;Todos los agentes de consul son servidores o clientes de un &lt;em&gt;cluster&lt;/em&gt; más grande. Sin embargo, y con el único objeto de probar y escribir una configuración útil, se nos ofrece la posibilidad de levantar el agente en modo de desarrollo.&lt;/p&gt;
+&lt;p&gt;Esto significa que ejecuta en memoria, sin necesidad de una carpeta local para escribir ninguna información de &lt;em&gt;runtime&lt;/em&gt;, que se levanta como un &lt;em&gt;cluster&lt;/em&gt; de un solo nodo y que levanta la interfaz web, lo que nos viene de perlas para la demostración.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: En un artículo futuro hablaremos de un &lt;em&gt;cluster&lt;/em&gt; adecuado que implique varios nodos.&lt;/p&gt;
+&lt;p&gt;Así sin más, lanzamos el comando; no es necesario nada más para algo simple.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/consul$ ./consul agent -dev
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Starting Consul agent...
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Consul agent running!
+           Version: &lt;span class="s1"&gt;&amp;#39;v1.0.3&amp;#39;&lt;/span&gt;
+           Node ID: &lt;span class="s1"&gt;&amp;#39;2feeb781-3422-98ef-1938-e5b8494de0dc&amp;#39;&lt;/span&gt;
+         Node name: &lt;span class="s1"&gt;&amp;#39;atlantis&amp;#39;&lt;/span&gt;
+        Datacenter: &lt;span class="s1"&gt;&amp;#39;dc1&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;Segment: &lt;span class="s1"&gt;&amp;#39;&amp;lt;all&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+            Server: &lt;span class="nb"&gt;true&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;Bootstrap: &lt;span class="nb"&gt;false&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+       Client Addr: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;127&lt;/span&gt;.0.0.1&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;HTTP: &lt;span class="m"&gt;8500&lt;/span&gt;, HTTPS: -1, DNS: &lt;span class="m"&gt;8600&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+      Cluster Addr: &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1 &lt;span class="o"&gt;(&lt;/span&gt;LAN: &lt;span class="m"&gt;8301&lt;/span&gt;, WAN: &lt;span class="m"&gt;8302&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+           Encrypt: Gossip: false, TLS-Outgoing: false, TLS-Incoming: &lt;span class="nb"&gt;false&lt;/span&gt;
+
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Log data will now stream in as it occurs:
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Se recomienda usar el &lt;em&gt;flag&lt;/em&gt; &lt;code&gt;-advertise&lt;/code&gt; para que sepa cual es la dirección que queremos usar para el &lt;em&gt;cluster&lt;/em&gt;. &lt;strong&gt;Consul&lt;/strong&gt; intenta detectarla por sí mismo, pero es fácil que no lo haga como esperamos; es mejor indicarlo explícitamente.&lt;/p&gt;
+&lt;p&gt;Esto nos levanta otros dos servicios en &lt;em&gt;localhost&lt;/em&gt; y en diferentes puertos (tanto la IP como los puertos son configurables):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Un servidor DNS en el puerto 8600&lt;/li&gt;
+&lt;li&gt;Una bonita interfaz web en el puerto 8500, y una API en el mismo puerto&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Probemos el DNS; solo hay que saber que el nombre en el DNS se saca añadiendo al &lt;em&gt;hostname&lt;/em&gt; el infijo &lt;em&gt;.node&lt;/em&gt; y el sufijo &lt;em&gt;.consul&lt;/em&gt; (configurable también).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ dig @127.0.0.1 -p &lt;span class="m"&gt;8600&lt;/span&gt; atlantis.node.consul
+
+&lt;span class="p"&gt;;&lt;/span&gt; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG &lt;span class="m"&gt;9&lt;/span&gt;.10.3-P4-Debian &amp;lt;&amp;lt;&amp;gt;&amp;gt; @127.0.0.1 -p &lt;span class="m"&gt;8600&lt;/span&gt; atlantis.node.consul
+&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; server found&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; global options: +cmd
+&lt;span class="p"&gt;;;&lt;/span&gt; Got answer:
+&lt;span class="p"&gt;;;&lt;/span&gt; -&amp;gt;&amp;gt;HEADER&lt;span class="s"&gt;&amp;lt;&amp;lt;- opco&lt;/span&gt;de: QUERY, status: NOERROR, id: &lt;span class="m"&gt;4332&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; flags: qr aa rd&lt;span class="p"&gt;;&lt;/span&gt; QUERY: &lt;span class="m"&gt;1&lt;/span&gt;, ANSWER: &lt;span class="m"&gt;1&lt;/span&gt;, AUTHORITY: &lt;span class="m"&gt;0&lt;/span&gt;, ADDITIONAL: &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; WARNING: recursion requested but not available
+
+&lt;span class="p"&gt;;;&lt;/span&gt; OPT PSEUDOSECTION:
+&lt;span class="p"&gt;;&lt;/span&gt; EDNS: version: &lt;span class="m"&gt;0&lt;/span&gt;, flags:&lt;span class="p"&gt;;&lt;/span&gt; udp: &lt;span class="m"&gt;4096&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; QUESTION SECTION:
+&lt;span class="p"&gt;;&lt;/span&gt;atlantis.node.consul.          IN      A
+
+&lt;span class="p"&gt;;;&lt;/span&gt; ANSWER SECTION:
+atlantis.node.consul.   &lt;span class="m"&gt;0&lt;/span&gt;       IN      A       &lt;span class="m"&gt;10&lt;/span&gt;.0.2.15
+
+&lt;span class="p"&gt;;;&lt;/span&gt; Query time: &lt;span class="m"&gt;0&lt;/span&gt; msec
+&lt;span class="p"&gt;;;&lt;/span&gt; SERVER: &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1#8600&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;127&lt;/span&gt;.0.0.1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; WHEN: Thu Feb &lt;span class="m"&gt;08&lt;/span&gt; &lt;span class="m"&gt;12&lt;/span&gt;:28:38 CET &lt;span class="m"&gt;2018&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; MSG SIZE  rcvd: &lt;span class="m"&gt;65&lt;/span&gt;
+
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La interfaz web la podemos abrir en un navegador en &lt;a href="http://localhost:8500/"&gt;http://localhost:8500/&lt;/a&gt; y sería algo como esto:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="aaa" src="https://1npo9l3lml0zvr6w62acc3t1-wpengine.netdna-ssl.com/wp-content/uploads/2017/06/consul-ui.png"&gt;&lt;/p&gt;
+&lt;h2&gt;Declarando servicios&lt;/h2&gt;
+&lt;p&gt;Vamos a levantar el agente de la misma forma, pero con el &lt;em&gt;flag&lt;/em&gt; &lt;code&gt;-config-file&lt;/code&gt;, lo que nos permite poner una configuración específica a nuestras necesidades.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/consul$ ./consul agent -dev -advertise &lt;span class="m"&gt;10&lt;/span&gt;.0.2.15 --config-file consul.json
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Starting Consul agent...
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Consul agent running!
+           Version: &lt;span class="s1"&gt;&amp;#39;v1.0.3&amp;#39;&lt;/span&gt;
+           Node ID: &lt;span class="s1"&gt;&amp;#39;183c31b0-33aa-e4f4-ef77-fb844b371403&amp;#39;&lt;/span&gt;
+         Node name: &lt;span class="s1"&gt;&amp;#39;atlantis&amp;#39;&lt;/span&gt;
+        Datacenter: &lt;span class="s1"&gt;&amp;#39;dc1&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;Segment: &lt;span class="s1"&gt;&amp;#39;&amp;lt;all&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+            Server: &lt;span class="nb"&gt;true&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;Bootstrap: &lt;span class="nb"&gt;false&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+       Client Addr: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;127&lt;/span&gt;.0.0.1&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;HTTP: &lt;span class="m"&gt;8500&lt;/span&gt;, HTTPS: -1, DNS: &lt;span class="m"&gt;8600&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+      Cluster Addr: &lt;span class="m"&gt;10&lt;/span&gt;.0.2.15 &lt;span class="o"&gt;(&lt;/span&gt;LAN: &lt;span class="m"&gt;8301&lt;/span&gt;, WAN: &lt;span class="m"&gt;8302&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+           Encrypt: Gossip: false, TLS-Outgoing: false, TLS-Incoming: &lt;span class="nb"&gt;false&lt;/span&gt;
+
+&lt;span class="o"&gt;==&lt;/span&gt;&amp;gt; Log data will now stream in as it occurs:
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El fichero de configuración declara servicios, en formato JSON; este es el ejemplo que he usado:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/consul$ cat consul.json
+&lt;span class="o"&gt;{&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;services&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;port&amp;quot;&lt;/span&gt;: &lt;span class="m"&gt;8001&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;,
+    &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;api&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;api&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;port&amp;quot;&lt;/span&gt;: &lt;span class="m"&gt;8002&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@atlantis:~/projects/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ambos servicios van a aparecer en la interfaz web y en la resolución DNS:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ dig @127.0.0.1 -p &lt;span class="m"&gt;8600&lt;/span&gt; web.service.consul
+
+&lt;span class="p"&gt;;&lt;/span&gt; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG &lt;span class="m"&gt;9&lt;/span&gt;.10.3-P4-Debian &amp;lt;&amp;lt;&amp;gt;&amp;gt; @127.0.0.1 -p &lt;span class="m"&gt;8600&lt;/span&gt; web.service.consul
+&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; server found&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; global options: +cmd
+&lt;span class="p"&gt;;;&lt;/span&gt; Got answer:
+&lt;span class="p"&gt;;;&lt;/span&gt; -&amp;gt;&amp;gt;HEADER&lt;span class="s"&gt;&amp;lt;&amp;lt;- opcode: QUERY, status: NOERROR, id: 21560&lt;/span&gt;
+&lt;span class="s"&gt;;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1&lt;/span&gt;
+&lt;span class="s"&gt;;; WARNING: recursion requested but not available&lt;/span&gt;
+
+&lt;span class="s"&gt;;; OPT PSEUDOSECTION:&lt;/span&gt;
+&lt;span class="s"&gt;; EDNS: version: 0, flags:; udp: 4096&lt;/span&gt;
+&lt;span class="s"&gt;;; QUESTION SECTION:&lt;/span&gt;
+&lt;span class="s"&gt;;web.service.consul.            IN      A&lt;/span&gt;
+
+&lt;span class="s"&gt;;; ANSWER SECTION:&lt;/span&gt;
+&lt;span class="s"&gt;web.service.consul.     0       IN      A       10.0.2.15&lt;/span&gt;
+
+&lt;span class="s"&gt;;; Query time: 0 msec&lt;/span&gt;
+&lt;span class="s"&gt;;; SERVER: 127.0.0.1#8600(127.0.0.1)&lt;/span&gt;
+&lt;span class="s"&gt;;; WHEN: Thu Feb 08 12:40:37 CET 2018&lt;/span&gt;
+&lt;span class="s"&gt;;; MSG SIZE  rcvd: 63&lt;/span&gt;
+
+&lt;span class="s"&gt;gerard@atlantis:~$ dig @127.0.0.1 -p 8600 api.service.consul&lt;/span&gt;
+
+&lt;span class="s"&gt;; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.10.3-P4-Debian &amp;lt;&amp;lt;&amp;gt;&amp;gt; @127.0.0.1 -p 8600 api.service.consul&lt;/span&gt;
+&lt;span class="s"&gt;; (1 server found)&lt;/span&gt;
+&lt;span class="s"&gt;;; global options: +cmd&lt;/span&gt;
+&lt;span class="s"&gt;;; Got answer:&lt;/span&gt;
+&lt;span class="s"&gt;;; -&amp;gt;&amp;gt;HEADER&amp;lt;&amp;lt;- opcode&lt;/span&gt;: QUERY, status: NOERROR, id: &lt;span class="m"&gt;6767&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; flags: qr aa rd&lt;span class="p"&gt;;&lt;/span&gt; QUERY: &lt;span class="m"&gt;1&lt;/span&gt;, ANSWER: &lt;span class="m"&gt;1&lt;/span&gt;, AUTHORITY: &lt;span class="m"&gt;0&lt;/span&gt;, ADDITIONAL: &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; WARNING: recursion requested but not available
+
+&lt;span class="p"&gt;;;&lt;/span&gt; OPT PSEUDOSECTION:
+&lt;span class="p"&gt;;&lt;/span&gt; EDNS: version: &lt;span class="m"&gt;0&lt;/span&gt;, flags:&lt;span class="p"&gt;;&lt;/span&gt; udp: &lt;span class="m"&gt;4096&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; QUESTION SECTION:
+&lt;span class="p"&gt;;&lt;/span&gt;api.service.consul.            IN      A
+
+&lt;span class="p"&gt;;;&lt;/span&gt; ANSWER SECTION:
+api.service.consul.     &lt;span class="m"&gt;0&lt;/span&gt;       IN      A       &lt;span class="m"&gt;10&lt;/span&gt;.0.2.15
+
+&lt;span class="p"&gt;;;&lt;/span&gt; Query time: &lt;span class="m"&gt;0&lt;/span&gt; msec
+&lt;span class="p"&gt;;;&lt;/span&gt; SERVER: &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1#8600&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;127&lt;/span&gt;.0.0.1&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; WHEN: Thu Feb &lt;span class="m"&gt;08&lt;/span&gt; &lt;span class="m"&gt;12&lt;/span&gt;:40:38 CET &lt;span class="m"&gt;2018&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; MSG SIZE  rcvd: &lt;span class="m"&gt;63&lt;/span&gt;
+
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Si los servicios se declaran en varios nodos del &lt;em&gt;cluster&lt;/em&gt;, el DNS nos va a devolver varias respuestas, indicando todas las direcciones IP en donde esté el servicio.&lt;/p&gt;
+&lt;h2&gt;Declarando health checks&lt;/h2&gt;
+&lt;p&gt;Los &lt;em&gt;health checks&lt;/em&gt; nos permiten indicar a &lt;strong&gt;consul&lt;/strong&gt; si el nodo o sus servicios están funcionales. Esto se refleja en la web y en la resolución DNS, de forma que no se nos responde una IP si esta no está bien.&lt;/p&gt;
+&lt;p&gt;Hay varios modelos de &lt;em&gt;checks&lt;/em&gt;, de acuerdo con &lt;a href="https://www.consul.io/docs/agent/checks.html"&gt;la documentación&lt;/a&gt;. Además, estos &lt;em&gt;checks&lt;/em&gt; pueden estar opcionalemente ligados a un servicio.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Si falla un &lt;em&gt;check&lt;/em&gt; ligado a un servicio, dicho servicio se da por malo.&lt;/li&gt;
+&lt;li&gt;Si falla un &lt;em&gt;check&lt;/em&gt; que no está ligado a ningún servicio, el nodo (servidor) entero se da por malo.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Veamos un ejemplo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/consul$ cat consul.json
+&lt;span class="o"&gt;{&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;services&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;port&amp;quot;&lt;/span&gt;: &lt;span class="m"&gt;8001&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;,
+    &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;api&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;api&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;port&amp;quot;&lt;/span&gt;: &lt;span class="m"&gt;8002&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;]&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;checks&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;ssh&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;tcp&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;localhost:22&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;interval&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;5s&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;timeout&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;5s&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;,
+    &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;service_id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;http&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;http://localhost:8001/&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;interval&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;5s&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;timeout&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;5s&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;,
+    &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;api&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;api&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;service_id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;api&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;http&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;http://localhost:8002/&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;interval&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;5s&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;timeout&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;5s&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@atlantis:~/projects/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso, los &lt;em&gt;checks&lt;/em&gt; ligados a servicios son el de web y el de la API. Esto se consigue mediante el parámetro &lt;em&gt;service_id&lt;/em&gt;, que referencia al parámetro &lt;em&gt;id&lt;/em&gt; del servicio.&lt;/p&gt;
+&lt;p&gt;Supongamos que el &lt;em&gt;check&lt;/em&gt; del servicio web falla, lo que simularemos parando el servidor web.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ dig @127.0.0.1 -p &lt;span class="m"&gt;8600&lt;/span&gt; atlantis.node.consul +short
+&lt;span class="m"&gt;10&lt;/span&gt;.0.2.15
+gerard@atlantis:~$ dig @127.0.0.1 -p &lt;span class="m"&gt;8600&lt;/span&gt; web.service.consul +short
+gerard@atlantis:~$ dig @127.0.0.1 -p &lt;span class="m"&gt;8600&lt;/span&gt; api.service.consul +short
+&lt;span class="m"&gt;10&lt;/span&gt;.0.2.15
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como podemos apreciar, el servicio web que no está funcionando, no se computa por &lt;strong&gt;consul&lt;/strong&gt; como bueno, por lo que lo quita de las respuestas. Eso no afecta a los otros servicios o al nodo mismo.&lt;/p&gt;
+&lt;p&gt;Así pues, si tenemos el servicio en 4 servidores y uno se cae, &lt;strong&gt;consul&lt;/strong&gt; lo sabrá; y por lo tanto, solo va a devolver los 3 que quedan activos. Lo mismo pasa cuando el servicio se recupere.&lt;/p&gt;
+&lt;p&gt;Si consumimos directamente este DNS, podemos ahorrarnos un balanceador; cada cliente es responsable de elegir una de las direcciones de la respuesta aleatoriamente.&lt;/p&gt;
+&lt;h2&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Teniendo una foto del estado de nuestros servicios, las posibilidades son infinitas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Podemos monitorizar directamente con la interfaz web&lt;/li&gt;
+&lt;li&gt;Podemos consumir la API de &lt;strong&gt;consul&lt;/strong&gt; con fines de automatización reactiva (por ejemplo notificando de alguna manera desde un &lt;em&gt;script&lt;/em&gt;)&lt;/li&gt;
+&lt;li&gt;Podemos limitarnos a usar el DNS&lt;/li&gt;
+&lt;li&gt;Incluso podemos generar las configuraciones de un balanceador de forma automática usando la API, aunque eso es otra historia.&lt;/li&gt;
+&lt;/ul&gt;</content><category term="consul"></category><category term="service discovery"></category><category term="monitoring"></category></entry><entry><title>Controlando Docker desde un contenedor</title><link href="http://www.linuxsysadmin.ml/2018/04/controlando-docker-desde-un-contenedor.html" rel="alternate"></link><published>2018-04-16T10:00:00+02:00</published><updated>2018-04-16T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-04-16:/2018/04/controlando-docker-desde-un-contenedor.html</id><summary type="html">&lt;p&gt;Curioso de ver como mucho contenedores eran capaces de ver el contenido &lt;strong&gt;Docker&lt;/strong&gt; de mi servidor, he decidido aprender como se hace, por si me hiciera falta en un futuro. En este artículo intento explicar las lecciones aprendidas, de forma que sean una futura referencia en caso de ser necesario …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Curioso de ver como mucho contenedores eran capaces de ver el contenido &lt;strong&gt;Docker&lt;/strong&gt; de mi servidor, he decidido aprender como se hace, por si me hiciera falta en un futuro. En este artículo intento explicar las lecciones aprendidas, de forma que sean una futura referencia en caso de ser necesario.&lt;/p&gt;
 &lt;p&gt;El primer paso para conseguir mi objetivo era tener el binario &lt;code&gt;docker&lt;/code&gt; en un contenedor. Una opción es copiarlo de mi servidor, junto con todas las dependencias; una opción más cuerda es aprovecharme de los paquetes existentes para ello.&lt;/p&gt;
 &lt;p&gt;Así pues, vamos a partir de un &lt;em&gt;Alpine Linux&lt;/em&gt;, que por su tamaño, su seguridad y su magnífico gestor de paquetes, se hace el candidato ideal:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/docker-client$ cat Dockerfile
