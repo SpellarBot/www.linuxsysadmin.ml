@@ -1,5 +1,234 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-04-09T10:00:00+02:00</updated><entry><title>Alta disponibilidad con Docker Swarm</title><link href="http://www.linuxsysadmin.ml/2018/04/alta-disponibilidad-con-docker-swarm.html" rel="alternate"></link><published>2018-04-09T10:00:00+02:00</published><updated>2018-04-09T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-04-09:/2018/04/alta-disponibilidad-con-docker-swarm.html</id><summary type="html">&lt;p&gt;He visto muchos artículos por internet que hacen maravillas para tener un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;Docker Swarm&lt;/strong&gt; funcional. Puede que en versiones anteriores fuera así, pero cada vez se ha simplificado más el &lt;em&gt;setup&lt;/em&gt; para alinearse con la filosofía de la simplicidad, frente a otras soluciones más completas, pero más complejas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;He visto muchos artículos por internet que hacen maravillas para tener un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;Docker Swarm&lt;/strong&gt; funcional. Puede que en versiones anteriores fuera así, pero cada vez se ha simplificado más el &lt;em&gt;setup&lt;/em&gt; para alinearse con la filosofía de la simplicidad, frente a otras soluciones más completas, pero más complejas.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-04-30T10:00:00+02:00</updated><entry><title>Levantando un cluster de consul</title><link href="http://www.linuxsysadmin.ml/2018/04/levantando-un-cluster-de-consul.html" rel="alternate"></link><published>2018-04-30T10:00:00+02:00</published><updated>2018-04-30T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-04-30:/2018/04/levantando-un-cluster-de-consul.html</id><summary type="html">&lt;p&gt;Ya vimos que &lt;strong&gt;consul&lt;/strong&gt; nos permitía mantener una foto del estado de nuestros servidores y de los servicios que corren en ellos. Es todavía más importante cuando contamos con varios servidores, y todos declaran sus partes a un servidor central, de forma que tenemos una foto global de la situación …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ya vimos que &lt;strong&gt;consul&lt;/strong&gt; nos permitía mantener una foto del estado de nuestros servidores y de los servicios que corren en ellos. Es todavía más importante cuando contamos con varios servidores, y todos declaran sus partes a un servidor central, de forma que tenemos una foto global de la situación.&lt;/p&gt;
+&lt;p&gt;Para este ejemplo, vamos a contar con 3 servidores; uno de los cuales va a actuar de &lt;em&gt;servidor&lt;/em&gt; y el resto harán de &lt;em&gt;clientes&lt;/em&gt;. Los servidores son:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;node1&lt;/strong&gt; &amp;rarr; Dirección IP 10.0.0.2 (será el &lt;em&gt;servidor&lt;/em&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;node2&lt;/strong&gt; &amp;rarr; Dirección IP 10.0.0.3 (será un &lt;em&gt;cliente&lt;/em&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;node3&lt;/strong&gt; &amp;rarr; Dirección IP 10.0.0.4 (será un &lt;em&gt;cliente&lt;/em&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: Es posible poner varios &lt;em&gt;servidores&lt;/em&gt; para obtener alta disponibilidad, pero al no ser un servício crítico, no vamos a extender el artículo innecesariamente.&lt;/p&gt;
+&lt;h2&gt;Instalación&lt;/h2&gt;
+&lt;p&gt;Ya vimos en &lt;a href="http://www.linuxsysadmin.ml/2018/04/monitorizacion-y-service-discovery-con-consul.html"&gt;otro articulo&lt;/a&gt; que &lt;strong&gt;consul&lt;/strong&gt; no necesita instalación, ya que es un binario estático. Para su fácil distribución entre las máquinas, lo he empaquetado en una imagen de &lt;strong&gt;docker&lt;/strong&gt;, acompañado de una carpeta &lt;em&gt;/data/&lt;/em&gt; que es donde &lt;strong&gt;consul&lt;/strong&gt; deja sus ficheros operativos. Vamos a inyectar la configuración desde el servidor mediante &lt;em&gt;host volumes&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Para tener el artículo completo, adjunto el contexto con el que se contruyó la imagen que usamos en el mismo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/projects/consul/build$ cat Dockerfile
+FROM scratch
+ADD rootfs.tar.gz /
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/consul&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@atlantis:~/projects/consul/build$ tar tf rootfs.tar.gz
+consul
+data/
+gerard@atlantis:~/projects/consul/build$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esto nos deja una imagen de unos 28mb. He usado el &lt;em&gt;tag&lt;/em&gt; &lt;code&gt;sirrtea/consul:1.0.5&lt;/code&gt; y lo he subido de forma temporal a &lt;a href="https://hub.docker.com/"&gt;DockerHub&lt;/a&gt;, que va a funcionar como repositorio de imágenes. No hace falta decir que 1.0.5 es la versión de &lt;strong&gt;consul&lt;/strong&gt; en el momento de escribir el artículo...&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Los &lt;em&gt;clientes&lt;/em&gt; son volátiles; no necesitamos persistir su carpeta de datos porque no guardan nada importante. Sin embargo, la carpeta &lt;em&gt;/data/&lt;/em&gt; de los servidores guardan información importante del &lt;em&gt;cluster&lt;/em&gt; y debe asegurarse que no se pierden en el reinicio del contenedor.&lt;/p&gt;
+&lt;h2&gt;Levantando el master&lt;/h2&gt;
+&lt;p&gt;Ponemos en &lt;strong&gt;node1&lt;/strong&gt; un carpeta con el fichero &lt;em&gt;docker-compose.yml&lt;/em&gt; y la configuración vacía, en donde lo tendremos todo ordenado.&lt;/p&gt;
+&lt;p&gt;Es importante recalcar que la configuración la mapeamos desde el &lt;em&gt;host&lt;/em&gt; y también la carpeta de datos, para que al reiniciar el contenedor no de pierda. Si eso pasara, habría que volver a añadir manualmente todos los otros nodos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node1:~/consul$ cat docker-compose.yml
+version: &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;
+services:
+  consul:
+    image: sirrtea/consul:1.0.5
+    container_name: consul
+    hostname: consul
+    network_mode: host
+    volumes:
+      - ./consul.json:/consul.json
+      - ./data:/data
+    command: agent -node node1 -advertise &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2 -data-dir /data --config-file /consul.json -server -bootstrap-expect&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;
+    restart: always
+gerard@node1:~/consul$ cat consul.json
+&lt;span class="o"&gt;{}&lt;/span&gt;
+gerard@node1:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Levantamos el servidor con &lt;strong&gt;docker-compose&lt;/strong&gt; de la forma habitual:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node1:~/consul$ docker-compose up -d
+Creating consul ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@node1:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver que el &lt;em&gt;cluster&lt;/em&gt; solo tiene el servidor, ya que no hemos puesto otros nodos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node1:~/consul$ docker &lt;span class="nb"&gt;exec&lt;/span&gt; consul /consul members
+Node   Address        Status  Type    Build  Protocol  DC   Segment
+node1  &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2:8301  alive   server  &lt;span class="m"&gt;1&lt;/span&gt;.0.5  &lt;span class="m"&gt;2&lt;/span&gt;         dc1  &amp;lt;all&amp;gt;
+gerard@node1:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos queda por ver que el &lt;em&gt;servidor&lt;/em&gt; asume el rol de &lt;em&gt;leader&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node1:~/consul$ docker-compose logs &lt;span class="p"&gt;|&lt;/span&gt; grep -o &lt;span class="s2"&gt;&amp;quot;New leader elected.*&amp;quot;&lt;/span&gt;
+New leader elected: node1
+gerard@node1:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Añadiendo los clientes&lt;/h2&gt;
+&lt;p&gt;De forma similar, vamos a crear una carpeta en &lt;strong&gt;node2&lt;/strong&gt; y en &lt;strong&gt;node3&lt;/strong&gt; (y en un futuro en el resto de nodos) para contener el fichero &lt;em&gt;docker-compose.yml&lt;/em&gt; y la configuración de &lt;strong&gt;consul&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Vamos a poner una configuración vacía; más adelante ya añadiremos servicios y &lt;em&gt;health checks&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node2:~/consul$ cat docker-compose.yml
+version: &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;
+services:
+  consul:
+    image: sirrtea/consul:1.0.5
+    container_name: consul
+    hostname: consul
+    network_mode: host
+    volumes:
+      - ./consul.json:/consul.json
+    command: agent -node node2 -advertise &lt;span class="m"&gt;10&lt;/span&gt;.0.0.3 -data-dir /data --config-file /consul.json -join node1
+    restart: always
+gerard@node2:~/consul$ cat consul.json
+&lt;span class="o"&gt;{}&lt;/span&gt;
+gerard@node2:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: La operación de &lt;em&gt;join&lt;/em&gt; se puede hacer en el comando de inicio o manualmente &lt;em&gt;a posteriori&lt;/em&gt;; la primera forma nos simplifica bastante el trabajo.&lt;/p&gt;
+&lt;p&gt;Levantamos el contenedor de &lt;strong&gt;consul&lt;/strong&gt; y verificamos que el &lt;em&gt;cluster&lt;/em&gt; conoce al nuevo miembro:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node2:~/consul$ docker-compose up -d
+Creating consul ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@node2:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node1:~/consul$ docker &lt;span class="nb"&gt;exec&lt;/span&gt; consul /consul members
+Node   Address        Status  Type    Build  Protocol  DC   Segment
+node1  &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2:8301  alive   server  &lt;span class="m"&gt;1&lt;/span&gt;.0.5  &lt;span class="m"&gt;2&lt;/span&gt;         dc1  &amp;lt;all&amp;gt;
+node2  &lt;span class="m"&gt;10&lt;/span&gt;.0.0.3:8301  alive   client  &lt;span class="m"&gt;1&lt;/span&gt;.0.5  &lt;span class="m"&gt;2&lt;/span&gt;         dc1  &amp;lt;default&amp;gt;
+gerard@node1:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Repetimos lo mismo para el &lt;strong&gt;node3&lt;/strong&gt; (cuidado con la IP de &lt;em&gt;advertise&lt;/em&gt;)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node1:~/consul$ docker &lt;span class="nb"&gt;exec&lt;/span&gt; consul /consul members
+Node   Address        Status  Type    Build  Protocol  DC   Segment
+node1  &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2:8301  alive   server  &lt;span class="m"&gt;1&lt;/span&gt;.0.5  &lt;span class="m"&gt;2&lt;/span&gt;         dc1  &amp;lt;all&amp;gt;
+node2  &lt;span class="m"&gt;10&lt;/span&gt;.0.0.3:8301  alive   client  &lt;span class="m"&gt;1&lt;/span&gt;.0.5  &lt;span class="m"&gt;2&lt;/span&gt;         dc1  &amp;lt;default&amp;gt;
+node3  &lt;span class="m"&gt;10&lt;/span&gt;.0.0.4:8301  alive   client  &lt;span class="m"&gt;1&lt;/span&gt;.0.5  &lt;span class="m"&gt;2&lt;/span&gt;         dc1  &amp;lt;default&amp;gt;
+gerard@node1:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La misma verificación se puede hacer solicitando la dirección de los nuevos nodos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node1:~/consul$ dig @127.0.0.1 -p &lt;span class="m"&gt;8600&lt;/span&gt; node1.node.consul +short
+&lt;span class="m"&gt;10&lt;/span&gt;.0.0.2
+gerard@node1:~/consul$ dig @127.0.0.1 -p &lt;span class="m"&gt;8600&lt;/span&gt; node2.node.consul +short
+&lt;span class="m"&gt;10&lt;/span&gt;.0.0.3
+gerard@node1:~/consul$ dig @127.0.0.1 -p &lt;span class="m"&gt;8600&lt;/span&gt; node3.node.consul +short
+&lt;span class="m"&gt;10&lt;/span&gt;.0.0.4
+gerard@node1:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Añadiendo servicios&lt;/h2&gt;
+&lt;p&gt;Supongamos ahora que queremos declarar un servicio &lt;em&gt;web&lt;/em&gt; en &lt;strong&gt;node1&lt;/strong&gt; y &lt;strong&gt;node2&lt;/strong&gt;. Simplemente vamos a añadir una configuración adecuada y a reiniciar el contenedor de &lt;strong&gt;consul&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;A pesar de que &lt;strong&gt;node1&lt;/strong&gt; es un &lt;em&gt;servidor&lt;/em&gt; y &lt;strong&gt;node2&lt;/strong&gt; es un &lt;em&gt;cliente&lt;/em&gt;, eso solo afecta a la mecánica del &lt;em&gt;cluster&lt;/em&gt;. Siguen siendo dos &lt;em&gt;agentes&lt;/em&gt; normales a todos los efectos; se configuran y se operan de la misma forma.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node1:~/consul$ cat consul.json
+&lt;span class="o"&gt;{&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;services&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;port&amp;quot;&lt;/span&gt;: &lt;span class="m"&gt;8080&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;]&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;checks&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;service_id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;http&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;http://localhost:8080/&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;interval&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;5s&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;timeout&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;5s&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@node1:~/consul$ docker-compose restart
+Restarting consul ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@node1:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: al tener la carpeta &lt;em&gt;/data/&lt;/em&gt; en el &lt;em&gt;host&lt;/em&gt; en donde corre el &lt;em&gt;servidor&lt;/em&gt;, no perdemos la lista de &lt;em&gt;clientes&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node1:~/consul$ docker &lt;span class="nb"&gt;exec&lt;/span&gt; consul /consul members
+Node   Address        Status  Type    Build  Protocol  DC   Segment
+node1  &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2:8301  alive   server  &lt;span class="m"&gt;1&lt;/span&gt;.0.5  &lt;span class="m"&gt;2&lt;/span&gt;         dc1  &amp;lt;all&amp;gt;
+node2  &lt;span class="m"&gt;10&lt;/span&gt;.0.0.3:8301  alive   client  &lt;span class="m"&gt;1&lt;/span&gt;.0.5  &lt;span class="m"&gt;2&lt;/span&gt;         dc1  &amp;lt;default&amp;gt;
+node3  &lt;span class="m"&gt;10&lt;/span&gt;.0.0.4:8301  alive   client  &lt;span class="m"&gt;1&lt;/span&gt;.0.5  &lt;span class="m"&gt;2&lt;/span&gt;         dc1  &amp;lt;default&amp;gt;
+gerard@node1:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y lo mismo para &lt;strong&gt;node2&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node2:~/consul$ cat consul.json
+&lt;span class="o"&gt;{&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;services&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;port&amp;quot;&lt;/span&gt;: &lt;span class="m"&gt;8080&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;]&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;checks&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;service_id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;http&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;http://localhost:8080/&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;interval&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;5s&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;timeout&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;5s&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@node2:~/consul$ docker-compose restart
+Restarting consul ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@node2:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos queda por observar que el servidor DNS integrado nos devuelve ambos, ya que están saludables:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node1:~/consul$ dig @127.0.0.1 -p &lt;span class="m"&gt;8600&lt;/span&gt; web.service.consul +short
+&lt;span class="m"&gt;10&lt;/span&gt;.0.0.2
+&lt;span class="m"&gt;10&lt;/span&gt;.0.0.3
+gerard@node1:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Caídas e incrementos de servicio&lt;/h2&gt;
+&lt;p&gt;Si se cayera, por ejemplo, la web de &lt;strong&gt;node1&lt;/strong&gt;, el servidor DNS no la devolvería, al no estar saludable:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node1:~/consul$ dig @127.0.0.1 -p &lt;span class="m"&gt;8600&lt;/span&gt; web.service.consul +short
+&lt;span class="m"&gt;10&lt;/span&gt;.0.0.3
+gerard@node1:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Este detalle hace que podamos añadir el servicio en otro nodo &lt;strong&gt;antes&lt;/strong&gt; del mismo servicio. Como la web no funciona, &lt;strong&gt;consul&lt;/strong&gt; no devolvería el nuevo nodo hasta que la web estuviera instalada, funcionando y saludable.&lt;/p&gt;
+&lt;p&gt;Así pues, vamos a declarar el servicio &lt;em&gt;web&lt;/em&gt; también en &lt;strong&gt;nodo3&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node3:~/consul$ cat consul.json
+&lt;span class="o"&gt;{&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;services&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;port&amp;quot;&lt;/span&gt;: &lt;span class="m"&gt;8080&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;]&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;checks&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;service_id&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;web&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;http&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;http://localhost:8080/&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;interval&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;5s&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;timeout&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;5s&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@node3:~/consul$ docker-compose restart
+Restarting consul ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@node3:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y sin sorpresas, el servidor DNS (y la API) de &lt;strong&gt;consul&lt;/strong&gt; no nos devolverían las 3 direcciones, ya que la tercera no funciona.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node1:~/consul$ dig @127.0.0.1 -p &lt;span class="m"&gt;8600&lt;/span&gt; web.service.consul +short
+&lt;span class="m"&gt;10&lt;/span&gt;.0.0.3
+&lt;span class="m"&gt;10&lt;/span&gt;.0.0.2
+gerard@node1:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos faltaría levantar la web en el &lt;strong&gt;nodo3&lt;/strong&gt; para que el servidor nos devolviera este nodo como proveedor del servicio &lt;em&gt;web&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@node1:~/consul$ dig @127.0.0.1 -p &lt;span class="m"&gt;8600&lt;/span&gt; web.service.consul
+...
+&lt;span class="p"&gt;;;&lt;/span&gt; QUESTION SECTION:
+&lt;span class="p"&gt;;&lt;/span&gt;web.service.consul.            IN      A
+
+&lt;span class="p"&gt;;;&lt;/span&gt; ANSWER SECTION:
+web.service.consul.     &lt;span class="m"&gt;0&lt;/span&gt;       IN      A       &lt;span class="m"&gt;10&lt;/span&gt;.0.0.4
+web.service.consul.     &lt;span class="m"&gt;0&lt;/span&gt;       IN      A       &lt;span class="m"&gt;10&lt;/span&gt;.0.0.3
+web.service.consul.     &lt;span class="m"&gt;0&lt;/span&gt;       IN      A       &lt;span class="m"&gt;10&lt;/span&gt;.0.0.2
+
+&lt;span class="p"&gt;;;&lt;/span&gt; Query time: &lt;span class="m"&gt;0&lt;/span&gt; msec
+&lt;span class="p"&gt;;;&lt;/span&gt; SERVER: &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1#8600&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;127&lt;/span&gt;.0.0.1&lt;span class="o"&gt;)&lt;/span&gt;
+...
+gerard@node1:~/consul$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A partir de ahora, es responsabilidad del que use este DNS elegir una entre las respuestas dadas.&lt;/p&gt;</content><category term="consul"></category><category term="service discovery"></category><category term="cluster"></category></entry><entry><title>Alta disponibilidad con Docker Swarm</title><link href="http://www.linuxsysadmin.ml/2018/04/alta-disponibilidad-con-docker-swarm.html" rel="alternate"></link><published>2018-04-09T10:00:00+02:00</published><updated>2018-04-09T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-04-09:/2018/04/alta-disponibilidad-con-docker-swarm.html</id><summary type="html">&lt;p&gt;He visto muchos artículos por internet que hacen maravillas para tener un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;Docker Swarm&lt;/strong&gt; funcional. Puede que en versiones anteriores fuera así, pero cada vez se ha simplificado más el &lt;em&gt;setup&lt;/em&gt; para alinearse con la filosofía de la simplicidad, frente a otras soluciones más completas, pero más complejas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;He visto muchos artículos por internet que hacen maravillas para tener un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;Docker Swarm&lt;/strong&gt; funcional. Puede que en versiones anteriores fuera así, pero cada vez se ha simplificado más el &lt;em&gt;setup&lt;/em&gt; para alinearse con la filosofía de la simplicidad, frente a otras soluciones más completas, pero más complejas.&lt;/p&gt;
 &lt;p&gt;Hoy vamos a mostrar como conseguir alta disponibilidad en un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;docker swarm&lt;/strong&gt;, de forma que si se cae un &lt;em&gt;manager&lt;/em&gt;, otro asume su lugar y reestructura los servicios para continuar cumpliendo las especificaciones indicadas.&lt;/p&gt;
 &lt;p&gt;Para hacerlo, vamos a disponer de 5 máquinas, todas con &lt;strong&gt;Docker&lt;/strong&gt; instalado, siendo irrelevante el sistema operativo, incluso mezclado:&lt;/p&gt;
 &lt;ul&gt;
