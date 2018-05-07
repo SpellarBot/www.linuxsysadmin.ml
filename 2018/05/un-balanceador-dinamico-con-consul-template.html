@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Un escritorio mínimo con Debian - Linux Sysadmin</title>
+    <title>Un balanceador dinámico con consul-template - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,24 +9,22 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.ml/2016/04/un-escritorio-minimo-con-debian.html">
+<link rel="canonical" href="http://www.linuxsysadmin.ml/2018/05/un-balanceador-dinamico-con-consul-template.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="keywords" content="linux,debian,jessie,escritorio,xfce" />
-        <meta name="description" content="Harto de distribuciones para escritorio cargados con aplicaciones que no se usan, decidí que esta vez iba a instalar un escritorio de trabajo partiendo de una Debian netinstall. El resto va a ser instalar las aplicaciones justas y necesarias para nuestro trabajo diario. En este artículo describo como lo hice …" />
+        <meta name="keywords" content="consul,service discovery,balanceador" />
+        <meta name="description" content="Aquellos que leéis mis artículos habitualmente ya sabéis lo que es un balanceador de carga, especialmente los de peticiones HTTP; en especial conocemos nginx y haproxy. La parte mala de estos servicios es que la configuración es estática e inmutable, y en un mundo cloud, eso no es lo ideal …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Un escritorio mínimo con Debian"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.ml/2016/04/un-escritorio-minimo-con-debian.html"/>
-        <meta property="og:description" content="Harto de distribuciones para escritorio cargados con aplicaciones que no se usan, decidí que esta vez iba a instalar un escritorio de trabajo partiendo de una Debian netinstall. El resto va a ser instalar las aplicaciones justas y necesarias para nuestro trabajo diario. En este artículo describo como lo hice …"/>
-        <meta property="article:published_time" content="2016-04-25" />
-            <meta property="article:section" content="Miscelánea" />
-            <meta property="article:tag" content="linux" />
-            <meta property="article:tag" content="debian" />
-            <meta property="article:tag" content="jessie" />
-            <meta property="article:tag" content="escritorio" />
-            <meta property="article:tag" content="xfce" />
+        <meta property="og:title" content="Un balanceador dinámico con consul-template"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.ml/2018/05/un-balanceador-dinamico-con-consul-template.html"/>
+        <meta property="og:description" content="Aquellos que leéis mis artículos habitualmente ya sabéis lo que es un balanceador de carga, especialmente los de peticiones HTTP; en especial conocemos nginx y haproxy. La parte mala de estos servicios es que la configuración es estática e inmutable, y en un mundo cloud, eso no es lo ideal …"/>
+        <meta property="article:published_time" content="2018-05-07" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="consul" />
+            <meta property="article:tag" content="service discovery" />
+            <meta property="article:tag" content="balanceador" />
             <meta property="article:author" content="Gerard" />
 
 
@@ -43,8 +41,8 @@
 
 
 
-        <link href="http://www.linuxsysadmin.ml/feeds/miscelanea.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Miscelánea ATOM Feed"/>
+        <link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -91,8 +89,8 @@ Linux Sysadmin            </a>
         <div class="col-sm-9">
             <ol class="breadcrumb">
                 <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.ml/category/miscelanea.html" title="Miscelánea">Miscelánea</a></li>
-                <li class="active">Un escritorio mínimo con Debian</li>
+                <li><a href="http://www.linuxsysadmin.ml/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Un balanceador dinámico con consul-template</li>
             </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -110,10 +108,10 @@ Linux Sysadmin            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://www.linuxsysadmin.ml/2016/04/un-escritorio-minimo-con-debian.html"
+                    <a href="http://www.linuxsysadmin.ml/2018/05/un-balanceador-dinamico-con-consul-template.html"
                        rel="bookmark"
-                       title="Permalink to Un escritorio mínimo con Debian">
-                        Un escritorio mínimo con Debian
+                       title="Permalink to Un balanceador dinámico con consul-template">
+                        Un balanceador dinámico con consul-template
                     </a>
                 </h1>
             </header>
@@ -123,193 +121,228 @@ Linux Sysadmin            </a>
 <footer class="post-info">
     <span class="label label-default">Fecha</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2016-04-25T08:00:00+02:00"> 2016-04-25</time>
+        <i class="fa fa-calendar"></i><time datetime="2018-05-07T10:00:00+02:00"> 2018-05-07</time>
     </span>
 
 
             <span class="label label-default">Autor</span>
             <a href="http://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
 
-        <span class="label label-default">Tiempo de lectura</span> 7 minutos
+        <span class="label label-default">Tiempo de lectura</span> 8 minutos
         <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.ml/category/miscelanea.html">Miscelánea</a>
+        <a href="http://www.linuxsysadmin.ml/category/sistemas.html">Sistemas</a>
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.ml/tag/linux.html">linux</a>
+	<a href="http://www.linuxsysadmin.ml/tag/consul.html">consul</a>
         /
-	<a href="http://www.linuxsysadmin.ml/tag/debian.html">debian</a>
+	<a href="http://www.linuxsysadmin.ml/tag/service-discovery.html">service discovery</a>
         /
-	<a href="http://www.linuxsysadmin.ml/tag/jessie.html">jessie</a>
-        /
-	<a href="http://www.linuxsysadmin.ml/tag/escritorio.html">escritorio</a>
-        /
-	<a href="http://www.linuxsysadmin.ml/tag/xfce.html">xfce</a>
+	<a href="http://www.linuxsysadmin.ml/tag/balanceador.html">balanceador</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>Harto de distribuciones para escritorio cargados con aplicaciones que no se usan, decidí que esta vez iba a instalar un escritorio de trabajo partiendo de una <em>Debian netinstall</em>. El resto va a ser instalar las aplicaciones justas y necesarias para nuestro trabajo diario. En este artículo describo como lo hice.</p>
-<p>Este tutorial se asume que ya tenemos la distribución instalada de una forma mínima, sin nada que sea innecesario. Vamos a instalar los paquetes que se necesiten para nuestro escritorio.</p>
-<p>Para practicar la instalación y probar variaciones, es recomendable hacerlo en una máquina virtual, por ejemplo, usando <strong>VirtualBox</strong>.</p>
-<p>En cuanto a los requisitos, vamos a partir de una distribución <em>Debian Jessie</em> normal, con una cantidad de memoria tirando a poca, y con un disco también bastante escaso. El resultado es bastante ligero.</p>
-<div class="highlight"><pre><span></span>root@kobayashi-maru:~# cat /etc/debian_version
-<span class="m">8</span>.4
-root@kobayashi-maru:~# free -m
-             total       used       free     shared    buffers     cached
-Mem:           <span class="m">500</span>         <span class="m">65</span>        <span class="m">435</span>          <span class="m">4</span>          <span class="m">6</span>         <span class="m">34</span>
--/+ buffers/cache:         <span class="m">23</span>        <span class="m">476</span>
-Swap:            <span class="m">0</span>          <span class="m">0</span>          <span class="m">0</span>
-root@kobayashi-maru:~# df -h
-S.ficheros     Tamaño Usados  Disp Uso% Montado en
-/dev/sda1        <span class="m">4</span>,0G   600M  <span class="m">3</span>,2G  <span class="m">16</span>% /
-udev              10M      <span class="m">0</span>   10M   <span class="m">0</span>% /dev
-tmpfs            101M   <span class="m">4</span>,4M   96M   <span class="m">5</span>% /run
-tmpfs            251M      <span class="m">0</span>  251M   <span class="m">0</span>% /dev/shm
-tmpfs            <span class="m">5</span>,0M      <span class="m">0</span>  <span class="m">5</span>,0M   <span class="m">0</span>% /run/lock
-tmpfs            251M      <span class="m">0</span>  251M   <span class="m">0</span>% /sys/fs/cgroup
-root@kobayashi-maru:~#
+                <p>Aquellos que leéis mis artículos habitualmente ya sabéis lo que es un balanceador de carga, especialmente los de peticiones HTTP; en especial conocemos <strong>nginx</strong> y <strong>haproxy</strong>. La parte mala de estos servicios es que la configuración es estática e inmutable, y en un mundo <em>cloud</em>, eso no es lo ideal.</p>
+<p>En el momento en que pasamos de servidores tradicionales al modelo <em>cloud</em>, nos damos cuenta que no es importante que el servidor X o el servidor Y funcionen; lo que queremos es <strong>dar un servicio</strong>, y no nos importan los servidores que sean; incluso podemos aumentar o decrementar su número con facilidad.</p>
+<p>En estos casos, es muy conveniente tener un servicio de <em>discovery</em>, que nos sepa decir qué servidores tenemos y qué servicios hay alojados en ellos; <strong>Consul</strong> es uno de ellos, que ya vimos con anterioridad.</p>
+<p>Sin embargo, seguimos teniendo que reconfigurar los balanceadores manualmente y recargando su configuración. Para ello se creó <strong>consul-template</strong>, que no es más que un proceso que se dedica a construir ficheros de configuración cuando <strong>consul</strong> le indica que ha habido un cambio relevante; en este momento, <strong>consul-template</strong> regenerará la configuración del servicio y opcionalmente lanzará un comando indicado.</p>
+<p>Juntando nuestro servicio de balanceador con <strong>consul-template</strong> podemos conseguir fácilmente la ilusión de un balancear dinámico: <strong>consul-template</strong> regenerará la configuración del balanceador y lanzará el comando necesario para que el balanceador la recargue.</p>
+<h2>Un ejemplo: balanceando peticiones web con HAProxy</h2>
+<p>Como decisión de diseño, y para simplificar vamos a ver el siguiente escenario:</p>
+<ul>
+<li>Tenemos un servidor web en <em>localhost:8001</em>.</li>
+<li>Tenemos un servidor web en <em>localhost:8002</em>.</li>
+<li>Vamos a exponer en <em>localhost:80</em> las peticiones, con <strong>HAProxy</strong> y con un algoritmo de <em>round-robin</em>.</li>
+<li>El balanceador es un contenedor <strong>Docker</strong>.</li>
+<li><strong>consul-template</strong> también ejecuta como un contendor <strong>Docker</strong>.</li>
+</ul>
+<p>De hecho, todo esto también sirve para otros servicios, como por ejemplo, <strong>nginx</strong>.</p>
+<h3>Ejecutando consul</h3>
+<p>Lo primero es ejecutar un proceso <strong>consul</strong> con los servicios declarados y con sus respectivos <em>checks</em>:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/services/consul$ cat consul.json
+<span class="o">{</span>
+  <span class="s2">&quot;services&quot;</span>: <span class="o">[</span>
+    <span class="o">{</span> <span class="s2">&quot;id&quot;</span>: <span class="s2">&quot;web1&quot;</span>, <span class="s2">&quot;name&quot;</span>: <span class="s2">&quot;web&quot;</span>, <span class="s2">&quot;port&quot;</span>: <span class="m">8001</span> <span class="o">}</span>,
+    <span class="o">{</span> <span class="s2">&quot;id&quot;</span>: <span class="s2">&quot;web2&quot;</span>, <span class="s2">&quot;name&quot;</span>: <span class="s2">&quot;web&quot;</span>, <span class="s2">&quot;port&quot;</span>: <span class="m">8002</span> <span class="o">}</span>
+  <span class="o">]</span>,
+  <span class="s2">&quot;checks&quot;</span>: <span class="o">[</span>
+    <span class="o">{</span> <span class="s2">&quot;id&quot;</span>: <span class="s2">&quot;web1&quot;</span>, <span class="s2">&quot;service_id&quot;</span>: <span class="s2">&quot;web1&quot;</span>, <span class="s2">&quot;http&quot;</span>: <span class="s2">&quot;http://localhost:8001/&quot;</span>, <span class="s2">&quot;interval&quot;</span>: <span class="s2">&quot;5s&quot;</span>, <span class="s2">&quot;timeout&quot;</span>: <span class="s2">&quot;5s&quot;</span> <span class="o">}</span>,
+    <span class="o">{</span> <span class="s2">&quot;id&quot;</span>: <span class="s2">&quot;web2&quot;</span>, <span class="s2">&quot;service_id&quot;</span>: <span class="s2">&quot;web2&quot;</span>, <span class="s2">&quot;http&quot;</span>: <span class="s2">&quot;http://localhost:8002/&quot;</span>, <span class="s2">&quot;interval&quot;</span>: <span class="s2">&quot;5s&quot;</span>, <span class="s2">&quot;timeout&quot;</span>: <span class="s2">&quot;5s&quot;</span> <span class="o">}</span>
+  <span class="o">]</span>
+<span class="o">}</span>
+gerard@atlantis:~/projects/services/consul$
 </pre></div>
 
 
-<p>Las buenas prácticas requieren separar algunas de las carpetas en particiones distintas, de forma que el disco raíz no se llene por el uso diario de los usuarios. Especialmente se recomienda asignar una partición o disco para la carpeta <em>/home/</em>.</p>
-<h2>El sistema de ventanas</h2>
-<p>Como primer paso, necesitamos el servidor de ventanas, que se encarga de mediar entre los <em>drivers</em> y las aplicaciones. En la distribución utilizada, se utiliza <strong>xorg</strong> para esta función.</p>
-<div class="highlight"><pre><span></span>root@kobayashi-maru:~# apt-get install xorg
-...
-root@kobayashi-maru:~#
-</pre></div>
+<p>Es especialmente crítico que ambos servicios y ambos <em>checks</em> tengan identificadores diferentes, porque sino, <strong>consul</strong> no los percibe como cosas diferentes.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/services/consul$ ./consul agent -dev --advertise <span class="m">10</span>.0.2.15 -client <span class="m">0</span>.0.0.0 -config-file consul.json
+<span class="o">==</span>&gt; Starting Consul agent...
+<span class="o">==</span>&gt; Consul agent running!
+           Version: <span class="s1">&#39;v1.0.6&#39;</span>
+           Node ID: <span class="s1">&#39;7d05eed1-f9db-2b02-499f-1bcdb37bf73c&#39;</span>
+         Node name: <span class="s1">&#39;atlantis&#39;</span>
+        Datacenter: <span class="s1">&#39;dc1&#39;</span> <span class="o">(</span>Segment: <span class="s1">&#39;&lt;all&gt;&#39;</span><span class="o">)</span>
+            Server: <span class="nb">true</span> <span class="o">(</span>Bootstrap: <span class="nb">false</span><span class="o">)</span>
+       Client Addr: <span class="o">[</span><span class="m">0</span>.0.0.0<span class="o">]</span> <span class="o">(</span>HTTP: <span class="m">8500</span>, HTTPS: -1, DNS: <span class="m">8600</span><span class="o">)</span>
+      Cluster Addr: <span class="m">10</span>.0.2.15 <span class="o">(</span>LAN: <span class="m">8301</span>, WAN: <span class="m">8302</span><span class="o">)</span>
+           Encrypt: Gossip: false, TLS-Outgoing: false, TLS-Incoming: <span class="nb">false</span>
 
-
-<p>Esto nos va a instalar el servidor, y gracias al sistema de dependencias de <em>Debian</em>, todos los drivers de entrada y de vídeo; esto añade muchos paquetes que seguramente no usaremos jamás, que necesitan irse actualizando y ocupan espacio en disco. En caso de querer reducir la cantidad de drivers instalados, y sabiendo los que necesitamos, podemos instalar los necesarios solamente.</p>
-<div class="highlight"><pre><span></span>root@kobayashi-maru:~# apt-get install xserver-xorg xserver-xorg-input-kbd xserver-xorg-input-mouse xserver-xorg-video-vesa
-...
-root@kobayashi-maru:~#
-</pre></div>
-
-
-<p>En este caso, yo opté por este sistema, instalando el <em>driver</em> de vídeo <em>vesa</em>, que es el que funciona con <strong>VirtualBox</strong> (este <em>driver</em> funciona siempre). En el caso de mi ordenador, puse el <em>driver</em> de vídeo <em>intel</em> (que es la tarjeta gráfica que tengo) y añadí el <em>driver</em> de entrada <em>synaptics</em> (que gestiona el <em>touchpad</em>).</p>
-<h2>El entorno de escritorio</h2>
-<p>En este apartado tenemos muchas posibilidades; el ecosistema de entornos de escritorio es grande, pudiendo elegir entre <em>GNOME</em>, <em>KDE</em>, <em>XFCE</em>, <em>LXDE</em> y otros tantos.</p>
-<p>Un entorno de escritorio que me gusta por su simplicidad es <em>LXDE</em>, que se puede instalar con el paquete <strong>lxde</strong>.</p>
-<div class="highlight"><pre><span></span>root@kobayashi-maru:~# apt-get install lxde
-...
-root@kobayashi-maru:~#
-</pre></div>
-
-
-<p>En caso de no necesitar todos los paquetes, es posible instalar un conjunto menor de paquetes. Una selección bastante completa podría ser la siguiente:</p>
-<div class="highlight"><pre><span></span>root@kobayashi-maru:~# apt-get install lxde-core lxappearance lxterminal lxtask
-...
-root@kobayashi-maru:~#
-</pre></div>
-
-
-<p>Sin embargo, este entorno de escritorio está muy limitado en cuando a herramientas de configuración, y yo preferí instalar <em>XFCE</em>, que conseguí con los paquetes <strong>xfce4</strong> y <strong>xfce4-goodies</strong> (opcional; incluye algunos <em>plugins</em> y aplicaciones extras).</p>
-<div class="highlight"><pre><span></span>root@kobayashi-maru:~# apt-get install xfce4 xfce4-goodies
-...
-root@kobayashi-maru:~#
-</pre></div>
-
-
-<h2>Cargar el modo gráfico</h2>
-<p>El primer método consiste en trabajar en modo terminal, levantando manualmente el entorno gráfico invocando el comando <strong>startx</strong>, que se encuentra en el paquete <strong>xinit</strong>.</p>
-<div class="highlight"><pre><span></span>root@kobayashi-maru:~# apt-get install xinit
-...
-root@kobayashi-maru:~#
-</pre></div>
-
-
-<p>Esto no es cómodo para el usuario corriente; lo normal es tener una pantalla de <em>login</em> para entrar en la sesión de escritorio. Nuevamente hay muchas alternativas, pero en nuestro caso hemos optado por poner el paquete <strong>lightdm</strong>.</p>
-<div class="highlight"><pre><span></span>root@kobayashi-maru:~# apt-get install lightdm
-...
-root@kobayashi-maru:~#
-</pre></div>
-
-
-<h2>Otras utilidades</h2>
-<p>Dependiendo del uso que vayamos a hacer, es interesante que nuestro ordenador pueda reproducir sonidos y tenga un gestor de redes, tanto cableadas como <em>wifi</em>.</p>
-<p>El primero consiste en usar <em>ALSA</em>, y detectar la configuración de nuestro sonido, guardando dicha configuración para futuros reinicios de la máquina.</p>
-<div class="highlight"><pre><span></span>root@kobayashi-maru:~# apt-get install alsa-utils
-...
-root@kobayashi-maru:~# alsactl init
-Found hardware: <span class="s2">&quot;ICH&quot;</span> <span class="s2">&quot;SigmaTel STAC9700,83,84&quot;</span> <span class="s2">&quot;AC97a:83847600&quot;</span> <span class="s2">&quot;0x8086&quot;</span> <span class="s2">&quot;0x0000&quot;</span>
-Hardware is initialized using a generic method
-root@kobayashi-maru:~# alsactl store
-root@kobayashi-maru:~#
-</pre></div>
-
-
-<p>Para la parte del gestor de redes, hay nuevamente debate. Uno que me gusta y que cumple bien con su función es <strong>wicd</strong>.</p>
-<div class="highlight"><pre><span></span>root@kobayashi-maru:~# apt-get install wicd
-...
-root@kobayashi-maru:~#
-</pre></div>
-
-
-<h2>Las aplicaciones</h2>
-<p>Las aplicaciones a instalar son un tema muy personal; cada usuario va a necesitar unos tipos de aplicaciones u otras. Incluso así, de las aplicaciones de un tipo dado, pueden haber diversas opciones.</p>
-<p>Estas aplicaciones se pueden ir instalando a <em>posteriori</em>, tal como se vayan necesitando. Sin embargo, podemos poner aquellas que se van a usar seguro, como un navegador web, por ejemplo <em>Chromium</em>.</p>
-<div class="highlight"><pre><span></span>root@kobayashi-maru:~# apt-get install chromium
-...
-root@kobayashi-maru:~#
-</pre></div>
-
-
-<p>Y para los fans de <em>Firefox</em>, también hay su alternativa:</p>
-<div class="highlight"><pre><span></span>root@kobayashi-maru:~# apt-get install iceweasel
-...
-root@kobayashi-maru:~#
-</pre></div>
-
-
-<h2>Y finalmente, la magia</h2>
-<p>Podemos limpiar los paquetes descargados e instalados, mediante un <em>clean</em> simple de <strong>apt-get</strong>. Esto liberará algunos <em>megas</em>.</p>
-<div class="highlight"><pre><span></span>root@kobayashi-maru:~# apt-get clean
-root@kobayashi-maru:~#
-</pre></div>
-
-
-<p>Rebotamos nuestro ordenador, y dejamos que lo instalado tome el control del <em>boot</em>.</p>
-<div class="highlight"><pre><span></span>root@kobayashi-maru:~# reboot
+<span class="o">==</span>&gt; Log data will now stream in as it occurs:
 ...
 </pre></div>
 
 
-<p>Iremos a parar a la pantalla de <em>login</em>, y con un usuario adecuado deberíamos ver nuestro escritorio, tal como se muestra.</p>
-<p><img alt="Escritorio XFCE" src="http://www.linuxsysadmin.ml/images/escritorio-xfce.jpg"></p>
-<p>Ahora es tarea del usuario tunear el escritorio a su gusto, con paneles, <em>plugins</em> y <em>wallpapers</em>.</p>
-<h2>Un apunte sobre los recursos</h2>
-<p>Tras instalar todos los componentes, vemos que los recursos apenas han subido; lo que nos da una idea del tipo de <em>hardware</em> que podemos usar.</p>
-<div class="highlight"><pre><span></span>gerard@kobayashi-maru:~$ df -h
-S.ficheros     Tamaño Usados  Disp Uso% Montado en
-/dev/sda1        <span class="m">4</span>,0G   <span class="m">1</span>,4G  <span class="m">2</span>,5G  <span class="m">36</span>% /
-udev              10M      <span class="m">0</span>   10M   <span class="m">0</span>% /dev
-tmpfs            101M   <span class="m">4</span>,4M   96M   <span class="m">5</span>% /run
-tmpfs            251M      <span class="m">0</span>  251M   <span class="m">0</span>% /dev/shm
-tmpfs            <span class="m">5</span>,0M   <span class="m">4</span>,0K  <span class="m">5</span>,0M   <span class="m">1</span>% /run/lock
-tmpfs            251M      <span class="m">0</span>  251M   <span class="m">0</span>% /sys/fs/cgroup
-tmpfs             51M   <span class="m">4</span>,0K   51M   <span class="m">1</span>% /run/user/110
-tmpfs             51M   <span class="m">4</span>,0K   51M   <span class="m">1</span>% /run/user/1000
-gerard@kobayashi-maru:~$ free -m
-             total       used       free     shared    buffers     cached
-Mem:           <span class="m">500</span>        <span class="m">238</span>        <span class="m">262</span>          <span class="m">5</span>         <span class="m">15</span>        <span class="m">125</span>
--/+ buffers/cache:         <span class="m">96</span>        <span class="m">404</span>
-Swap:            <span class="m">0</span>          <span class="m">0</span>          <span class="m">0</span>
-gerard@kobayashi-maru:~$
+<p>Y lo dejamos funcionado.</p>
+<h3>El balanceador y consul-template</h3>
+<p>El balanceador no tiene ningún misterio; se trata de un <strong>haproxy</strong> normal y corriente, con la única peculiaridad de que la carpeta <em>/etc/haproxy/</em> es un volúmen, de forma que el contenedor de <strong>consul-template</strong> lo pueda exportar y escribir en él. De esta forma podemos "dar un cambiazo" al fichero de configuración desde otro contenedor.</p>
+<p>Estaría bien tener en la imagen del balanceador un <em>script</em> que supiera como recargar la configuración del balanceador de forma fina y delicada, de forma que el otro contenedor simplemente ejecutaría un <code>docker exec</code> para "pedirle" que lo hiciera, sin entrar en detalles de como se hace. Para agilizar el artículo, nos limitaremos a hacer un <code>docker restart</code>, que no es ideal, pero nos vale de momento.</p>
+<p>Por su parte, el contenedor que ejecuta <strong>consul-template</strong> tampoco tiene ningún misterio. Se limita a exportar la carpeta de configuración de <strong>haproxy</strong> y ejecutar <strong>consul-template</strong>, de forma continua y limitándose a crear <code>/etc/haproxy/haproxy.cfg</code> a partir de la información del <strong>consul</strong> local y la plantilla suministrada.</p>
+<p>Si se diera el caso de un cambio en el servicio implicado, <strong>consul-template</strong> regeneraría la configuración de <strong>haproxy</strong>; como <em>bonus</em>, va a reiniciar el contenedor de <strong>haproxy</strong> para que este aplique la nueva configuración. No es la mejor manera de hacer las cosas, pero el "como reinicar un <strong>haproxy</strong>" no es la parte relevante del artículo.</p>
+<p><strong>TRUCO</strong>: Para más información de como controlar un contenedor alojado en el mismo <em>host</em> en que corre el nuestro, podemos seguir <a href="http://www.linuxsysadmin.ml/2018/04/controlando-docker-desde-un-contenedor.html">este otro artículo</a>.</p>
+<p>El contenedor de <strong>consul-template</strong> solo tiene lo necesario para usar el comando <code>docker</code> y el mismo <code>consul-template</code>. Los añado como referencia:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/balancer$ tree templater_build/
+templater_build/
+├── consul-template
+└── Dockerfile
+
+<span class="m">0</span> directories, <span class="m">2</span> files
+gerard@atlantis:~/projects/balancer$ cat templater_build/Dockerfile
+FROM alpine:3.7
+RUN apk add --no-cache docker <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/docker-proxy <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/docker-containerd-shim <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/docker-runc <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/docker-containerd-ctr <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/docker-containerd <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/dockerd
+COPY consul-template /usr/bin/
+gerard@atlantis:~/projects/balancer$
 </pre></div>
 
 
-<p>El disco ha aumentado en unos 900 mb y la memoria ha pasado de 23 a 96 mb, sin tener ninguna aplicación abierta.</p>
-<p><strong>CUIDADO</strong>: Algunas aplicaciones necesitan mucho disco y también memoria. Depende de lo que se ponga, podemos pasar de unos requerimientos <em>hardware</em> austeros, a una máquina que dejaría de juguete a un supercomputador...</p>
-<p>Para el uso que doy de mi <em>netbook</em> (navegar, redacción de artículos, programación de <em>scripts</em> y alguna sesión de <em>SSH</em>), los 2gb de memoria me sobran; con 128 mb tendría suficiente.</p>
+<p>También añado como referencia el <em>docker-compose.yml</em> con el que se levantan ambos contenedores.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/balancer$ cat docker-compose.yml
+version: <span class="s1">&#39;2&#39;</span>
+services:
+  loadbalancer:
+    image: sirrtea/haproxy:alpine
+    container_name: balancer
+    hostname: balancer
+    network_mode: host
+    volumes:
+      - /etc/haproxy
+  templater:
+    image: templater
+    container_name: templater
+    hostname: templater
+    network_mode: host
+    volumes:
+      - ./haproxy.ctmpl:/tmp/haproxy.ctmpl:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    volumes_from:
+      - loadbalancer
+    command: consul-template -template <span class="s2">&quot;/tmp/haproxy.ctmpl:/etc/haproxy/haproxy.cfg:docker restart balancer&quot;</span>
+gerard@atlantis:~/projects/balancer$
+</pre></div>
+
+
+<p>Fijáos especialmente en:</p>
+<ul>
+<li>El volumen en <em>/etc/haproxy/</em>, para poder compartir el fichero de configuración.</li>
+<li>El volumen <em>/var/run/docker.sock</em> para controlar el servidor <strong>docker</strong> del <em>host</em>.</li>
+<li>La plantilla, que también se añade como volumen.</li>
+<li>Y como curiosidad, el comando <strong>consul-template</strong> necesario, con el comando de <em>restart</em> del contendor <em>balancer</em>.</li>
+</ul>
+<p>La plantilla de <strong>haproxy</strong> tampoco tiene ninguna complejidad...</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/balancer$ cat haproxy.ctmpl
+global
+    chroot /var/lib/haproxy
+    user haproxy
+    group haproxy
+
+defaults
+    mode http
+
+listen stats
+    <span class="nb">bind</span> *:8080
+    stats <span class="nb">enable</span>
+    stats uri /
+
+listen web
+    <span class="nb">bind</span> *:80
+    balance roundrobin
+<span class="o">{{</span> range service <span class="s2">&quot;web&quot;</span> <span class="o">}}</span>
+    server <span class="o">{{</span> .ID <span class="o">}}</span> <span class="o">{{</span> .Address <span class="o">}}</span>:<span class="o">{{</span> .Port <span class="o">}}</span>
+<span class="o">{{</span> end <span class="o">}}</span>
+gerard@atlantis:~/projects/balancer$
+</pre></div>
+
+
+<h3>Resultado</h3>
+<p>Com ambos servicios <em>web</em> funcionando todo va como se espera (también lo podemos comprobar en la página de estadísticas de <strong>haproxy</strong>, en el puerto 8080):</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/balancer$ docker <span class="nb">exec</span> balancer cat /etc/haproxy/haproxy.cfg <span class="p">|</span> grep server
+    server web1 <span class="m">10</span>.0.2.15:8001
+    server web2 <span class="m">10</span>.0.2.15:8002
+gerard@atlantis:~/projects/balancer$ curl http://localhost:80/
+web1
+gerard@atlantis:~/projects/balancer$ curl http://localhost:80/
+web2
+gerard@atlantis:~/projects/balancer$ curl http://localhost:80/
+web1
+gerard@atlantis:~/projects/balancer$ curl http://localhost:80/
+web2
+gerard@atlantis:~/projects/balancer$
+</pre></div>
+
+
+<p>Si se cae, por ejemplo, el servicio <em>web1</em> en el puerto 8001, <strong>consul</strong> lo detecta. En este momento, <strong>consul-template</strong> regenera la configuración y reinica el contenedor <em>balancer</em>:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/balancer$ docker <span class="nb">exec</span> balancer cat /etc/haproxy/haproxy.cfg <span class="p">|</span> grep server
+    server web2 <span class="m">10</span>.0.2.15:8002
+gerard@atlantis:~/projects/balancer$ curl http://localhost:80/
+web2
+gerard@atlantis:~/projects/balancer$ curl http://localhost:80/
+web2
+gerard@atlantis:~/projects/balancer$ curl http://localhost:80/
+web2
+gerard@atlantis:~/projects/balancer$
+</pre></div>
+
+
+<p>Se cae el servicio <em>web2</em>, y nos quedamos sin servicio completamente, pero la configuración queda como se espera:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/balancer$ docker <span class="nb">exec</span> balancer cat /etc/haproxy/haproxy.cfg <span class="p">|</span> grep server
+gerard@atlantis:~/projects/balancer$ curl http://localhost:80/
+&lt;html&gt;&lt;body&gt;&lt;h1&gt;503 Service Unavailable&lt;/h1&gt;
+No server is available to handle this request.
+&lt;/body&gt;&lt;/html&gt;
+gerard@atlantis:~/projects/balancer$
+</pre></div>
+
+
+<p>Solo nos quedaría restablecer el servicio tanto en <em>web1</em> como en <em>web2</em>, y verificar que el servicio global se restablece:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/projects/balancer$ docker <span class="nb">exec</span> balancer cat /etc/haproxy/haproxy.cfg <span class="p">|</span> grep server
+    server web1 <span class="m">10</span>.0.2.15:8001
+    server web2 <span class="m">10</span>.0.2.15:8002
+gerard@atlantis:~/projects/balancer$ curl http://localhost:80/
+web1
+gerard@atlantis:~/projects/balancer$ curl http://localhost:80/
+web2
+gerard@atlantis:~/projects/balancer$ curl http://localhost:80/
+web1
+gerard@atlantis:~/projects/balancer$ curl http://localhost:80/
+web2
+gerard@atlantis:~/projects/balancer$
+</pre></div>
+
+
+<p>El siguiente paso sería añadir nuevos nodos con <strong>consul</strong> para observar como la configuración de <strong>hoproxy</strong> crece. De esta forma, no tendremos que preocuparnos de la configuración del balanceador nunca más; solamente de tener la plantilla actualizada si añadimos más aplicaciones.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.ml/2015/12/construyendo-un-raid-10-en-linux.html">Construyendo un RAID 10 en linux</a></li>
-        <li><a href="http://www.linuxsysadmin.ml/2015/12/construyendo-una-replica-set-en-mongodb.html">Construyendo una replica set en mongodb</a></li>
-        <li><a href="http://www.linuxsysadmin.ml/2017/02/compartiendo-carpetas-con-nfs.html">Compartiendo carpetas con NFS</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2018/04/monitorizacion-y-service-discovery-con-consul.html">Monitorización y service discovery con Consul</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2018/04/levantando-un-cluster-de-consul.html">Levantando un cluster de consul</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2016/03/creando-un-entorno-escalable-4.html">Creando un entorno escalable (IV)</a></li>
     </ul>
 </section>
     <hr/>
@@ -321,8 +354,8 @@ gerard@kobayashi-maru:~$
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'un-escritorio-minimo-con-debian';
-                var disqus_url = 'http://www.linuxsysadmin.ml/2016/04/un-escritorio-minimo-con-debian.html';
+                    var disqus_identifier = 'un-balanceador-dinamico-con-consul-template';
+                var disqus_url = 'http://www.linuxsysadmin.ml/2018/05/un-balanceador-dinamico-con-consul-template.html';
 
             var disqus_config = function () {
                 this.language = "es";
