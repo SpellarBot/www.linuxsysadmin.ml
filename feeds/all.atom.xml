@@ -1,5 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-05-07T10:00:00+02:00</updated><entry><title>Un balanceador dinámico con consul-template</title><link href="http://www.linuxsysadmin.ml/2018/05/un-balanceador-dinamico-con-consul-template.html" rel="alternate"></link><published>2018-05-07T10:00:00+02:00</published><updated>2018-05-07T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-05-07:/2018/05/un-balanceador-dinamico-con-consul-template.html</id><summary type="html">&lt;p&gt;Aquellos que leéis mis artículos habitualmente ya sabéis lo que es un balanceador de carga, especialmente los de peticiones HTTP; en especial conocemos &lt;strong&gt;nginx&lt;/strong&gt; y &lt;strong&gt;haproxy&lt;/strong&gt;. La parte mala de estos servicios es que la configuración es estática e inmutable, y en un mundo &lt;em&gt;cloud&lt;/em&gt;, eso no es lo ideal …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Aquellos que leéis mis artículos habitualmente ya sabéis lo que es un balanceador de carga, especialmente los de peticiones HTTP; en especial conocemos &lt;strong&gt;nginx&lt;/strong&gt; y &lt;strong&gt;haproxy&lt;/strong&gt;. La parte mala de estos servicios es que la configuración es estática e inmutable, y en un mundo &lt;em&gt;cloud&lt;/em&gt;, eso no es lo ideal.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-05-14T10:00:00+02:00</updated><entry><title>Una jaula SSH con git-shell</title><link href="http://www.linuxsysadmin.ml/2018/05/una-jaula-ssh-con-git-shell.html" rel="alternate"></link><published>2018-05-14T10:00:00+02:00</published><updated>2018-05-14T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-05-14:/2018/05/una-jaula-ssh-con-git-shell.html</id><summary type="html">&lt;p&gt;El otro día recibí una petición en el trabajo por parte de un cliente: poder ejecutar algunas operaciones por SSH en nuestro servidor. Solo de pensar en montar una jaula SSH con los binarios y sus librerías ya se me hizo cuesta arriba, y por eso lo hice con &lt;strong&gt;git-shell …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día recibí una petición en el trabajo por parte de un cliente: poder ejecutar algunas operaciones por SSH en nuestro servidor. Solo de pensar en montar una jaula SSH con los binarios y sus librerías ya se me hizo cuesta arriba, y por eso lo hice con &lt;strong&gt;git-shell&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;No he encontrado por internet nadie que haya hecho algo similar, así que lo he puesto por escrito en este artículo. Se trata de utilizar el &lt;em&gt;shell&lt;/em&gt; restringido &lt;strong&gt;git-shell&lt;/strong&gt; para que el usuario solo pueda utilizar los &lt;em&gt;scripts&lt;/em&gt; o binarios presentes en la carpeta &lt;code&gt;~/git-shell-commands/&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Por defecto, &lt;strong&gt;git-shell&lt;/strong&gt; solo acepta las operaciones necesarias para trabajar remotamente con repositorios &lt;em&gt;git&lt;/em&gt;. Esto se puede leer en &lt;a href="https://git-scm.com/docs/git-shell"&gt;la documentación&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Call the corresponding server-side command to support the client’s git push, git fetch, or git archive --remote request.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Sin embargo, ante la presencia de una carpeta &lt;code&gt;~/git-shell-commands/&lt;/code&gt; también nos añade los &lt;em&gt;scripts&lt;/em&gt; y binarios de la misma al conjunto de operaciones que podemos ejecutar.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;If a ~/git-shell-commands directory is present, git shell will also handle other, custom commands by running "git-shell-commands/&lt;command&gt; &lt;arguments&gt;" from the user’s home directory.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Esto está pensado para operaciones administrativas como crear, borrar y modificar los repositorios alojados. Sin embargo, podemos utilizarlo para limitar los comandos que un usuario puede ejecutar, sean o no de &lt;em&gt;git&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Por supuesto, el soporte a operaciones remotas de &lt;em&gt;git&lt;/em&gt; no nos molesta; al no haber repositorios, estas operaciones van a fallar de todas formas. Así pues, vamos a centrarnos en nuestras propias operaciones.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo simple&lt;/h2&gt;
+&lt;p&gt;Supongamos que tenemos un servidor con SSH, al que vamos a llamar &lt;em&gt;server&lt;/em&gt;. Para la demostración, se va a tratar de un servidor &lt;strong&gt;Alpine Linux&lt;/strong&gt;, aunque esto no es relevante.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: A menos que se diga lo contrario, todos los comandos se ejecutan con &lt;em&gt;root&lt;/em&gt;, aunque podéis usar &lt;em&gt;sudo&lt;/em&gt; con el mismo efecto.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: Las sesiones de SSH a &lt;em&gt;server&lt;/em&gt; responden con el nombre &lt;em&gt;localhost&lt;/em&gt;. Esto es debido a que el servidor es un contenedor &lt;strong&gt;docker&lt;/strong&gt; con el puerto 22 mapeado al puerto 22 del servidor &lt;em&gt;sirius&lt;/em&gt;; al ser un ejemplo, prefiero no virtualizar máquinas nuevas.&lt;/p&gt;
+&lt;p&gt;Para disponer del binario &lt;strong&gt;git-shell&lt;/strong&gt;, necesitamos el paquete &lt;strong&gt;git&lt;/strong&gt; instalado. Si no lo tenéis hecho, es el mejor momento para hacerlo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;server:~# apk add --no-cache git
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.7/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.7/community/x86_64/APKINDEX.tar.gz
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;/6&lt;span class="o"&gt;)&lt;/span&gt; Installing ca-certificates &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;20171114&lt;/span&gt;-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;/6&lt;span class="o"&gt;)&lt;/span&gt; Installing libssh2 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.8.0-r2&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;/6&lt;span class="o"&gt;)&lt;/span&gt; Installing libcurl &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;.59.0-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;/6&lt;span class="o"&gt;)&lt;/span&gt; Installing expat &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.2.5-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;/6&lt;span class="o"&gt;)&lt;/span&gt; Installing pcre2 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;.30-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;/6&lt;span class="o"&gt;)&lt;/span&gt; Installing git &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.15.0-r1&lt;span class="o"&gt;)&lt;/span&gt;
+Executing busybox-1.27.2-r7.trigger
+Executing ca-certificates-20171114-r0.trigger
+OK: &lt;span class="m"&gt;20&lt;/span&gt; MiB in &lt;span class="m"&gt;20&lt;/span&gt; packages
+server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a crear un usuario para que nuestro cliente pueda entrar por SSH; nada nuevo por el momento, con la excepción de que vamos a indicar como su &lt;em&gt;shell&lt;/em&gt; el mismo &lt;strong&gt;git-shell&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;server:~# adduser -D customer -s /usr/bin/git-shell
+server:~# &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;customer:s3cr3t&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; chpasswd
+chpasswd: password &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;customer&amp;#39;&lt;/span&gt; changed
+server:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si el usuario intenta entrar en este punto, solo podrá utilizar las operaciones &lt;em&gt;git&lt;/em&gt; remotas, siendo imposible que lance una sesión interactiva, o comandos sueltos por SSH.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ ssh customer@server
+Warning: Permanently added &lt;span class="s1"&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;ECDSA&lt;span class="o"&gt;)&lt;/span&gt; to the list of known hosts.
+customer@localhost&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+Welcome to Alpine!
+
+The Alpine Wiki contains a large amount of how-to guides and general
+information about administrating Alpine systems.
+See &amp;lt;http://wiki.alpinelinux.org&amp;gt;.
+
+You can setup the system with the command: setup-alpine
+
+You may change this message by editing /etc/motd.
+
+fatal: Interactive git shell is not enabled.
+hint: ~/git-shell-commands should exist and have &lt;span class="nb"&gt;read&lt;/span&gt; and execute access.
+Connection to localhost closed.
+gerard@sirius:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ ssh customer@server hostname
+Warning: Permanently added &lt;span class="s1"&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;ECDSA&lt;span class="o"&gt;)&lt;/span&gt; to the list of known hosts.
+customer@localhost&lt;span class="s1"&gt;&amp;#39;s password: &lt;/span&gt;
+&lt;span class="s1"&gt;fatal: unrecognized command &amp;#39;&lt;/span&gt;hostname&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;
+gerard@sirius:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para activar &lt;strong&gt;git-shell&lt;/strong&gt;, hay que crear la carpeta indicada &lt;code&gt;~/git-shell-commands&lt;/code&gt;; los comandos que se pueden ejecutar son los que van dentro de la misma.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;server:~# &lt;span class="nb"&gt;cd&lt;/span&gt; /home/customer/
+server:/home/customer# mkdir git-shell-commands
+server:/home/customer# chown customer:customer git-shell-commands/
+server:/home/customer# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Con esto el usuario ya va a poder entrar en una sesión interactiva, aunque no dispone de comandos para ejecutar:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ ssh customer@server
+Warning: Permanently added &lt;span class="s1"&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;ECDSA&lt;span class="o"&gt;)&lt;/span&gt; to the list of known hosts.
+customer@localhost&lt;span class="s1"&gt;&amp;#39;s password: &lt;/span&gt;
+&lt;span class="s1"&gt;Welcome to Alpine!&lt;/span&gt;
+
+&lt;span class="s1"&gt;The Alpine Wiki contains a large amount of how-to guides and general&lt;/span&gt;
+&lt;span class="s1"&gt;information about administrating Alpine systems.&lt;/span&gt;
+&lt;span class="s1"&gt;See &amp;lt;http://wiki.alpinelinux.org&amp;gt;.&lt;/span&gt;
+
+&lt;span class="s1"&gt;You can setup the system with the command: setup-alpine&lt;/span&gt;
+
+&lt;span class="s1"&gt;You may change this message by editing /etc/motd.&lt;/span&gt;
+
+&lt;span class="s1"&gt;git&amp;gt; hostname&lt;/span&gt;
+&lt;span class="s1"&gt;unrecognized command &amp;#39;&lt;/span&gt;hostname&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;
+git&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos faltaría rellenar la carpeta con los binarios o &lt;em&gt;scripts&lt;/em&gt; que este usuario pueda necesitar. Como punto interesante, si existe un &lt;code&gt;help&lt;/code&gt;, este se va a ejecutar al entrar por SSH de forma automática, y nos puede servir para que el usuario sepa que hacer (o para que pida ayuda en el medio de una sesión).&lt;/p&gt;
+&lt;p&gt;El resto de comandos son libres y podéis hacer literalmente lo que queráis, con el entendido que estos &lt;em&gt;scripts&lt;/em&gt; pueden invocar todos los comandos del sistema de forma normal, pero  el usuario solo va a poder ejecutar estos &lt;em&gt;scripts&lt;/em&gt;. Veamos un ejemplo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;server:/home/customer# &lt;span class="nb"&gt;cd&lt;/span&gt; git-shell-commands/
+server:/home/customer/git-shell-commands# cat &lt;span class="nb"&gt;help&lt;/span&gt; 
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Permitted commands:&amp;quot;&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;  help - shows this help message&amp;quot;&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;  hostname - shows hostname of this server&amp;quot;&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;  get_connected_users - shows user currently logged on&amp;quot;&lt;/span&gt;
+server:/home/customer/git-shell-commands# cat hostname 
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+hostname
+server:/home/customer/git-shell-commands# cat get_connected_users 
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class="nv"&gt;n&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$RANDOM&lt;/span&gt;
+&lt;span class="nb"&gt;let&lt;/span&gt; n%&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Users connected: &lt;/span&gt;&lt;span class="nv"&gt;$n&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+server:/home/customer/git-shell-commands# chown customer:customer *
+server:/home/customer/git-shell-commands# chmod &lt;span class="m"&gt;755&lt;/span&gt; *
+server:/home/customer/git-shell-commands# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora es el momento de que el usuario se conecte y vea el resultado:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~$ ssh customer@server
+Warning: Permanently added &lt;span class="s1"&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;ECDSA&lt;span class="o"&gt;)&lt;/span&gt; to the list of known hosts.
+customer@localhost&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+Welcome to Alpine!
+
+The Alpine Wiki contains a large amount of how-to guides and general
+information about administrating Alpine systems.
+See &amp;lt;http://wiki.alpinelinux.org&amp;gt;.
+
+You can setup the system with the command: setup-alpine
+
+You may change this message by editing /etc/motd.
+
+Permitted commands:
+  &lt;span class="nb"&gt;help&lt;/span&gt; - shows this &lt;span class="nb"&gt;help&lt;/span&gt; message
+  hostname - shows hostname of this server
+  get_connected_users - shows user currently logged on
+git&amp;gt; hostname
+server
+git&amp;gt; &lt;span class="nb"&gt;help&lt;/span&gt;
+Permitted commands:
+  &lt;span class="nb"&gt;help&lt;/span&gt; - shows this &lt;span class="nb"&gt;help&lt;/span&gt; message
+  hostname - shows hostname of this server
+  get_connected_users - shows user currently logged on
+git&amp;gt; get_connected_users
+Users connected: &lt;span class="m"&gt;4&lt;/span&gt;
+git&amp;gt; &lt;span class="nb"&gt;exit&lt;/span&gt;
+Connection to localhost closed.
+gerard@sirius:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y de esta forma, el usuario queda limitado, pero con estos 3 comandos posibles.&lt;/p&gt;</content><category term="git"></category><category term="git-shell"></category><category term="jaula"></category><category term="ssh"></category></entry><entry><title>Un balanceador dinámico con consul-template</title><link href="http://www.linuxsysadmin.ml/2018/05/un-balanceador-dinamico-con-consul-template.html" rel="alternate"></link><published>2018-05-07T10:00:00+02:00</published><updated>2018-05-07T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-05-07:/2018/05/un-balanceador-dinamico-con-consul-template.html</id><summary type="html">&lt;p&gt;Aquellos que leéis mis artículos habitualmente ya sabéis lo que es un balanceador de carga, especialmente los de peticiones HTTP; en especial conocemos &lt;strong&gt;nginx&lt;/strong&gt; y &lt;strong&gt;haproxy&lt;/strong&gt;. La parte mala de estos servicios es que la configuración es estática e inmutable, y en un mundo &lt;em&gt;cloud&lt;/em&gt;, eso no es lo ideal …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Aquellos que leéis mis artículos habitualmente ya sabéis lo que es un balanceador de carga, especialmente los de peticiones HTTP; en especial conocemos &lt;strong&gt;nginx&lt;/strong&gt; y &lt;strong&gt;haproxy&lt;/strong&gt;. La parte mala de estos servicios es que la configuración es estática e inmutable, y en un mundo &lt;em&gt;cloud&lt;/em&gt;, eso no es lo ideal.&lt;/p&gt;
 &lt;p&gt;En el momento en que pasamos de servidores tradicionales al modelo &lt;em&gt;cloud&lt;/em&gt;, nos damos cuenta que no es importante que el servidor X o el servidor Y funcionen; lo que queremos es &lt;strong&gt;dar un servicio&lt;/strong&gt;, y no nos importan los servidores que sean; incluso podemos aumentar o decrementar su número con facilidad.&lt;/p&gt;
 &lt;p&gt;En estos casos, es muy conveniente tener un servicio de &lt;em&gt;discovery&lt;/em&gt;, que nos sepa decir qué servidores tenemos y qué servicios hay alojados en ellos; &lt;strong&gt;Consul&lt;/strong&gt; es uno de ellos, que ya vimos con anterioridad.&lt;/p&gt;
 &lt;p&gt;Sin embargo, seguimos teniendo que reconfigurar los balanceadores manualmente y recargando su configuración. Para ello se creó &lt;strong&gt;consul-template&lt;/strong&gt;, que no es más que un proceso que se dedica a construir ficheros de configuración cuando &lt;strong&gt;consul&lt;/strong&gt; le indica que ha habido un cambio relevante; en este momento, &lt;strong&gt;consul-template&lt;/strong&gt; regenerará la configuración del servicio y opcionalmente lanzará un comando indicado.&lt;/p&gt;
