@@ -1,5 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-05-14T10:00:00+02:00</updated><entry><title>Una jaula SSH con git-shell</title><link href="http://www.linuxsysadmin.ml/2018/05/una-jaula-ssh-con-git-shell.html" rel="alternate"></link><published>2018-05-14T10:00:00+02:00</published><updated>2018-05-14T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-05-14:/2018/05/una-jaula-ssh-con-git-shell.html</id><summary type="html">&lt;p&gt;El otro día recibí una petición en el trabajo por parte de un cliente: poder ejecutar algunas operaciones por SSH en nuestro servidor. Solo de pensar en montar una jaula SSH con los binarios y sus librerías ya se me hizo cuesta arriba, y por eso lo hice con &lt;strong&gt;git-shell …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día recibí una petición en el trabajo por parte de un cliente: poder ejecutar algunas operaciones por SSH en nuestro servidor. Solo de pensar en montar una jaula SSH con los binarios y sus librerías ya se me hizo cuesta arriba, y por eso lo hice con &lt;strong&gt;git-shell&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-05-21T10:00:00+02:00</updated><entry><title>Un cron alternativo con go: go-cron</title><link href="http://www.linuxsysadmin.ml/2018/05/un-cron-alternativo-con-go-go-cron.html" rel="alternate"></link><published>2018-05-21T10:00:00+02:00</published><updated>2018-05-21T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-05-21:/2018/05/un-cron-alternativo-con-go-go-cron.html</id><summary type="html">&lt;p&gt;Quiero presentar una de esas herramientas que ya existen, pero que alguien ha reescrito con el lenguaje &lt;strong&gt;go&lt;/strong&gt;. Se trata de una utilidad tipo &lt;em&gt;cron&lt;/em&gt;, pero está compilada de forma estática, no necesita de otras librerías y, por lo tanto, lo podemos usar en donde no tengamos permisos de &lt;em&gt;root …&lt;/em&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Quiero presentar una de esas herramientas que ya existen, pero que alguien ha reescrito con el lenguaje &lt;strong&gt;go&lt;/strong&gt;. Se trata de una utilidad tipo &lt;em&gt;cron&lt;/em&gt;, pero está compilada de forma estática, no necesita de otras librerías y, por lo tanto, lo podemos usar en donde no tengamos permisos de &lt;em&gt;root&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Instalación de go-cron&lt;/h2&gt;
+&lt;p&gt;El binario &lt;strong&gt;go-cron&lt;/strong&gt; no depende de librerías externas, tratándose de un binario estático que podemos tener, por ejemplo, en nuestra carpeta personal.&lt;/p&gt;
+&lt;p&gt;Su instalación se limita a descargarse el binario de &lt;a href="https://github.com/odise/go-cron/releases"&gt;GitHub&lt;/a&gt; y usar; el fichero descargado es un binario precompilado y comprimido.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace$ wget -O go-cron.gz https://github.com/odise/go-cron/releases/download/v0.0.7/go-cron-linux.gz
+...  
+Petición HTTP enviada, esperando respuesta... &lt;span class="m"&gt;200&lt;/span&gt; OK
+Longitud: &lt;span class="m"&gt;1755640&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;,7M&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;application/octet-stream&lt;span class="o"&gt;]&lt;/span&gt;
+Grabando a: “go-cron.gz”
+
+go-cron.gz               &lt;span class="m"&gt;100&lt;/span&gt;%&lt;span class="o"&gt;[====================================&lt;/span&gt;&amp;gt;&lt;span class="o"&gt;]&lt;/span&gt;   &lt;span class="m"&gt;1&lt;/span&gt;,67M  &lt;span class="m"&gt;1&lt;/span&gt;,49MB/s   en &lt;span class="m"&gt;1&lt;/span&gt;,1s   
+
+&lt;span class="m"&gt;2018&lt;/span&gt;-04-25 &lt;span class="m"&gt;11&lt;/span&gt;:13:41 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;,49 MB/s&lt;span class="o"&gt;)&lt;/span&gt; - “go-cron.gz” guardado &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1755640&lt;/span&gt;/1755640&lt;span class="o"&gt;]&lt;/span&gt;
+
+gerard@sirius:~/workspace$ gunzip go-cron.gz 
+gerard@sirius:~/workspace$ chmod &lt;span class="m"&gt;755&lt;/span&gt; go-cron 
+gerard@sirius:~/workspace$ strip go-cron 
+gerard@sirius:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: El binario viene con los símbolos de &lt;em&gt;debug&lt;/em&gt;; si ejecutamos el comando &lt;em&gt;strip&lt;/em&gt;, lo podemos bajar de 6mb a 4.3mb.&lt;/p&gt;
+&lt;h2&gt;Uso de go-cron&lt;/h2&gt;
+&lt;p&gt;Empezamos con una visión general de lo que podemos hacer con el binario, que no es mucho:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace$ ./go-cron -h
+Usage of ./go-cron &lt;span class="o"&gt;(&lt;/span&gt;build 6f160c2 &lt;span class="o"&gt;)&lt;/span&gt;
+./go-cron  &lt;span class="o"&gt;[&lt;/span&gt; OPTIONS &lt;span class="o"&gt;]&lt;/span&gt; -- &lt;span class="o"&gt;[&lt;/span&gt; COMMAND &lt;span class="o"&gt;]&lt;/span&gt;
+  -h&lt;span class="o"&gt;=&lt;/span&gt;false: display usage
+  -p&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;18080&amp;quot;&lt;/span&gt;: &lt;span class="nb"&gt;bind&lt;/span&gt; healthcheck to a specific port, &lt;span class="nb"&gt;set&lt;/span&gt; to &lt;span class="m"&gt;0&lt;/span&gt; to not open HTTP port at all
+  -s&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;* * * * *&amp;quot;&lt;/span&gt;: schedule the task the cron style
+gerard@sirius:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: A diferencia de otras herramienta tipo &lt;em&gt;cron&lt;/em&gt;, esta se encarga de gestionar &lt;strong&gt;una sola tarea&lt;/strong&gt;. Junto con el hecho de que el proceso ejecuta en primer plano, lo hace ideal para su uso en contenedores &lt;strong&gt;docker&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;La parte más importante es que demos la especificación temporal (&lt;em&gt;flag&lt;/em&gt; &lt;code&gt;-s&lt;/code&gt;) y el comando a ejecutar. Podemos encontrar documentación para la especificación temporal &lt;a href="https://godoc.org/github.com/robfig/cron"&gt;aquí&lt;/a&gt;. Esta puede ser de 3 tipos: tipo &lt;em&gt;cron&lt;/em&gt;, tiempos preconfigurados y por intervalos.&lt;/p&gt;
+&lt;h3&gt;Especificación tipo cron&lt;/h3&gt;
+&lt;p&gt;Se trata de dar 5 o 6 valores, que indican respectivamente el segundo, el minuto, la hora, el día del mes, el mes, y -opcionalmente- el día de la semana.&lt;/p&gt;
+&lt;p&gt;Estos valores pueden tener intervalos, comodines e incrementos, justo como en el &lt;em&gt;cron&lt;/em&gt; normal. Por ejemplo, para lanzar un comando en el segundo 0, cada 30 minutos, entre las 10 y las 20 horas, los días 1 y 15 del mes de todos los meses, usaríamos algo como esto:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace$ ./go-cron -s &lt;span class="s2"&gt;&amp;quot;0 */30 10-20 1,15 *&amp;quot;&lt;/span&gt; -- &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;hola&amp;quot;&lt;/span&gt;
+&lt;span class="m"&gt;2018&lt;/span&gt;/04/25 &lt;span class="m"&gt;12&lt;/span&gt;:19:32 Running version: 6f160c2
+&lt;span class="m"&gt;2018&lt;/span&gt;/04/25 &lt;span class="m"&gt;12&lt;/span&gt;:19:32 new cron: &lt;span class="m"&gt;0&lt;/span&gt; */30 &lt;span class="m"&gt;10&lt;/span&gt;-20 &lt;span class="m"&gt;1&lt;/span&gt;,15 *
+&lt;span class="m"&gt;2018&lt;/span&gt;/04/25 &lt;span class="m"&gt;12&lt;/span&gt;:19:32 Opening port &lt;span class="m"&gt;18080&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; health checking
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Valores preconfigurados&lt;/h3&gt;
+&lt;p&gt;Alternativamente, &lt;strong&gt;go-cron&lt;/strong&gt; nos ofrece unos valores preconfigurados que simplifican la expresión, a costa de perder especificaciones más caprichosas. A saber:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;@yearly&lt;/code&gt; o &lt;code&gt;@annually&lt;/code&gt; &amp;rarr; Ejecuta cada año, concretamente el 1 de enero (equivale a &lt;code&gt;0 0 0 1 1 *&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@monthly&lt;/code&gt; &amp;rarr; Ejecuta una vez al mes, en el día 1 (equivale a &lt;code&gt;0 0 0 1 * *&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@weekly&lt;/code&gt; &amp;rarr; Ejecuta cada semana, a medianoche del domingo (equivale a &lt;code&gt;0 0 0 * * 0&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@daily&lt;/code&gt; o &lt;code&gt;@midnight&lt;/code&gt; &amp;rarr; Ejecuta una vez al día, a medianoche (equivale a &lt;code&gt;0 0 0 * * *&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;@hourly&lt;/code&gt; &amp;rarr; Ejecuta cada hora, a su principio (equivale a &lt;code&gt;0 0 * * * *&lt;/code&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Así pues, para ejecutar un &lt;em&gt;backup&lt;/em&gt; diario, podríamos hacer algo como lo siguiente:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace$ ./go-cron -s &lt;span class="s2"&gt;&amp;quot;@daily&amp;quot;&lt;/span&gt; -- ./backup_database.sh
+&lt;span class="m"&gt;2018&lt;/span&gt;/04/25 &lt;span class="m"&gt;12&lt;/span&gt;:27:45 Running version: 6f160c2
+&lt;span class="m"&gt;2018&lt;/span&gt;/04/25 &lt;span class="m"&gt;12&lt;/span&gt;:27:45 new cron: @daily
+&lt;span class="m"&gt;2018&lt;/span&gt;/04/25 &lt;span class="m"&gt;12&lt;/span&gt;:27:45 Opening port &lt;span class="m"&gt;18080&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; health checking
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Especificación por intervalos&lt;/h3&gt;
+&lt;p&gt;También podemos instruir a &lt;strong&gt;go-cron&lt;/strong&gt; para que ejecute cada cierto tiempo, con el &lt;em&gt;keyword&lt;/em&gt; &lt;code&gt;@every&lt;/code&gt;. Esto nos dejaría una línea de comandos como esta:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace$ ./go-cron -s &lt;span class="s2"&gt;&amp;quot;@every 1m30s&amp;quot;&lt;/span&gt; -- ./send_keepalive.sh
+&lt;span class="m"&gt;2018&lt;/span&gt;/04/25 &lt;span class="m"&gt;12&lt;/span&gt;:30:25 Running version: 6f160c2
+&lt;span class="m"&gt;2018&lt;/span&gt;/04/25 &lt;span class="m"&gt;12&lt;/span&gt;:30:25 new cron: @every 1m30s
+&lt;span class="m"&gt;2018&lt;/span&gt;/04/25 &lt;span class="m"&gt;12&lt;/span&gt;:30:25 Opening port &lt;span class="m"&gt;18080&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; health checking
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: La primera ejecución se hace cuando ha pasado el tiempo especificado tras levantar &lt;strong&gt;go-cron&lt;/strong&gt;. Las siguientes lo hacen sin tener en cuenta el tiempo de ejecución del comando dado. En caso de ejecutar cada hora, y tardar el &lt;em&gt;script&lt;/em&gt; 40 minutos, saltaría en siguiente en unos 20 minutos; en casos extremos, podríamos tener solapamiento de ejecuciones.&lt;/p&gt;
+&lt;h3&gt;El servicio de healthcheck&lt;/h3&gt;
+&lt;p&gt;El &lt;em&gt;flag&lt;/em&gt; &lt;code&gt;-p&lt;/code&gt; sirve para indicar el puerto en el que vamos a contar con un &lt;em&gt;webservice&lt;/em&gt; con información de lo que pasa en &lt;strong&gt;go-cron&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace$ ./go-cron -s &lt;span class="s2"&gt;&amp;quot;@every 10s&amp;quot;&lt;/span&gt; -- ./do_something.sh 
+&lt;span class="m"&gt;2018&lt;/span&gt;/04/25 &lt;span class="m"&gt;12&lt;/span&gt;:38:32 Running version: 6f160c2
+&lt;span class="m"&gt;2018&lt;/span&gt;/04/25 &lt;span class="m"&gt;12&lt;/span&gt;:38:32 new cron: @every 10s
+&lt;span class="m"&gt;2018&lt;/span&gt;/04/25 &lt;span class="m"&gt;12&lt;/span&gt;:38:32 Opening port &lt;span class="m"&gt;18080&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; health checking
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace$ curl http://localhost:18080/
+&lt;span class="o"&gt;{&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;Running&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;9107&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;
+      &lt;span class="s2"&gt;&amp;quot;Exit_status&amp;quot;&lt;/span&gt;: &lt;span class="m"&gt;0&lt;/span&gt;,
+      &lt;span class="s2"&gt;&amp;quot;Stdout&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt;,
+      &lt;span class="s2"&gt;&amp;quot;Stderr&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt;,
+      &lt;span class="s2"&gt;&amp;quot;ExitTime&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt;,
+      &lt;span class="s2"&gt;&amp;quot;Pid&amp;quot;&lt;/span&gt;: &lt;span class="m"&gt;9107&lt;/span&gt;,
+      &lt;span class="s2"&gt;&amp;quot;StartingTime&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;2018-04-25T12:39:02+02:00&amp;quot;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;Last&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;Exit_status&amp;quot;&lt;/span&gt;: &lt;span class="m"&gt;0&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;Stdout&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;hello\n&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;Stderr&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;ExitTime&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;2018-04-25T12:38:57+02:00&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;Pid&amp;quot;&lt;/span&gt;: &lt;span class="m"&gt;9096&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;StartingTime&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;2018-04-25T12:38:52+02:00&amp;quot;&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;,
+  &lt;span class="s2"&gt;&amp;quot;Schedule&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;@every 10s&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Se puede desactivar indicando puerto 0, pero igual le podéis encontrar una utilidad...&lt;/p&gt;</content><category term="cron"></category><category term="go"></category><category term="go-cron"></category></entry><entry><title>Una jaula SSH con git-shell</title><link href="http://www.linuxsysadmin.ml/2018/05/una-jaula-ssh-con-git-shell.html" rel="alternate"></link><published>2018-05-14T10:00:00+02:00</published><updated>2018-05-14T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-05-14:/2018/05/una-jaula-ssh-con-git-shell.html</id><summary type="html">&lt;p&gt;El otro día recibí una petición en el trabajo por parte de un cliente: poder ejecutar algunas operaciones por SSH en nuestro servidor. Solo de pensar en montar una jaula SSH con los binarios y sus librerías ya se me hizo cuesta arriba, y por eso lo hice con &lt;strong&gt;git-shell …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día recibí una petición en el trabajo por parte de un cliente: poder ejecutar algunas operaciones por SSH en nuestro servidor. Solo de pensar en montar una jaula SSH con los binarios y sus librerías ya se me hizo cuesta arriba, y por eso lo hice con &lt;strong&gt;git-shell&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;No he encontrado por internet nadie que haya hecho algo similar, así que lo he puesto por escrito en este artículo. Se trata de utilizar el &lt;em&gt;shell&lt;/em&gt; restringido &lt;strong&gt;git-shell&lt;/strong&gt; para que el usuario solo pueda utilizar los &lt;em&gt;scripts&lt;/em&gt; o binarios presentes en la carpeta &lt;code&gt;~/git-shell-commands/&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Por defecto, &lt;strong&gt;git-shell&lt;/strong&gt; solo acepta las operaciones necesarias para trabajar remotamente con repositorios &lt;em&gt;git&lt;/em&gt;. Esto se puede leer en &lt;a href="https://git-scm.com/docs/git-shell"&gt;la documentación&lt;/a&gt;:&lt;/p&gt;
 &lt;blockquote&gt;
