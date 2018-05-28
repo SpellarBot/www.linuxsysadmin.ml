@@ -1,5 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-05-21T10:00:00+02:00</updated><entry><title>Un cron alternativo con go: go-cron</title><link href="http://www.linuxsysadmin.ml/2018/05/un-cron-alternativo-con-go-go-cron.html" rel="alternate"></link><published>2018-05-21T10:00:00+02:00</published><updated>2018-05-21T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-05-21:/2018/05/un-cron-alternativo-con-go-go-cron.html</id><summary type="html">&lt;p&gt;Quiero presentar una de esas herramientas que ya existen, pero que alguien ha reescrito con el lenguaje &lt;strong&gt;go&lt;/strong&gt;. Se trata de una utilidad tipo &lt;em&gt;cron&lt;/em&gt;, pero está compilada de forma estática, no necesita de otras librerías y, por lo tanto, lo podemos usar en donde no tengamos permisos de &lt;em&gt;root …&lt;/em&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Quiero presentar una de esas herramientas que ya existen, pero que alguien ha reescrito con el lenguaje &lt;strong&gt;go&lt;/strong&gt;. Se trata de una utilidad tipo &lt;em&gt;cron&lt;/em&gt;, pero está compilada de forma estática, no necesita de otras librerías y, por lo tanto, lo podemos usar en donde no tengamos permisos de &lt;em&gt;root&lt;/em&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-05-28T10:00:00+02:00</updated><entry><title>Despliegues sin corte de servicio: blue-green deployments</title><link href="http://www.linuxsysadmin.ml/2018/05/despliegues-sin-corte-de-servicio-blue-green-deployments.html" rel="alternate"></link><published>2018-05-28T10:00:00+02:00</published><updated>2018-05-28T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-05-28:/2018/05/despliegues-sin-corte-de-servicio-blue-green-deployments.html</id><summary type="html">&lt;p&gt;Para muchas aplicaciones caseras, nos importa poco parar un servidor de aplicaciones o web. Sin embargo, en el mundo empresarial, un corte de servicio o &lt;em&gt;downtime&lt;/em&gt; son palabras mayores, y normalmente vienen seguidos de un papeleo espectacular; otras veces se puede calmar la situación mediante el despido del pobre operador …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Para muchas aplicaciones caseras, nos importa poco parar un servidor de aplicaciones o web. Sin embargo, en el mundo empresarial, un corte de servicio o &lt;em&gt;downtime&lt;/em&gt; son palabras mayores, y normalmente vienen seguidos de un papeleo espectacular; otras veces se puede calmar la situación mediante el despido del pobre operador.&lt;/p&gt;
+&lt;p&gt;En un mundo &lt;em&gt;agile&lt;/em&gt; en donde los despliegues son el pan de cada semana, nos interesa minimizar, o incluso suprimir, cualquier mención a la probabilidad de un &lt;em&gt;downtime&lt;/em&gt;. Para esto existe un patrón que se llama &lt;a href="https://martinfowler.com/bliki/BlueGreenDeployment.html"&gt;blue-green deployment&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;La idea de fondo es muy simple: tenemos dos entornos iguales llamados &lt;strong&gt;blue&lt;/strong&gt; y &lt;strong&gt;green&lt;/strong&gt;, precedidos con un &lt;em&gt;proxy&lt;/em&gt; o un balanceador que hace fácil dirigir el tráfico hacia uno u otro. Esto significa que podemos modificar uno de los entornos en caliente, sabiendo que &lt;strong&gt;no es producción&lt;/strong&gt;. Solamente cuando el entorno secundario funciona bien podemos dirigir el tráfico hacia él, que &lt;strong&gt;se convierte en producción&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Blue-green deployment" src="http://www.linuxsysadmin.ml/images/blue-green_deployments.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;En caso de un error catastrófico no detectado, basta con volver a dirigir el tráfico al entorno anterior, que todavía tenemos funcional. Si no hubieran errores, podremos reinstalar este entorno anterior, en vistas a que pase a ser producción en un futuro cercano. Los montajes más habituales ofrecen ambos entornos, sirviendo dos puntos de entrada: uno como entorno de producción y el otro como entorno de pruebas.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo práctico&lt;/h2&gt;
+&lt;p&gt;Vamos a exponer una API de ejemplo que no hace nada en especial; es lo de menos en este momento. Vamos a poner dos servidores de aplicaciones por entorno y vamos a hacer balanceo de carga además de la función de dirección de tráfico. Estas son las decisiones de diseño de este ejemplo:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Tenemos un servidor llamado &lt;em&gt;proxy&lt;/em&gt; que va a ejecutar un &lt;strong&gt;nginx&lt;/strong&gt; como balanceador y &lt;em&gt;switch&lt;/em&gt;, aunque serviría otro (un &lt;strong&gt;haproxy&lt;/strong&gt;, por ejemplo)&lt;/li&gt;
+&lt;li&gt;El entorno &lt;strong&gt;blue&lt;/strong&gt; se compone de dos servidores &lt;em&gt;blue1&lt;/em&gt; y &lt;em&gt;blue2&lt;/em&gt; escuchando en el puerto 8080&lt;/li&gt;
+&lt;li&gt;El entorno &lt;strong&gt;green&lt;/strong&gt; se compone de dos servidores &lt;em&gt;green1&lt;/em&gt; y &lt;em&gt;green2&lt;/em&gt; escuchando en el puerto 8080&lt;/li&gt;
+&lt;li&gt;El puerto 80 del &lt;em&gt;proxy&lt;/em&gt; será producción, y el puerto 8080 del mismo servidor servirá como entorno de pruebas&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;El estado inicial&lt;/h3&gt;
+&lt;p&gt;Tenemos una versión 1.0.0 en todos los servidores de aplicaciones. La API de ejemplo que ponemos nos muestra claramente la versión y el servidor que atendió la petición, para mayor claridad.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@proxy:~# wget -qO- http://blue1:8080/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;blue1&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+root@proxy:~# wget -qO- http://blue2:8080/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;blue2&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+root@proxy:~# wget -qO- http://green1:8080/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;green1&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+root@proxy:~# wget -qO- http://green2:8080/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;green2&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+root@proxy:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Decidimos que el entorno &lt;strong&gt;blue&lt;/strong&gt; es actualmente producción, y por lo tanto, &lt;strong&gt;green&lt;/strong&gt; es el entorno de pruebas. Simplemente necesitamos modificar la configuración del &lt;strong&gt;nginx&lt;/strong&gt; para que apunte cada puerto al entorno que toca, por ejemplo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@proxy:~# cat /etc/nginx/conf.d/api.conf 
+upstream blue &lt;span class="o"&gt;{&lt;/span&gt;
+    server blue1:8080&lt;span class="p"&gt;;&lt;/span&gt;
+    server blue2:8080&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+upstream green &lt;span class="o"&gt;{&lt;/span&gt;
+    server green1:8080&lt;span class="p"&gt;;&lt;/span&gt;
+    server green2:8080&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen &lt;span class="m"&gt;80&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    location / &lt;span class="o"&gt;{&lt;/span&gt;
+        proxy_pass http://blue&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen &lt;span class="m"&gt;8080&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    location / &lt;span class="o"&gt;{&lt;/span&gt;
+        proxy_pass http://green&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@proxy:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Recargamos el &lt;strong&gt;nginx&lt;/strong&gt; y ya tenemos lo que queríamos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Entorno de producción en el puerto 80, apuntando al entorno &lt;strong&gt;blue&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Entorno de pruebas en el puerto 8080, apuntando al entorno &lt;strong&gt;green&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace$ curl http://proxy/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;blue1&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ curl http://proxy/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;blue2&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ curl http://proxy/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;blue1&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ curl http://proxy/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;blue2&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace$ curl http://proxy:8080/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;green1&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ curl http://proxy:8080/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;green2&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ curl http://proxy:8080/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;green1&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ curl http://proxy:8080/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;green2&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Un despliegue fallido&lt;/h3&gt;
+&lt;p&gt;Desplegamos una nueva versión en el entorno de pruebas, actualmente como entorno &lt;strong&gt;green&lt;/strong&gt;. Eso significa deplegar nueva versión en &lt;em&gt;green1&lt;/em&gt; y en &lt;em&gt;green2&lt;/em&gt;. Como el entorno de producción es &lt;strong&gt;blue&lt;/strong&gt;, cualquier desastre que pase en &lt;strong&gt;green&lt;/strong&gt; no va a afectar a la operativa.&lt;/p&gt;
+&lt;p&gt;Tras subir &lt;strong&gt;green&lt;/strong&gt; a la versión 1.1.0, vemos en el &lt;em&gt;endpoint&lt;/em&gt; de pruebas que no funciona:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace$ curl http://proxy:8080/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;500&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Errors everywhere...&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.1.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;green1&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ curl http://proxy:8080/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;500&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Errors everywhere...&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.1.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;green2&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Pero no pasa nada; el entorno de producción sigue apuntando a &lt;strong&gt;blue&lt;/strong&gt;, que no hemos modificado y por lo tanto, sigue funcionando con la versión anterior.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace$ curl http://proxy/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;blue1&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ curl http://proxy/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.0.0&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;blue2&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Basta con no cambiar la configuración del &lt;strong&gt;nginx&lt;/strong&gt; en el servidor &lt;em&gt;proxy&lt;/em&gt; para no exponer el desastre más allá del entorno de pruebas. Si algún manazas hubiera cambiado ya la configuración del &lt;em&gt;proxy&lt;/em&gt;, el &lt;em&gt;rollback&lt;/em&gt; consistiría en modificar de nuevo la configuración del &lt;em&gt;proxy&lt;/em&gt;.&lt;/p&gt;
+&lt;h3&gt;Un despliegue con éxito&lt;/h3&gt;
+&lt;p&gt;Tras investigar el problema de la nueva versión, se localiza un &lt;em&gt;bug&lt;/em&gt; que causa los errores y se escribe un &lt;em&gt;hotfix&lt;/em&gt;, que se libera como version 1.1.1; supongamos que tenemos éxito.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace$ curl http://proxy:8080/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.1.1&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;green1&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ curl http://proxy:8080/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.1.1&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;green2&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Basta con modificar la configuración del &lt;em&gt;proxy&lt;/em&gt; para que producción apunte a &lt;strong&gt;green&lt;/strong&gt;, en donde tenemos la nueva versión estable. En el caso de la configuración expuesta anteriormente, bastaría con cambiar las directivas &lt;code&gt;proxy_pass&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@proxy:~# cat /etc/nginx/conf.d/api.conf 
+upstream blue &lt;span class="o"&gt;{&lt;/span&gt;
+    server blue1:8080&lt;span class="p"&gt;;&lt;/span&gt;
+    server blue2:8080&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+upstream green &lt;span class="o"&gt;{&lt;/span&gt;
+    server green1:8080&lt;span class="p"&gt;;&lt;/span&gt;
+    server green2:8080&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen &lt;span class="m"&gt;80&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    location / &lt;span class="o"&gt;{&lt;/span&gt;
+        proxy_pass http://green&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+server &lt;span class="o"&gt;{&lt;/span&gt;
+    listen &lt;span class="m"&gt;8080&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    location / &lt;span class="o"&gt;{&lt;/span&gt;
+        proxy_pass http://blue&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+root@proxy:~# nginx -s reload
+&lt;span class="m"&gt;2018&lt;/span&gt;/05/07 &lt;span class="m"&gt;17&lt;/span&gt;:43:26 &lt;span class="o"&gt;[&lt;/span&gt;notice&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="m"&gt;21&lt;/span&gt;&lt;span class="c1"&gt;#21: signal process started&lt;/span&gt;
+root@proxy:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Puesto que un &lt;em&gt;reload&lt;/em&gt; del &lt;strong&gt;nginx&lt;/strong&gt; no provoca pérdida de paquetes ni de peticiones, solo queda ver que las peticiones del entorno de producción son atendidas en los servidores &lt;em&gt;green1&lt;/em&gt; y &lt;em&gt;green2&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace$ curl http://proxy/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.1.1&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;green1&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ curl http://proxy/fake/
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;200&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;message&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Everything is OK&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;version&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;1.1.1&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;server&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;green2&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@sirius:~/workspace$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este punto, el estado de nuestro servicio ha cambiado; ahora tenemos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Entorno de producción en el puerto 80, apuntando al entorno &lt;strong&gt;green&lt;/strong&gt;, con versión 1.1.1&lt;/li&gt;
+&lt;li&gt;Entorno de pruebas en el puerto 8080, apuntando al entorno &lt;strong&gt;blue&lt;/strong&gt;, con versión 1.0.0&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Por lo tanto, los nuevos despliegues se harían en el entorno &lt;strong&gt;blue&lt;/strong&gt;, que ha dejado de ser el entorno de producción en favor del entorno &lt;strong&gt;green&lt;/strong&gt;. Como pequeño detalle, sería interesante subir &lt;strong&gt;blue&lt;/strong&gt; a la versión nueva, para tener ambos entornos idénticos, como punto de partida para una posible nueva versión.&lt;/p&gt;
+&lt;h2&gt;Y que pasa con las bases de datos?&lt;/h2&gt;
+&lt;p&gt;En realidad es un problema que no solo atañe a las bases de datos; otras partes &lt;em&gt;stateful&lt;/em&gt; como sistemas de ficheros, colas y APIs remotas también deben ser tratadas en este caso. Este es un tema que no queda bien reflejado, habiendo dos corrientes enfrentadas que defienden sus puntos de vista:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Bases de datos duplicadas&lt;/li&gt;
+&lt;li&gt;Bases de datos compartidas&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;En caso de duplicar la base de datos en ambos entornos, ganamos la posibilidad de modificarla en nuestros &lt;em&gt;tests&lt;/em&gt;, ya que las pruebas en el entorno de pruebas no van a afectar al entorno de producción. El problema en este punto es que tenemos la necesidad de mantenerlas sincronizadas, pudiendo ser un proceso lento en caso de un conjunto de datos grande.&lt;/p&gt;
+&lt;p&gt;Si compartimos la base de datos entre los entornos &lt;strong&gt;blue&lt;/strong&gt; y &lt;strong&gt;green&lt;/strong&gt;, nos ahorramos la sincronización, a costa de no poder modificar nada en el entorno de pruebas, ya que estaríamos modificando los mismos datos que se usan en el entorno de producción.&lt;/p&gt;
+&lt;p&gt;Un punto espinoso en esta configuración compartido son las migraciones de la base de datos; hacerlas antes causaría &lt;em&gt;downtime&lt;/em&gt; en la versión anterior hasta instalar la nueva versión, y hacerlas después causaría &lt;em&gt;downtime&lt;/em&gt; en la nueva versión hasta poder hacer la migración. La solución más aceptada es hacer una &lt;em&gt;release&lt;/em&gt; intermedia, capaz de trabajar con la base de datos migrada y sin migrar; sería responsabilidad de esta &lt;em&gt;release&lt;/em&gt; intermedia detectar si la base de datos está migrada o no, y suplir las carencias mediante lógica específica.&lt;/p&gt;</content><category term="blue-green"></category><category term="deployment"></category></entry><entry><title>Un cron alternativo con go: go-cron</title><link href="http://www.linuxsysadmin.ml/2018/05/un-cron-alternativo-con-go-go-cron.html" rel="alternate"></link><published>2018-05-21T10:00:00+02:00</published><updated>2018-05-21T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-05-21:/2018/05/un-cron-alternativo-con-go-go-cron.html</id><summary type="html">&lt;p&gt;Quiero presentar una de esas herramientas que ya existen, pero que alguien ha reescrito con el lenguaje &lt;strong&gt;go&lt;/strong&gt;. Se trata de una utilidad tipo &lt;em&gt;cron&lt;/em&gt;, pero está compilada de forma estática, no necesita de otras librerías y, por lo tanto, lo podemos usar en donde no tengamos permisos de &lt;em&gt;root …&lt;/em&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Quiero presentar una de esas herramientas que ya existen, pero que alguien ha reescrito con el lenguaje &lt;strong&gt;go&lt;/strong&gt;. Se trata de una utilidad tipo &lt;em&gt;cron&lt;/em&gt;, pero está compilada de forma estática, no necesita de otras librerías y, por lo tanto, lo podemos usar en donde no tengamos permisos de &lt;em&gt;root&lt;/em&gt;.&lt;/p&gt;
 &lt;h2&gt;Instalación de go-cron&lt;/h2&gt;
 &lt;p&gt;El binario &lt;strong&gt;go-cron&lt;/strong&gt; no depende de librerías externas, tratándose de un binario estático que podemos tener, por ejemplo, en nuestra carpeta personal.&lt;/p&gt;
 &lt;p&gt;Su instalación se limita a descargarse el binario de &lt;a href="https://github.com/odise/go-cron/releases"&gt;GitHub&lt;/a&gt; y usar; el fichero descargado es un binario precompilado y comprimido.&lt;/p&gt;
