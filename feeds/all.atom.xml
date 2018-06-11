@@ -1,5 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-06-04T10:00:00+02:00</updated><entry><title>Explorando bash: la variable de entorno HOSTALIASES</title><link href="http://www.linuxsysadmin.ml/2018/06/explorando-bash-la-variable-de-entorno-hostaliases.html" rel="alternate"></link><published>2018-06-04T10:00:00+02:00</published><updated>2018-06-04T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-06-04:/2018/06/explorando-bash-la-variable-de-entorno-hostaliases.html</id><summary type="html">&lt;p&gt;Muchas veces me he encontrado haciendo &lt;em&gt;demos&lt;/em&gt; con aplicaciones ejecutando en local o en un contenedor. Otras tantas el cliente ha hecho un montón de preguntas tontas referentes a porqué pone &lt;em&gt;localhost&lt;/em&gt;. En algunos de estos sistemas no disponía de acceso &lt;em&gt;root&lt;/em&gt; o &lt;em&gt;sudo&lt;/em&gt; para cambiar el fichero &lt;code&gt;/etc/hosts …&lt;/code&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Muchas veces me he encontrado haciendo &lt;em&gt;demos&lt;/em&gt; con aplicaciones ejecutando en local o en un contenedor. Otras tantas el cliente ha hecho un montón de preguntas tontas referentes a porqué pone &lt;em&gt;localhost&lt;/em&gt;. En algunos de estos sistemas no disponía de acceso &lt;em&gt;root&lt;/em&gt; o &lt;em&gt;sudo&lt;/em&gt; para cambiar el fichero &lt;code&gt;/etc/hosts&lt;/code&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-06-11T10:00:00+02:00</updated><entry><title>Un servidor git con frontal web: Gitea</title><link href="http://www.linuxsysadmin.ml/2018/06/un-servidor-git-con-frontal-web-gitea.html" rel="alternate"></link><published>2018-06-11T10:00:00+02:00</published><updated>2018-06-11T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-06-11:/2018/06/un-servidor-git-con-frontal-web-gitea.html</id><summary type="html">&lt;p&gt;Los servidores de &lt;strong&gt;git&lt;/strong&gt; son muy útiles, pero si solo lo accedemos mediante terminal, se quedan limitados a pocos usuarios avanzados. Sin embargo, las soluciones con interfaz web, como &lt;strong&gt;GitHub&lt;/strong&gt; llegan a todo tipo de usuarios. En un intento de abaratar costes, se han hecho varios clones, entre ellos, &lt;strong&gt;Gitea …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Los servidores de &lt;strong&gt;git&lt;/strong&gt; son muy útiles, pero si solo lo accedemos mediante terminal, se quedan limitados a pocos usuarios avanzados. Sin embargo, las soluciones con interfaz web, como &lt;strong&gt;GitHub&lt;/strong&gt; llegan a todo tipo de usuarios. En un intento de abaratar costes, se han hecho varios clones, entre ellos, &lt;strong&gt;Gitea&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Realmente hay muchos clones, como &lt;strong&gt;Gitlab&lt;/strong&gt; o &lt;strong&gt;Gogs&lt;/strong&gt;; de hecho, &lt;strong&gt;Gitea&lt;/strong&gt; es un clon de &lt;strong&gt;Gogs&lt;/strong&gt; hecho en lenguaje &lt;strong&gt;Go&lt;/strong&gt;. Y lo que me llama especialmente la atención es la facilidad en que lo pude instalar: se trata simplemente de ejecutar un contenedor &lt;strong&gt;Docker&lt;/strong&gt; que, a diferencia de otros, ocupa relativamente poco espacio de disco.&lt;/p&gt;
+&lt;h2&gt;Instalación&lt;/h2&gt;
+&lt;p&gt;Lo primero es hacer un &lt;code&gt;docker pull gitea/gitea&lt;/code&gt;, que es la forma de traernos la imagen desde su correspondiente &lt;a href="https://hub.docker.com/r/gitea/gitea/"&gt;repositorio de &lt;strong&gt;DockerHub&lt;/strong&gt;&lt;/a&gt;. La misma documentación del repositorio indica como debe ejecutarse.&lt;/p&gt;
+&lt;p&gt;Como punto interesante, &lt;strong&gt;Gitea&lt;/strong&gt; utiliza una base de datos para guardar toda aquella información de la página web que no queda reflejada en el propio repositorio. Esta pequeña configuración se indica de forma web, en la primera invocación de la interfaz; las posibilidades son varias: &lt;strong&gt;MySQL&lt;/strong&gt;, &lt;strong&gt;MSSQL&lt;/strong&gt;, &lt;strong&gt;PostgreSQL&lt;/strong&gt; e incluso una base de datos local &lt;strong&gt;SQLite3&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Es vuestra decisión elegir la que usar, pero por brevedad voy a levantar la instancia de pruebas sin un servidor de base de datos dedicado, confiando en &lt;strong&gt;SQLite3&lt;/strong&gt;. Por otra parte, los repositorios se alojan en el sistema de ficheros local; para evitar perderlos en caso de reinicio, lo voy a poner como un volumen local. Os pongo un &lt;em&gt;docker-compose.yml&lt;/em&gt; de ejemplo, para simplificar el despliegue:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/tools/gitea$ cat docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;2&amp;#39;&lt;/span&gt;
+services:
+  gitea:
+    image: gitea/gitea
+    volumes:
+      - ./data:/data
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;3000:3000&amp;quot;&lt;/span&gt;
+      - &lt;span class="s2"&gt;&amp;quot;22:22&amp;quot;&lt;/span&gt;
+gerard@sirius:~/tools/gitea$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Evidentemente, la carpeta de datos de &lt;strong&gt;Gitea&lt;/strong&gt; debe existir en el servidor, con lo que la he creado en la misma carpeta:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/tools/gitea$ tree
+.
+├── data
+└── docker-compose.yml
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;1&lt;/span&gt; file
+gerard@sirius:~/tools/gitea$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos queda levantar los contenedores usando los comandos habituales de &lt;em&gt;docker-compose&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/tools/gitea$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;gitea_default&amp;quot;&lt;/span&gt; with the default driver
+Creating gitea_gitea_1
+gerard@sirius:~/tools/gitea$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Nuestra instancia de &lt;strong&gt;Gitea&lt;/strong&gt; queda expuesta en &lt;em&gt;localhost&lt;/em&gt;, concretamente el puerto 3000 para la web, y el puerto 22 para la comunicación SSH con la que se lanzan las peticiones de &lt;em&gt;clone&lt;/em&gt;, &lt;em&gt;push&lt;/em&gt; o &lt;em&gt;pull&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Cabe decir que la primera vez que entremos en la web habrá que configurar algunos detalles; solo recomiendo tocar los de la base de datos y aquellos que son meramente cosméticos, como por ejemplo el título del sitio. Si no rellenáis la parte del administrador, este rol va a recaer en el primer usuario que se registre; aseguraos de ser vosotros.&lt;/p&gt;
+&lt;p&gt;Os dejo una imagen que vale más que mil palabras.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Frontal de Gitea" src="http://www.linuxsysadmin.ml/images/gitea.jpg"&gt;&lt;/p&gt;</content><category term="git"></category><category term="gitea"></category><category term="docker"></category></entry><entry><title>Explorando bash: la variable de entorno HOSTALIASES</title><link href="http://www.linuxsysadmin.ml/2018/06/explorando-bash-la-variable-de-entorno-hostaliases.html" rel="alternate"></link><published>2018-06-04T10:00:00+02:00</published><updated>2018-06-04T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-06-04:/2018/06/explorando-bash-la-variable-de-entorno-hostaliases.html</id><summary type="html">&lt;p&gt;Muchas veces me he encontrado haciendo &lt;em&gt;demos&lt;/em&gt; con aplicaciones ejecutando en local o en un contenedor. Otras tantas el cliente ha hecho un montón de preguntas tontas referentes a porqué pone &lt;em&gt;localhost&lt;/em&gt;. En algunos de estos sistemas no disponía de acceso &lt;em&gt;root&lt;/em&gt; o &lt;em&gt;sudo&lt;/em&gt; para cambiar el fichero &lt;code&gt;/etc/hosts …&lt;/code&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Muchas veces me he encontrado haciendo &lt;em&gt;demos&lt;/em&gt; con aplicaciones ejecutando en local o en un contenedor. Otras tantas el cliente ha hecho un montón de preguntas tontas referentes a porqué pone &lt;em&gt;localhost&lt;/em&gt;. En algunos de estos sistemas no disponía de acceso &lt;em&gt;root&lt;/em&gt; o &lt;em&gt;sudo&lt;/em&gt; para cambiar el fichero &lt;code&gt;/etc/hosts&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;En estos casos, es especialmente interesante conocer la variable de &lt;strong&gt;bash&lt;/strong&gt; llamada &lt;strong&gt;HOSTALIASES&lt;/strong&gt;. Se trata de una variable de entorno que define un &lt;em&gt;path&lt;/em&gt; a un fichero, que va a ser una lista de &lt;em&gt;hosts&lt;/em&gt; y su &lt;em&gt;alias&lt;/em&gt;, aunque no soporta direcciones IP.&lt;/p&gt;
 &lt;h2&gt;Un ejemplo simple: falseando un servidor, con un servicio local&lt;/h2&gt;
 &lt;p&gt;Tanto si os pongo un ejemplo en este &lt;em&gt;blog&lt;/em&gt;, como si se trata de una &lt;em&gt;demo&lt;/em&gt; para un cliente, es muy habitual esconder el hecho de que no hay un servidor dedicado ni virtual mediante la exposición del puerto de un contenedor.&lt;/p&gt;

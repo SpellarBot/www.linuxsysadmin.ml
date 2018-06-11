@@ -5,42 +5,49 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/</loc>
-<lastmod>2018-06-04T07:16:34-00:00</lastmod>
+<lastmod>2018-06-11T08:28:15-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2018-06-04T07:16:34-00:00</lastmod>
+<lastmod>2018-06-11T08:28:15-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2018-06-04T07:16:34-00:00</lastmod>
+<lastmod>2018-06-11T08:28:15-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2018-06-04T07:16:34-00:00</lastmod>
+<lastmod>2018-06-11T08:28:15-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2018-06-04T07:16:34-00:00</lastmod>
+<lastmod>2018-06-11T08:28:15-00:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/curriculum.html</loc>
-<lastmod>2018-06-04T07:16:34-00:00</lastmod>
+<lastmod>2018-06-11T08:28:15-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/2018/06/un-servidor-git-con-frontal-web-gitea.html</loc>
+<lastmod>2018-06-11T10:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1048,7 +1055,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/category/sistemas.html</loc>
-<lastmod>2018-05-07T10:00:00-00:15</lastmod>
+<lastmod>2018-06-11T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1131,8 +1138,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/inventario.html</loc>
-<lastmod>2016-08-15T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/markdown.html</loc>
+<lastmod>2017-01-02T12:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1201,8 +1208,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/cache.html</loc>
-<lastmod>2017-05-08T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/gitea.html</loc>
+<lastmod>2018-06-11T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1943,8 +1950,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/markdown.html</loc>
-<lastmod>2017-01-02T12:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/cache.html</loc>
+<lastmod>2017-05-08T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2049,7 +2056,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/git.html</loc>
-<lastmod>2018-05-14T10:00:00-00:15</lastmod>
+<lastmod>2018-06-11T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2615,6 +2622,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.ml/tag/oracle.html</loc>
+<lastmod>2016-04-18T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.ml/tag/configuracion.html</loc>
 <lastmod>2016-09-12T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -2734,15 +2748,15 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/oracle.html</loc>
-<lastmod>2016-04-18T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/inventario.html</loc>
+<lastmod>2016-08-15T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/docker.html</loc>
-<lastmod>2018-04-16T10:00:00-00:15</lastmod>
+<lastmod>2018-06-11T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2763,7 +2777,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2018-06-04T10:00:00-00:15</lastmod>
+<lastmod>2018-06-11T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
