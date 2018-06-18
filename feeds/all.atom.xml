@@ -1,5 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-06-11T10:00:00+02:00</updated><entry><title>Un servidor git con frontal web: Gitea</title><link href="http://www.linuxsysadmin.ml/2018/06/un-servidor-git-con-frontal-web-gitea.html" rel="alternate"></link><published>2018-06-11T10:00:00+02:00</published><updated>2018-06-11T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-06-11:/2018/06/un-servidor-git-con-frontal-web-gitea.html</id><summary type="html">&lt;p&gt;Los servidores de &lt;strong&gt;git&lt;/strong&gt; son muy útiles, pero si solo lo accedemos mediante terminal, se quedan limitados a pocos usuarios avanzados. Sin embargo, las soluciones con interfaz web, como &lt;strong&gt;GitHub&lt;/strong&gt; llegan a todo tipo de usuarios. En un intento de abaratar costes, se han hecho varios clones, entre ellos, &lt;strong&gt;Gitea …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Los servidores de &lt;strong&gt;git&lt;/strong&gt; son muy útiles, pero si solo lo accedemos mediante terminal, se quedan limitados a pocos usuarios avanzados. Sin embargo, las soluciones con interfaz web, como &lt;strong&gt;GitHub&lt;/strong&gt; llegan a todo tipo de usuarios. En un intento de abaratar costes, se han hecho varios clones, entre ellos, &lt;strong&gt;Gitea&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-06-18T10:00:00+02:00</updated><entry><title>Contraseñas de un solo uso para usuarios linux</title><link href="http://www.linuxsysadmin.ml/2018/06/contrasenas-de-un-solo-uso-para-usuarios-linux.html" rel="alternate"></link><published>2018-06-18T10:00:00+02:00</published><updated>2018-06-18T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-06-18:/2018/06/contrasenas-de-un-solo-uso-para-usuarios-linux.html</id><summary type="html">&lt;p&gt;No dejan de sorprenderme los administradores de sistemas que crean usuarios a petición, pero les asignan &lt;em&gt;passwords&lt;/em&gt; supuestamente de un solo uso pidiéndoles que la cambien en el primer uso. La experiencia me dice que esa &lt;em&gt;password&lt;/em&gt; solo se cambia si es estrictamente necesario. Esta petición la puedes forzar fácilmente …&lt;/p&gt;</summary><content type="html">&lt;p&gt;No dejan de sorprenderme los administradores de sistemas que crean usuarios a petición, pero les asignan &lt;em&gt;passwords&lt;/em&gt; supuestamente de un solo uso pidiéndoles que la cambien en el primer uso. La experiencia me dice que esa &lt;em&gt;password&lt;/em&gt; solo se cambia si es estrictamente necesario. Esta petición la puedes forzar fácilmente.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo&lt;/h2&gt;
+&lt;p&gt;Vamos a simular una de estas peticiones, de un usuario &lt;em&gt;bob&lt;/em&gt; que quiere acceder a un servidor llamado &lt;em&gt;server&lt;/em&gt;. Un administrador tradicional va a ejecutar un comando estándar para crear el usuario, y le va a asignar una contraseña, posiblemente de diccionario.&lt;/p&gt;
+&lt;h3&gt;El problema&lt;/h3&gt;
+&lt;p&gt;El servidor en cuestión es un servidor simulado, montado con &lt;strong&gt;Alpine Linux&lt;/strong&gt;, y esto es lo que se ejecutaría en él:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/ &lt;span class="c1"&gt;# adduser -D bob&lt;/span&gt;
+/ &lt;span class="c1"&gt;# echo &amp;quot;bob:temporal&amp;quot; | chpasswd &lt;/span&gt;
+chpasswd: password &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;bob&amp;#39;&lt;/span&gt; changed
+/ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Le mandamos el par de usuario y contraseña al usuario, muchas veces usando un canal relativamente inseguro, como el correo electrónico o mediante un &lt;em&gt;post-it&lt;/em&gt;. Le pedimos al usuario que la cambie, pero no podemos obligarle. Simplemente quiere entrar al servidor.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/server$ ssh bob@server
+bob@localhost&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+Welcome to Alpine!
+
+The Alpine Wiki contains a large amount of how-to guides and general
+information about administrating Alpine systems.
+See &amp;lt;http://wiki.alpinelinux.org&amp;gt;.
+
+You can setup the system with the command: setup-alpine
+
+You may change this message by editing /etc/motd.
+
+server:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y tras ver que le funciona aparta la tarea y jamás se acuerda de cambiar su contraseña; otros directamente pasan de hacerlo, o se creen que su &lt;em&gt;post-it&lt;/em&gt; es ley; lo pegan en su monitor y la seguridad de la cuenta queda altamente comprometida.&lt;/p&gt;
+&lt;h3&gt;La solución&lt;/h3&gt;
+&lt;p&gt;La mejor forma que tenemos de forzar el cambio de la contraseña, sin tener demasiado trabajo, es delegarlo al sistema operativo. Las contraseñas en &lt;em&gt;linux&lt;/em&gt; pueden configurarse para &lt;strong&gt;caducar&lt;/strong&gt;. De hecho, directamente la podemos marcar como caducada, lo que va a forzar su cambio en el primer &lt;em&gt;login&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Esto se hace mediante el comando &lt;code&gt;chage&lt;/code&gt;, que nos permite el &lt;em&gt;flag&lt;/em&gt; &lt;code&gt;-d&lt;/code&gt;, que es el que indica la fecha del último cambio de contraseña. Este &lt;em&gt;flag&lt;/em&gt; acepta el valor especial &lt;code&gt;0&lt;/code&gt; que obliga a que el usuario cambie su contraseña tras el primer &lt;em&gt;login&lt;/em&gt;. Esto se puede hacer en cualquier momento, pero es interesante hacerlo antes de mandarle la contraseña, cuando su usuario ya exista.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/ &lt;span class="c1"&gt;# chage -d 0 bob&lt;/span&gt;
+/ &lt;span class="c1"&gt;# &lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: El comando &lt;code&gt;chage&lt;/code&gt; se encuentra en el paquete &lt;strong&gt;shadow&lt;/strong&gt; en &lt;strong&gt;Alpine Linux&lt;/strong&gt;; otras distribuciones lo tienen en el paquete &lt;strong&gt;passwd&lt;/strong&gt;. Si no disponéis del comando, instalad el paquete adecuado.&lt;/p&gt;
+&lt;p&gt;El resultado es que el usuario va a poder entrar, pero no va a poder hacer nada hasta que haga un cambio de contraseña de forma exitosa. Por supuesto, esto invalida la contraseña temporal que le hayamos podido dar, y hace de nuestro servidor un lugar un poco más seguro.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/server$ ssh bob@server
+bob@localhost&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s password: 
+Welcome to Alpine!
+
+The Alpine Wiki contains a large amount of how-to guides and general
+information about administrating Alpine systems.
+See &amp;lt;http://wiki.alpinelinux.org&amp;gt;.
+
+You can setup the system with the command: setup-alpine
+
+You may change this message by editing /etc/motd.
+
+WARNING: Your password has expired.
+You must change your password now and login again!
+Changing password &lt;span class="k"&gt;for&lt;/span&gt; bob.
+Current password: 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A partir de aquí, depende del usuario saber donde apunta la contraseña y con quien la comparte.&lt;/p&gt;</content><category term="password"></category><category term="temporal"></category><category term="caducar"></category></entry><entry><title>Un servidor git con frontal web: Gitea</title><link href="http://www.linuxsysadmin.ml/2018/06/un-servidor-git-con-frontal-web-gitea.html" rel="alternate"></link><published>2018-06-11T10:00:00+02:00</published><updated>2018-06-11T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-06-11:/2018/06/un-servidor-git-con-frontal-web-gitea.html</id><summary type="html">&lt;p&gt;Los servidores de &lt;strong&gt;git&lt;/strong&gt; son muy útiles, pero si solo lo accedemos mediante terminal, se quedan limitados a pocos usuarios avanzados. Sin embargo, las soluciones con interfaz web, como &lt;strong&gt;GitHub&lt;/strong&gt; llegan a todo tipo de usuarios. En un intento de abaratar costes, se han hecho varios clones, entre ellos, &lt;strong&gt;Gitea …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Los servidores de &lt;strong&gt;git&lt;/strong&gt; son muy útiles, pero si solo lo accedemos mediante terminal, se quedan limitados a pocos usuarios avanzados. Sin embargo, las soluciones con interfaz web, como &lt;strong&gt;GitHub&lt;/strong&gt; llegan a todo tipo de usuarios. En un intento de abaratar costes, se han hecho varios clones, entre ellos, &lt;strong&gt;Gitea&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Realmente hay muchos clones, como &lt;strong&gt;Gitlab&lt;/strong&gt; o &lt;strong&gt;Gogs&lt;/strong&gt;; de hecho, &lt;strong&gt;Gitea&lt;/strong&gt; es un clon de &lt;strong&gt;Gogs&lt;/strong&gt; hecho en lenguaje &lt;strong&gt;Go&lt;/strong&gt;. Y lo que me llama especialmente la atención es la facilidad en que lo pude instalar: se trata simplemente de ejecutar un contenedor &lt;strong&gt;Docker&lt;/strong&gt; que, a diferencia de otros, ocupa relativamente poco espacio de disco.&lt;/p&gt;
 &lt;h2&gt;Instalación&lt;/h2&gt;
 &lt;p&gt;Lo primero es hacer un &lt;code&gt;docker pull gitea/gitea&lt;/code&gt;, que es la forma de traernos la imagen desde su correspondiente &lt;a href="https://hub.docker.com/r/gitea/gitea/"&gt;repositorio de &lt;strong&gt;DockerHub&lt;/strong&gt;&lt;/a&gt;. La misma documentación del repositorio indica como debe ejecutarse.&lt;/p&gt;
@@ -314,7 +373,7 @@ gerard@sirius:~/workspace$
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: La primera ejecución se hace cuando ha pasado el tiempo especificado tras levantar &lt;strong&gt;go-cron&lt;/strong&gt;. Las siguientes lo hacen sin tener en cuenta el tiempo de ejecución del comando dado. En caso de ejecutar cada hora, y tardar el &lt;em&gt;script&lt;/em&gt; 40 minutos, saltaría en siguiente en unos 20 minutos; en casos extremos, podríamos tener solapamiento de ejecuciones.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: La primera ejecución se hace cuando ha pasado el tiempo especificado tras levantar &lt;strong&gt;go-cron&lt;/strong&gt;. Las siguientes lo hacen sin tener en cuenta el tiempo de ejecución del comando dado. En caso de ejecutar cada hora, y tardar el &lt;em&gt;script&lt;/em&gt; 40 minutos, saltaría el siguiente en unos 20 minutos tras la finalización del actual; en casos extremos, podríamos tener solapamiento de ejecuciones.&lt;/p&gt;
 &lt;h3&gt;El servicio de healthcheck&lt;/h3&gt;
 &lt;p&gt;El &lt;em&gt;flag&lt;/em&gt; &lt;code&gt;-p&lt;/code&gt; sirve para indicar el puerto en el que vamos a contar con un &lt;em&gt;webservice&lt;/em&gt; con información de lo que pasa en &lt;strong&gt;go-cron&lt;/strong&gt;.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace$ ./go-cron -s &lt;span class="s2"&gt;&amp;quot;@every 10s&amp;quot;&lt;/span&gt; -- ./do_something.sh 

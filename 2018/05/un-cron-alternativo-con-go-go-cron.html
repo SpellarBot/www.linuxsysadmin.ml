@@ -214,7 +214,7 @@ gerard@sirius:~/workspace$
 </pre></div>
 
 
-<p><strong>AVISO</strong>: La primera ejecución se hace cuando ha pasado el tiempo especificado tras levantar <strong>go-cron</strong>. Las siguientes lo hacen sin tener en cuenta el tiempo de ejecución del comando dado. En caso de ejecutar cada hora, y tardar el <em>script</em> 40 minutos, saltaría en siguiente en unos 20 minutos; en casos extremos, podríamos tener solapamiento de ejecuciones.</p>
+<p><strong>AVISO</strong>: La primera ejecución se hace cuando ha pasado el tiempo especificado tras levantar <strong>go-cron</strong>. Las siguientes lo hacen sin tener en cuenta el tiempo de ejecución del comando dado. En caso de ejecutar cada hora, y tardar el <em>script</em> 40 minutos, saltaría el siguiente en unos 20 minutos tras la finalización del actual; en casos extremos, podríamos tener solapamiento de ejecuciones.</p>
 <h3>El servicio de healthcheck</h3>
 <p>El <em>flag</em> <code>-p</code> sirve para indicar el puerto en el que vamos a contar con un <em>webservice</em> con información de lo que pasa en <strong>go-cron</strong>.</p>
 <div class="highlight"><pre><span></span>gerard@sirius:~/workspace$ ./go-cron -s <span class="s2">&quot;@every 10s&quot;</span> -- ./do_something.sh 
@@ -667,11 +667,6 @@ gerard@sirius:~/workspace$
                             password
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.ml/tag/pentest.html">
-                            pentest
-                        </a>
-                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.ml/tag/php.html">
                             php
@@ -795,6 +790,11 @@ gerard@sirius:~/workspace$
                     <li class="list-group-item tag-4">
                         <a href="http://www.linuxsysadmin.ml/tag/telegram.html">
                             telegram
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.ml/tag/temporal.html">
+                            temporal
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

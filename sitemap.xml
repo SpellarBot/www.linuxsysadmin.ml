@@ -5,42 +5,49 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/</loc>
-<lastmod>2018-06-11T08:28:15-00:00</lastmod>
+<lastmod>2018-06-18T06:54:57-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2018-06-11T08:28:15-00:00</lastmod>
+<lastmod>2018-06-18T06:54:57-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2018-06-11T08:28:15-00:00</lastmod>
+<lastmod>2018-06-18T06:54:57-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2018-06-11T08:28:15-00:00</lastmod>
+<lastmod>2018-06-18T06:54:57-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2018-06-11T08:28:15-00:00</lastmod>
+<lastmod>2018-06-18T06:54:57-00:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/curriculum.html</loc>
-<lastmod>2018-06-11T08:28:15-00:00</lastmod>
+<lastmod>2018-06-18T06:54:57-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/2018/06/contrasenas-de-un-solo-uso-para-usuarios-linux.html</loc>
+<lastmod>2018-06-18T10:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1041,7 +1048,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/category/operaciones.html</loc>
-<lastmod>2018-06-04T10:00:00-00:15</lastmod>
+<lastmod>2018-06-18T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1208,6 +1215,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.ml/tag/temporal.html</loc>
+<lastmod>2018-06-18T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.ml/tag/gitea.html</loc>
 <lastmod>2018-06-11T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1355,8 +1369,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/nginx.html</loc>
-<lastmod>2017-11-13T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/framework.html</loc>
+<lastmod>2017-12-18T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1405,7 +1419,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/password.html</loc>
-<lastmod>2018-02-05T10:00:00-00:15</lastmod>
+<lastmod>2018-06-18T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2020,6 +2034,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>http://www.linuxsysadmin.ml/tag/https.html</loc>
+<lastmod>2016-02-22T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>http://www.linuxsysadmin.ml/tag/aufs.html</loc>
 <lastmod>2016-03-28T08:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -2125,8 +2146,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/dns.html</loc>
-<lastmod>2017-04-17T00:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/caducar.html</loc>
+<lastmod>2018-06-18T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2174,8 +2195,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/https.html</loc>
-<lastmod>2016-02-22T08:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/dns.html</loc>
+<lastmod>2017-04-17T00:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2678,8 +2699,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/framework.html</loc>
-<lastmod>2017-12-18T10:00:00-00:15</lastmod>
+<loc>http://www.linuxsysadmin.ml/tag/nginx.html</loc>
+<lastmod>2017-11-13T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2777,7 +2798,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2018-06-11T10:00:00-00:15</lastmod>
+<lastmod>2018-06-18T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
