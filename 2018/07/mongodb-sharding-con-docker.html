@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Un escritorio con Archlinux - Linux Sysadmin</title>
+    <title>MongoDB sharding con docker - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,23 +9,23 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.ml/2016/07/un-escritorio-con-archlinux.html">
+<link rel="canonical" href="http://www.linuxsysadmin.ml/2018/07/mongodb-sharding-con-docker.html">
 
         <meta name="author" content="Gerard" />
-        <meta name="keywords" content="linux,archlinux,escritorio,xfce" />
-        <meta name="description" content="En otro articulo vimos como instalar Archlinux. Como tantas otras distribuciones nos vale para servidor y como distribución de escritorio. Sin embargo, debido a su filosofía como rolling release, puede asustarnos un poco como servidor; aunque tener un escritorio &#34;a la última&#34; es un caramelo que muy pocos podemos rechazar …" />
+        <meta name="keywords" content="mongodb,docker,sharding,cluster" />
+        <meta name="description" content="El otro día estaba revisando viejos artículos, y me tropecé con uno anterior. Este estaba montado con ansible, y se me pasó por la cabeza reescribirlo usando contenedores con docker. Así pues, vamos a montar exactamente el mismo cluster, pero con el cambio que la última revolución tecnológica nos aporta …" />
 
         <meta property="og:site_name" content="Linux Sysadmin" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="Un escritorio con Archlinux"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.ml/2016/07/un-escritorio-con-archlinux.html"/>
-        <meta property="og:description" content="En otro articulo vimos como instalar Archlinux. Como tantas otras distribuciones nos vale para servidor y como distribución de escritorio. Sin embargo, debido a su filosofía como rolling release, puede asustarnos un poco como servidor; aunque tener un escritorio &#34;a la última&#34; es un caramelo que muy pocos podemos rechazar …"/>
-        <meta property="article:published_time" content="2016-07-25" />
-            <meta property="article:section" content="Miscelánea" />
-            <meta property="article:tag" content="linux" />
-            <meta property="article:tag" content="archlinux" />
-            <meta property="article:tag" content="escritorio" />
-            <meta property="article:tag" content="xfce" />
+        <meta property="og:title" content="MongoDB sharding con docker"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.ml/2018/07/mongodb-sharding-con-docker.html"/>
+        <meta property="og:description" content="El otro día estaba revisando viejos artículos, y me tropecé con uno anterior. Este estaba montado con ansible, y se me pasó por la cabeza reescribirlo usando contenedores con docker. Así pues, vamos a montar exactamente el mismo cluster, pero con el cambio que la última revolución tecnológica nos aporta …"/>
+        <meta property="article:published_time" content="2018-07-02" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="mongodb" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:tag" content="sharding" />
+            <meta property="article:tag" content="cluster" />
             <meta property="article:author" content="Gerard" />
 
 
@@ -42,8 +42,8 @@
 
 
 
-        <link href="http://www.linuxsysadmin.ml/feeds/miscelanea.atom.xml" type="application/atom+xml" rel="alternate"
-              title="Linux Sysadmin Miscelánea ATOM Feed"/>
+        <link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -90,8 +90,8 @@ Linux Sysadmin            </a>
         <div class="col-sm-9">
             <ol class="breadcrumb">
                 <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-                <li><a href="http://www.linuxsysadmin.ml/category/miscelanea.html" title="Miscelánea">Miscelánea</a></li>
-                <li class="active">Un escritorio con Archlinux</li>
+                <li><a href="http://www.linuxsysadmin.ml/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">MongoDB sharding con docker</li>
             </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -109,10 +109,10 @@ Linux Sysadmin            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://www.linuxsysadmin.ml/2016/07/un-escritorio-con-archlinux.html"
+                    <a href="http://www.linuxsysadmin.ml/2018/07/mongodb-sharding-con-docker.html"
                        rel="bookmark"
-                       title="Permalink to Un escritorio con Archlinux">
-                        Un escritorio con Archlinux
+                       title="Permalink to MongoDB sharding con docker">
+                        MongoDB sharding con docker
                     </a>
                 </h1>
             </header>
@@ -122,245 +122,522 @@ Linux Sysadmin            </a>
 <footer class="post-info">
     <span class="label label-default">Fecha</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2016-07-25T08:00:00+02:00"> 2016-07-25</time>
+        <i class="fa fa-calendar"></i><time datetime="2018-07-02T09:00:00+02:00"> 2018-07-02</time>
     </span>
 
 
             <span class="label label-default">Autor</span>
             <a href="http://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
 
-        <span class="label label-default">Tiempo de lectura</span> 11 minutos
+        <span class="label label-default">Tiempo de lectura</span> 12 minutos
         <span class="label label-default">Categoría</span>
-        <a href="http://www.linuxsysadmin.ml/category/miscelanea.html">Miscelánea</a>
+        <a href="http://www.linuxsysadmin.ml/category/sistemas.html">Sistemas</a>
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://www.linuxsysadmin.ml/tag/linux.html">linux</a>
+	<a href="http://www.linuxsysadmin.ml/tag/mongodb.html">mongodb</a>
         /
-	<a href="http://www.linuxsysadmin.ml/tag/archlinux.html">archlinux</a>
+	<a href="http://www.linuxsysadmin.ml/tag/docker.html">docker</a>
         /
-	<a href="http://www.linuxsysadmin.ml/tag/escritorio.html">escritorio</a>
+	<a href="http://www.linuxsysadmin.ml/tag/sharding.html">sharding</a>
         /
-	<a href="http://www.linuxsysadmin.ml/tag/xfce.html">xfce</a>
+	<a href="http://www.linuxsysadmin.ml/tag/cluster.html">cluster</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>En <a href="http://www.linuxsysadmin.ml/2016/04/un-escritorio-minimo-con-debian.html">otro articulo</a> vimos como instalar <strong>Archlinux</strong>. Como tantas otras distribuciones nos vale para servidor y como distribución de escritorio. Sin embargo, debido a su filosofía como <em>rolling release</em>, puede asustarnos un poco como servidor; aunque tener un escritorio "a la última" es un caramelo que muy pocos podemos rechazar.</p>
-<p>Vamos a instalar un escritorio basado en <strong>XFCE</strong>, que es bueno, bonito y barato. Me encanta personalmente porque no usa muchos recursos, responde rápido y tiene muchas herramientas de configuración, a diferencia de otros, por ejemplo <strong>LXDE</strong>.</p>
-<p>Empezaremos instalando la capa gráfica. Esto se consigue mediante el paquete <strong>xorg</strong>.</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># pacman -S xorg</span>
+                <p>El otro día estaba revisando viejos artículos, y me tropecé con <a href="http://www.linuxsysadmin.ml/2016/05/mongodb-sharding-con-ansible.html">uno anterior</a>. Este estaba montado con <strong>ansible</strong>, y se me pasó por la cabeza reescribirlo usando contenedores con <strong>docker</strong>. Así pues, vamos a montar exactamente el mismo <em>cluster</em>, pero con el cambio que la última revolución tecnológica nos aporta.</p>
+<p><img alt="Sharded cluster" src="http://www.linuxsysadmin.ml/images/sharding_arquitectura_logica.jpg"></p>
+<p>Aunque lo ideal sería desplegar todas las instancias en varias máquinas diferentes, voy a pasar; por comodidad, voy a desplegar todos los contenedores en una sola máquina mediante <strong>docker-compose</strong>. De esta forma puedo aprovechar las mismas imágenes sin una ocupación de disco elevada.</p>
+<p>Como de costumbre, vamos a crear una carpeta para contener el proyecto y la vamos a llamar <code>sharding</code>. En ella voy a depositar los ficheros <code>Dockerfile</code> necesarios para la construcción de las imágenes, y de paso, el <code>docker-compose.yml</code> y las configuraciones que vamos a montar como volúmenes.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/sharding$ tree
+.
+├── build
+│   ├── mongo
+│   │   └── Dockerfile
+│   ├── mongod
+│   │   └── Dockerfile
+│   └── mongos
+│       └── Dockerfile
+├── docker-compose.yml
+├── mongod_aquila.conf
+├── mongod_config.conf
+├── mongod_cygnus.conf
+├── mongod_lyra.conf
+└── mongos.conf
+
+<span class="m">4</span> directories, <span class="m">9</span> files
+gerard@sirius:~/workspace/sharding$ 
+</pre></div>
+
+
+<h2>Construyendo las imágenes</h2>
+<p>El primer paso para levantar el entorno son las imágenes que lo sostienen. Necesitamos 3 imágenes: una para el proceso <code>mongod</code> (que sostiene los <em>shards</em> y los <em>config server</em>), una para el proceso <code>mongos</code> (punto de entrada al <em>cluster</em>) y otra para el cliente <code>mongo</code> (que nos sirve para atar el <em>cluster</em>).</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/sharding$ cat build/mongod/Dockerfile 
+FROM alpine:3.7
+RUN apk add --no-cache mongodb <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/mongo /usr/bin/mongos /usr/bin/mongoperf <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    install -d -o mongodb -g mongodb -m <span class="m">0755</span> /srv/mongodb
+USER mongodb
+CMD <span class="o">[</span><span class="s2">&quot;/usr/bin/mongod&quot;</span>, <span class="s2">&quot;--config&quot;</span>, <span class="s2">&quot;/etc/mongod.conf&quot;</span><span class="o">]</span>
+gerard@sirius:~/workspace/sharding$ 
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/sharding$ cat build/mongos/Dockerfile 
+FROM alpine:3.7
+RUN apk add --no-cache mongodb <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/mongo /usr/bin/mongod /usr/bin/mongoperf
+USER mongodb
+CMD <span class="o">[</span><span class="s2">&quot;/usr/bin/mongos&quot;</span>, <span class="s2">&quot;--config&quot;</span>, <span class="s2">&quot;/etc/mongos.conf&quot;</span><span class="o">]</span>
+gerard@sirius:~/workspace/sharding$ 
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/sharding$ cat build/mongo/Dockerfile 
+FROM alpine:3.7
+RUN apk add --no-cache mongodb <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    rm /usr/bin/mongod /usr/bin/mongos /usr/bin/mongoperf
+USER mongodb
+gerard@sirius:~/workspace/sharding$ 
+</pre></div>
+
+
+<p>Solo nos queda construirlas usando los comandos habituales:</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/sharding$ docker build -t mongo-server build/mongod/
 ...
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
+Successfully tagged mongo-server:latest
+gerard@sirius:~/workspace/sharding$ 
 </pre></div>
 
 
-<p>Alternativamente, podemos instalar solamente el servidor gráfico y los <em>drivers</em> necesarios. Esto es especialmente importante en <strong>Archlinux</strong> porque los paquetes se actualizan muy a menudo, y por lo tanto, tener paquetes que no vamos a usar solo incrementa el tiempo del <em>update</em>.</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># pacman -S xorg-server xf86-input-mouse xf86-input-keyboard xf86-input-synaptics xf86-video-vesa</span>
-resolviendo dependencias…
-:: Existen <span class="m">4</span> proveedores disponibles para libgl:
-:: Repositorio extra
-   <span class="m">1</span><span class="o">)</span> mesa-libgl  <span class="m">2</span><span class="o">)</span> nvidia-304xx-libgl  <span class="m">3</span><span class="o">)</span> nvidia-340xx-libgl  <span class="m">4</span><span class="o">)</span> nvidia-libgl
-
-Introduzca un número <span class="o">(</span>por omisión<span class="o">=</span><span class="m">1</span><span class="o">)</span>:
-:: Existen <span class="m">2</span> proveedores disponibles para xf86-input-driver:
-:: Repositorio extra
-   <span class="m">1</span><span class="o">)</span> xf86-input-evdev  <span class="m">2</span><span class="o">)</span> xf86-input-libinput
-
-Introduzca un número <span class="o">(</span>por omisión<span class="o">=</span><span class="m">1</span><span class="o">)</span>:
-buscando conflictos entre paquetes…
-advertencia: bucle de dependencias detectado:
-advertencia: harfbuzz será instalado antes que su dependencia freetype2
-
-Paquetes <span class="o">(</span><span class="m">62</span><span class="o">)</span> damageproto-1.2.1-3  elfutils-0.166-1  fixesproto-5.0-3  fontconfig-2.12.0-1  fontsproto-2.1.3-1  freetype2-2.6.3-1
-              graphite-1:1.3.8-1  harfbuzz-1.2.7-1  inputproto-2.3.2-1  kbproto-1.0.7-1  libdrm-2.4.68-1  libepoxy-1.3.1-1
-              libevdev-1.5.2-1  libfontenc-1.1.3-1  libomxil-bellagio-0.9.3-1  libpciaccess-0.13.4-1  libpng-1.6.23-1
-              libtxc_dxtn-1.0.1-6  libunwind-1.1-3  libx11-1.6.3-1  libxau-1.0.8-2  libxcb-1.12-1  libxdamage-1.1.4-2
-              libxdmcp-1.1.2-1  libxext-1.3.3-1  libxfixes-5.0.2-1  libxfont-1.5.1-1  libxi-1.7.6-1  libxkbfile-1.0.9-1
-              libxml2-2.9.4+0+gbdec218-2  libxshmfence-1.2-1  libxtst-1.2.2-1  libxxf86vm-1.1.4-1  llvm-libs-3.8.0-1
-              mesa-11.2.2-1  mesa-libgl-11.2.2-1  mtdev-1.1.5-1  pixman-0.34.0-1  recordproto-1.14.2-2  wayland-1.11.0-1
-              xcb-proto-1.12-2  xextproto-7.3.0-1  xf86-input-evdev-2.10.3-1  xf86vidmodeproto-2.3.1-3  xkeyboard-config-2.18-1
-              xorg-bdftopcf-1.0.5-1  xorg-font-util-1.3.1-1  xorg-font-utils-7.6-4  xorg-fonts-alias-1.0.3-1
-              xorg-fonts-encodings-1.0.4-4  xorg-fonts-misc-1.0.3-4  xorg-mkfontdir-1.0.7-2  xorg-mkfontscale-1.1.2-1
-              xorg-server-common-1.18.3-2  xorg-setxkbmap-1.3.1-1  xorg-xkbcomp-1.3.1-1  xproto-7.0.29-1
-              xf86-input-keyboard-1.8.1-2  xf86-input-mouse-1.9.1-2  xf86-input-synaptics-1.8.99.1-1  xf86-video-vesa-2.3.4-2
-              xorg-server-1.18.3-2
-
-Tamaño total de la descarga:     <span class="m">37</span>,78 MiB
-Tamaño total de la instalación:  <span class="m">150</span>,38 MiB
-
-:: ¿Continuar con la instalación? <span class="o">[</span>S/n<span class="o">]</span> s
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/sharding$ docker build -t mongo-proxy build/mongos/
 ...
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
+Successfully tagged mongo-proxy:latest
+gerard@sirius:~/workspace/sharding$ 
 </pre></div>
 
 
-<p>Una vez tenemos el servidor gráfico, el siguiente paso es el escritorio que elijamos. Tras buscar el <a href="https://www.archlinux.org/groups/">el índice de grupos</a>, me decanté por <strong>XFCE</strong>, aunque hay para todos los gustos.</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># pacman -S xfce4 xfce4-goodies</span>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/sharding$ docker build -t mongo-client build/mongo/
 ...
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
+Successfully tagged mongo-client:latest
+gerard@sirius:~/workspace/sharding$ 
 </pre></div>
 
 
-<p>Si lo queréis un poco mas <em>minimal</em>, solo haría falta el paquete <strong>xfce4</strong>. Para ser breves, me limito a este solamente.</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># pacman -S xfce4</span>
-:: Hay <span class="m">17</span> miembros en el grupo xfce4:
-:: Repositorio extra
-   <span class="m">1</span><span class="o">)</span> exo  <span class="m">2</span><span class="o">)</span> garcon  <span class="m">3</span><span class="o">)</span> gtk-xfce-engine  <span class="m">4</span><span class="o">)</span> thunar  <span class="m">5</span><span class="o">)</span> thunar-volman  <span class="m">6</span><span class="o">)</span> tumbler  <span class="m">7</span><span class="o">)</span> xfce4-appfinder  <span class="m">8</span><span class="o">)</span> xfce4-mixer
-   <span class="m">9</span><span class="o">)</span> xfce4-panel  <span class="m">10</span><span class="o">)</span> xfce4-power-manager  <span class="m">11</span><span class="o">)</span> xfce4-session  <span class="m">12</span><span class="o">)</span> xfce4-settings  <span class="m">13</span><span class="o">)</span> xfce4-terminal  <span class="m">14</span><span class="o">)</span> xfconf  <span class="m">15</span><span class="o">)</span> xfdesktop
-   <span class="m">16</span><span class="o">)</span> xfwm4  <span class="m">17</span><span class="o">)</span> xfwm4-themes
+<h2>Levantando todos los procesos</h2>
+<p>La parte más tediosa de levantar un <em>cluster</em> es levantar todos los procesos implicados. En el caso del <em>cluster</em> de ejemplo, necesitamos un mínimo de 13 procesos:</p>
+<ul>
+<li>1 <code>mongos</code> o más para poder utilizar e <em>cluster</em> de forma transparente</li>
+<li>3 <code>mongod</code> en configuración de <em>replica set</em> para actuar como <em>config servers</em></li>
+<li>3 <code>mongod</code> en configuración de <em>replica set</em> para actuar como el <em>shard aquila</em></li>
+<li>3 <code>mongod</code> en configuración de <em>replica set</em> para actuar como el <em>shard lyra</em></li>
+<li>3 <code>mongod</code> en configuración de <em>replica set</em> para actuar como el <em>shard cygnus</em></li>
+</ul>
+<p>El contenedor para ejecutar el cliente <code>mongo</code> no es necesario; lo normal es que cada aplicación consuma directamente los procesos <code>mongos</code> utilizando el <em>driver</em>. Para operar el <em>cluster</em> vamos a levantar el cliente de forma puntual, eliminando el contenedor al acabar.</p>
+<p>Para facilitar el levantado de procesos, vamos a utilizar <strong>docker-compose</strong>; aquí os dejo el fichero <code>docker-compose.yml</code>.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/sharding$ cat docker-compose.yml 
+version: <span class="s1">&#39;3&#39;</span>
+services:
+  mongos01:
+    image: mongo-proxy
+    container_name: mongos01
+    hostname: mongos01
+    volumes:
+      - ./mongos.conf:/etc/mongos.conf:ro
+    restart: always
+  config01:
+    image: mongo-server
+    container_name: config01
+    hostname: config01
+    volumes:
+      - ./mongod_config.conf:/etc/mongod.conf:ro
+    restart: always
+  config02:
+    image: mongo-server
+    container_name: config02
+    hostname: config02
+    volumes:
+      - ./mongod_config.conf:/etc/mongod.conf:ro
+    restart: always
+  config03:
+    image: mongo-server
+    container_name: config03
+    hostname: config03
+    volumes:
+      - ./mongod_config.conf:/etc/mongod.conf:ro
+    restart: always
+  aquila01:
+    image: mongo-server
+    container_name: aquila01
+    hostname: aquila01
+    volumes:
+      - ./mongod_aquila.conf:/etc/mongod.conf:ro
+    restart: always
+  aquila02:
+    image: mongo-server
+    container_name: aquila02
+    hostname: aquila02
+    volumes:
+      - ./mongod_aquila.conf:/etc/mongod.conf:ro
+    restart: always
+  aquila03:
+    image: mongo-server
+    container_name: aquila03
+    hostname: aquila03
+    volumes:
+      - ./mongod_aquila.conf:/etc/mongod.conf:ro
+    restart: always
+  lyra01:
+    image: mongo-server
+    container_name: lyra01
+    hostname: lyra01
+    volumes:
+      - ./mongod_lyra.conf:/etc/mongod.conf:ro
+    restart: always
+  lyra02:
+    image: mongo-server
+    container_name: lyra02
+    hostname: lyra02
+    volumes:
+      - ./mongod_lyra.conf:/etc/mongod.conf:ro
+    restart: always
+  lyra03:
+    image: mongo-server
+    container_name: lyra03
+    hostname: lyra03
+    volumes:
+      - ./mongod_lyra.conf:/etc/mongod.conf:ro
+    restart: always
+  cygnus01:
+    image: mongo-server
+    container_name: cygnus01
+    hostname: cygnus01
+    volumes:
+      - ./mongod_cygnus.conf:/etc/mongod.conf:ro
+    restart: always
+  cygnus02:
+    image: mongo-server
+    container_name: cygnus02
+    hostname: cygnus02
+    volumes:
+      - ./mongod_cygnus.conf:/etc/mongod.conf:ro
+    restart: always
+  cygnus03:
+    image: mongo-server
+    container_name: cygnus03
+    hostname: cygnus03
+    volumes:
+      - ./mongod_cygnus.conf:/etc/mongod.conf:ro
+    restart: always
+gerard@sirius:~/workspace/sharding$ 
+</pre></div>
 
-Introduzca una selección <span class="o">(</span>por omisión<span class="o">=</span>todos<span class="o">)</span>:
-resolviendo dependencias…
-buscando conflictos entre paquetes…
 
-Paquetes <span class="o">(</span><span class="m">113</span><span class="o">)</span> adwaita-icon-theme-3.20-2  alsa-lib-1.1.1-1  at-spi2-atk-2.20.1-2  at-spi2-core-2.20.2-1  atk-2.20.0-1
-               avahi-0.6.32-2  cairo-1.14.6-1  cantarell-fonts-1:0.0.24-1  cdparanoia-10.2-5  colord-1.3.2-2
-               compositeproto-0.4.2-3  dbus-glib-0.106-1  dconf-0.26.0-1  desktop-file-utils-0.22-2  gdk-pixbuf2-2.34.0-2
-               glib-networking-2.48.2-1  gnome-icon-theme-3.12.0-3  gnome-icon-theme-symbolic-3.12.0-4
-               gnome-themes-standard-3.20.2-1  gsettings-desktop-schemas-3.21.2-1  gstreamer0.10-0.10.36-4
-               gstreamer0.10-base-0.10.36-3  gstreamer0.10-base-plugins-0.10.36-3  gtk-update-icon-cache-3.20.6-1  gtk2-2.24.30-2
-               gtk3-3.20.6-1  hicolor-icon-theme-0.15-1  iso-codes-3.68-1  jasper-1.900.1-15  js17-17.0.0-3  json-glib-1.2.0-1
-               lcms2-2.7-1  libcroco-0.6.11-1  libcups-2.1.4-1  libdaemon-0.14-3  libdatrie-0.2.10-1  libexif-0.6.21-2
-               libgudev-230-1  libgusb-0.2.9-1  libice-1.0.9-1  libimobiledevice-1.2.0-3  libjpeg-turbo-1.5.0-1
-               libkeybinder2-0.3.0-2  libnotify-0.7.6-2  libogg-1.3.2-1  libplist-1.12-4  libproxy-0.4.12-2  librsvg-2:2.40.16-1
-               libsm-1.2.2-2  libsoup-2.54.1-1  libthai-0.1.24-1  libtheora-1.1.1-3  libtiff-4.0.6-2  libunique-1.1.6-6
-               libusbmuxd-1.0.10-1  libvisual-0.4.0-6  libvorbis-1.3.5-1  libwnck-2.31.0-1  libxcomposite-0.4.4-2
-               libxcursor-1.1.14-2  libxfce4ui-4.12.1-2  libxfce4util-4.12.1-1  libxft-2.3.2-1  libxinerama-1.1.3-2
-               libxkbcommon-0.6.1-1  libxklavier-5.4-1  libxmu-1.1.2-1  libxrandr-1.5.0-1  libxrender-0.9.9-1  libxres-1.0.7-1
-               libxt-1.1.5-1  libxv-1.0.10-1  nspr-4.12-1  orc-0.4.25-2  pango-1.40.1-1  perl-uri-1.71-1  polkit-0.113-4
-               polkit-gnome-0.105-3  randrproto-1.5.0-1  renderproto-0.11.1-3  rest-0.8.0-1  shared-mime-info-1.6-2
-               startup-notification-0.12-4  ttf-dejavu-2.35-1  upower-0.99.4-2  videoproto-2.3.3-1  vte-0.28.2-7
-               vte-common-0.44.2-1  wayland-protocols-1.4-1  xcb-util-0.4.0-1  xineramaproto-1.2.1-3  xorg-iceauth-1.0.7-1
-               xorg-xauth-1.0.9-1  xorg-xinit-1.3.4-4  xorg-xmodmap-1.0.9-1  xorg-xrdb-1.1.0-2  exo-0.10.7-2  garcon-0.4.0-1
-               gtk-xfce-engine-2.10.1-1  thunar-1.6.10-3  thunar-volman-0.8.1-2  tumbler-0.1.31-1  xfce4-appfinder-4.12.0-4
-               xfce4-mixer-4.11.0-3  xfce4-panel-4.12.0-2  xfce4-power-manager-1.4.4-2  xfce4-session-4.12.1-4
-               xfce4-settings-4.12.0-4  xfce4-terminal-0.6.3-3  xfconf-4.12.0-4  xfdesktop-4.12.3-2  xfwm4-4.12.3-2
-               xfwm4-themes-4.10.0-2
+<p><strong>NOTA</strong>: Es importante que el <em>hostname</em> y el <em>container_name</em> sean el mismo; las <em>replicas</em> utilizan el <em>hostname</em> para su descubrimiento, pero el <em>container_name</em> al conectarse entre ellas.</p>
+<p>Cada elemento dentro del <em>cluster</em> necesita un parámetro <code>replSetName</code> indicando el nombre de la <em>replica set</em> a la que pertenecen. Otro parámetro cambiante es el <code>clusterRole</code>, dependiendo si la <em>replica set</em> va a ejercer como <em>config server</em> o como <em>shard</em>. Los miembros del mismo <em>replica set</em> comparten configuración, así que solo necesitamos 4 distintas.</p>
+<p>Empezaremos exponiendo la configuración de los <em>config server</em>:</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/sharding$ cat mongod_config.conf 
+processManagement:
+  fork: <span class="nb">false</span>
 
-Tamaño total de la descarga:     <span class="m">65</span>,79 MiB
-Tamaño total de la instalación:  <span class="m">298</span>,53 MiB
+net:
+  bindIp: <span class="m">0</span>.0.0.0
+  port: <span class="m">27019</span>
+  unixDomainSocket:
+    enabled: <span class="nb">false</span>
 
-:: ¿Continuar con la instalación? <span class="o">[</span>S/n<span class="o">]</span> s
+storage:
+  dbPath: /srv/mongodb
+  engine: wiredTiger
+  journal:
+    enabled: <span class="nb">true</span>
+
+replication:
+  replSetName: config
+
+sharding:
+  clusterRole: configsvr
+gerard@sirius:~/workspace/sharding$ 
+</pre></div>
+
+
+<p>La configuración de los <em>shards</em> es prácticamente la misma; solo hace falta cambiar el <code>clusterRole</code> el <code>replSetName</code> y el puerto usado. Empezaremos exponiendo la configuración del primer <em>shard</em>:</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/sharding$ cat mongod_aquila.conf 
+processManagement:
+  fork: <span class="nb">false</span>
+
+net:
+  bindIp: <span class="m">0</span>.0.0.0
+  port: <span class="m">27018</span>
+  unixDomainSocket:
+    enabled: <span class="nb">false</span>
+
+storage:
+  dbPath: /srv/mongodb
+  engine: wiredTiger
+  journal:
+    enabled: <span class="nb">true</span>
+
+replication:
+  replSetName: aquila
+
+sharding:
+  clusterRole: shardsvr
+gerard@sirius:~/workspace/sharding$ 
+</pre></div>
+
+
+<p><strong>NOTA</strong>: El <em>cluster</em> original ponía el árbitro en otro puerto para poder ir a la misma máquina. Esto ya no es necesario con <strong>docker</strong> y nos ahorra poner una configuración nueva.</p>
+<p>Los otros <em>shards</em> son prácticamente iguales, cambiando solamente el nombre de la <em>replica set</em>:</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/sharding$ diff mongod_aquila.conf mongod_lyra.conf 
+17c17
+&lt;   replSetName: aquila
+---
+&gt;   replSetName: lyra
+gerard@sirius:~/workspace/sharding$ diff mongod_aquila.conf mongod_cygnus.conf 
+17c17
+&lt;   replSetName: aquila
+---
+&gt;   replSetName: cygnus
+gerard@sirius:~/workspace/sharding$ 
+</pre></div>
+
+
+<p>Y con esto tenemos todo lo necesario para levantar los procesos, así que no lo demoramos más.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/sharding$ docker-compose up -d
+Creating network <span class="s2">&quot;sharding_default&quot;</span> with the default driver
+Creating cygnus03
+Creating config03
+Creating mongos01
+Creating aquila02
+Creating lyra03
+Creating cygnus02
+Creating cygnus01
+Creating config01
+Creating lyra01
+Creating aquila03
+Creating lyra02
+Creating config02
+Creating aquila01
+gerard@sirius:~/workspace/sharding$ 
+</pre></div>
+
+
+<h2>Atando el cluster</h2>
+<p>Para atar completamente el <em>cluster</em> se necesita hacer dos cosas:</p>
+<ul>
+<li>Atar los <em>replica sets</em> que conformarán los <em>shards</em> y los <em>config server</em></li>
+<li>Añadir los <em>shards</em> ya atados a través de un <em>mongos</em></li>
+</ul>
+<p>Estas tareas administrativas requieren de un cliente <code>mongo</code> que no queremos tener de forma permanente, así que tendremos un contenedor de "usar y tirar". De esta forma, cuando acabemos lo destruiremos y no tendremos partes innecesarias.</p>
+<p>Levantar un contenedor con la imagen que contiene el cliente <code>mongo</code> no tiene misterio. El único detalle es que lo vamos a añadir a la misma red que creó el <em>docker-compose.yml</em>; eso nos garantiza que podamos usar los <em>container_name</em> en vez de ir buscando las direcciones IP de cada contenedor.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/sharding$ docker run -ti --rm --net sharding_default mongo-client
+/ $ 
+</pre></div>
+
+
+<p><strong>TRUCO</strong>: A partir de aquí todos los comandos se hacen en el <em>shell</em> de <em>alpine linux</em>. Desde esta sesión interactiva, vamos a ir abriendo sesiones de <em>mongo shell</em> contra los procesos <code>mongod</code> o <code>mongos</code> que nos haga falta.</p>
+<p>Atar los <em>replica sets</em> es siempre igual: entramos en uno de los miembros y le damos una configuración; otra opción es iniciar uno solo de los miembros y añadir los otros.</p>
+<p>Empezaremos con los <em>config servers</em>, que a partir de la versión 3.2 de <strong>mongodb</strong> pueden ser <em>replica sets</em>, y que deben serlo a partir de la versión 3.4 (la que usamos). Entraremos en <em>config01</em> y lo inicializamos, para añadir los otros dos en el mismo <em>mongo shell</em>.</p>
+<div class="highlight"><pre><span></span>/ $ mongo --host config01 --port <span class="m">27019</span>
 ...
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># </span>
+&gt; rs.initiate<span class="o">()</span>
+<span class="o">{</span>
+    <span class="s2">&quot;info2&quot;</span> : <span class="s2">&quot;no configuration specified. Using a default configuration for the set&quot;</span>,
+    <span class="s2">&quot;me&quot;</span> : <span class="s2">&quot;config01:27019&quot;</span>,
+    <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span>
+<span class="o">}</span>
+config:PRIMARY&gt; rs.add<span class="o">(</span><span class="s2">&quot;config02:27019&quot;</span><span class="o">)</span>
+<span class="o">{</span> <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+config:PRIMARY&gt; rs.add<span class="o">(</span><span class="s2">&quot;config03:27019&quot;</span><span class="o">)</span>
+<span class="o">{</span> <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+config:PRIMARY&gt; <span class="nb">exit</span>
+bye
+/ $ 
 </pre></div>
 
 
-<p>Como pequeño inconveniente ante otras distribuciones, como <strong>Debian</strong>, los paquetes no tienen tantas dependencias, dejando al usuario elegir lo que pone o no.</p>
-<p>Como requisito para tener algunas de las funcionalidades del escritorio, por ejemplo la papelera, es necesario instalar otros paquetes. En el caso concreto de la papelera, se necesita el paquete <strong>gvfs</strong>.</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># pacman -S gvfs</span>
-resolviendo dependencias…
-buscando conflictos entre paquetes…
-
-Paquetes <span class="o">(</span><span class="m">10</span><span class="o">)</span> fuse-2.9.6-1  gcr-3.20.0-1  libatasmart-0.19-3  libbluray-0.9.2-2  libcddb-1.3.2-4  libcdio-0.93-3
-              libcdio-paranoia-10.2+0.93+1-2  libsecret-0.18.5-1  udisks2-2.1.7-1  gvfs-1.28.2-1
-
-Tamaño total de la descarga:     <span class="m">3</span>,84 MiB
-Tamaño total de la instalación:  <span class="m">23</span>,45 MiB
-
-:: ¿Continuar con la instalación? <span class="o">[</span>S/n<span class="o">]</span> s
+<p><strong>NOTA</strong>: Los <em>replica sets</em> destinados a ser <em>config servers</em> no pueden contener árbitros; si lo intentáis, obtendréis un bonito mensaje de error, pero no habrá consecuencias.</p>
+<p>Repetiremos la fórmula para cada uno de los otros <em>shards</em>; entramos en el primer contenedor de cada <em>shard</em>, donde lo inicializamos y añadimos los otros dos. Para ser fieles al artículo original, el tercer contenedor de cada <em>shard</em> será un árbitro.</p>
+<div class="highlight"><pre><span></span>/ $ mongo --host aquila01 --port <span class="m">27018</span>
 ...
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
+&gt; rs.initiate<span class="o">()</span>
+<span class="o">{</span>
+    <span class="s2">&quot;info2&quot;</span> : <span class="s2">&quot;no configuration specified. Using a default configuration for the set&quot;</span>,
+    <span class="s2">&quot;me&quot;</span> : <span class="s2">&quot;aquila01:27018&quot;</span>,
+    <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span>
+<span class="o">}</span>
+aquila:PRIMARY&gt; rs.add<span class="o">(</span><span class="s2">&quot;aquila02:27018&quot;</span><span class="o">)</span>
+<span class="o">{</span> <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+aquila:PRIMARY&gt; rs.addArb<span class="o">(</span><span class="s2">&quot;aquila03:27018&quot;</span><span class="o">)</span>
+<span class="o">{</span> <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+aquila:PRIMARY&gt; <span class="nb">exit</span>
+bye
+/ $ 
 </pre></div>
 
 
-<p>El siguiente paso es el gestor de entrada. Podemos entrar mediante un <em>login</em> texto, y escalar a gráficos con <em>startx</em>, pero es mas bonito y cómodo usar un gestor gráfico como <strong>lightdm</strong>. En caso de <strong>Archlinux</strong>, no depende de ninguna librería gráfica, y hay que decidirlo por nosotros mismos. Puesto que <strong>XFCE</strong> usa las librerías <strong>GTK</strong>, vamos a aprovecharnos de ello.</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># pacman -S lightdm lightdm-gtk-greeter</span>
-resolviendo dependencias…
-buscando conflictos entre paquetes…
-
-Paquetes <span class="o">(</span><span class="m">2</span><span class="o">)</span> lightdm-1:1.18.1-2  lightdm-gtk-greeter-1:2.0.1-3
-
-Tamaño total de la descarga:    <span class="m">0</span>,27 MiB
-Tamaño total de la instalación:  <span class="m">2</span>,68 MiB
-
-:: ¿Continuar con la instalación? <span class="o">[</span>S/n<span class="o">]</span> s
+<div class="highlight"><pre><span></span>/ $ mongo --host lyra01 --port <span class="m">27018</span>
 ...
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
+&gt; rs.initiate<span class="o">()</span>
+<span class="o">{</span>
+    <span class="s2">&quot;info2&quot;</span> : <span class="s2">&quot;no configuration specified. Using a default configuration for the set&quot;</span>,
+    <span class="s2">&quot;me&quot;</span> : <span class="s2">&quot;lyra01:27018&quot;</span>,
+    <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span>
+<span class="o">}</span>
+lyra:PRIMARY&gt; rs.add<span class="o">(</span><span class="s2">&quot;lyra02:27018&quot;</span><span class="o">)</span>
+<span class="o">{</span> <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+lyra:PRIMARY&gt; rs.addArb<span class="o">(</span><span class="s2">&quot;lyra03:27018&quot;</span><span class="o">)</span>
+<span class="o">{</span> <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+lyra:PRIMARY&gt; <span class="nb">exit</span>
+bye
+/ $ 
 </pre></div>
 
 
-<p>Activamos el <em>login manager</em> para que salte automáticamente en cada <em>boot</em> de nuestro sistema, usando <strong>systemd</strong>.</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># systemctl enable lightdm</span>
-Created symlink /etc/systemd/system/display-manager.service → /usr/lib/systemd/system/lightdm.service.
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
-</pre></div>
-
-
-<p>Y ya como detalles opcionales, vamos a habilitar el sonido y un gestor de redes, que nos van a hacer la vida mas fácil.</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># pacman -S wicd wicd-gtk alsa-utils</span>
-resolviendo dependencias…
-buscando conflictos entre paquetes…
-
-Paquetes <span class="o">(</span><span class="m">22</span><span class="o">)</span> ethtool-1:4.5-1  fftw-3.3.4-2  flac-1.3.1-3  libglade-2.6.4-5  libnl-3.2.27-1  libsamplerate-0.1.8-3
-              libsndfile-1.0.26-1  net-tools-1.60.20130531git-1  pygobject2-devel-2.28.6-12  pygtk-2.24.0-6
-              python-dbus-common-1.2.4-1  python2-2.7.11-3  python2-cairo-1.10.0-2  python2-dbus-1.2.4-1
-              python2-gobject2-2.28.6-12  python2-urwid-1.3.1-2  rfkill-0.5-1  wireless_tools-30.pre9-1  wpa_supplicant-1:2.5-3
-              alsa-utils-1.1.1-1  wicd-1.7.4-1  wicd-gtk-1.7.4-1
-
-Tamaño total de la descarga:     <span class="m">19</span>,58 MiB
-Tamaño total de la instalación:  <span class="m">110</span>,79 MiB
-
-:: ¿Continuar con la instalación? <span class="o">[</span>S/n<span class="o">]</span> s
+<div class="highlight"><pre><span></span>/ $ mongo --host cygnus01 --port <span class="m">27018</span>
 ...
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
+&gt; rs.initiate<span class="o">()</span>
+<span class="o">{</span>
+    <span class="s2">&quot;info2&quot;</span> : <span class="s2">&quot;no configuration specified. Using a default configuration for the set&quot;</span>,
+    <span class="s2">&quot;me&quot;</span> : <span class="s2">&quot;cygnus01:27018&quot;</span>,
+    <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span>
+<span class="o">}</span>
+cygnus:PRIMARY&gt; rs.add<span class="o">(</span><span class="s2">&quot;cygnus02:27018&quot;</span><span class="o">)</span>
+<span class="o">{</span> <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+cygnus:PRIMARY&gt; rs.addArb<span class="o">(</span><span class="s2">&quot;cygnus03:27018&quot;</span><span class="o">)</span>
+<span class="o">{</span> <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+cygnus:PRIMARY&gt; <span class="nb">exit</span>
+bye
+/ $ 
 </pre></div>
 
 
-<p>El paquete <strong>wicd</strong> usa un frontal para el escritorio, pero todas las operaciones delicadas se delegan a un <em>daemon</em> que funciona en segundo plano. De forma similar a <strong>Redhat</strong>, los servicios no se instalan preparados para arrancar, y hay que activarlos manualmente.</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># systemctl enable wicd</span>
-Created symlink /etc/systemd/system/dbus-org.wicd.daemon.service → /usr/lib/systemd/system/wicd.service.
-Created symlink /etc/systemd/system/multi-user.target.wants/wicd.service → /usr/lib/systemd/system/wicd.service.
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
-</pre></div>
-
-
-<p>El subsistema de sonido funciona solo, salvo por el hecho de que hay que inicializar el dispositivo, y guardar los niveles de audio, para que se puedan restablecer tras cada <em>reboot</em>.</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># alsactl init</span>
-alsactl: sysfs_init:48: sysfs path <span class="s1">&#39;/sys&#39;</span> is invalid
-
-Found hardware: <span class="s2">&quot;ICH&quot;</span> <span class="s2">&quot;Analog Devices AD1980&quot;</span> <span class="s2">&quot;AC97a:41445370&quot;</span> <span class="s2">&quot;0x1028&quot;</span> <span class="s2">&quot;0x0177&quot;</span>
-Hardware is initialized using a generic method
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># alsactl store</span>
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
-</pre></div>
-
-
-<p>Como paso final, vamos a necesitar un usuario con el que trabajar habitualmente, sin privilegios y sin la capacidad de romper nada.</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># useradd -m gerard</span>
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># passwd gerard</span>
-Introduzca la nueva contraseña de UNIX:
-Vuelva a escribir la nueva contraseña de UNIX:
-passwd: contraseña actualizada correctamente
-<span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1">#</span>
-</pre></div>
-
-
-<p>Finalmente podemos reiniciar la máquina, y ver como nos queda de bonito.</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>root@archlinux ~<span class="o">]</span><span class="c1"># reboot</span>
+<p>Ahora tenemos 4 <em>replica sets</em>, uno configurado como <em>config server</em> y apuntado por el proceso <code>mongos</code>, y otros 3 que serán los <em>shards</em>. Vamos a iniciar un <em>mongo shell</em> contra el proceso <code>mongos</code>, desde donde vamos a acabar las configuraciones.</p>
+<div class="highlight"><pre><span></span>/ $ mongo --host mongos01 --port <span class="m">27017</span>
 ...
+mongos&gt; 
 </pre></div>
 
 
-<p>Si todo ha salido bien, nos queda un escritorio de esta apariencia, que tendremos que personalizar a nuestro gusto.</p>
-<p><img alt="Escritorio XFCE" src="http://www.linuxsysadmin.ml/images/escritorio-xfce-archlinux.jpg"></p>
-<p>Y todo esto, con un consumo de recursos bastante escaso...</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>gerard@archlinux ~<span class="o">]</span>$ free -m
-              total        used        free      shared  buff/cache   
-available
-Mem:            <span class="m">498</span>          <span class="m">97</span>         <span class="m">310</span>           <span class="m">1</span>          <span class="m">89</span>         
-<span class="m">379</span>
-Swap:           <span class="m">522</span>           <span class="m">0</span>         <span class="m">522</span>
-<span class="o">[</span>gerard@archlinux ~<span class="o">]</span>$ 
+<p>De hecho, en este punto ya tenemos un <em>cluster</em> funcional, pero como no tiene <em>shards</em>, no hay donde guardar datos.</p>
+<div class="highlight"><pre><span></span>mongos&gt; sh.status<span class="o">()</span>
+--- Sharding Status --- 
+  sharding version: <span class="o">{</span>
+    <span class="s2">&quot;_id&quot;</span> : <span class="m">1</span>,
+    <span class="s2">&quot;minCompatibleVersion&quot;</span> : <span class="m">5</span>,
+    <span class="s2">&quot;currentVersion&quot;</span> : <span class="m">6</span>,
+    <span class="s2">&quot;clusterId&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;5b182ae62446c4f43cbab312&quot;</span><span class="o">)</span>
+  <span class="o">}</span>
+  shards:
+  active mongoses:
+        <span class="s2">&quot;3.4.10&quot;</span> : <span class="m">1</span>
+  autosplit:
+        Currently enabled: yes
+  balancer:
+        Currently enabled:  yes
+        Currently running:  no
+NaN
+        Failed balancer rounds in last <span class="m">5</span> attempts:  <span class="m">0</span>
+        Migration Results <span class="k">for</span> the last <span class="m">24</span> hours: 
+                No recent migrations
+  databases:
+
+mongos&gt; 
 </pre></div>
+
+
+<p>Para añadir <em>shards</em> solamente tenemos que utilizar el método <code>sh.addShard()</code> para especificar la <em>replica set</em> que va a actuar como <em>shard</em>; hay que añadir la <em>replica set</em> siguiendo la fórmula <code>rsName/server1:port,...,serverN:port</code>, aunque si especificamos uno solo nombre, basta.</p>
+<div class="highlight"><pre><span></span>mongos&gt; sh.addShard<span class="o">(</span><span class="s2">&quot;aquila/aquila01:27018&quot;</span><span class="o">)</span>
+<span class="o">{</span> <span class="s2">&quot;shardAdded&quot;</span> : <span class="s2">&quot;aquila&quot;</span>, <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+mongos&gt; 
+</pre></div>
+
+
+<p><strong>TRUCO</strong>: A pesar de haber dado solamente el nombre <em>aquila01</em>, el resto de servidores ha sido descubierto por el <em>cluster</em> de forma automática; aún así, los árbitros no aparecen en el listado.</p>
+<div class="highlight"><pre><span></span>mongos&gt; sh.status<span class="o">()</span>
+--- Sharding Status --- 
+  sharding version: <span class="o">{</span>
+    <span class="s2">&quot;_id&quot;</span> : <span class="m">1</span>,
+    <span class="s2">&quot;minCompatibleVersion&quot;</span> : <span class="m">5</span>,
+    <span class="s2">&quot;currentVersion&quot;</span> : <span class="m">6</span>,
+    <span class="s2">&quot;clusterId&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;5b182ae62446c4f43cbab312&quot;</span><span class="o">)</span>
+  <span class="o">}</span>
+  shards:
+        <span class="o">{</span>  <span class="s2">&quot;_id&quot;</span> : <span class="s2">&quot;aquila&quot;</span>,  <span class="s2">&quot;host&quot;</span> : <span class="s2">&quot;aquila/aquila01:27018,aquila02:27018&quot;</span>,  <span class="s2">&quot;state&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+  active mongoses:
+        <span class="s2">&quot;3.4.10&quot;</span> : <span class="m">1</span>
+  autosplit:
+        Currently enabled: yes
+  balancer:
+        Currently enabled:  yes
+        Currently running:  no
+NaN
+        Failed balancer rounds in last <span class="m">5</span> attempts:  <span class="m">0</span>
+        Migration Results <span class="k">for</span> the last <span class="m">24</span> hours: 
+                No recent migrations
+  databases:
+
+mongos&gt; 
+</pre></div>
+
+
+<p>Vamos a repetir la fórmula para añadir los otros <em>shards</em>, que es básicamente la misma:</p>
+<div class="highlight"><pre><span></span>mongos&gt; sh.addShard<span class="o">(</span><span class="s2">&quot;lyra/lyra01:27018&quot;</span><span class="o">)</span>
+<span class="o">{</span> <span class="s2">&quot;shardAdded&quot;</span> : <span class="s2">&quot;lyra&quot;</span>, <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+mongos&gt; sh.addShard<span class="o">(</span><span class="s2">&quot;cygnus/cygnus01:27018&quot;</span><span class="o">)</span>
+<span class="o">{</span> <span class="s2">&quot;shardAdded&quot;</span> : <span class="s2">&quot;cygnus&quot;</span>, <span class="s2">&quot;ok&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+mongos&gt; 
+</pre></div>
+
+
+<p>Y de esta forma, ya podemos ver el <em>cluster</em> acabado, con sus 3 <em>shards</em> añadidos sin problemas.</p>
+<div class="highlight"><pre><span></span>mongos&gt; sh.status<span class="o">()</span>
+--- Sharding Status --- 
+  sharding version: <span class="o">{</span>
+    <span class="s2">&quot;_id&quot;</span> : <span class="m">1</span>,
+    <span class="s2">&quot;minCompatibleVersion&quot;</span> : <span class="m">5</span>,
+    <span class="s2">&quot;currentVersion&quot;</span> : <span class="m">6</span>,
+    <span class="s2">&quot;clusterId&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;5b182ae62446c4f43cbab312&quot;</span><span class="o">)</span>
+  <span class="o">}</span>
+  shards:
+        <span class="o">{</span>  <span class="s2">&quot;_id&quot;</span> : <span class="s2">&quot;aquila&quot;</span>,  <span class="s2">&quot;host&quot;</span> : <span class="s2">&quot;aquila/aquila01:27018,aquila02:27018&quot;</span>,  <span class="s2">&quot;state&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+        <span class="o">{</span>  <span class="s2">&quot;_id&quot;</span> : <span class="s2">&quot;cygnus&quot;</span>,  <span class="s2">&quot;host&quot;</span> : <span class="s2">&quot;cygnus/cygnus01:27018,cygnus02:27018&quot;</span>,  <span class="s2">&quot;state&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+        <span class="o">{</span>  <span class="s2">&quot;_id&quot;</span> : <span class="s2">&quot;lyra&quot;</span>,  <span class="s2">&quot;host&quot;</span> : <span class="s2">&quot;lyra/lyra01:27018,lyra02:27018&quot;</span>,  <span class="s2">&quot;state&quot;</span> : <span class="m">1</span> <span class="o">}</span>
+  active mongoses:
+        <span class="s2">&quot;3.4.10&quot;</span> : <span class="m">1</span>
+  autosplit:
+        Currently enabled: yes
+  balancer:
+        Currently enabled:  yes
+        Currently running:  no
+NaN
+        Failed balancer rounds in last <span class="m">5</span> attempts:  <span class="m">0</span>
+        Migration Results <span class="k">for</span> the last <span class="m">24</span> hours: 
+                No recent migrations
+  databases:
+
+mongos&gt; 
+</pre></div>
+
+
+<p>Como no necesitamos más el contenedor del <em>mongo shell</em>, salimos de él para que el sistema lo pueda reciclar.</p>
+<div class="highlight"><pre><span></span>mongos&gt; <span class="nb">exit</span>
+bye
+/ $ <span class="nb">exit</span>
+gerard@sirius:~/workspace/sharding$ 
+</pre></div>
+
+
+<p>Y con esto estamos listos para introducir nuestros datos, aunque añadir más procesos <code>mongos</code> nos dará alta disponibilidad para el acceso de nuestras aplicaciones, aunque los <em>shards</em> y los <em>config servers</em> ya disfrutan de ella.</p>
             </div>
             <!-- /.entry-content -->
 <section class="well" id="related-posts">
     <h4>Posts relacionados:</h4>
     <ul>
-        <li><a href="http://www.linuxsysadmin.ml/2016/04/un-escritorio-minimo-con-debian.html">Un escritorio mínimo con Debian</a></li>
-        <li><a href="http://www.linuxsysadmin.ml/2016/07/instalando-una-maquina-con-archlinux.html">Instalando una máquina con Archlinux</a></li>
-        <li><a href="http://www.linuxsysadmin.ml/2016/03/creando-un-entorno-escalable-4.html">Creando un entorno escalable (IV)</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2018/01/una-plataforma-para-desplegar-contenedores-rancheros.html">Una plataforma para desplegar contenedores: RancherOS</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2017/10/montando-un-cluster-de-docker-con-docker-swarm.html">Montando un cluster de docker con docker swarm</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2018/01/automatizando-el-setup-de-un-mongo-replica-set-en-docker.html">Automatizando el setup de un mongo replica set en docker</a></li>
     </ul>
 </section>
     <hr/>
@@ -372,8 +649,8 @@ Swap:           <span class="m">522</span>           <span class="m">0</span>   
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'un-escritorio-con-archlinux';
-                var disqus_url = 'http://www.linuxsysadmin.ml/2016/07/un-escritorio-con-archlinux.html';
+                    var disqus_identifier = 'mongodb-sharding-con-docker';
+                var disqus_url = 'http://www.linuxsysadmin.ml/2018/07/mongodb-sharding-con-docker.html';
 
             var disqus_config = function () {
                 this.language = "es";

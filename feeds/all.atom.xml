@@ -1,5 +1,489 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-06-25T10:00:00+02:00</updated><entry><title>Un reciclaje de Tomcat usando Docker</title><link href="http://www.linuxsysadmin.ml/2018/06/un-reciclaje-de-tomcat-usando-docker.html" rel="alternate"></link><published>2018-06-25T10:00:00+02:00</published><updated>2018-06-25T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-06-25:/2018/06/un-reciclaje-de-tomcat-usando-docker.html</id><summary type="html">&lt;p&gt;Hace poco he cambiado de trabajo por motivos personales. En mi nueva posición me he encontrado con un cambio en las tecnologías usadas; lo que me he encontrado es algo que hacía tiempo que no tocaba: basan sus sistemas en &lt;strong&gt;Java&lt;/strong&gt; y &lt;strong&gt;Tomcat&lt;/strong&gt;. He necesitado un ligero reciclaje en ellos …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hace poco he cambiado de trabajo por motivos personales. En mi nueva posición me he encontrado con un cambio en las tecnologías usadas; lo que me he encontrado es algo que hacía tiempo que no tocaba: basan sus sistemas en &lt;strong&gt;Java&lt;/strong&gt; y &lt;strong&gt;Tomcat&lt;/strong&gt;. He necesitado un ligero reciclaje en ellos.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-07-02T09:00:00+02:00</updated><entry><title>MongoDB sharding con docker</title><link href="http://www.linuxsysadmin.ml/2018/07/mongodb-sharding-con-docker.html" rel="alternate"></link><published>2018-07-02T09:00:00+02:00</published><updated>2018-07-02T09:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-07-02:/2018/07/mongodb-sharding-con-docker.html</id><summary type="html">&lt;p&gt;El otro día estaba revisando viejos artículos, y me tropecé con &lt;a href="http://www.linuxsysadmin.ml/2016/05/mongodb-sharding-con-ansible.html"&gt;uno anterior&lt;/a&gt;. Este estaba montado con &lt;strong&gt;ansible&lt;/strong&gt;, y se me pasó por la cabeza reescribirlo usando contenedores con &lt;strong&gt;docker&lt;/strong&gt;. Así pues, vamos a montar exactamente el mismo &lt;em&gt;cluster&lt;/em&gt;, pero con el cambio que la última revolución tecnológica nos aporta …&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día estaba revisando viejos artículos, y me tropecé con &lt;a href="http://www.linuxsysadmin.ml/2016/05/mongodb-sharding-con-ansible.html"&gt;uno anterior&lt;/a&gt;. Este estaba montado con &lt;strong&gt;ansible&lt;/strong&gt;, y se me pasó por la cabeza reescribirlo usando contenedores con &lt;strong&gt;docker&lt;/strong&gt;. Así pues, vamos a montar exactamente el mismo &lt;em&gt;cluster&lt;/em&gt;, pero con el cambio que la última revolución tecnológica nos aporta.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Sharded cluster" src="http://www.linuxsysadmin.ml/images/sharding_arquitectura_logica.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;Aunque lo ideal sería desplegar todas las instancias en varias máquinas diferentes, voy a pasar; por comodidad, voy a desplegar todos los contenedores en una sola máquina mediante &lt;strong&gt;docker-compose&lt;/strong&gt;. De esta forma puedo aprovechar las mismas imágenes sin una ocupación de disco elevada.&lt;/p&gt;
+&lt;p&gt;Como de costumbre, vamos a crear una carpeta para contener el proyecto y la vamos a llamar &lt;code&gt;sharding&lt;/code&gt;. En ella voy a depositar los ficheros &lt;code&gt;Dockerfile&lt;/code&gt; necesarios para la construcción de las imágenes, y de paso, el &lt;code&gt;docker-compose.yml&lt;/code&gt; y las configuraciones que vamos a montar como volúmenes.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/sharding$ tree
+.
+├── build
+│   ├── mongo
+│   │   └── Dockerfile
+│   ├── mongod
+│   │   └── Dockerfile
+│   └── mongos
+│       └── Dockerfile
+├── docker-compose.yml
+├── mongod_aquila.conf
+├── mongod_config.conf
+├── mongod_cygnus.conf
+├── mongod_lyra.conf
+└── mongos.conf
+
+&lt;span class="m"&gt;4&lt;/span&gt; directories, &lt;span class="m"&gt;9&lt;/span&gt; files
+gerard@sirius:~/workspace/sharding$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Construyendo las imágenes&lt;/h2&gt;
+&lt;p&gt;El primer paso para levantar el entorno son las imágenes que lo sostienen. Necesitamos 3 imágenes: una para el proceso &lt;code&gt;mongod&lt;/code&gt; (que sostiene los &lt;em&gt;shards&lt;/em&gt; y los &lt;em&gt;config server&lt;/em&gt;), una para el proceso &lt;code&gt;mongos&lt;/code&gt; (punto de entrada al &lt;em&gt;cluster&lt;/em&gt;) y otra para el cliente &lt;code&gt;mongo&lt;/code&gt; (que nos sirve para atar el &lt;em&gt;cluster&lt;/em&gt;).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/sharding$ cat build/mongod/Dockerfile 
+FROM alpine:3.7
+RUN apk add --no-cache mongodb &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm /usr/bin/mongo /usr/bin/mongos /usr/bin/mongoperf &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    install -d -o mongodb -g mongodb -m &lt;span class="m"&gt;0755&lt;/span&gt; /srv/mongodb
+USER mongodb
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/bin/mongod&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--config&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;/etc/mongod.conf&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/workspace/sharding$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/sharding$ cat build/mongos/Dockerfile 
+FROM alpine:3.7
+RUN apk add --no-cache mongodb &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm /usr/bin/mongo /usr/bin/mongod /usr/bin/mongoperf
+USER mongodb
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/bin/mongos&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--config&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;/etc/mongos.conf&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/workspace/sharding$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/sharding$ cat build/mongo/Dockerfile 
+FROM alpine:3.7
+RUN apk add --no-cache mongodb &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    rm /usr/bin/mongod /usr/bin/mongos /usr/bin/mongoperf
+USER mongodb
+gerard@sirius:~/workspace/sharding$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos queda construirlas usando los comandos habituales:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/sharding$ docker build -t mongo-server build/mongod/
+...
+Successfully tagged mongo-server:latest
+gerard@sirius:~/workspace/sharding$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/sharding$ docker build -t mongo-proxy build/mongos/
+...
+Successfully tagged mongo-proxy:latest
+gerard@sirius:~/workspace/sharding$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/sharding$ docker build -t mongo-client build/mongo/
+...
+Successfully tagged mongo-client:latest
+gerard@sirius:~/workspace/sharding$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Levantando todos los procesos&lt;/h2&gt;
+&lt;p&gt;La parte más tediosa de levantar un &lt;em&gt;cluster&lt;/em&gt; es levantar todos los procesos implicados. En el caso del &lt;em&gt;cluster&lt;/em&gt; de ejemplo, necesitamos un mínimo de 13 procesos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;1 &lt;code&gt;mongos&lt;/code&gt; o más para poder utilizar e &lt;em&gt;cluster&lt;/em&gt; de forma transparente&lt;/li&gt;
+&lt;li&gt;3 &lt;code&gt;mongod&lt;/code&gt; en configuración de &lt;em&gt;replica set&lt;/em&gt; para actuar como &lt;em&gt;config servers&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;3 &lt;code&gt;mongod&lt;/code&gt; en configuración de &lt;em&gt;replica set&lt;/em&gt; para actuar como el &lt;em&gt;shard aquila&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;3 &lt;code&gt;mongod&lt;/code&gt; en configuración de &lt;em&gt;replica set&lt;/em&gt; para actuar como el &lt;em&gt;shard lyra&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;3 &lt;code&gt;mongod&lt;/code&gt; en configuración de &lt;em&gt;replica set&lt;/em&gt; para actuar como el &lt;em&gt;shard cygnus&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;El contenedor para ejecutar el cliente &lt;code&gt;mongo&lt;/code&gt; no es necesario; lo normal es que cada aplicación consuma directamente los procesos &lt;code&gt;mongos&lt;/code&gt; utilizando el &lt;em&gt;driver&lt;/em&gt;. Para operar el &lt;em&gt;cluster&lt;/em&gt; vamos a levantar el cliente de forma puntual, eliminando el contenedor al acabar.&lt;/p&gt;
+&lt;p&gt;Para facilitar el levantado de procesos, vamos a utilizar &lt;strong&gt;docker-compose&lt;/strong&gt;; aquí os dejo el fichero &lt;code&gt;docker-compose.yml&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/sharding$ cat docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;
+services:
+  mongos01:
+    image: mongo-proxy
+    container_name: mongos01
+    hostname: mongos01
+    volumes:
+      - ./mongos.conf:/etc/mongos.conf:ro
+    restart: always
+  config01:
+    image: mongo-server
+    container_name: config01
+    hostname: config01
+    volumes:
+      - ./mongod_config.conf:/etc/mongod.conf:ro
+    restart: always
+  config02:
+    image: mongo-server
+    container_name: config02
+    hostname: config02
+    volumes:
+      - ./mongod_config.conf:/etc/mongod.conf:ro
+    restart: always
+  config03:
+    image: mongo-server
+    container_name: config03
+    hostname: config03
+    volumes:
+      - ./mongod_config.conf:/etc/mongod.conf:ro
+    restart: always
+  aquila01:
+    image: mongo-server
+    container_name: aquila01
+    hostname: aquila01
+    volumes:
+      - ./mongod_aquila.conf:/etc/mongod.conf:ro
+    restart: always
+  aquila02:
+    image: mongo-server
+    container_name: aquila02
+    hostname: aquila02
+    volumes:
+      - ./mongod_aquila.conf:/etc/mongod.conf:ro
+    restart: always
+  aquila03:
+    image: mongo-server
+    container_name: aquila03
+    hostname: aquila03
+    volumes:
+      - ./mongod_aquila.conf:/etc/mongod.conf:ro
+    restart: always
+  lyra01:
+    image: mongo-server
+    container_name: lyra01
+    hostname: lyra01
+    volumes:
+      - ./mongod_lyra.conf:/etc/mongod.conf:ro
+    restart: always
+  lyra02:
+    image: mongo-server
+    container_name: lyra02
+    hostname: lyra02
+    volumes:
+      - ./mongod_lyra.conf:/etc/mongod.conf:ro
+    restart: always
+  lyra03:
+    image: mongo-server
+    container_name: lyra03
+    hostname: lyra03
+    volumes:
+      - ./mongod_lyra.conf:/etc/mongod.conf:ro
+    restart: always
+  cygnus01:
+    image: mongo-server
+    container_name: cygnus01
+    hostname: cygnus01
+    volumes:
+      - ./mongod_cygnus.conf:/etc/mongod.conf:ro
+    restart: always
+  cygnus02:
+    image: mongo-server
+    container_name: cygnus02
+    hostname: cygnus02
+    volumes:
+      - ./mongod_cygnus.conf:/etc/mongod.conf:ro
+    restart: always
+  cygnus03:
+    image: mongo-server
+    container_name: cygnus03
+    hostname: cygnus03
+    volumes:
+      - ./mongod_cygnus.conf:/etc/mongod.conf:ro
+    restart: always
+gerard@sirius:~/workspace/sharding$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: Es importante que el &lt;em&gt;hostname&lt;/em&gt; y el &lt;em&gt;container_name&lt;/em&gt; sean el mismo; las &lt;em&gt;replicas&lt;/em&gt; utilizan el &lt;em&gt;hostname&lt;/em&gt; para su descubrimiento, pero el &lt;em&gt;container_name&lt;/em&gt; al conectarse entre ellas.&lt;/p&gt;
+&lt;p&gt;Cada elemento dentro del &lt;em&gt;cluster&lt;/em&gt; necesita un parámetro &lt;code&gt;replSetName&lt;/code&gt; indicando el nombre de la &lt;em&gt;replica set&lt;/em&gt; a la que pertenecen. Otro parámetro cambiante es el &lt;code&gt;clusterRole&lt;/code&gt;, dependiendo si la &lt;em&gt;replica set&lt;/em&gt; va a ejercer como &lt;em&gt;config server&lt;/em&gt; o como &lt;em&gt;shard&lt;/em&gt;. Los miembros del mismo &lt;em&gt;replica set&lt;/em&gt; comparten configuración, así que solo necesitamos 4 distintas.&lt;/p&gt;
+&lt;p&gt;Empezaremos exponiendo la configuración de los &lt;em&gt;config server&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/sharding$ cat mongod_config.conf 
+processManagement:
+  fork: &lt;span class="nb"&gt;false&lt;/span&gt;
+
+net:
+  bindIp: &lt;span class="m"&gt;0&lt;/span&gt;.0.0.0
+  port: &lt;span class="m"&gt;27019&lt;/span&gt;
+  unixDomainSocket:
+    enabled: &lt;span class="nb"&gt;false&lt;/span&gt;
+
+storage:
+  dbPath: /srv/mongodb
+  engine: wiredTiger
+  journal:
+    enabled: &lt;span class="nb"&gt;true&lt;/span&gt;
+
+replication:
+  replSetName: config
+
+sharding:
+  clusterRole: configsvr
+gerard@sirius:~/workspace/sharding$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La configuración de los &lt;em&gt;shards&lt;/em&gt; es prácticamente la misma; solo hace falta cambiar el &lt;code&gt;clusterRole&lt;/code&gt; el &lt;code&gt;replSetName&lt;/code&gt; y el puerto usado. Empezaremos exponiendo la configuración del primer &lt;em&gt;shard&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/sharding$ cat mongod_aquila.conf 
+processManagement:
+  fork: &lt;span class="nb"&gt;false&lt;/span&gt;
+
+net:
+  bindIp: &lt;span class="m"&gt;0&lt;/span&gt;.0.0.0
+  port: &lt;span class="m"&gt;27018&lt;/span&gt;
+  unixDomainSocket:
+    enabled: &lt;span class="nb"&gt;false&lt;/span&gt;
+
+storage:
+  dbPath: /srv/mongodb
+  engine: wiredTiger
+  journal:
+    enabled: &lt;span class="nb"&gt;true&lt;/span&gt;
+
+replication:
+  replSetName: aquila
+
+sharding:
+  clusterRole: shardsvr
+gerard@sirius:~/workspace/sharding$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: El &lt;em&gt;cluster&lt;/em&gt; original ponía el árbitro en otro puerto para poder ir a la misma máquina. Esto ya no es necesario con &lt;strong&gt;docker&lt;/strong&gt; y nos ahorra poner una configuración nueva.&lt;/p&gt;
+&lt;p&gt;Los otros &lt;em&gt;shards&lt;/em&gt; son prácticamente iguales, cambiando solamente el nombre de la &lt;em&gt;replica set&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/sharding$ diff mongod_aquila.conf mongod_lyra.conf 
+17c17
+&amp;lt;   replSetName: aquila
+---
+&amp;gt;   replSetName: lyra
+gerard@sirius:~/workspace/sharding$ diff mongod_aquila.conf mongod_cygnus.conf 
+17c17
+&amp;lt;   replSetName: aquila
+---
+&amp;gt;   replSetName: cygnus
+gerard@sirius:~/workspace/sharding$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos todo lo necesario para levantar los procesos, así que no lo demoramos más.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/sharding$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;sharding_default&amp;quot;&lt;/span&gt; with the default driver
+Creating cygnus03
+Creating config03
+Creating mongos01
+Creating aquila02
+Creating lyra03
+Creating cygnus02
+Creating cygnus01
+Creating config01
+Creating lyra01
+Creating aquila03
+Creating lyra02
+Creating config02
+Creating aquila01
+gerard@sirius:~/workspace/sharding$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Atando el cluster&lt;/h2&gt;
+&lt;p&gt;Para atar completamente el &lt;em&gt;cluster&lt;/em&gt; se necesita hacer dos cosas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Atar los &lt;em&gt;replica sets&lt;/em&gt; que conformarán los &lt;em&gt;shards&lt;/em&gt; y los &lt;em&gt;config server&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Añadir los &lt;em&gt;shards&lt;/em&gt; ya atados a través de un &lt;em&gt;mongos&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Estas tareas administrativas requieren de un cliente &lt;code&gt;mongo&lt;/code&gt; que no queremos tener de forma permanente, así que tendremos un contenedor de "usar y tirar". De esta forma, cuando acabemos lo destruiremos y no tendremos partes innecesarias.&lt;/p&gt;
+&lt;p&gt;Levantar un contenedor con la imagen que contiene el cliente &lt;code&gt;mongo&lt;/code&gt; no tiene misterio. El único detalle es que lo vamos a añadir a la misma red que creó el &lt;em&gt;docker-compose.yml&lt;/em&gt;; eso nos garantiza que podamos usar los &lt;em&gt;container_name&lt;/em&gt; en vez de ir buscando las direcciones IP de cada contenedor.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/sharding$ docker run -ti --rm --net sharding_default mongo-client
+/ $ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: A partir de aquí todos los comandos se hacen en el &lt;em&gt;shell&lt;/em&gt; de &lt;em&gt;alpine linux&lt;/em&gt;. Desde esta sesión interactiva, vamos a ir abriendo sesiones de &lt;em&gt;mongo shell&lt;/em&gt; contra los procesos &lt;code&gt;mongod&lt;/code&gt; o &lt;code&gt;mongos&lt;/code&gt; que nos haga falta.&lt;/p&gt;
+&lt;p&gt;Atar los &lt;em&gt;replica sets&lt;/em&gt; es siempre igual: entramos en uno de los miembros y le damos una configuración; otra opción es iniciar uno solo de los miembros y añadir los otros.&lt;/p&gt;
+&lt;p&gt;Empezaremos con los &lt;em&gt;config servers&lt;/em&gt;, que a partir de la versión 3.2 de &lt;strong&gt;mongodb&lt;/strong&gt; pueden ser &lt;em&gt;replica sets&lt;/em&gt;, y que deben serlo a partir de la versión 3.4 (la que usamos). Entraremos en &lt;em&gt;config01&lt;/em&gt; y lo inicializamos, para añadir los otros dos en el mismo &lt;em&gt;mongo shell&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/ $ mongo --host config01 --port &lt;span class="m"&gt;27019&lt;/span&gt;
+...
+&amp;gt; rs.initiate&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;info2&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;no configuration specified. Using a default configuration for the set&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;me&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;config01:27019&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+config:PRIMARY&amp;gt; rs.add&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;config02:27019&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+config:PRIMARY&amp;gt; rs.add&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;config03:27019&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+config:PRIMARY&amp;gt; &lt;span class="nb"&gt;exit&lt;/span&gt;
+bye
+/ $ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: Los &lt;em&gt;replica sets&lt;/em&gt; destinados a ser &lt;em&gt;config servers&lt;/em&gt; no pueden contener árbitros; si lo intentáis, obtendréis un bonito mensaje de error, pero no habrá consecuencias.&lt;/p&gt;
+&lt;p&gt;Repetiremos la fórmula para cada uno de los otros &lt;em&gt;shards&lt;/em&gt;; entramos en el primer contenedor de cada &lt;em&gt;shard&lt;/em&gt;, donde lo inicializamos y añadimos los otros dos. Para ser fieles al artículo original, el tercer contenedor de cada &lt;em&gt;shard&lt;/em&gt; será un árbitro.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/ $ mongo --host aquila01 --port &lt;span class="m"&gt;27018&lt;/span&gt;
+...
+&amp;gt; rs.initiate&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;info2&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;no configuration specified. Using a default configuration for the set&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;me&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;aquila01:27018&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+aquila:PRIMARY&amp;gt; rs.add&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;aquila02:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+aquila:PRIMARY&amp;gt; rs.addArb&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;aquila03:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+aquila:PRIMARY&amp;gt; &lt;span class="nb"&gt;exit&lt;/span&gt;
+bye
+/ $ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/ $ mongo --host lyra01 --port &lt;span class="m"&gt;27018&lt;/span&gt;
+...
+&amp;gt; rs.initiate&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;info2&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;no configuration specified. Using a default configuration for the set&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;me&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;lyra01:27018&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+lyra:PRIMARY&amp;gt; rs.add&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;lyra02:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+lyra:PRIMARY&amp;gt; rs.addArb&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;lyra03:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+lyra:PRIMARY&amp;gt; &lt;span class="nb"&gt;exit&lt;/span&gt;
+bye
+/ $ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/ $ mongo --host cygnus01 --port &lt;span class="m"&gt;27018&lt;/span&gt;
+...
+&amp;gt; rs.initiate&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;info2&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;no configuration specified. Using a default configuration for the set&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;me&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;cygnus01:27018&amp;quot;&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+cygnus:PRIMARY&amp;gt; rs.add&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;cygnus02:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+cygnus:PRIMARY&amp;gt; rs.addArb&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;cygnus03:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+cygnus:PRIMARY&amp;gt; &lt;span class="nb"&gt;exit&lt;/span&gt;
+bye
+/ $ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora tenemos 4 &lt;em&gt;replica sets&lt;/em&gt;, uno configurado como &lt;em&gt;config server&lt;/em&gt; y apuntado por el proceso &lt;code&gt;mongos&lt;/code&gt;, y otros 3 que serán los &lt;em&gt;shards&lt;/em&gt;. Vamos a iniciar un &lt;em&gt;mongo shell&lt;/em&gt; contra el proceso &lt;code&gt;mongos&lt;/code&gt;, desde donde vamos a acabar las configuraciones.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/ $ mongo --host mongos01 --port &lt;span class="m"&gt;27017&lt;/span&gt;
+...
+mongos&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De hecho, en este punto ya tenemos un &lt;em&gt;cluster&lt;/em&gt; funcional, pero como no tiene &lt;em&gt;shards&lt;/em&gt;, no hay donde guardar datos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;mongos&amp;gt; sh.status&lt;span class="o"&gt;()&lt;/span&gt;
+--- Sharding Status --- 
+  sharding version: &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;minCompatibleVersion&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;5&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;currentVersion&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;6&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;clusterId&amp;quot;&lt;/span&gt; : ObjectId&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;5b182ae62446c4f43cbab312&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+  shards:
+  active mongoses:
+        &lt;span class="s2"&gt;&amp;quot;3.4.10&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt;
+  autosplit:
+        Currently enabled: yes
+  balancer:
+        Currently enabled:  yes
+        Currently running:  no
+NaN
+        Failed balancer rounds in last &lt;span class="m"&gt;5&lt;/span&gt; attempts:  &lt;span class="m"&gt;0&lt;/span&gt;
+        Migration Results &lt;span class="k"&gt;for&lt;/span&gt; the last &lt;span class="m"&gt;24&lt;/span&gt; hours: 
+                No recent migrations
+  databases:
+
+mongos&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para añadir &lt;em&gt;shards&lt;/em&gt; solamente tenemos que utilizar el método &lt;code&gt;sh.addShard()&lt;/code&gt; para especificar la &lt;em&gt;replica set&lt;/em&gt; que va a actuar como &lt;em&gt;shard&lt;/em&gt;; hay que añadir la &lt;em&gt;replica set&lt;/em&gt; siguiendo la fórmula &lt;code&gt;rsName/server1:port,...,serverN:port&lt;/code&gt;, aunque si especificamos uno solo nombre, basta.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;mongos&amp;gt; sh.addShard&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;aquila/aquila01:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;shardAdded&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;aquila&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+mongos&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: A pesar de haber dado solamente el nombre &lt;em&gt;aquila01&lt;/em&gt;, el resto de servidores ha sido descubierto por el &lt;em&gt;cluster&lt;/em&gt; de forma automática; aún así, los árbitros no aparecen en el listado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;mongos&amp;gt; sh.status&lt;span class="o"&gt;()&lt;/span&gt;
+--- Sharding Status --- 
+  sharding version: &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;minCompatibleVersion&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;5&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;currentVersion&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;6&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;clusterId&amp;quot;&lt;/span&gt; : ObjectId&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;5b182ae62446c4f43cbab312&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+  shards:
+        &lt;span class="o"&gt;{&lt;/span&gt;  &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;aquila&amp;quot;&lt;/span&gt;,  &lt;span class="s2"&gt;&amp;quot;host&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;aquila/aquila01:27018,aquila02:27018&amp;quot;&lt;/span&gt;,  &lt;span class="s2"&gt;&amp;quot;state&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+  active mongoses:
+        &lt;span class="s2"&gt;&amp;quot;3.4.10&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt;
+  autosplit:
+        Currently enabled: yes
+  balancer:
+        Currently enabled:  yes
+        Currently running:  no
+NaN
+        Failed balancer rounds in last &lt;span class="m"&gt;5&lt;/span&gt; attempts:  &lt;span class="m"&gt;0&lt;/span&gt;
+        Migration Results &lt;span class="k"&gt;for&lt;/span&gt; the last &lt;span class="m"&gt;24&lt;/span&gt; hours: 
+                No recent migrations
+  databases:
+
+mongos&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a repetir la fórmula para añadir los otros &lt;em&gt;shards&lt;/em&gt;, que es básicamente la misma:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;mongos&amp;gt; sh.addShard&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;lyra/lyra01:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;shardAdded&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;lyra&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+mongos&amp;gt; sh.addShard&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;cygnus/cygnus01:27018&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;shardAdded&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;cygnus&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;ok&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+mongos&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y de esta forma, ya podemos ver el &lt;em&gt;cluster&lt;/em&gt; acabado, con sus 3 &lt;em&gt;shards&lt;/em&gt; añadidos sin problemas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;mongos&amp;gt; sh.status&lt;span class="o"&gt;()&lt;/span&gt;
+--- Sharding Status --- 
+  sharding version: &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;minCompatibleVersion&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;5&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;currentVersion&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;6&lt;/span&gt;,
+    &lt;span class="s2"&gt;&amp;quot;clusterId&amp;quot;&lt;/span&gt; : ObjectId&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;5b182ae62446c4f43cbab312&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+  shards:
+        &lt;span class="o"&gt;{&lt;/span&gt;  &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;aquila&amp;quot;&lt;/span&gt;,  &lt;span class="s2"&gt;&amp;quot;host&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;aquila/aquila01:27018,aquila02:27018&amp;quot;&lt;/span&gt;,  &lt;span class="s2"&gt;&amp;quot;state&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+        &lt;span class="o"&gt;{&lt;/span&gt;  &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;cygnus&amp;quot;&lt;/span&gt;,  &lt;span class="s2"&gt;&amp;quot;host&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;cygnus/cygnus01:27018,cygnus02:27018&amp;quot;&lt;/span&gt;,  &lt;span class="s2"&gt;&amp;quot;state&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+        &lt;span class="o"&gt;{&lt;/span&gt;  &lt;span class="s2"&gt;&amp;quot;_id&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;lyra&amp;quot;&lt;/span&gt;,  &lt;span class="s2"&gt;&amp;quot;host&amp;quot;&lt;/span&gt; : &lt;span class="s2"&gt;&amp;quot;lyra/lyra01:27018,lyra02:27018&amp;quot;&lt;/span&gt;,  &lt;span class="s2"&gt;&amp;quot;state&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;}&lt;/span&gt;
+  active mongoses:
+        &lt;span class="s2"&gt;&amp;quot;3.4.10&amp;quot;&lt;/span&gt; : &lt;span class="m"&gt;1&lt;/span&gt;
+  autosplit:
+        Currently enabled: yes
+  balancer:
+        Currently enabled:  yes
+        Currently running:  no
+NaN
+        Failed balancer rounds in last &lt;span class="m"&gt;5&lt;/span&gt; attempts:  &lt;span class="m"&gt;0&lt;/span&gt;
+        Migration Results &lt;span class="k"&gt;for&lt;/span&gt; the last &lt;span class="m"&gt;24&lt;/span&gt; hours: 
+                No recent migrations
+  databases:
+
+mongos&amp;gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como no necesitamos más el contenedor del &lt;em&gt;mongo shell&lt;/em&gt;, salimos de él para que el sistema lo pueda reciclar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;mongos&amp;gt; &lt;span class="nb"&gt;exit&lt;/span&gt;
+bye
+/ $ &lt;span class="nb"&gt;exit&lt;/span&gt;
+gerard@sirius:~/workspace/sharding$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto estamos listos para introducir nuestros datos, aunque añadir más procesos &lt;code&gt;mongos&lt;/code&gt; nos dará alta disponibilidad para el acceso de nuestras aplicaciones, aunque los &lt;em&gt;shards&lt;/em&gt; y los &lt;em&gt;config servers&lt;/em&gt; ya disfrutan de ella.&lt;/p&gt;</content><category term="mongodb"></category><category term="docker"></category><category term="sharding"></category><category term="cluster"></category></entry><entry><title>Un reciclaje de Tomcat usando Docker</title><link href="http://www.linuxsysadmin.ml/2018/06/un-reciclaje-de-tomcat-usando-docker.html" rel="alternate"></link><published>2018-06-25T10:00:00+02:00</published><updated>2018-06-25T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-06-25:/2018/06/un-reciclaje-de-tomcat-usando-docker.html</id><summary type="html">&lt;p&gt;Hace poco he cambiado de trabajo por motivos personales. En mi nueva posición me he encontrado con un cambio en las tecnologías usadas; lo que me he encontrado es algo que hacía tiempo que no tocaba: basan sus sistemas en &lt;strong&gt;Java&lt;/strong&gt; y &lt;strong&gt;Tomcat&lt;/strong&gt;. He necesitado un ligero reciclaje en ellos …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hace poco he cambiado de trabajo por motivos personales. En mi nueva posición me he encontrado con un cambio en las tecnologías usadas; lo que me he encontrado es algo que hacía tiempo que no tocaba: basan sus sistemas en &lt;strong&gt;Java&lt;/strong&gt; y &lt;strong&gt;Tomcat&lt;/strong&gt;. He necesitado un ligero reciclaje en ellos.&lt;/p&gt;
 &lt;p&gt;Por supuesto, no voy a perder el tiempo en instalar un servidor y luego el &lt;strong&gt;Tomcat&lt;/strong&gt; pertinente; experiencias pasadas nos demuestran que es mucho más fácil utilizar imágenes &lt;strong&gt;Docker&lt;/strong&gt;, que son fáciles de usar y no necesitan tiempo de &lt;em&gt;setup&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Vamos a partir de la imagen de &lt;strong&gt;Tomcat&lt;/strong&gt; oficial que podemos encontrar &lt;a href="https://hub.docker.com/_/tomcat/"&gt;aquí&lt;/a&gt;. Uno de los grandes aciertos de los que mantienen las imágenes es que, por muchos &lt;em&gt;tags&lt;/em&gt; que generen, todos funcionan bajo los mismos parámetros; esto nos permite hacer pruebas con el &lt;em&gt;tag&lt;/em&gt; de &lt;em&gt;Alpine Linux&lt;/em&gt;, y luego -si fuera necesario- saltar a algunos de los &lt;em&gt;tags&lt;/em&gt; basados en &lt;em&gt;Debian&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;En los ejemplos también se hace uso de un fichero &lt;em&gt;.war&lt;/em&gt; de prueba, llamado &lt;em&gt;sample.war&lt;/em&gt;, que he sacado de &lt;a href="https://tomcat.apache.org/tomcat-7.0-doc/appdev/sample/"&gt;aquí&lt;/a&gt;, concretamente &lt;a href="https://tomcat.apache.org/tomcat-7.0-doc/appdev/sample/sample.war"&gt;este&lt;/a&gt;. Lo que hace nuestra aplicación es irrelevante en este momento, y solamente lo vamos a utilizar para probar su disponibilidad.&lt;/p&gt;
