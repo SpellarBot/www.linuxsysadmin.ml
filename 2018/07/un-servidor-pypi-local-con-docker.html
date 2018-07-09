@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>gateway - Linux Sysadmin</title>
+    <title>Un servidor pypi local con Docker - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,24 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.ml/2018/07/un-servidor-pypi-local-con-docker.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="gateway" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="python,PyPI,wheel,docker" />
+        <meta name="description" content="Estaba yo el otro día investigando una nueva librería de python, pero necesitaba de otra librería que se compilaba. Harto de perder el tiempo compilando cada vez esta librería, recuperé un antiguo artículo que me permitía distribuir el archivo wheel ya compilado tantas veces yo quisiera; como no, usando docker …" />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.ml"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Un servidor pypi local con Docker"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.ml/2018/07/un-servidor-pypi-local-con-docker.html"/>
+        <meta property="og:description" content="Estaba yo el otro día investigando una nueva librería de python, pero necesitaba de otra librería que se compilaba. Harto de perder el tiempo compilando cada vez esta librería, recuperé un antiguo artículo que me permitía distribuir el archivo wheel ya compilado tantas veces yo quisiera; como no, usando docker …"/>
+        <meta property="article:published_time" content="2018-07-09" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="python" />
+            <meta property="article:tag" content="PyPI" />
+            <meta property="article:tag" content="wheel" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,6 +42,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -78,11 +88,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.ml/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
-        <li class="active">gateway</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.ml/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Un servidor pypi local con Docker</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -95,20 +105,245 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2018/03/un-gateway-con-debian-iptables-y-dnsmasq.html">Un gateway con Debian, iptables y dnsmasq</a></h2>
-                <div class="summary"><p>En algunas ocasiones no nos basta con tener un servidor único. Queremos tener un conjunto de servidores que se comuniquen abiertamente entre ellos usando una red privada, pero solo queremos exponer al mundo una sola dirección IP. El resto de servidores necesitan acceso a internet a través de un representante …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/03/un-gateway-con-debian-iptables-y-dnsmasq.html">Seguir leyendo</a>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.ml/2018/07/un-servidor-pypi-local-con-docker.html"
+                       rel="bookmark"
+                       title="Permalink to Un servidor pypi local con Docker">
+                        Un servidor pypi local con Docker
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2018-07-09T09:00:00+02:00"> 2018-07-09</time>
+    </span>
+
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 6 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.ml/category/sistemas.html">Sistemas</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.ml/tag/python.html">python</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/pypi.html">PyPI</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/wheel.html">wheel</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/docker.html">docker</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/07/desactivando-nuestras-apis-con-un-frontal-nginx.html">Desactivando nuestras APIs con un frontal nginx</a></h2>
-                <div class="summary"><p>El otro día recibí una petición algo atípica en mi trabajo: querían activar y desactivar en un único punto centralizado cada una de las varias APIs que tenemos. Se trata de poner un <strong>nginx</strong> frontal que gestione los <em>virtualhosts</em> existentes y haga <em>proxy_pass</em> o no en función de un <em>flag …</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/07/desactivando-nuestras-apis-con-un-frontal-nginx.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+                <p>Estaba yo el otro día investigando una nueva librería de <strong>python</strong>, pero necesitaba de otra librería que se compilaba. Harto de perder el tiempo compilando cada vez esta librería, recuperé un antiguo artículo que me permitía distribuir el archivo <em>wheel</em> ya compilado tantas veces yo quisiera; como no, usando <strong>docker</strong>.</p>
+<p>El artículo anterior es <a href="http://www.linuxsysadmin.ml/2016/09/un-servidor-pypi-local.html">este</a>, y su único objetivo era montar un servidor de <strong>pypi</strong> local que nos permite alojar nuestros ficheros <em>wheel</em>, aunque funciona genial para evitar múltiples compilaciones y como <em>caché</em> de paquetes.</p>
+<h2>El servidor pypi</h2>
+<p>Para facilitar el montaje y la distribución de este servidor, se ha decidido hacer una imagen de <strong>docker</strong> para encapsular lo necesario; de paso, el fichero <em>Dockerfile</em> es una magnífica receta para evitar un montón de pasos manuales que salían en el artículo citado.</p>
+<p>El fichero <em>Dockerfile</em> no puede ser más explícito; puesto que necesitamos instalar <strong>pypiserver</strong> mediante <strong>pip</strong>, los instalamos. También se define el comando que va a levantar el servidor y se crea la carpeta en donde deben residir nuestros paquetes. No veo muy útil crear un <em>virtualenv</em>; un contenedor <strong>docker</strong> ya es un entorno aislado en sí mismo.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/pypiserver$ cat Dockerfile 
+FROM alpine:3.7
+RUN apk add --no-cache py2-pip tini <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    pip install pypiserver <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    mkdir /srv/packages
+ENTRYPOINT <span class="o">[</span><span class="s2">&quot;/sbin/tini&quot;</span>, <span class="s2">&quot;--&quot;</span><span class="o">]</span>
+CMD <span class="o">[</span><span class="s2">&quot;/usr/bin/pypi-server&quot;</span>, <span class="s2">&quot;/srv/packages&quot;</span><span class="o">]</span>
+gerard@sirius:~/workspace/pypiserver$ 
+</pre></div>
+
+
+<p><strong>TRUCO</strong>: El binario <code>pypi-server</code> no cumple como un <em>init</em> correcto, y el contenedor no acaba hasta que <strong>docker</strong> lo mata. Para evitar ese problema, vamos a utilizar <strong>tini</strong>, tal y como explicamos en <a href="http://www.linuxsysadmin.ml/2017/09/un-proceso-inicial-para-docker-tini-y-dumb-init.html">otro artículo</a>.</p>
+<p>Construimos la imagen con los comando habituales y le damos un <em>tag</em> para su fácil uso cuando lo queramos levantar.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/pypiserver$ docker build -t pypiserver .
+...
+Successfully tagged pypiserver:latest
+gerard@sirius:~/workspace/pypiserver$ 
+</pre></div>
+
+
+<p>Y solo queda revisar que la imagen existe y que su tamaño tiene sentido:</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/pypiserver$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+pypiserver          latest              ad483ac352d7        <span class="m">56</span> seconds ago      <span class="m">52</span>.8MB
+alpine              <span class="m">3</span>.7                 3fd9065eaf02        <span class="m">5</span> months ago        <span class="m">4</span>.15MB
+gerard@sirius:~/workspace/pypiserver$ 
+</pre></div>
+
+
+<p>Para el <em>runtime</em>, vamos a utilizar <em>docker-compose</em> para reducir la longitud del comando de levantamiento, dejándolo todo explícitamente declarado en el fichero <em>docker-compose.yml</em>.</p>
+<p>La otra decisión de diseño es servir los <em>wheels</em> desde una carpeta local, en donde podemos ponerlos y quitarlos con gran facilidad. Solo necesitamos declarar la carpeta para los paquetes, que voy a poner en la misma carpeta del <em>docker-compose.yml</em>:</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/pypiserver$ tree
+.
+├── packages
+├── docker-compose.yml
+└── Dockerfile
+
+<span class="m">1</span> directory, <span class="m">2</span> files
+gerard@sirius:~/workspace/pypiserver$ 
+</pre></div>
+
+
+<p>En el <em>docker-compose.yml</em> nos limitamos a montar la carpeta local como volumen y publicar el puerto del contenedor en nuestro servidor; esto hará el contenedor transparente a los ojos del resto de servidores.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/pypiserver$ cat docker-compose.yml 
+version: <span class="s1">&#39;3&#39;</span>
+services:
+  pypiserver:
+    image: pypiserver
+    container_name: pypiserver
+    hostname: pypiserver
+    volumes:
+      - ./packages:/srv/packages:ro
+    ports:
+      - <span class="s2">&quot;8080:8080&quot;</span>
+    restart: always
+gerard@sirius:~/workspace/pypiserver$ 
+</pre></div>
+
+
+<p>Ya no falta nada para levantarlo todo y lo hacemos sin más preámbulo.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/pypiserver$ docker-compose up -d
+Creating network <span class="s2">&quot;pypiserver_default&quot;</span> with the default driver
+Creating pypiserver
+gerard@sirius:~/workspace/pypiserver$ 
+</pre></div>
+
+
+<p>Y con esto tenemos el servidor funcional.</p>
+<h2>Rellenando nuestro servidor de paquetes</h2>
+<p>El único requisito para poder servir paquetes es dejarlos en la carpeta que a ese fin hemos destinado. No es importante como llegan los paquetes ahí; podemos:</p>
+<ul>
+<li>Descargarlos de <a href="https://pypi.org/">https://pypi.org/</a></li>
+<li>Pescarlos de nuestra caché local en <code>~/.cache/pip/</code></li>
+<li>Obtenerlos mediante <code>pip wheel</code></li>
+</ul>
+<p>En este caso vamos a utilizar el tercer método. Como no tengo <strong>pip</strong> instalado en mi servidor, y para demostrar que solo necesito los fichero <em>wheel</em>, voy a utilizar el <strong>pip</strong> de un <em>virtualenv</em> temporal, que destruiré al acabar. Otra opción sería crear un contenedor que los dejara en esa carpeta, que también montaría como un volumen.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/pypiserver$ virtualenv env
+Running virtualenv with interpreter /usr/bin/python2
+New python executable in env/bin/python2
+Also creating executable in env/bin/python
+Installing setuptools, pip...done.
+gerard@sirius:~/workspace/pypiserver$ 
+</pre></div>
+
+
+<p>Ni siquiera hace falta activar el <em>virtualenv</em>. Lo único que hace el <em>script</em> de activación es poner la carpeta <em>bin/</em> en el <em>PATH</em>, pero para lanzar el comando una vez no lo necesito...</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/pypiserver$ ./env/bin/pip wheel -w packages/ falcon mongoengine
+...
+gerard@sirius:~/workspace/pypiserver$ 
+</pre></div>
+
+
+<p>El comando <code>pip wheel</code> solo descarga los paquetes y los convierte en <em>wheels</em>, y los deja en la carpeta indicada, que es desde donde los servimos. Como ya tenemos lo que queríamos (los <em>wheels</em>), podemos eliminar el <em>virtualenv</em>, que nos deja la carpeta limpia de cosas innecesarias.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/pypiserver$ rm -R env/
+gerard@sirius:~/workspace/pypiserver$ 
+</pre></div>
+
+
+<p>Podemos ver que solo hemos conservado los ficheros <em>wheel</em> solicitados y sus dependencias; no hay más que lo estrictamente necesario.</p>
+<div class="highlight"><pre><span></span>gerard@sirius:~/workspace/pypiserver$ tree
+.
+├── packages
+│   ├── falcon-1.4.1-py2.py3-none-any.whl
+│   ├── mongoengine-0.15.0-py2-none-any.whl
+│   ├── pymongo-3.6.1-cp27-none-linux_x86_64.whl
+│   ├── python_mimeparse-1.6.0-py2.py3-none-any.whl
+│   └── six-1.11.0-py2.py3-none-any.whl
+├── docker-compose.yml
+└── Dockerfile
+
+<span class="m">1</span> directory, <span class="m">7</span> files
+gerard@sirius:~/workspace/pypiserver$ 
+</pre></div>
+
+
+<h2>Usando nuestro servidor local</h2>
+<p>El comando <strong>pip</strong> nos ofrece dos formas de añadir nuestro servidor: como URL única o como URL añadida a la normal. Haced un <code>pip install --help</code> para más detalles. Yo me decanto por usar solamente mi servidor, que aparentemente, tiene todo lo que necesito.</p>
+<p>Supongamos que necesito el paquete <strong>falcon</strong> en el servidor <strong>snowy</strong>; lo instalamos con nuestro servidor local (<em>flag</em> <code>-i</code>) y punto. Observad las URLs de las que se descarga el paquete:</p>
+<div class="highlight"><pre><span></span>root@snowy:~# pip install --trusted-host <span class="m">172</span>.17.0.1 -i http://172.17.0.1:8080/ falcon
+Looking in indexes: http://172.17.0.1:8080/
+Collecting falcon
+  Downloading http://172.17.0.1:8080/packages/falcon-1.4.1-py2.py3-none-any.whl <span class="o">(</span>159kB<span class="o">)</span>
+    <span class="m">100</span>% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 163kB <span class="m">7</span>.8MB/s 
+Collecting six&gt;<span class="o">=</span><span class="m">1</span>.4.0 <span class="o">(</span>from falcon<span class="o">)</span>
+  Downloading http://172.17.0.1:8080/packages/six-1.11.0-py2.py3-none-any.whl
+Collecting python-mimeparse&gt;<span class="o">=</span><span class="m">1</span>.5.2 <span class="o">(</span>from falcon<span class="o">)</span>
+  Downloading http://172.17.0.1:8080/packages/python_mimeparse-1.6.0-py2.py3-none-any.whl
+Installing collected packages: six, python-mimeparse, falcon
+Successfully installed falcon-1.4.1 python-mimeparse-1.6.0 six-1.11.0
+root@snowy:~# 
+</pre></div>
+
+
+<p><strong>NOTA</strong>: El servidor local es HTTP plano, lo que lo convierte en un servidor no confiable; eso nos obliga  a poner el <em>flag</em> <code>--trusted-host</code> para que <strong>pip</strong> lo quiera usar. Otra opción sería utilizar HTTPS, lo que implica poner un <em>proxy reverso</em> delante, por ejemplo con <strong>nginx</strong>.</p>
+<p>Otro servidor podría querer descargar los mismos paquetes u otros sin que eso nos repercuta en problemas, tal y como esperamos:</p>
+<div class="highlight"><pre><span></span>root@stormy:~# pip install --trusted-host <span class="m">172</span>.17.0.1 -i http://172.17.0.1:8080/ mongoengine
+Looking in indexes: http://172.17.0.1:8080/
+Collecting mongoengine
+  Downloading http://172.17.0.1:8080/packages/mongoengine-0.15.0-py2-none-any.whl <span class="o">(</span>99kB<span class="o">)</span>
+    <span class="m">100</span>% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 102kB <span class="m">6</span>.6MB/s 
+Collecting pymongo&gt;<span class="o">=</span><span class="m">2</span>.7.1 <span class="o">(</span>from mongoengine<span class="o">)</span>
+  Downloading http://172.17.0.1:8080/packages/pymongo-3.6.1-cp27-none-linux_x86_64.whl <span class="o">(</span>256kB<span class="o">)</span>
+    <span class="m">100</span>% <span class="p">|</span>████████████████████████████████<span class="p">|</span> 266kB <span class="m">9</span>.0MB/s 
+Collecting six <span class="o">(</span>from mongoengine<span class="o">)</span>
+  Downloading http://172.17.0.1:8080/packages/six-1.11.0-py2.py3-none-any.whl
+Installing collected packages: pymongo, six, mongoengine
+Successfully installed mongoengine-0.15.0 pymongo-3.6.1 six-1.11.0
+root@stormy:~# 
+</pre></div>
+
+
+<p>Siempre y cuando utilizen los mismos tipos de CPU y versiones de <strong>python</strong>, pueden utilizar los mismos <em>wheels</em>. Eso nos evita compilarlos y reduce notoriamente el tiempo de red invertido en descargarlos.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.ml/2016/09/un-servidor-pypi-local.html">Un servidor pypi local</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2017/05/problemas-de-log-con-docker-y-python.html">Problemas de log con docker y python</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html">Separando el build y el runtime con contenedores Docker</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'un-servidor-pypi-local-con-docker';
+                var disqus_url = 'http://www.linuxsysadmin.ml/2018/07/un-servidor-pypi-local-con-docker.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
 
         </div>
         <div class="col-sm-3" id="sidebar">

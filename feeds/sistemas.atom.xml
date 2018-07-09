@@ -1,5 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-07-02T09:00:00+02:00</updated><entry><title>MongoDB sharding con docker</title><link href="http://www.linuxsysadmin.ml/2018/07/mongodb-sharding-con-docker.html" rel="alternate"></link><published>2018-07-02T09:00:00+02:00</published><updated>2018-07-02T09:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-07-02:/2018/07/mongodb-sharding-con-docker.html</id><summary type="html">&lt;p&gt;El otro día estaba revisando viejos artículos, y me tropecé con &lt;a href="http://www.linuxsysadmin.ml/2016/05/mongodb-sharding-con-ansible.html"&gt;uno anterior&lt;/a&gt;. Este estaba montado con &lt;strong&gt;ansible&lt;/strong&gt;, y se me pasó por la cabeza reescribirlo usando contenedores con &lt;strong&gt;docker&lt;/strong&gt;. Así pues, vamos a montar exactamente el mismo &lt;em&gt;cluster&lt;/em&gt;, pero con el cambio que la última revolución tecnológica nos aporta …&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día estaba revisando viejos artículos, y me tropecé con &lt;a href="http://www.linuxsysadmin.ml/2016/05/mongodb-sharding-con-ansible.html"&gt;uno anterior&lt;/a&gt;. Este estaba montado con &lt;strong&gt;ansible&lt;/strong&gt;, y se me pasó por la cabeza reescribirlo usando contenedores con &lt;strong&gt;docker&lt;/strong&gt;. Así pues, vamos a montar exactamente el mismo &lt;em&gt;cluster&lt;/em&gt;, pero con el cambio que la última revolución tecnológica nos aporta.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-07-09T09:00:00+02:00</updated><entry><title>Un servidor pypi local con Docker</title><link href="http://www.linuxsysadmin.ml/2018/07/un-servidor-pypi-local-con-docker.html" rel="alternate"></link><published>2018-07-09T09:00:00+02:00</published><updated>2018-07-09T09:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-07-09:/2018/07/un-servidor-pypi-local-con-docker.html</id><summary type="html">&lt;p&gt;Estaba yo el otro día investigando una nueva librería de &lt;strong&gt;python&lt;/strong&gt;, pero necesitaba de otra librería que se compilaba. Harto de perder el tiempo compilando cada vez esta librería, recuperé un antiguo artículo que me permitía distribuir el archivo &lt;em&gt;wheel&lt;/em&gt; ya compilado tantas veces yo quisiera; como no, usando &lt;strong&gt;docker …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Estaba yo el otro día investigando una nueva librería de &lt;strong&gt;python&lt;/strong&gt;, pero necesitaba de otra librería que se compilaba. Harto de perder el tiempo compilando cada vez esta librería, recuperé un antiguo artículo que me permitía distribuir el archivo &lt;em&gt;wheel&lt;/em&gt; ya compilado tantas veces yo quisiera; como no, usando &lt;strong&gt;docker&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;El artículo anterior es &lt;a href="http://www.linuxsysadmin.ml/2016/09/un-servidor-pypi-local.html"&gt;este&lt;/a&gt;, y su único objetivo era montar un servidor de &lt;strong&gt;pypi&lt;/strong&gt; local que nos permite alojar nuestros ficheros &lt;em&gt;wheel&lt;/em&gt;, aunque funciona genial para evitar múltiples compilaciones y como &lt;em&gt;caché&lt;/em&gt; de paquetes.&lt;/p&gt;
+&lt;h2&gt;El servidor pypi&lt;/h2&gt;
+&lt;p&gt;Para facilitar el montaje y la distribución de este servidor, se ha decidido hacer una imagen de &lt;strong&gt;docker&lt;/strong&gt; para encapsular lo necesario; de paso, el fichero &lt;em&gt;Dockerfile&lt;/em&gt; es una magnífica receta para evitar un montón de pasos manuales que salían en el artículo citado.&lt;/p&gt;
+&lt;p&gt;El fichero &lt;em&gt;Dockerfile&lt;/em&gt; no puede ser más explícito; puesto que necesitamos instalar &lt;strong&gt;pypiserver&lt;/strong&gt; mediante &lt;strong&gt;pip&lt;/strong&gt;, los instalamos. También se define el comando que va a levantar el servidor y se crea la carpeta en donde deben residir nuestros paquetes. No veo muy útil crear un &lt;em&gt;virtualenv&lt;/em&gt;; un contenedor &lt;strong&gt;docker&lt;/strong&gt; ya es un entorno aislado en sí mismo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/pypiserver$ cat Dockerfile 
+FROM alpine:3.7
+RUN apk add --no-cache py2-pip tini &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    pip install pypiserver &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    mkdir /srv/packages
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/sbin/tini&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/bin/pypi-server&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;/srv/packages&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@sirius:~/workspace/pypiserver$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: El binario &lt;code&gt;pypi-server&lt;/code&gt; no cumple como un &lt;em&gt;init&lt;/em&gt; correcto, y el contenedor no acaba hasta que &lt;strong&gt;docker&lt;/strong&gt; lo mata. Para evitar ese problema, vamos a utilizar &lt;strong&gt;tini&lt;/strong&gt;, tal y como explicamos en &lt;a href="http://www.linuxsysadmin.ml/2017/09/un-proceso-inicial-para-docker-tini-y-dumb-init.html"&gt;otro artículo&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Construimos la imagen con los comando habituales y le damos un &lt;em&gt;tag&lt;/em&gt; para su fácil uso cuando lo queramos levantar.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/pypiserver$ docker build -t pypiserver .
+...
+Successfully tagged pypiserver:latest
+gerard@sirius:~/workspace/pypiserver$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y solo queda revisar que la imagen existe y que su tamaño tiene sentido:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/pypiserver$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+pypiserver          latest              ad483ac352d7        &lt;span class="m"&gt;56&lt;/span&gt; seconds ago      &lt;span class="m"&gt;52&lt;/span&gt;.8MB
+alpine              &lt;span class="m"&gt;3&lt;/span&gt;.7                 3fd9065eaf02        &lt;span class="m"&gt;5&lt;/span&gt; months ago        &lt;span class="m"&gt;4&lt;/span&gt;.15MB
+gerard@sirius:~/workspace/pypiserver$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para el &lt;em&gt;runtime&lt;/em&gt;, vamos a utilizar &lt;em&gt;docker-compose&lt;/em&gt; para reducir la longitud del comando de levantamiento, dejándolo todo explícitamente declarado en el fichero &lt;em&gt;docker-compose.yml&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;La otra decisión de diseño es servir los &lt;em&gt;wheels&lt;/em&gt; desde una carpeta local, en donde podemos ponerlos y quitarlos con gran facilidad. Solo necesitamos declarar la carpeta para los paquetes, que voy a poner en la misma carpeta del &lt;em&gt;docker-compose.yml&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/pypiserver$ tree
+.
+├── packages
+├── docker-compose.yml
+└── Dockerfile
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;2&lt;/span&gt; files
+gerard@sirius:~/workspace/pypiserver$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En el &lt;em&gt;docker-compose.yml&lt;/em&gt; nos limitamos a montar la carpeta local como volumen y publicar el puerto del contenedor en nuestro servidor; esto hará el contenedor transparente a los ojos del resto de servidores.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/pypiserver$ cat docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;
+services:
+  pypiserver:
+    image: pypiserver
+    container_name: pypiserver
+    hostname: pypiserver
+    volumes:
+      - ./packages:/srv/packages:ro
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;8080:8080&amp;quot;&lt;/span&gt;
+    restart: always
+gerard@sirius:~/workspace/pypiserver$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ya no falta nada para levantarlo todo y lo hacemos sin más preámbulo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/pypiserver$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;pypiserver_default&amp;quot;&lt;/span&gt; with the default driver
+Creating pypiserver
+gerard@sirius:~/workspace/pypiserver$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos el servidor funcional.&lt;/p&gt;
+&lt;h2&gt;Rellenando nuestro servidor de paquetes&lt;/h2&gt;
+&lt;p&gt;El único requisito para poder servir paquetes es dejarlos en la carpeta que a ese fin hemos destinado. No es importante como llegan los paquetes ahí; podemos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Descargarlos de &lt;a href="https://pypi.org/"&gt;https://pypi.org/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Pescarlos de nuestra caché local en &lt;code&gt;~/.cache/pip/&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Obtenerlos mediante &lt;code&gt;pip wheel&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;En este caso vamos a utilizar el tercer método. Como no tengo &lt;strong&gt;pip&lt;/strong&gt; instalado en mi servidor, y para demostrar que solo necesito los fichero &lt;em&gt;wheel&lt;/em&gt;, voy a utilizar el &lt;strong&gt;pip&lt;/strong&gt; de un &lt;em&gt;virtualenv&lt;/em&gt; temporal, que destruiré al acabar. Otra opción sería crear un contenedor que los dejara en esa carpeta, que también montaría como un volumen.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/pypiserver$ virtualenv env
+Running virtualenv with interpreter /usr/bin/python2
+New python executable in env/bin/python2
+Also creating executable in env/bin/python
+Installing setuptools, pip...done.
+gerard@sirius:~/workspace/pypiserver$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ni siquiera hace falta activar el &lt;em&gt;virtualenv&lt;/em&gt;. Lo único que hace el &lt;em&gt;script&lt;/em&gt; de activación es poner la carpeta &lt;em&gt;bin/&lt;/em&gt; en el &lt;em&gt;PATH&lt;/em&gt;, pero para lanzar el comando una vez no lo necesito...&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/pypiserver$ ./env/bin/pip wheel -w packages/ falcon mongoengine
+...
+gerard@sirius:~/workspace/pypiserver$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El comando &lt;code&gt;pip wheel&lt;/code&gt; solo descarga los paquetes y los convierte en &lt;em&gt;wheels&lt;/em&gt;, y los deja en la carpeta indicada, que es desde donde los servimos. Como ya tenemos lo que queríamos (los &lt;em&gt;wheels&lt;/em&gt;), podemos eliminar el &lt;em&gt;virtualenv&lt;/em&gt;, que nos deja la carpeta limpia de cosas innecesarias.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/pypiserver$ rm -R env/
+gerard@sirius:~/workspace/pypiserver$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver que solo hemos conservado los ficheros &lt;em&gt;wheel&lt;/em&gt; solicitados y sus dependencias; no hay más que lo estrictamente necesario.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@sirius:~/workspace/pypiserver$ tree
+.
+├── packages
+│   ├── falcon-1.4.1-py2.py3-none-any.whl
+│   ├── mongoengine-0.15.0-py2-none-any.whl
+│   ├── pymongo-3.6.1-cp27-none-linux_x86_64.whl
+│   ├── python_mimeparse-1.6.0-py2.py3-none-any.whl
+│   └── six-1.11.0-py2.py3-none-any.whl
+├── docker-compose.yml
+└── Dockerfile
+
+&lt;span class="m"&gt;1&lt;/span&gt; directory, &lt;span class="m"&gt;7&lt;/span&gt; files
+gerard@sirius:~/workspace/pypiserver$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Usando nuestro servidor local&lt;/h2&gt;
+&lt;p&gt;El comando &lt;strong&gt;pip&lt;/strong&gt; nos ofrece dos formas de añadir nuestro servidor: como URL única o como URL añadida a la normal. Haced un &lt;code&gt;pip install --help&lt;/code&gt; para más detalles. Yo me decanto por usar solamente mi servidor, que aparentemente, tiene todo lo que necesito.&lt;/p&gt;
+&lt;p&gt;Supongamos que necesito el paquete &lt;strong&gt;falcon&lt;/strong&gt; en el servidor &lt;strong&gt;snowy&lt;/strong&gt;; lo instalamos con nuestro servidor local (&lt;em&gt;flag&lt;/em&gt; &lt;code&gt;-i&lt;/code&gt;) y punto. Observad las URLs de las que se descarga el paquete:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@snowy:~# pip install --trusted-host &lt;span class="m"&gt;172&lt;/span&gt;.17.0.1 -i http://172.17.0.1:8080/ falcon
+Looking in indexes: http://172.17.0.1:8080/
+Collecting falcon
+  Downloading http://172.17.0.1:8080/packages/falcon-1.4.1-py2.py3-none-any.whl &lt;span class="o"&gt;(&lt;/span&gt;159kB&lt;span class="o"&gt;)&lt;/span&gt;
+    &lt;span class="m"&gt;100&lt;/span&gt;% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 163kB &lt;span class="m"&gt;7&lt;/span&gt;.8MB/s 
+Collecting six&amp;gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.4.0 &lt;span class="o"&gt;(&lt;/span&gt;from falcon&lt;span class="o"&gt;)&lt;/span&gt;
+  Downloading http://172.17.0.1:8080/packages/six-1.11.0-py2.py3-none-any.whl
+Collecting python-mimeparse&amp;gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.5.2 &lt;span class="o"&gt;(&lt;/span&gt;from falcon&lt;span class="o"&gt;)&lt;/span&gt;
+  Downloading http://172.17.0.1:8080/packages/python_mimeparse-1.6.0-py2.py3-none-any.whl
+Installing collected packages: six, python-mimeparse, falcon
+Successfully installed falcon-1.4.1 python-mimeparse-1.6.0 six-1.11.0
+root@snowy:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: El servidor local es HTTP plano, lo que lo convierte en un servidor no confiable; eso nos obliga  a poner el &lt;em&gt;flag&lt;/em&gt; &lt;code&gt;--trusted-host&lt;/code&gt; para que &lt;strong&gt;pip&lt;/strong&gt; lo quiera usar. Otra opción sería utilizar HTTPS, lo que implica poner un &lt;em&gt;proxy reverso&lt;/em&gt; delante, por ejemplo con &lt;strong&gt;nginx&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Otro servidor podría querer descargar los mismos paquetes u otros sin que eso nos repercuta en problemas, tal y como esperamos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@stormy:~# pip install --trusted-host &lt;span class="m"&gt;172&lt;/span&gt;.17.0.1 -i http://172.17.0.1:8080/ mongoengine
+Looking in indexes: http://172.17.0.1:8080/
+Collecting mongoengine
+  Downloading http://172.17.0.1:8080/packages/mongoengine-0.15.0-py2-none-any.whl &lt;span class="o"&gt;(&lt;/span&gt;99kB&lt;span class="o"&gt;)&lt;/span&gt;
+    &lt;span class="m"&gt;100&lt;/span&gt;% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 102kB &lt;span class="m"&gt;6&lt;/span&gt;.6MB/s 
+Collecting pymongo&amp;gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.7.1 &lt;span class="o"&gt;(&lt;/span&gt;from mongoengine&lt;span class="o"&gt;)&lt;/span&gt;
+  Downloading http://172.17.0.1:8080/packages/pymongo-3.6.1-cp27-none-linux_x86_64.whl &lt;span class="o"&gt;(&lt;/span&gt;256kB&lt;span class="o"&gt;)&lt;/span&gt;
+    &lt;span class="m"&gt;100&lt;/span&gt;% &lt;span class="p"&gt;|&lt;/span&gt;████████████████████████████████&lt;span class="p"&gt;|&lt;/span&gt; 266kB &lt;span class="m"&gt;9&lt;/span&gt;.0MB/s 
+Collecting six &lt;span class="o"&gt;(&lt;/span&gt;from mongoengine&lt;span class="o"&gt;)&lt;/span&gt;
+  Downloading http://172.17.0.1:8080/packages/six-1.11.0-py2.py3-none-any.whl
+Installing collected packages: pymongo, six, mongoengine
+Successfully installed mongoengine-0.15.0 pymongo-3.6.1 six-1.11.0
+root@stormy:~# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Siempre y cuando utilizen los mismos tipos de CPU y versiones de &lt;strong&gt;python&lt;/strong&gt;, pueden utilizar los mismos &lt;em&gt;wheels&lt;/em&gt;. Eso nos evita compilarlos y reduce notoriamente el tiempo de red invertido en descargarlos.&lt;/p&gt;</content><category term="python"></category><category term="PyPI"></category><category term="wheel"></category><category term="docker"></category></entry><entry><title>MongoDB sharding con docker</title><link href="http://www.linuxsysadmin.ml/2018/07/mongodb-sharding-con-docker.html" rel="alternate"></link><published>2018-07-02T09:00:00+02:00</published><updated>2018-07-02T09:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-07-02:/2018/07/mongodb-sharding-con-docker.html</id><summary type="html">&lt;p&gt;El otro día estaba revisando viejos artículos, y me tropecé con &lt;a href="http://www.linuxsysadmin.ml/2016/05/mongodb-sharding-con-ansible.html"&gt;uno anterior&lt;/a&gt;. Este estaba montado con &lt;strong&gt;ansible&lt;/strong&gt;, y se me pasó por la cabeza reescribirlo usando contenedores con &lt;strong&gt;docker&lt;/strong&gt;. Así pues, vamos a montar exactamente el mismo &lt;em&gt;cluster&lt;/em&gt;, pero con el cambio que la última revolución tecnológica nos aporta …&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día estaba revisando viejos artículos, y me tropecé con &lt;a href="http://www.linuxsysadmin.ml/2016/05/mongodb-sharding-con-ansible.html"&gt;uno anterior&lt;/a&gt;. Este estaba montado con &lt;strong&gt;ansible&lt;/strong&gt;, y se me pasó por la cabeza reescribirlo usando contenedores con &lt;strong&gt;docker&lt;/strong&gt;. Así pues, vamos a montar exactamente el mismo &lt;em&gt;cluster&lt;/em&gt;, pero con el cambio que la última revolución tecnológica nos aporta.&lt;/p&gt;
 &lt;p&gt;&lt;img alt="Sharded cluster" src="http://www.linuxsysadmin.ml/images/sharding_arquitectura_logica.jpg"&gt;&lt;/p&gt;
 &lt;p&gt;Aunque lo ideal sería desplegar todas las instancias en varias máquinas diferentes, voy a pasar; por comodidad, voy a desplegar todos los contenedores en una sola máquina mediante &lt;strong&gt;docker-compose&lt;/strong&gt;. De esta forma puedo aprovechar las mismas imágenes sin una ocupación de disco elevada.&lt;/p&gt;
 &lt;p&gt;Como de costumbre, vamos a crear una carpeta para contener el proyecto y la vamos a llamar &lt;code&gt;sharding&lt;/code&gt;. En ella voy a depositar los ficheros &lt;code&gt;Dockerfile&lt;/code&gt; necesarios para la construcción de las imágenes, y de paso, el &lt;code&gt;docker-compose.yml&lt;/code&gt; y las configuraciones que vamos a montar como volúmenes.&lt;/p&gt;

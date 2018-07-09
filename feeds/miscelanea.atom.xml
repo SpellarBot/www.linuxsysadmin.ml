@@ -1212,12 +1212,12 @@ resolviendo dependencias…
 :: Repositorio extra
    &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; mesa-libgl  &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; nvidia-304xx-libgl  &lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; nvidia-340xx-libgl  &lt;span class="m"&gt;4&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; nvidia-libgl
 
-Introduzca un número &lt;span class="o"&gt;(&lt;/span&gt;por omisión&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:
+Introduzca un número &lt;span class="o"&gt;(&lt;/span&gt;por &lt;span class="nv"&gt;omisión&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:
 :: Existen &lt;span class="m"&gt;2&lt;/span&gt; proveedores disponibles para xf86-input-driver:
 :: Repositorio extra
    &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xf86-input-evdev  &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xf86-input-libinput
 
-Introduzca un número &lt;span class="o"&gt;(&lt;/span&gt;por omisión&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:
+Introduzca un número &lt;span class="o"&gt;(&lt;/span&gt;por &lt;span class="nv"&gt;omisión&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:
 buscando conflictos entre paquetes…
 advertencia: bucle de dependencias detectado:
 advertencia: harfbuzz será instalado antes que su dependencia freetype2
@@ -1260,7 +1260,7 @@ Tamaño total de la instalación:  &lt;span class="m"&gt;150&lt;/span&gt;,38 MiB
    &lt;span class="m"&gt;9&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfce4-panel  &lt;span class="m"&gt;10&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfce4-power-manager  &lt;span class="m"&gt;11&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfce4-session  &lt;span class="m"&gt;12&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfce4-settings  &lt;span class="m"&gt;13&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfce4-terminal  &lt;span class="m"&gt;14&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfconf  &lt;span class="m"&gt;15&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfdesktop
    &lt;span class="m"&gt;16&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfwm4  &lt;span class="m"&gt;17&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; xfwm4-themes
 
-Introduzca una selección &lt;span class="o"&gt;(&lt;/span&gt;por omisión&lt;span class="o"&gt;=&lt;/span&gt;todos&lt;span class="o"&gt;)&lt;/span&gt;:
+Introduzca una selección &lt;span class="o"&gt;(&lt;/span&gt;por &lt;span class="nv"&gt;omisión&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;todos&lt;span class="o"&gt;)&lt;/span&gt;:
 resolviendo dependencias…
 buscando conflictos entre paquetes…
 
