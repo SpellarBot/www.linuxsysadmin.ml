@@ -1,5 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-07-09T09:00:00+02:00</updated><entry><title>Un servidor pypi local con Docker</title><link href="http://www.linuxsysadmin.ml/2018/07/un-servidor-pypi-local-con-docker.html" rel="alternate"></link><published>2018-07-09T09:00:00+02:00</published><updated>2018-07-09T09:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-07-09:/2018/07/un-servidor-pypi-local-con-docker.html</id><summary type="html">&lt;p&gt;Estaba yo el otro día investigando una nueva librería de &lt;strong&gt;python&lt;/strong&gt;, pero necesitaba de otra librería que se compilaba. Harto de perder el tiempo compilando cada vez esta librería, recuperé un antiguo artículo que me permitía distribuir el archivo &lt;em&gt;wheel&lt;/em&gt; ya compilado tantas veces yo quisiera; como no, usando &lt;strong&gt;docker …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Estaba yo el otro día investigando una nueva librería de &lt;strong&gt;python&lt;/strong&gt;, pero necesitaba de otra librería que se compilaba. Harto de perder el tiempo compilando cada vez esta librería, recuperé un antiguo artículo que me permitía distribuir el archivo &lt;em&gt;wheel&lt;/em&gt; ya compilado tantas veces yo quisiera; como no, usando &lt;strong&gt;docker&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-07-16T09:00:00+02:00</updated><entry><title>Explorando los tokens JWT</title><link href="http://www.linuxsysadmin.ml/2018/07/explorando-los-tokens-jwt.html" rel="alternate"></link><published>2018-07-16T09:00:00+02:00</published><updated>2018-07-16T09:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-07-16:/2018/07/explorando-los-tokens-jwt.html</id><summary type="html">&lt;p&gt;Hace mucho tiempo que me fascinan las APIs REST; sin embargo siempre he pasado de sistemas de autenticación en mis proyectos personales. Cuando me puse en serio a investigar sobre este tema, descubrí la autenticación basada en &lt;em&gt;tokens&lt;/em&gt;, y especialmente, los &lt;strong&gt;JSON Web Tokens&lt;/strong&gt;, que es lo que explico hoy …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hace mucho tiempo que me fascinan las APIs REST; sin embargo siempre he pasado de sistemas de autenticación en mis proyectos personales. Cuando me puse en serio a investigar sobre este tema, descubrí la autenticación basada en &lt;em&gt;tokens&lt;/em&gt;, y especialmente, los &lt;strong&gt;JSON Web Tokens&lt;/strong&gt;, que es lo que explico hoy.&lt;/p&gt;
+&lt;p&gt;Cuando leemos las buenas prácticas de los servicios REST, una de las máximas es que &lt;strong&gt;no hay estado&lt;/strong&gt;; eso significa que no hay peticiones a medias, ni sesiones ni nada: todo lo necesario para completar una llamada está en la misma petición.&lt;/p&gt;
+&lt;p&gt;Tradicionalmente, hemos pasado el usuario y la contraseña de algún modo en las cabeceras, evitando a terceros mediante el uso de HTTPS. Este método requiere la validación de las credenciales en cada petición, y supone un estrés innecesario a la base de datos.&lt;/p&gt;
+&lt;p&gt;Este panorama cambia cuando aparece una nueva filosofía: hacer &lt;em&gt;login&lt;/em&gt; una vez y expedir un &lt;em&gt;token&lt;/em&gt; con toda la información necesaria para futuras peticiones, probablemente con validez temporal.&lt;/p&gt;
+&lt;p&gt;Los &lt;a href="https://jwt.io/"&gt;JSON Web Tokens&lt;/a&gt; funcionan de esta manera, aunque no intentan encriptar ningún dato; se limitan a la verificación de que la firma del mensaje es válida.&lt;/p&gt;
+&lt;h2&gt;Forma de un token JWT&lt;/h2&gt;
+&lt;p&gt;Un &lt;em&gt;token&lt;/em&gt; JWT tiene la forma &lt;code&gt;xxxxx.yyyyy.zzzzz&lt;/code&gt;, con 3 partes separadas por puntos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Una cabecera, que es una especificación del tipo de &lt;em&gt;token&lt;/em&gt; y un base64 del algoritmo de &lt;em&gt;hash&lt;/em&gt; usado.&lt;/li&gt;
+&lt;li&gt;Un payload, que es la información arbitraria que cargamos en el momento de crear el &lt;em&gt;token&lt;/em&gt; y está en base64; algunos campos tienen significado especial.&lt;/li&gt;
+&lt;li&gt;Una firma, que es un &lt;em&gt;hash&lt;/em&gt; del mensaje con una clave del servidor, que sirve para que el servidor pueda verificarla como suya.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Veamos un ejemplo, con el siguiente token:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZ2VyYXJkIiwiZXhwIjoiMTUyOTQwMzc5NSJ9.07VsjI6OFGjMwYTmzE9g8qoPpXJYAB5DuGiIROOY4HM
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: La forma habitual de obtener este &lt;em&gt;token&lt;/em&gt; es mediante una operación de &lt;em&gt;login&lt;/em&gt;, y normalmente tiene una fecha de expiración, que en JWT es el campo &lt;code&gt;exp&lt;/code&gt;, como un &lt;em&gt;unix timestamp&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/jwttest$ &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; base64 -d&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;alg&amp;quot;&lt;/span&gt;:&lt;span class="s2"&gt;&amp;quot;HS256&amp;quot;&lt;/span&gt;,&lt;span class="s2"&gt;&amp;quot;typ&amp;quot;&lt;/span&gt;:&lt;span class="s2"&gt;&amp;quot;JWT&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@atlantis:~/workspace/jwttest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/jwttest$ &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;eyJ1c2VyIjoiZ2VyYXJkIiwiZXhwIjoiMTUyOTQwMzc5NSJ9&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; base64 -d&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;user&amp;quot;&lt;/span&gt;:&lt;span class="s2"&gt;&amp;quot;gerard&amp;quot;&lt;/span&gt;,&lt;span class="s2"&gt;&amp;quot;exp&amp;quot;&lt;/span&gt;:&lt;span class="s2"&gt;&amp;quot;1529403795&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@atlantis:~/workspace/jwttest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Cualquiera (salvo uso de HTTPS) puede ver la información contenida en el &lt;em&gt;token&lt;/em&gt;. Sin embargo, para verificar la firma se necesita saber la clave con la que se cifró. De esta forma, un servidor puede expedir un &lt;em&gt;token&lt;/em&gt; con información, pero gracias a la firma puede verificar que el &lt;em&gt;token&lt;/em&gt; que le devuelven es el que expedió y no ha sido modificado por un tercero.&lt;/p&gt;
+&lt;p&gt;Como punto a favor, el estándar JWT permite firmar con una sola clave, o usando un par de claves RSA, la privada para cifrar y la pública para desencriptar. Esto hace que nuestros auditores de seguridad se queden tranquilos, aunque como veremos, solo tiene utilidad real en algunos casos.&lt;/p&gt;
+&lt;h2&gt;Creando un token con una clave simétrica&lt;/h2&gt;
+&lt;p&gt;Este es el caso de uso más simple: un solo servicio genera y consume el &lt;em&gt;token&lt;/em&gt;. En este tipo de casos nos importa poco que se encripte y se desencripte con la misma clave, así que vamos a lo simple.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="JWT de clave simétrica" src="http://www.linuxsysadmin.ml/images/JWT_Symmetric_Key.png"&gt;&lt;/p&gt;
+&lt;p&gt;Como lo vamos a hacer en &lt;strong&gt;python&lt;/strong&gt;, vamos a necesitar una librería que siga este estándar, por ejemplo, &lt;code&gt;PyJWT&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$ pip freeze
+...
+&lt;span class="nv"&gt;PyJWT&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.6.4
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a utilizar un &lt;em&gt;script&lt;/em&gt; para generar el &lt;em&gt;token&lt;/em&gt; y otro para validarlo, que son estos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$ cat simple_encode.py
+import jwt
+import datetime
+import sys
+
+&lt;span class="nv"&gt;KEY&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; sys.argv&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;USER&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; sys.argv&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+
+&lt;span class="nv"&gt;payload&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;user&amp;#39;&lt;/span&gt;: USER,
+    &lt;span class="s1"&gt;&amp;#39;exp&amp;#39;&lt;/span&gt;: datetime.datetime.utcnow&lt;span class="o"&gt;()&lt;/span&gt; + datetime.timedelta&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;seconds&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;60&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;,
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+print jwt.encode&lt;span class="o"&gt;(&lt;/span&gt;payload, KEY, &lt;span class="nv"&gt;algorithm&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;HS256&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$ cat simple_decode.py
+import jwt
+import datetime
+import sys
+
+&lt;span class="nv"&gt;KEY&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; sys.argv&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;TOKEN&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; sys.argv&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+
+print jwt.decode&lt;span class="o"&gt;(&lt;/span&gt;TOKEN, KEY, &lt;span class="nv"&gt;algorithm&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;HS256&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En algún punto, expedimos un &lt;em&gt;token&lt;/em&gt; con un &lt;em&gt;secret&lt;/em&gt; dado:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$ python simple_encode.py secret gerard
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZ2VyYXJkIiwiZXhwIjoxNTI5NDA1NTU0fQ.3KNRsiIEcOvxN5b8Tgv_5qd8_58nA91fCkPxmnNr9F0
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si lo intentamos verificar con el mismo &lt;em&gt;secret&lt;/em&gt;, no hay problema:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$ python simple_decode.py secret eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZ2VyYXJkIiwiZXhwIjoxNTI5NDA1NTU0fQ.3KNRsiIEcOvxN5b8Tgv_5qd8_58nA91fCkPxmnNr9F0
+&lt;span class="o"&gt;{&lt;/span&gt;u&lt;span class="s1"&gt;&amp;#39;user&amp;#39;&lt;/span&gt;: u&lt;span class="s1"&gt;&amp;#39;gerard&amp;#39;&lt;/span&gt;, u&lt;span class="s1"&gt;&amp;#39;exp&amp;#39;&lt;/span&gt;: &lt;span class="m"&gt;1529405554&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Un &lt;em&gt;secret&lt;/em&gt; que no corresponde nos da un error, indicando que no es el &lt;em&gt;secret&lt;/em&gt; con el que ciframos y desciframos, seguramente porque nos han dado el cambiazo, y por lo tanto, rechazamos el &lt;em&gt;token&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$ python simple_decode.py badsecret eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZ2VyYXJkIiwiZXhwIjoxNTI5NDA1NTU0fQ.3KNRsiIEcOvxN5b8Tgv_5qd8_58nA91fCkPxmnNr9F0
+Traceback &lt;span class="o"&gt;(&lt;/span&gt;most recent call last&lt;span class="o"&gt;)&lt;/span&gt;:
+...
+jwt.exceptions.InvalidSignatureError: Signature verification failed
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si dejamos pasar el tiempo de expiración, el &lt;em&gt;token&lt;/em&gt; también pasa a ser inválido:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$ python simple_decode.py secret eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZ2VyYXJkIiwiZXhwIjoxNTI5NDA1NTU0fQ.3KNRsiIEcOvxN5b8Tgv_5qd8_58nA91fCkPxmnNr9F0
+Traceback &lt;span class="o"&gt;(&lt;/span&gt;most recent call last&lt;span class="o"&gt;)&lt;/span&gt;:
+...
+jwt.exceptions.ExpiredSignatureError: Signature has expired
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De esta forma podemos estar seguros que no se ha generado un &lt;em&gt;token&lt;/em&gt; por un tercero, y que el que dimos no ha sido modificado.&lt;/p&gt;
+&lt;h2&gt;Creando un token con una clave asimétrica&lt;/h2&gt;
+&lt;p&gt;Se trata de un caso un poco más complicado: un servicio genera el &lt;em&gt;token&lt;/em&gt; y otros lo consumen. En estos casos conviene que solo uno pueda cifrar, y todos puedan verificarlo; de esta forma, una API comprometida no expone el algoritmo de encriptación y evitamos suplantaciones.&lt;/p&gt;
+&lt;p&gt;Este caso se utiliza en esquemas de &lt;em&gt;single sign on&lt;/em&gt;, en donde un servicio de autenticación genera el &lt;em&gt;token&lt;/em&gt;, indicando a qué aplicaciones tiene acceso un usuario. La responsabilidad de verificar el permiso recae en cada aplicación individual.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="JWT de clave asimétrica" src="http://www.linuxsysadmin.ml/images/JWT_Single_Sign_On.png"&gt;&lt;/p&gt;
+&lt;p&gt;Vamos a asegurarnos que tenemos las librerías &lt;strong&gt;python&lt;/strong&gt; necesarias:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$ pip freeze
+...
+&lt;span class="nv"&gt;PyJWT&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.6.4
+&lt;span class="nv"&gt;cryptography&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.2.2
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;También vamos a necesitar el par de claves RSA:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$ openssl genrsa -out private.pem &lt;span class="m"&gt;1024&lt;/span&gt;
+Generating RSA private key, &lt;span class="m"&gt;1024&lt;/span&gt; bit long modulus
+...........................++++++
+...........................++++++
+e is &lt;span class="m"&gt;65537&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;0x010001&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$ openssl rsa -in private.pem -pubout -out public.pem
+writing RSA key
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/jwttest$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La idea es que la clave privada se queda en el servidor de autenticación, de forma que &lt;strong&gt;puede cifrar&lt;/strong&gt;. La parte publica es para todas las aplicaciones que necesiten &lt;strong&gt;verificar&lt;/strong&gt; el &lt;em&gt;token&lt;/em&gt;. De esta forma solo una puede expedir &lt;em&gt;tokens&lt;/em&gt;, y por lo tanto, es el único punto de &lt;em&gt;hacking&lt;/em&gt; del sistema distribuído.&lt;/p&gt;
+&lt;p&gt;En el servidor de autenticación haríamos algo así:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;create_new_token&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;permissions&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;expire&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;datetime&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;timedelta&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;seconds&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;EXPIRE_SECONDS&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;payload&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;user&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;permissions&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;permissions&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;exp&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;datetime&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;datetime&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;utcnow&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;expire&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;jwt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;encode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;payload&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;JWT_PRIVATE_KEY&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;algorithm&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;RS256&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Mientras que si el usuario facilita un &lt;em&gt;token&lt;/em&gt; a una aplicación, esta hará algo como:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;extract_token&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="k"&gt;try&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;decoded&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;jwt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;decode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;JWT_PUBLIC_KEY&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;algorithms&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;RS256&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;decoded&lt;/span&gt;
+    &lt;span class="k"&gt;except&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;raise&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De esta forma se puede validar el &lt;em&gt;token&lt;/em&gt;, que sea correcto, no se haya modificado, no esté expirado y con la seguridad que solo lo pudo generar el servidor de autenticación. No hace falta para nada ir a la base de datos, o pedir una verificación al creador del &lt;em&gt;token&lt;/em&gt;. Lo único que no verifica este método es si el &lt;em&gt;payload&lt;/em&gt; incluye permisos para  el uso del método de la API solicitado.&lt;/p&gt;</content><category term="JWT"></category><category term="token"></category><category term="api"></category><category term="REST"></category><category term="autenticación"></category></entry><entry><title>Un servidor pypi local con Docker</title><link href="http://www.linuxsysadmin.ml/2018/07/un-servidor-pypi-local-con-docker.html" rel="alternate"></link><published>2018-07-09T09:00:00+02:00</published><updated>2018-07-09T09:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-07-09:/2018/07/un-servidor-pypi-local-con-docker.html</id><summary type="html">&lt;p&gt;Estaba yo el otro día investigando una nueva librería de &lt;strong&gt;python&lt;/strong&gt;, pero necesitaba de otra librería que se compilaba. Harto de perder el tiempo compilando cada vez esta librería, recuperé un antiguo artículo que me permitía distribuir el archivo &lt;em&gt;wheel&lt;/em&gt; ya compilado tantas veces yo quisiera; como no, usando &lt;strong&gt;docker …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Estaba yo el otro día investigando una nueva librería de &lt;strong&gt;python&lt;/strong&gt;, pero necesitaba de otra librería que se compilaba. Harto de perder el tiempo compilando cada vez esta librería, recuperé un antiguo artículo que me permitía distribuir el archivo &lt;em&gt;wheel&lt;/em&gt; ya compilado tantas veces yo quisiera; como no, usando &lt;strong&gt;docker&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;El artículo anterior es &lt;a href="http://www.linuxsysadmin.ml/2016/09/un-servidor-pypi-local.html"&gt;este&lt;/a&gt;, y su único objetivo era montar un servidor de &lt;strong&gt;pypi&lt;/strong&gt; local que nos permite alojar nuestros ficheros &lt;em&gt;wheel&lt;/em&gt;, aunque funciona genial para evitar múltiples compilaciones y como &lt;em&gt;caché&lt;/em&gt; de paquetes.&lt;/p&gt;
 &lt;h2&gt;El servidor pypi&lt;/h2&gt;
 &lt;p&gt;Para facilitar el montaje y la distribución de este servidor, se ha decidido hacer una imagen de &lt;strong&gt;docker&lt;/strong&gt; para encapsular lo necesario; de paso, el fichero &lt;em&gt;Dockerfile&lt;/em&gt; es una magnífica receta para evitar un montón de pasos manuales que salían en el artículo citado.&lt;/p&gt;
