@@ -1,5 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-06-18T10:00:00+02:00</updated><entry><title>Contraseñas de un solo uso para usuarios linux</title><link href="http://www.linuxsysadmin.ml/2018/06/contrasenas-de-un-solo-uso-para-usuarios-linux.html" rel="alternate"></link><published>2018-06-18T10:00:00+02:00</published><updated>2018-06-18T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-06-18:/2018/06/contrasenas-de-un-solo-uso-para-usuarios-linux.html</id><summary type="html">&lt;p&gt;No dejan de sorprenderme los administradores de sistemas que crean usuarios a petición, pero les asignan &lt;em&gt;passwords&lt;/em&gt; supuestamente de un solo uso pidiéndoles que la cambien en el primer uso. La experiencia me dice que esa &lt;em&gt;password&lt;/em&gt; solo se cambia si es estrictamente necesario. Esta petición la puedes forzar fácilmente …&lt;/p&gt;</summary><content type="html">&lt;p&gt;No dejan de sorprenderme los administradores de sistemas que crean usuarios a petición, pero les asignan &lt;em&gt;passwords&lt;/em&gt; supuestamente de un solo uso pidiéndoles que la cambien en el primer uso. La experiencia me dice que esa &lt;em&gt;password&lt;/em&gt; solo se cambia si es estrictamente necesario. Esta petición la puedes forzar fácilmente.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-07-23T09:00:00+02:00</updated><entry><title>Ampliando la memoria swap mediante swapfiles</title><link href="http://www.linuxsysadmin.ml/2018/07/ampliando-la-memoria-swap-mediante-swapfiles.html" rel="alternate"></link><published>2018-07-23T09:00:00+02:00</published><updated>2018-07-23T09:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-07-23:/2018/07/ampliando-la-memoria-swap-mediante-swapfiles.html</id><summary type="html">&lt;p&gt;Como ya sabéis, para escribir artículos, utilizo &lt;strong&gt;VirtualBox&lt;/strong&gt;. Últimamente no paro de clonar la misma imagen base una y otra vez, lo que me da un particionado idéntico. Sin embargo, cuando se trata de memoria &lt;em&gt;swap&lt;/em&gt;, no todas las instáncias clonadas necesitan la misma &lt;em&gt;swap&lt;/em&gt; y cambiarlo no es fácil …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Como ya sabéis, para escribir artículos, utilizo &lt;strong&gt;VirtualBox&lt;/strong&gt;. Últimamente no paro de clonar la misma imagen base una y otra vez, lo que me da un particionado idéntico. Sin embargo, cuando se trata de memoria &lt;em&gt;swap&lt;/em&gt;, no todas las instáncias clonadas necesitan la misma &lt;em&gt;swap&lt;/em&gt; y cambiarlo no es fácil.&lt;/p&gt;
+&lt;p&gt;Si nos fijamos en la última versión de &lt;strong&gt;Ubuntu&lt;/strong&gt; podremos ver que una instalación básica &lt;strong&gt;no lleva partición &lt;em&gt;swap&lt;/em&gt;&lt;/strong&gt;. Lo que lleva es un fichero predimensionado que es utilizado como memoria &lt;em&gt;swap&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Hay detractores de este método, pero lo que no podemos negar es que es una forma muy cómoda de añadir más &lt;em&gt;swap&lt;/em&gt; o redimensionarla (casi) en caliente. Muchos proveedores de máquinas virtuales cloud ni siquiera nos dan una partición &lt;em&gt;swap&lt;/em&gt;, así que conocer este método nos puede ser muy útil.&lt;/p&gt;
+&lt;h2&gt;Creando un swapfile&lt;/h2&gt;
+&lt;p&gt;Supongamos que tenemos un servidor sin memoria &lt;em&gt;swap&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@cloudserver:~$ free -m
+              total        used        free      shared  buff/cache   available
+Mem:            &lt;span class="m"&gt;492&lt;/span&gt;          &lt;span class="m"&gt;32&lt;/span&gt;         &lt;span class="m"&gt;409&lt;/span&gt;           &lt;span class="m"&gt;0&lt;/span&gt;          &lt;span class="m"&gt;50&lt;/span&gt;         &lt;span class="m"&gt;446&lt;/span&gt;
+Swap:             &lt;span class="m"&gt;0&lt;/span&gt;           &lt;span class="m"&gt;0&lt;/span&gt;           &lt;span class="m"&gt;0&lt;/span&gt;
+gerard@cloudserver:~$ cat /proc/swaps
+Filename                                Type            Size    Used    Priority
+gerard@cloudserver:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para ir bien, un servidor no debería utilizarla, ya que impacta en el rendimiento, al ser más lento el disco que la memoria. Hay ocasiones en las que es legítimo usarla de forma temporal, o es preferible tenerla para evitar que nos tiren procesos por falta de memoria.&lt;/p&gt;
+&lt;p&gt;Así pues, decidimos poner &lt;em&gt;swap&lt;/em&gt;, pero no tenemos un particionado que nos lo permita; vamos a recurrir a un &lt;em&gt;swapfile&lt;/em&gt;, que no es otra cosa que un fichero normal que es utilizado como dispositivo de bloques para ejercer de memoria &lt;em&gt;swap&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Para ello necesitamos un fichero del tamaño de la &lt;em&gt;swap&lt;/em&gt; que necesitemos, con las únicas restricciones de pertenecer a &lt;em&gt;root&lt;/em&gt; y con permisos de lectura y escritura para el propio &lt;em&gt;root&lt;/em&gt;. Vamos a crearlo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@cloudserver:~$ sudo dd &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/dev/zero &lt;span class="nv"&gt;of&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/swapfile &lt;span class="nv"&gt;bs&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1M &lt;span class="nv"&gt;count&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;512&lt;/span&gt;
+&lt;span class="m"&gt;512&lt;/span&gt;+0 registros leídos
+&lt;span class="m"&gt;512&lt;/span&gt;+0 registros escritos
+&lt;span class="m"&gt;536870912&lt;/span&gt; bytes &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;537&lt;/span&gt; MB, &lt;span class="m"&gt;512&lt;/span&gt; MiB&lt;span class="o"&gt;)&lt;/span&gt; copied, &lt;span class="m"&gt;0&lt;/span&gt;,841317 s, &lt;span class="m"&gt;638&lt;/span&gt; MB/s
+gerard@cloudserver:~$ sudo chown root:root /swapfile
+gerard@cloudserver:~$ sudo chmod &lt;span class="m"&gt;600&lt;/span&gt; /swapfile
+gerard@cloudserver:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Con esto tenemos nuestro dispositivo de bloques. Lo siguiente es "formatearlo" como &lt;em&gt;swap&lt;/em&gt;. Esto se hace con el comando &lt;code&gt;mkswap&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@cloudserver:~$ sudo mkswap /swapfile
+Configurando espacio de intercambio versión &lt;span class="m"&gt;1&lt;/span&gt;, &lt;span class="nv"&gt;tamaño&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;512&lt;/span&gt; MiB &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;536866816&lt;/span&gt; bytes&lt;span class="o"&gt;)&lt;/span&gt;
+sin etiqueta, &lt;span class="nv"&gt;UUID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;612fd4be-2ea4-4561-ab7d-81b33df5b7e5
+gerard@cloudserver:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo queda activarlo, con el comando &lt;code&gt;swapon&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@cloudserver:~$ sudo swapon /swapfile
+gerard@cloudserver:~$ free -m
+              total        used        free      shared  buff/cache   available
+Mem:            &lt;span class="m"&gt;492&lt;/span&gt;          &lt;span class="m"&gt;32&lt;/span&gt;           &lt;span class="m"&gt;6&lt;/span&gt;           &lt;span class="m"&gt;0&lt;/span&gt;         &lt;span class="m"&gt;453&lt;/span&gt;         &lt;span class="m"&gt;446&lt;/span&gt;
+Swap:           &lt;span class="m"&gt;511&lt;/span&gt;           &lt;span class="m"&gt;0&lt;/span&gt;         &lt;span class="m"&gt;511&lt;/span&gt;
+gerard@cloudserver:~$ cat /proc/swaps
+Filename                                Type            Size    Used    Priority
+/swapfile                               file            &lt;span class="m"&gt;524284&lt;/span&gt;  &lt;span class="m"&gt;0&lt;/span&gt;       -1
+gerard@cloudserver:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como nos gusta el resultado, configuramos el fichero &lt;code&gt;/etc/fstab&lt;/code&gt; para que se active automáticamente tras cada reinicio:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@cloudserver:~$ grep swapfile /etc/fstab
+/swapfile none swap defaults &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;
+gerard@cloudserver:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Ampliando el swapfile&lt;/h2&gt;
+&lt;p&gt;Nos quedamos cortos de &lt;em&gt;swap&lt;/em&gt; y decidimos que necesitamos agrandar nuestra &lt;em&gt;swap&lt;/em&gt;. Solamente tenemos que desactivar el fichero, redimensionarlo, formatearlo y volver a activarlo; sin complicaciones:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@cloudserver:~$ sudo swapoff /swapfile
+gerard@cloudserver:~$ sudo dd &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/dev/zero &lt;span class="nv"&gt;of&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/swapfile &lt;span class="nv"&gt;bs&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1M &lt;span class="nv"&gt;count&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1024&lt;/span&gt;
+&lt;span class="m"&gt;1024&lt;/span&gt;+0 registros leídos
+&lt;span class="m"&gt;1024&lt;/span&gt;+0 registros escritos
+&lt;span class="m"&gt;1073741824&lt;/span&gt; bytes &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;,1 GB, &lt;span class="m"&gt;1&lt;/span&gt;,0 GiB&lt;span class="o"&gt;)&lt;/span&gt; copied, &lt;span class="m"&gt;1&lt;/span&gt;,82175 s, &lt;span class="m"&gt;589&lt;/span&gt; MB/s
+gerard@cloudserver:~$ sudo mkswap /swapfile
+Configurando espacio de intercambio versión &lt;span class="m"&gt;1&lt;/span&gt;, &lt;span class="nv"&gt;tamaño&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;1024&lt;/span&gt; MiB &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1073737728&lt;/span&gt; bytes&lt;span class="o"&gt;)&lt;/span&gt;
+sin etiqueta, &lt;span class="nv"&gt;UUID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;fb036b45-6fca-4ff2-acb6-9ae585f08c74
+gerard@cloudserver:~$ sudo swapon /swapfile
+gerard@cloudserver:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y ya tenemos 1Gb de &lt;em&gt;swap&lt;/em&gt;, sin sorpresas:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@cloudserver:~$ free -m
+              total        used        free      shared  buff/cache   available
+Mem:            &lt;span class="m"&gt;492&lt;/span&gt;          &lt;span class="m"&gt;32&lt;/span&gt;           &lt;span class="m"&gt;6&lt;/span&gt;           &lt;span class="m"&gt;0&lt;/span&gt;         &lt;span class="m"&gt;453&lt;/span&gt;         &lt;span class="m"&gt;446&lt;/span&gt;
+Swap:          &lt;span class="m"&gt;1023&lt;/span&gt;           &lt;span class="m"&gt;0&lt;/span&gt;        &lt;span class="m"&gt;1023&lt;/span&gt;
+gerard@cloudserver:~$ cat /proc/swaps
+Filename                                Type            Size    Used    Priority
+/swapfile                               file            &lt;span class="m"&gt;1048572&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;       -1
+gerard@cloudserver:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En un futuro cercano, decidimos que hay que poner más &lt;em&gt;swap&lt;/em&gt;. Ahora tenemos un nuevo problema: la &lt;em&gt;swap&lt;/em&gt; existente no se puede desactivar porque no hay memoria en donde mover lo que hay en &lt;em&gt;swap&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Eso no supone más problema, porque la memoria &lt;em&gt;swap&lt;/em&gt; es una masa que se forma a partir de varios dispositivos, así que podemos añadir otro, de la misma manera:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@cloudserver:~$ sudo dd &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/dev/zero &lt;span class="nv"&gt;of&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/swapfile2 &lt;span class="nv"&gt;bs&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1M &lt;span class="nv"&gt;count&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3072&lt;/span&gt;
+&lt;span class="m"&gt;3072&lt;/span&gt;+0 registros leídos
+&lt;span class="m"&gt;3072&lt;/span&gt;+0 registros escritos
+&lt;span class="m"&gt;3221225472&lt;/span&gt; bytes &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;,2 GB, &lt;span class="m"&gt;3&lt;/span&gt;,0 GiB&lt;span class="o"&gt;)&lt;/span&gt; copied, &lt;span class="m"&gt;5&lt;/span&gt;,16648 s, &lt;span class="m"&gt;623&lt;/span&gt; MB/s
+gerard@cloudserver:~$ sudo chown root:root /swapfile2
+gerard@cloudserver:~$ sudo chmod &lt;span class="m"&gt;600&lt;/span&gt; /swapfile2
+gerard@cloudserver:~$ sudo swapon /swapfile2
+swapon: /swapfile2: fallo al obtener la cabecera de intercambio
+sin etiqueta, &lt;span class="nv"&gt;UUID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;a35f5fdb-d0fe-4a8d-aecc-c03362128990
+gerard@cloudserver:~$ sudo swapon /swapfile2
+gerard@cloudserver:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y como esperamos, ahora tenemos un total de 4Gb de &lt;em&gt;swap&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@cloudserver:~$ free -m
+              total        used        free      shared  buff/cache   available
+Mem:            &lt;span class="m"&gt;492&lt;/span&gt;          &lt;span class="m"&gt;32&lt;/span&gt;           &lt;span class="m"&gt;6&lt;/span&gt;           &lt;span class="m"&gt;0&lt;/span&gt;         &lt;span class="m"&gt;452&lt;/span&gt;         &lt;span class="m"&gt;446&lt;/span&gt;
+Swap:          &lt;span class="m"&gt;4095&lt;/span&gt;           &lt;span class="m"&gt;0&lt;/span&gt;        &lt;span class="m"&gt;4095&lt;/span&gt;
+gerard@cloudserver:~$ cat /proc/swaps
+Filename                                Type            Size    Used    Priority
+/swapfile                               file            &lt;span class="m"&gt;1048572&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;       -1
+/swapfile2                              file            &lt;span class="m"&gt;3145724&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;       -2
+gerard@cloudserver:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este punto ya podríamos desactivar la primera &lt;em&gt;swap&lt;/em&gt;, ya sea para ampliarla, o para eliminarla. El contenido que tenía pasaría ahora a la segunda &lt;em&gt;swap&lt;/em&gt; en donde hemos creado espacio. Nada nos impide ampliar el primer fichero para eliminar el segundo, haciendo que la segunda &lt;em&gt;swap&lt;/em&gt; fuera solo un apaño temporal.&lt;/p&gt;</content><category term="memoria"></category><category term="swap"></category><category term="swapfile"></category></entry><entry><title>Contraseñas de un solo uso para usuarios linux</title><link href="http://www.linuxsysadmin.ml/2018/06/contrasenas-de-un-solo-uso-para-usuarios-linux.html" rel="alternate"></link><published>2018-06-18T10:00:00+02:00</published><updated>2018-06-18T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-06-18:/2018/06/contrasenas-de-un-solo-uso-para-usuarios-linux.html</id><summary type="html">&lt;p&gt;No dejan de sorprenderme los administradores de sistemas que crean usuarios a petición, pero les asignan &lt;em&gt;passwords&lt;/em&gt; supuestamente de un solo uso pidiéndoles que la cambien en el primer uso. La experiencia me dice que esa &lt;em&gt;password&lt;/em&gt; solo se cambia si es estrictamente necesario. Esta petición la puedes forzar fácilmente …&lt;/p&gt;</summary><content type="html">&lt;p&gt;No dejan de sorprenderme los administradores de sistemas que crean usuarios a petición, pero les asignan &lt;em&gt;passwords&lt;/em&gt; supuestamente de un solo uso pidiéndoles que la cambien en el primer uso. La experiencia me dice que esa &lt;em&gt;password&lt;/em&gt; solo se cambia si es estrictamente necesario. Esta petición la puedes forzar fácilmente.&lt;/p&gt;
 &lt;h2&gt;Un ejemplo&lt;/h2&gt;
 &lt;p&gt;Vamos a simular una de estas peticiones, de un usuario &lt;em&gt;bob&lt;/em&gt; que quiere acceder a un servidor llamado &lt;em&gt;server&lt;/em&gt;. Un administrador tradicional va a ejecutar un comando estándar para crear el usuario, y le va a asignar una contraseña, posiblemente de diccionario.&lt;/p&gt;
 &lt;h3&gt;El problema&lt;/h3&gt;
