@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Linux Sysadmin</title>
+    <title>alpine - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,8 +9,9 @@
 
 
 
-<link rel="canonical" href="http://www.linuxsysadmin.ml">
-        <meta name="author" content="Gerard" />
+
+    <meta name="author" content="Gerard" />
+    <meta name="keywords" content="alpine" />
 
     <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
@@ -77,6 +78,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
+    <ol class="breadcrumb">
+        <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+        <li><a href="http://www.linuxsysadmin.ml/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
+        <li class="active">alpine</li>
+    </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -90,112 +96,13 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/08/espiando-trazas-de-red-con-tcpdump.html">Espiando trazas de red con tcpdump</a></h2>
-                <div class="summary"><p>No suelen haber errores de conexión en los entornos que administro; sin embargo, alguna vez los hay. Esto supone un marrón, porque la red es ese elemento que escapa a mi gestión; la gente que se dedica a eso suele negar estos problemas argumentando cualquier excusa. Para eso está <strong>tcpdump …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/08/espiando-trazas-de-red-con-tcpdump.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/08/evitando-problemas-de-concurrencia-multiple-con-flock.html">Evitando problemas de concurrencia múltiple con flock</a></h2>
-                <div class="summary"><p>Cuando trabajas con procesos en <em>background</em>, es fácil que algunos de los procesos hagan algo que necesite exclusividad, no siendo seguro ejecutar varios de estos procesos a la vez. Por ejemplo, archivos que se descomprimen, se procesan y luego se borran; si usan la misma carpeta suele ser un problema …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/08/evitando-problemas-de-concurrencia-multiple-con-flock.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/07/ignorando-el-proxy-de-mi-empresa-un-proxy-socks.html">Ignorando el proxy de mi empresa: un proxy SOCKS</a></h2>
-                <div class="summary"><p>Tenemos en el trabajo uno de esos <em>enginjerks</em> que lanzan acciones <em>random</em> para justificar su trabajo. Cortó el acceso a <em>Dropbox</em>, en donde tengo cosas útiles para mi trabajo. Harto de encender los datos móviles de mi móvil para ir sincronizando ficheros, me he montado un proxy <strong>SOCKS</strong> para mí …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/07/ignorando-el-proxy-de-mi-empresa-un-proxy-socks.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/07/montando-un-servidor-docker-con-debian-stretch.html">Montando un servidor docker con Debian Stretch</a></h2>
-                <div class="summary"><p>Finalmente ha sucedido: ha llegado el esperado lanzamiento de <strong>Debian Stretch</strong>. Como buen linuxero no me he podido resistir a hacer alguna instalación para probar, aunque solo sea como una máquina virtual. Su función, determinada por mi actual flujo de trabajo, va a ser como servidor de <strong>docker</strong> con <strong>docker-compose …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/07/montando-un-servidor-docker-con-debian-stretch.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/07/autenticacion-centralizada-por-claves-ssh.html">Autenticación centralizada por claves SSH</a></h2>
-                <div class="summary"><p>Ya vimos en <a href="http://www.linuxsysadmin.ml/2016/05/autenticacion-ssh-por-claves.html">un artículo anterior</a> como autenticar las sesiones <strong>SSH</strong> mediante claves locales en la máquina. Sin embargo, esto no es práctico cuando tenemos muchos servidores, y hay que replicar esas claves en todos ellos. Hoy vamos a ver como usar un <em>script</em> que pueda sacar las claves dinámicamente …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/07/autenticacion-centralizada-por-claves-ssh.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/07/desactivando-nuestras-apis-con-un-frontal-nginx.html">Desactivando nuestras APIs con un frontal nginx</a></h2>
-                <div class="summary"><p>El otro día recibí una petición algo atípica en mi trabajo: querían activar y desactivar en un único punto centralizado cada una de las varias APIs que tenemos. Se trata de poner un <strong>nginx</strong> frontal que gestione los <em>virtualhosts</em> existentes y haga <em>proxy_pass</em> o no en función de un <em>flag …</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/07/desactivando-nuestras-apis-con-un-frontal-nginx.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/07/el-concepto-del-servidor-fachada-con-docker.html">El concepto del servidor fachada con Docker</a></h2>
-                <div class="summary"><p>Muchos de nosotros tenemos un servidor en casa o en algún <em>hosting</em>. Como no tenemos mucho tráfico y cada servidor tiene un coste, acabamos llenándolo con un conjunto de servicios bastante grande. Esto supone un problema para actualizar el sistema operativo, suponiendo que los servicios no se molesten entre sí …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/07/el-concepto-del-servidor-fachada-con-docker.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/06/un-servidor-de-git-local-con-gitolite.html">Un servidor de git local con gitolite</a></h2>
-                <div class="summary"><p>A todos nos encanta el sistema de control de versiones <strong>git</strong>. Tanto a nivel local como a nivel público en <em>GitHub</em> es una maravilla; lo que no me gusta tanto es el precio que suelen tener las soluciones privadas. Sin embargo, y con un poco de habilidad, podemos encontrar alternativas …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/06/un-servidor-de-git-local-con-gitolite.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/06/explorando-bash-la-variable-de-entorno-prompt-command.html">Explorando bash: la variable de entorno PROMPT_COMMAND</a></h2>
-                <div class="summary"><p>Los <em>gurús</em> del terminal ya conocemos muchas de las virtudes de <strong>bash</strong>. Sin embargo, es una utilidad muy grande y no es raro que cada vez que busquemos encontremos cosas nuevas. Esta vez, y casi por curiosidad, encontré una variable llamada <strong>PROMPT_COMMAND</strong>, que aunque no es conocida, es muy útil …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/06/explorando-bash-la-variable-de-entorno-prompt-command.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html">Exponiendo puertos TCP a través de un firewall con ngrok</a></h2>
-                <div class="summary"><p>A veces tenemos la necesidad de exponer en internet algún puerto TCP de forma temporal, para hacer <em>testing</em> o alguna <em>demo</em>. Ya vimos como podemos hacer esto mediante <a href="http://www.linuxsysadmin.ml/2016/10/creando-tuneles-con-ssh.html">túneles SSH reversos</a>, aunque no siempre disponemos de un dominio público. En estos casos podemos usar un sistema de túneles llamado <strong>ngrok …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html">Seguir leyendo</a>
+                <h2><a href="http://www.linuxsysadmin.ml/2018/07/una-oda-a-alpine-linux.html">Una oda a Alpine Linux</a></h2>
+                <div class="summary"><p>Hace unos días salió la <em>release</em> 3.8 de <strong>Alpine Linux</strong>. Por problemas varios en el <em>build</em>, la imagen de <strong>docker</strong> se hizo esperar bastante, y como la paciencia no es una de mis virtudes, decidí darle un intento en una máquina virtual <strong>Virtualbox</strong>, quedando gratamente complacido con el resultado …</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/07/una-oda-a-alpine-linux.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
 
-        <ul class="pagination">
-                <li class="prev"><a href="http://www.linuxsysadmin.ml/index5.html">&laquo;</a>
-                </li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/index.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/index2.html">2</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/index3.html">3</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/index4.html">4</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/index5.html">5</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.ml/index6.html">6</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/index7.html">7</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/index8.html">8</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/index9.html">9</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/index10.html">10</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/index11.html">11</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/index12.html">12</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/index13.html">13</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/index14.html">14</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/index15.html">15</a></li>
-                <li class="next"><a
-                        href="http://www.linuxsysadmin.ml/index7.html">&raquo;</a></li>
-        </ul>
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>

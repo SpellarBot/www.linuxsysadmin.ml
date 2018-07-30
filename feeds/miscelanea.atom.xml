@@ -1,5 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Miscelánea</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/miscelanea.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-03-05T10:00:00+01:00</updated><entry><title>Entornos de trabajo en contenedores Docker</title><link href="http://www.linuxsysadmin.ml/2018/03/entornos-de-trabajo-en-contenedores-docker.html" rel="alternate"></link><published>2018-03-05T10:00:00+01:00</published><updated>2018-03-05T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-03-05:/2018/03/entornos-de-trabajo-en-contenedores-docker.html</id><summary type="html">&lt;p&gt;Cuando usamos herramientas concretas para todos los miembros de un mismo equipo, suele ser problemático instalarlo en sus equipos. Por la ausencia de instalación y su gran reproducibilidad, es cada vez más frecuente distribuir esas herramientas en una imagen de &lt;strong&gt;Docker&lt;/strong&gt;, aunque esto no garantiza estar libres de otros problemas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando usamos herramientas concretas para todos los miembros de un mismo equipo, suele ser problemático instalarlo en sus equipos. Por la ausencia de instalación y su gran reproducibilidad, es cada vez más frecuente distribuir esas herramientas en una imagen de &lt;strong&gt;Docker&lt;/strong&gt;, aunque esto no garantiza estar libres de otros problemas.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Miscelánea</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/miscelanea.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-07-30T09:00:00+02:00</updated><entry><title>Una oda a Alpine Linux</title><link href="http://www.linuxsysadmin.ml/2018/07/una-oda-a-alpine-linux.html" rel="alternate"></link><published>2018-07-30T09:00:00+02:00</published><updated>2018-07-30T09:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-07-30:/2018/07/una-oda-a-alpine-linux.html</id><summary type="html">&lt;p&gt;Hace unos días salió la &lt;em&gt;release&lt;/em&gt; 3.8 de &lt;strong&gt;Alpine Linux&lt;/strong&gt;. Por problemas varios en el &lt;em&gt;build&lt;/em&gt;, la imagen de &lt;strong&gt;docker&lt;/strong&gt; se hizo esperar bastante, y como la paciencia no es una de mis virtudes, decidí darle un intento en una máquina virtual &lt;strong&gt;Virtualbox&lt;/strong&gt;, quedando gratamente complacido con el resultado …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hace unos días salió la &lt;em&gt;release&lt;/em&gt; 3.8 de &lt;strong&gt;Alpine Linux&lt;/strong&gt;. Por problemas varios en el &lt;em&gt;build&lt;/em&gt;, la imagen de &lt;strong&gt;docker&lt;/strong&gt; se hizo esperar bastante, y como la paciencia no es una de mis virtudes, decidí darle un intento en una máquina virtual &lt;strong&gt;Virtualbox&lt;/strong&gt;, quedando gratamente complacido con el resultado obtenido.&lt;/p&gt;
+&lt;p&gt;El primer paso es descargar la imagen de &lt;a href="https://alpinelinux.org/downloads/"&gt;la pagina de descargas&lt;/a&gt;. En esta página hay que elegir la variante de la imagen y la variante del procesador; aplicando a mi máquina y sabiendo que voy a ejecutarlo como máquina virtual, he elegido &lt;a href="http://dl-cdn.alpinelinux.org/alpine/v3.8/releases/x86_64/alpine-virt-3.8.0-x86_64.iso"&gt;esta&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Se trata de un fichero &lt;code&gt;.iso&lt;/code&gt; de 32mb que, a su vez, es un &lt;em&gt;livecd&lt;/em&gt; con el instalador incorporado. Es una distribución muy ligera, así que con una máquina virtual de 256mb de memoria funciona de sobras para la instalación base con SSH y nada más; modificaremos este valor cuando necesitemos más memoria para otro tipo de carga de trabajo.&lt;/p&gt;
+&lt;p&gt;Iniciamos la máquina virtual con el CD montado, y obtenemos un &lt;em&gt;shell&lt;/em&gt;, previo &lt;em&gt;login&lt;/em&gt; con el usuario &lt;strong&gt;root&lt;/strong&gt; y sin contraseña. En este momento, estamos consumiendo 33mb de memoria (sin &lt;em&gt;buffers&lt;/em&gt;), lo que nos deja con más de 200mb disponibles para nuestro uso.&lt;/p&gt;
+&lt;p&gt;Como &lt;em&gt;livecd&lt;/em&gt; es muy bonito, pero lo que queremos es &lt;strong&gt;instalar&lt;/strong&gt;. Esto se consigue con el &lt;em&gt;script&lt;/em&gt; &lt;code&gt;setup-alpine&lt;/code&gt;. Sin embargo, si nos leemos &lt;a href="https://wiki.alpinelinux.org/wiki/Alpine_setup_scripts#setup-disk"&gt;la documentación&lt;/a&gt; de los &lt;em&gt;scripts&lt;/em&gt; de la instalación veremos varias cosas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Por defecto, se crean 3 particiones:&lt;ul&gt;
+&lt;li&gt;La partición raíz, montada en &lt;code&gt;/&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Una partición para los ficheros de &lt;em&gt;boot&lt;/em&gt;, montados en &lt;code&gt;/boot&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Una partición de &lt;em&gt;swap&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;El instalador se puede parametrizar con variables de entorno&lt;ul&gt;
+&lt;li&gt;Podemos modificar el tamaño de la particion &lt;code&gt;/boot&lt;/code&gt;, pero no eliminarla con &lt;code&gt;BOOT_SIZE&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Podemos modificar el tamaño de la partición &lt;em&gt;swap&lt;/em&gt; con &lt;code&gt;SWAP_SIZE&lt;/code&gt;, incluso eliminándola con tamaño 0&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: Como pretendo modificar la &lt;em&gt;swap&lt;/em&gt; a posteriori, prefiero &lt;a href="http://www.linuxsysadmin.ml/2018/07/ampliando-la-memoria-swap-mediante-swapfiles.html"&gt;crear un &lt;em&gt;swapfile&lt;/em&gt;&lt;/a&gt;, y por lo tanto voy a anular la partición &lt;em&gt;swap&lt;/em&gt; indicando tamaño 0.&lt;/p&gt;
+&lt;p&gt;Lanzamos el comando &lt;code&gt;SWAP_SIZE=0 setup-alpine&lt;/code&gt; para realizar la instalación. El proceso en sí mismo no tiene ninguna complicación y está listo en menos de 5 minutos; solo voy a detallar las opciones que he ido usando:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Teclado&lt;/strong&gt;: El que tengáis; pongo "es"&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Hostname&lt;/strong&gt;: De momento "alpine"; cuando clone la máquina ya lo cambiaré&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Red&lt;/strong&gt;: Lo que os haga falta; yo he usado &lt;em&gt;eth0&lt;/em&gt; en modo &lt;em&gt;dhcp&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Zona horaria&lt;/strong&gt;: Algo como "Europe" y luego "Madrid"&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Mirrors de &lt;em&gt;apk&lt;/em&gt;&lt;/strong&gt;: Pongo "f"; es un proceso lento, pero a la larga vale la pena&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Servidor de SSH&lt;/strong&gt;: Voy a lo seguro, "openssh"&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Clente de NTP&lt;/strong&gt;: Dejo el que viene por defecto "chrony"&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Disco a usar&lt;/strong&gt;: El que tengáis, yo pongo "sda", usado como "sys", que es instalación tradicional&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Y con esto estamos. Reiniciamos sin el &lt;em&gt;live cd&lt;/em&gt; y ya estamos en nuestro nuevo y flamante servidor &lt;strong&gt;Alpine Linux&lt;/strong&gt;, que nos ocupa 26mb de memoria solamente.&lt;/p&gt;
+&lt;h2&gt;Siguientes pasos&lt;/h2&gt;
+&lt;p&gt;La instalación base está realmente bien, aunque algunas modificaciones nos van a venir muy bien; algunas son muy evidentes y otras son para nota.&lt;/p&gt;
+&lt;h3&gt;Usuario nominal y sudo&lt;/h3&gt;
+&lt;p&gt;Por defecto, &lt;strong&gt;Alpine Linux&lt;/strong&gt; solo crea el usuario &lt;strong&gt;root&lt;/strong&gt;, que encima, no puede entrar por SSH usando contraseña. Esto nos deja sin acceso al servidor.&lt;/p&gt;
+&lt;p&gt;Siguiendo el estilo &lt;strong&gt;Ubuntu&lt;/strong&gt;, vamos a crear un usuario nominal con permisos de &lt;strong&gt;sudo&lt;/strong&gt;, y vamos a bloquear al usuario &lt;strong&gt;root&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;alpine:~# apk add sudo
+...
+alpine:~# adduser gerard
+...
+alpine:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;Alpine Linux&lt;/strong&gt; viene por defecto con el grupo &lt;strong&gt;wheel&lt;/strong&gt;, pero no con el grupo &lt;strong&gt;sudo&lt;/strong&gt;. Así pues, vamos a habilitar &lt;strong&gt;sudo&lt;/strong&gt; para todos los usuarios del grupo &lt;strong&gt;wheel&lt;/strong&gt;, al que añadiremos a nuestro usuario.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;alpine:~# cat /etc/sudoers &lt;span class="p"&gt;|&lt;/span&gt; grep ^%wheel
+%wheel &lt;span class="nv"&gt;ALL&lt;/span&gt;&lt;span class="o"&gt;=(&lt;/span&gt;ALL&lt;span class="o"&gt;)&lt;/span&gt; ALL
+alpine:~# adduser gerard wheel
+alpine:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y nos logamos al servidor con el usuario nominal. Probamos que podemos hacer &lt;strong&gt;sudo&lt;/strong&gt; y si es así, bloqueamos el usuario &lt;strong&gt;root&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;alpine:~$ id
+&lt;span class="nv"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1000&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;gerard&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1000&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;gerard&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;wheel&lt;span class="o"&gt;)&lt;/span&gt;,1000&lt;span class="o"&gt;(&lt;/span&gt;gerard&lt;span class="o"&gt;)&lt;/span&gt;
+alpine:~$ sudo id
+&lt;span class="o"&gt;[&lt;/span&gt;sudo&lt;span class="o"&gt;]&lt;/span&gt; password &lt;span class="k"&gt;for&lt;/span&gt; gerard:
+&lt;span class="nv"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;root&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;root&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;root&lt;span class="o"&gt;)&lt;/span&gt;,1&lt;span class="o"&gt;(&lt;/span&gt;bin&lt;span class="o"&gt;)&lt;/span&gt;,2&lt;span class="o"&gt;(&lt;/span&gt;daemon&lt;span class="o"&gt;)&lt;/span&gt;,3&lt;span class="o"&gt;(&lt;/span&gt;sys&lt;span class="o"&gt;)&lt;/span&gt;,4&lt;span class="o"&gt;(&lt;/span&gt;adm&lt;span class="o"&gt;)&lt;/span&gt;,6&lt;span class="o"&gt;(&lt;/span&gt;disk&lt;span class="o"&gt;)&lt;/span&gt;,10&lt;span class="o"&gt;(&lt;/span&gt;wheel&lt;span class="o"&gt;)&lt;/span&gt;,11&lt;span class="o"&gt;(&lt;/span&gt;floppy&lt;span class="o"&gt;)&lt;/span&gt;,20&lt;span class="o"&gt;(&lt;/span&gt;dialout&lt;span class="o"&gt;)&lt;/span&gt;,26&lt;span class="o"&gt;(&lt;/span&gt;tape&lt;span class="o"&gt;)&lt;/span&gt;,27&lt;span class="o"&gt;(&lt;/span&gt;video&lt;span class="o"&gt;)&lt;/span&gt;
+alpine:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;alpine:~$ sudo passwd -l root
+passwd: password &lt;span class="k"&gt;for&lt;/span&gt; root changed by root
+alpine:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Creación de un swapfile&lt;/h3&gt;
+&lt;p&gt;Como pretendíamos clonar esta imagen base, se decidió deshabilitar la partición &lt;em&gt;swap&lt;/em&gt; con &lt;code&gt;SWAP_SIZE=0&lt;/code&gt;. Esto nos deja si memoria &lt;em&gt;swap&lt;/em&gt;, y no es recomendable. Para poder redimensionar la memoria &lt;em&gt;swap&lt;/em&gt; en cada clon, lo fácil es &lt;a href="http://www.linuxsysadmin.ml/2018/07/ampliando-la-memoria-swap-mediante-swapfiles.html"&gt;crear la &lt;em&gt;swap&lt;/em&gt; en un fichero&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Para ello solo hay que crear un fichero para tal uso, con el tamaño deseado y perteciendo a &lt;strong&gt;root&lt;/strong&gt;, con permisos 600. Lo formateamos como &lt;em&gt;swap&lt;/em&gt; y ya lo tenemos preparado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;alpine:~$ sudo dd &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/dev/zero &lt;span class="nv"&gt;of&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/swapfile &lt;span class="nv"&gt;bs&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;1M &lt;span class="nv"&gt;count&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;512&lt;/span&gt;
+...
+alpine:~$ sudo chown &lt;span class="m"&gt;600&lt;/span&gt; /swapfile
+alpine:~$ sudo mkswap /swapfile
+...
+alpine:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para que se monte automáticamente en cada &lt;em&gt;boot&lt;/em&gt;, se necesitan dos cosas: ponerlo en &lt;code&gt;/etc/fstab&lt;/code&gt; y tener el servicio &lt;strong&gt;swap&lt;/strong&gt; activado en &lt;strong&gt;boot time&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;alpine:~$ grep swap /etc/fstab
+/swapfile none swap sw &lt;span class="m"&gt;0&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;
+alpine:~$ sudo rc-update add swap
+ * service swap added to runlevel default
+alpine:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En el siguiente reinicio, la memoria &lt;em&gt;swap&lt;/em&gt; se activará sola. Para los que no tengáis paciencia para reiniciar, podéis levantar el servicio directamente.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;alpine:~$ sudo rc-service swap start
+ * Activating swap devices ...                                                                                           &lt;span class="o"&gt;[&lt;/span&gt; ok &lt;span class="o"&gt;]&lt;/span&gt;
+alpine:~$ free -m
+             total       used       free     shared    buffers     cached
+Mem:           &lt;span class="m"&gt;238&lt;/span&gt;        &lt;span class="m"&gt;231&lt;/span&gt;          &lt;span class="m"&gt;6&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;          &lt;span class="m"&gt;5&lt;/span&gt;        &lt;span class="m"&gt;196&lt;/span&gt;
+-/+ buffers/cache:         &lt;span class="m"&gt;29&lt;/span&gt;        &lt;span class="m"&gt;208&lt;/span&gt;
+Swap:          &lt;span class="m"&gt;511&lt;/span&gt;          &lt;span class="m"&gt;0&lt;/span&gt;        &lt;span class="m"&gt;511&lt;/span&gt;
+alpine:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Los clones pueden limitarse a desactivar la &lt;em&gt;swap&lt;/em&gt; con &lt;code&gt;swapoff&lt;/code&gt;, recrear &lt;code&gt;/swapfile&lt;/code&gt; con el tamaño y los permisos adecuados, lanzar el &lt;code&gt;mkswap&lt;/code&gt; y volver a activarla con &lt;code&gt;swapon&lt;/code&gt;.&lt;/p&gt;
+&lt;h3&gt;Limpiar configuraciones&lt;/h3&gt;
+&lt;p&gt;Los ficheros de configuración son bastante correctos, pero no está de más revisar algunos de ellos, especialmente si clonamos esta máquina hay que cambiarlos en el clon:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/etc/hostname&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/etc/hosts&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/etc/network/interfaces&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/etc/resolv.conf&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/etc/apk/repositories&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Carpetas ~/bin de usuario&lt;/h3&gt;
+&lt;p&gt;Es muy útil que los usuarios tengan una carpeta &lt;code&gt;bin&lt;/code&gt; en su carpeta personal, para poner &lt;em&gt;scripts&lt;/em&gt; u otras utilidades. Eso se puede conseguir de dos formas: una global, o por usuario.&lt;/p&gt;
+&lt;h4&gt;De forma global&lt;/h4&gt;
+&lt;p&gt;Útil cuando queremos que se aplique a todos los usuarios; podemos editar &lt;code&gt;/etc/profile&lt;/code&gt;, o aprovecharnos de que se incluye todos los ficheros &lt;code&gt;.sh&lt;/code&gt; en &lt;code&gt;/etc/profile.d/&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;alpine:~$ cat /etc/profile.d/local_bin.sh
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[[&lt;/span&gt; -d ~/bin &lt;span class="o"&gt;]]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+    &lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;~/bin:&lt;span class="nv"&gt;$PATH&lt;/span&gt;
+&lt;span class="k"&gt;fi&lt;/span&gt;
+alpine:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Este fichero necesita acabar en &lt;code&gt;.sh&lt;/code&gt;, pero no necesita permisos de ejecución; se incluye usando &lt;code&gt;source&lt;/code&gt;.&lt;/p&gt;
+&lt;h4&gt;De forma local&lt;/h4&gt;
+&lt;p&gt;El &lt;em&gt;shell&lt;/em&gt; que viene con &lt;strong&gt;Alpine Linux&lt;/strong&gt; respeta la convención de leer el fichero &lt;code&gt;.profile&lt;/code&gt;. Podemos hacer el cambio individualmente para cada usuario; recordad que no se hace solo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;alpine:~$ cat .profile
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[[&lt;/span&gt; -d ~/bin &lt;span class="o"&gt;]]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+    &lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;~/bin:&lt;span class="nv"&gt;$PATH&lt;/span&gt;
+&lt;span class="k"&gt;fi&lt;/span&gt;
+alpine:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;En este punto tengo un servidor mínimo con &lt;strong&gt;Alpine Linux&lt;/strong&gt;, que usa 27mb de memoria, ocupa 130mb de disco (&lt;em&gt;swapfile&lt;/em&gt; aparte) y con un magnífico gestor de paquetes, al que no le falta de nada.&lt;/p&gt;
+&lt;p&gt;Los paquetes de la distribución no están a la última (tenéis la opción de la rama &lt;em&gt;edge&lt;/em&gt;), pero aún así están más actualizados que en &lt;strong&gt;Debian&lt;/strong&gt;, con un &lt;em&gt;focus&lt;/em&gt; importante en la seguridad. Si se instala un paquete, por ejemplo &lt;strong&gt;docker&lt;/strong&gt;, las dependencias son muy correctas, y no se trae ni &lt;strong&gt;python&lt;/strong&gt;, ni &lt;strong&gt;gcc&lt;/strong&gt;, ni &lt;strong&gt;git&lt;/strong&gt;, a diferencia de &lt;strong&gt;Debian&lt;/strong&gt;. Esto reduce la superficie de ataque y las herramientas disponibles en caso de intrusión.&lt;/p&gt;
+&lt;p&gt;Yo lo he utilizado como nodo de un &lt;em&gt;docker swarm&lt;/em&gt;, con un disco de tamaño adecuado montado en &lt;code&gt;/var/lib/docker&lt;/code&gt; y un poco más de memoria disponible. Es un caso de éxito sin precedentes.&lt;/p&gt;</content><category term="alpine"></category><category term="linux"></category></entry><entry><title>Entornos de trabajo en contenedores Docker</title><link href="http://www.linuxsysadmin.ml/2018/03/entornos-de-trabajo-en-contenedores-docker.html" rel="alternate"></link><published>2018-03-05T10:00:00+01:00</published><updated>2018-03-05T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-03-05:/2018/03/entornos-de-trabajo-en-contenedores-docker.html</id><summary type="html">&lt;p&gt;Cuando usamos herramientas concretas para todos los miembros de un mismo equipo, suele ser problemático instalarlo en sus equipos. Por la ausencia de instalación y su gran reproducibilidad, es cada vez más frecuente distribuir esas herramientas en una imagen de &lt;strong&gt;Docker&lt;/strong&gt;, aunque esto no garantiza estar libres de otros problemas …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando usamos herramientas concretas para todos los miembros de un mismo equipo, suele ser problemático instalarlo en sus equipos. Por la ausencia de instalación y su gran reproducibilidad, es cada vez más frecuente distribuir esas herramientas en una imagen de &lt;strong&gt;Docker&lt;/strong&gt;, aunque esto no garantiza estar libres de otros problemas.&lt;/p&gt;
 &lt;p&gt;El tema más problemático suele ser la diferencia entre el usuario del equipo y el del contenedor &lt;strong&gt;Docker&lt;/strong&gt;; un fichero guardado con el usuario &lt;em&gt;john&lt;/em&gt; en el contenedor pasaria a pertenecer, por ejemplo, al usuario &lt;em&gt;james&lt;/em&gt; en el &lt;em&gt;host&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Esto se debe a que el usuario se guarda en el disco como su identificador numérico, que luego se interpreta de acuerdo al fichero &lt;em&gt;/etc/passwd&lt;/em&gt; del sistema operativo que lo lea. Afortunadamente, este es un problema menor que puede ser solventado con un poco de habilidad.&lt;/p&gt;
 &lt;h2&gt;Un ejemplo práctico: un contenedor para usar Python&lt;/h2&gt;
