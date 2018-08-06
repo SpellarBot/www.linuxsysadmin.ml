@@ -212,7 +212,7 @@ alpine:~$
 <p>Para ello solo hay que crear un fichero para tal uso, con el tamaño deseado y perteciendo a <strong>root</strong>, con permisos 600. Lo formateamos como <em>swap</em> y ya lo tenemos preparado.</p>
 <div class="highlight"><pre><span></span>alpine:~$ sudo dd <span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/swapfile <span class="nv">bs</span><span class="o">=</span>1M <span class="nv">count</span><span class="o">=</span><span class="m">512</span>
 ...
-alpine:~$ sudo chown <span class="m">600</span> /swapfile
+alpine:~$ sudo chmod <span class="m">600</span> /swapfile
 alpine:~$ sudo mkswap /swapfile
 ...
 alpine:~$
@@ -466,11 +466,6 @@ alpine:~$
                             certificado
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.ml/tag/cliente.html">
-                            cliente
-                        </a>
-                    </li>
                     <li class="list-group-item tag-2">
                         <a href="http://www.linuxsysadmin.ml/tag/cluster.html">
                             cluster
@@ -714,6 +709,11 @@ alpine:~$
                     <li class="list-group-item tag-2">
                         <a href="http://www.linuxsysadmin.ml/tag/password.html">
                             password
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.ml/tag/pets-vs-cattle.html">
+                            pets vs cattle
                         </a>
                     </li>
                     <li class="list-group-item tag-3">
