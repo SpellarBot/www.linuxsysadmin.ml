@@ -5,42 +5,49 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/</loc>
-<lastmod>2018-08-13T10:21:56-00:00</lastmod>
+<lastmod>2018-08-24T07:32:36-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2018-08-13T10:21:56-00:00</lastmod>
+<lastmod>2018-08-24T07:32:36-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2018-08-13T10:21:56-00:00</lastmod>
+<lastmod>2018-08-24T07:32:36-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2018-08-13T10:21:56-00:00</lastmod>
+<lastmod>2018-08-24T07:32:36-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2018-08-13T10:21:56-00:00</lastmod>
+<lastmod>2018-08-24T07:32:36-00:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/curriculum.html</loc>
-<lastmod>2018-08-13T10:21:56-00:00</lastmod>
+<lastmod>2018-08-24T07:32:36-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/2018/08/verificando-contrasenas-manualmente-en-linux.html</loc>
+<lastmod>2018-08-20T10:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1111,7 +1118,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/category/seguridad.html</loc>
-<lastmod>2018-02-05T10:00:00-00:15</lastmod>
+<lastmod>2018-08-20T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1126,6 +1133,20 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.ml/category/virtualizacion.html</loc>
 <lastmod>2016-05-23T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/tag/password.html</loc>
+<lastmod>2018-08-20T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/tag/shadow.html</loc>
+<lastmod>2018-08-20T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1287,13 +1308,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/tomcat.html</loc>
 <lastmod>2018-06-25T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>http://www.linuxsysadmin.ml/tag/password.html</loc>
-<lastmod>2018-06-18T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2917,7 +2931,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2018-08-13T09:00:00-00:15</lastmod>
+<lastmod>2018-08-20T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

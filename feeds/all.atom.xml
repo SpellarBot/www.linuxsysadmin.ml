@@ -1,5 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-08-13T09:00:00+02:00</updated><entry><title>Cambiando la posición del fichero authorized_keys</title><link href="http://www.linuxsysadmin.ml/2018/08/cambiando-la-posicion-del-fichero-authorized-keys.html" rel="alternate"></link><published>2018-08-13T09:00:00+02:00</published><updated>2018-08-13T09:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-08-13:/2018/08/cambiando-la-posicion-del-fichero-authorized-keys.html</id><summary type="html">&lt;p&gt;Un requerimiento de seguridad estándar en mi trabajo, es que los servidores SFTP no permitan la autenticación con &lt;em&gt;passwords&lt;/em&gt; normales, y estamos obligados a usar autenticación por claves. El otro día tuvimos una queja de un usuario que no podía entrar porque había eliminado su carpeta &lt;code&gt;.ssh&lt;/code&gt; de forma consciente …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Un requerimiento de seguridad estándar en mi trabajo, es que los servidores SFTP no permitan la autenticación con &lt;em&gt;passwords&lt;/em&gt; normales, y estamos obligados a usar autenticación por claves. El otro día tuvimos una queja de un usuario que no podía entrar porque había eliminado su carpeta &lt;code&gt;.ssh&lt;/code&gt; de forma consciente.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-08-20T10:00:00+02:00</updated><entry><title>Verificando contraseñas manualmente en Linux</title><link href="http://www.linuxsysadmin.ml/2018/08/verificando-contrasenas-manualmente-en-linux.html" rel="alternate"></link><published>2018-08-20T10:00:00+02:00</published><updated>2018-08-20T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-08-20:/2018/08/verificando-contrasenas-manualmente-en-linux.html</id><summary type="html">&lt;p&gt;El otro día recibí una petición inusual; un usuario no se acordaba de su contraseña y quería que se la descifrara de los ficheros de sistema. Como eso no es factible, y tras mi negativa, él me dijo que no sabía si era una de una lista, lo que comprobé …&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día recibí una petición inusual; un usuario no se acordaba de su contraseña y quería que se la descifrara de los ficheros de sistema. Como eso no es factible, y tras mi negativa, él me dijo que no sabía si era una de una lista, lo que comprobé.&lt;/p&gt;
+&lt;p&gt;Las contraseñas en &lt;strong&gt;Linux&lt;/strong&gt; no se guardan; lo que se guarda es un &lt;em&gt;hash&lt;/em&gt; de las mismas en el fichero &lt;code&gt;/etc/shadow&lt;/code&gt;, y para verificarlas solo hay que hacer el mismo procedimiento de &lt;em&gt;hash&lt;/em&gt;, para luego comparar los resultados.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo&lt;/h2&gt;
+&lt;p&gt;El usuario &lt;strong&gt;zeus&lt;/strong&gt; ha perdido su contraseña y por lo tanto no puede acceder a &lt;strong&gt;olympus&lt;/strong&gt;. Como administrador, puedo ver lo que hay en &lt;code&gt;/etc/shadow&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@olympus:~# grep zeus /etc/shadow
+zeus:&lt;span class="nv"&gt;$6$jq62gTbU$kYZgWuKLuNTX0Ur&lt;/span&gt;.UWiuBJuIYltW3hc7EdI2/4RpldwUoLlRl9IdXgJb6B3kxEoAxWolDwXDCqOnz8SN0CKkJ1:17739:0:99999:7:::
+root@olympus:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Los campos se separan por &lt;code&gt;:&lt;/code&gt;; el primer campo es el usuario y el segundo, el &lt;em&gt;hash&lt;/em&gt; de su password. Este &lt;em&gt;hash&lt;/em&gt; tiene la forma &lt;code&gt;$id$salt$hashed&lt;/code&gt;, y cada parte significa algo:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;6&lt;/code&gt; &amp;rarr; es algoritmo usado para el &lt;em&gt;hash&lt;/em&gt;, donde "6" significa &lt;strong&gt;SHA-512&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;jq62gTbU&lt;/code&gt; &amp;rarr; el algoritmo &lt;strong&gt;SHA-512&lt;/strong&gt; requiere de un &lt;em&gt;salt&lt;/em&gt; para combinar con la contraseña antes del &lt;em&gt;hash&lt;/em&gt;, por seguridad.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;kYZgWuKLuNTX0Ur.UWiuBJuIYltW3hc7EdI2/4RpldwUoLlRl9IdXgJb6B3kxEoAxWolDwXDCqOnz8SN0CKkJ1&lt;/code&gt; &amp;rarr; este es el &lt;em&gt;hash&lt;/em&gt; propiamente dicho.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: Más información &lt;a href="https://www.cyberciti.biz/faq/understanding-etcshadow-file/"&gt;aquí&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Sabiendo el algoritmo y el &lt;em&gt;salt&lt;/em&gt;, podemos hacer el &lt;em&gt;hash&lt;/em&gt; de cualquier contraseña. En caso de que el &lt;em&gt;hash&lt;/em&gt; sea el mismo que tenemos guardado, &lt;strong&gt;Linux&lt;/strong&gt; asume la contraseña como válida. Es importante recalcar que dos &lt;em&gt;salt&lt;/em&gt; distintos darían dos &lt;em&gt;hash&lt;/em&gt; distintos.&lt;/p&gt;
+&lt;p&gt;Podemos probar con la contraseña &lt;code&gt;temporal&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;crypt&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;crypt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;crypt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;temporal&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;$6$jq62gTbU&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="s1"&gt;&amp;#39;$6$jq62gTbU$Zr/CBQAIKhWu1wCIE/jP0okICiaCQrw.eUBl4f9fQjgyCcLzkGB0dqfE8sM4tB1YG/DtLtaompXqvIrpPlErn1&amp;#39;&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;No nos cuadra con el ejemplo, con lo que contraseña sería rechazada. Probemos ahora con &lt;code&gt;supersecret&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;crypt&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;crypt&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;crypt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;supersecret&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;$6$jq62gTbU&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="s1"&gt;&amp;#39;$6$jq62gTbU$kYZgWuKLuNTX0Ur.UWiuBJuIYltW3hc7EdI2/4RpldwUoLlRl9IdXgJb6B3kxEoAxWolDwXDCqOnz8SN0CKkJ1&amp;#39;&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esto es exactamente lo mismo que sacamos del fichero &lt;code&gt;/etc/shadow&lt;/code&gt;, con lo que la contraseña sería aceptada. Ahora le podemos comunicar a &lt;strong&gt;zeus&lt;/strong&gt; que puede entrar a &lt;strong&gt;olympus&lt;/strong&gt; usando la contraseña &lt;code&gt;supersecret&lt;/code&gt;.&lt;/p&gt;
+&lt;h2&gt;Probando contraseñas por fuerza bruta&lt;/h2&gt;
+&lt;p&gt;Si podemos hacer una función que nos permita validar una contraseña dada, podemos enchufar un montón de entradas. Tirando de &lt;strong&gt;python&lt;/strong&gt;, esto no tiene mucha dificultad:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@olympus:~# cat test_passwords.py
+&lt;span class="c1"&gt;#!/usr/bin/env python3&lt;/span&gt;
+
+import crypt
+
+class PasswordCracker:
+    def __init__&lt;span class="o"&gt;(&lt;/span&gt;self, shadow&lt;span class="o"&gt;)&lt;/span&gt;:
+        self.shadow &lt;span class="o"&gt;=&lt;/span&gt; shadow
+        self.salt &lt;span class="o"&gt;=&lt;/span&gt; shadow&lt;span class="o"&gt;[&lt;/span&gt;:shadow.rfind&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;$&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)]&lt;/span&gt;
+    def verify&lt;span class="o"&gt;(&lt;/span&gt;self, password&lt;span class="o"&gt;)&lt;/span&gt;:
+        &lt;span class="nb"&gt;hash&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; crypt.crypt&lt;span class="o"&gt;(&lt;/span&gt;password, self.salt&lt;span class="o"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nb"&gt;hash&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; self.shadow
+
+&lt;span class="nv"&gt;shadow&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;$6$jq62gTbU$kYZgWuKLuNTX0Ur.UWiuBJuIYltW3hc7EdI2/4RpldwUoLlRl9IdXgJb6B3kxEoAxWolDwXDCqOnz8SN0CKkJ1&amp;#39;&lt;/span&gt;
+&lt;span class="nv"&gt;possible&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;temporal&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;baspassword&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;secret&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;supersecret&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;pc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; PasswordCracker&lt;span class="o"&gt;(&lt;/span&gt;shadow&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; password in possible:
+    &lt;span class="k"&gt;if&lt;/span&gt; pc.verify&lt;span class="o"&gt;(&lt;/span&gt;password&lt;span class="o"&gt;)&lt;/span&gt;:
+        print&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Password &amp;quot;%s&amp;quot; is valid&amp;#39;&lt;/span&gt; % password&lt;span class="o"&gt;)&lt;/span&gt;
+root@olympus:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y una ejecución nos probaría toda la lista:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@olympus:~# ./test_passwords.py
+Password &lt;span class="s2"&gt;&amp;quot;supersecret&amp;quot;&lt;/span&gt; is valid
+root@olympus:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: Probar varias contraseñas no lleva mucho tiempo, pero si intentáis un generador de contraseñas posibles, puede ser muy costoso en tiempo.&lt;/p&gt;</content><category term="password"></category><category term="shadow"></category></entry><entry><title>Cambiando la posición del fichero authorized_keys</title><link href="http://www.linuxsysadmin.ml/2018/08/cambiando-la-posicion-del-fichero-authorized-keys.html" rel="alternate"></link><published>2018-08-13T09:00:00+02:00</published><updated>2018-08-13T09:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-08-13:/2018/08/cambiando-la-posicion-del-fichero-authorized-keys.html</id><summary type="html">&lt;p&gt;Un requerimiento de seguridad estándar en mi trabajo, es que los servidores SFTP no permitan la autenticación con &lt;em&gt;passwords&lt;/em&gt; normales, y estamos obligados a usar autenticación por claves. El otro día tuvimos una queja de un usuario que no podía entrar porque había eliminado su carpeta &lt;code&gt;.ssh&lt;/code&gt; de forma consciente …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Un requerimiento de seguridad estándar en mi trabajo, es que los servidores SFTP no permitan la autenticación con &lt;em&gt;passwords&lt;/em&gt; normales, y estamos obligados a usar autenticación por claves. El otro día tuvimos una queja de un usuario que no podía entrar porque había eliminado su carpeta &lt;code&gt;.ssh&lt;/code&gt; de forma consciente.&lt;/p&gt;
 &lt;p&gt;En casos como este no nos queda más remedio que reirnos un rato y restablecer su fichero &lt;code&gt;authorized_keys&lt;/code&gt; desde un &lt;em&gt;backup&lt;/em&gt;. Sin embargo, hay varias preguntas que se nos deberían plantear en estos casos:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;¿Por qué este usuario tenía permisos para escribir la carpeta &lt;code&gt;.ssh&lt;/code&gt;?&lt;/li&gt;
