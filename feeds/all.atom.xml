@@ -1,5 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-08-20T10:00:00+02:00</updated><entry><title>Verificando contraseñas manualmente en Linux</title><link href="http://www.linuxsysadmin.ml/2018/08/verificando-contrasenas-manualmente-en-linux.html" rel="alternate"></link><published>2018-08-20T10:00:00+02:00</published><updated>2018-08-20T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-08-20:/2018/08/verificando-contrasenas-manualmente-en-linux.html</id><summary type="html">&lt;p&gt;El otro día recibí una petición inusual; un usuario no se acordaba de su contraseña y quería que se la descifrara de los ficheros de sistema. Como eso no es factible, y tras mi negativa, él me dijo que no sabía si era una de una lista, lo que comprobé …&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día recibí una petición inusual; un usuario no se acordaba de su contraseña y quería que se la descifrara de los ficheros de sistema. Como eso no es factible, y tras mi negativa, él me dijo que no sabía si era una de una lista, lo que comprobé.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-08-27T10:00:00+02:00</updated><entry><title>Deshaciéndome del historial de comandos en Bash</title><link href="http://www.linuxsysadmin.ml/2018/08/deshaciendome-del-historial-de-comandos-en-bash.html" rel="alternate"></link><published>2018-08-27T10:00:00+02:00</published><updated>2018-08-27T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-08-27:/2018/08/deshaciendome-del-historial-de-comandos-en-bash.html</id><summary type="html">&lt;p&gt;Muchas veces me pregunto para qué necesito guardar un histórico de comandos en mis sesiones de &lt;strong&gt;bash&lt;/strong&gt;. Como no soy nada repetitivo con los comandos que uso, solo se trata de basura acumulándose en &lt;code&gt;~/.bash_history&lt;/code&gt;, y un riesgo innecesario de que otros usuarios puedan chafardear los comandos que voy utilizando …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Muchas veces me pregunto para qué necesito guardar un histórico de comandos en mis sesiones de &lt;strong&gt;bash&lt;/strong&gt;. Como no soy nada repetitivo con los comandos que uso, solo se trata de basura acumulándose en &lt;code&gt;~/.bash_history&lt;/code&gt;, y un riesgo innecesario de que otros usuarios puedan chafardear los comandos que voy utilizando.&lt;/p&gt;
+&lt;p&gt;¿Pero como funciona el mecanismo de &lt;em&gt;history&lt;/em&gt; en &lt;strong&gt;bash&lt;/strong&gt;?&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Cuando inicias sesión en &lt;strong&gt;bash&lt;/strong&gt;, se lee la lista del historial de comandos desde el fichero &lt;code&gt;~/.bash_history&lt;/code&gt;. Concretamente el fichero es el que indica el parámetro del &lt;em&gt;shell&lt;/em&gt; &lt;code&gt;HISTFILE&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Cada vez que escribes un comando, la lista en memoria se actualiza con el nuevo comando, quedando limitado por el parámetro de &lt;em&gt;shell&lt;/em&gt; &lt;code&gt;HISTSIZE&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Al salir de la sesión, las últimas &lt;code&gt;HISTFILESIZE&lt;/code&gt; líneas de la historia se escriben en &lt;code&gt;HISTFILE&lt;/code&gt;, para su uso en sesiones posteriores.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;Eliminar el historial de comandos&lt;/h2&gt;
+&lt;p&gt;Con esto en mente podemos hacer algunas modificaciones en los parámetros del &lt;em&gt;shell&lt;/em&gt; mediante el comando &lt;code&gt;set&lt;/code&gt; que puede tener consecuencias en el comportamiento del historial de comandos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Hacer un &lt;code&gt;unset&lt;/code&gt; de &lt;code&gt;HISTFILE&lt;/code&gt; va a causar que el histórico no se guarde en ningún fichero.&lt;/li&gt;
+&lt;li&gt;Hacer un &lt;code&gt;set&lt;/code&gt; de &lt;code&gt;HISTSIZE&lt;/code&gt; a un valor dado, nos va a limitar los comandos recordados en la sesión de &lt;strong&gt;bash&lt;/strong&gt; actual.&lt;/li&gt;
+&lt;li&gt;Hacer un &lt;code&gt;set&lt;/code&gt; de &lt;code&gt;HISTFILESIZE&lt;/code&gt; a un valor dado, va a limitar el número de comandos que se recuerden entre sesiones.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Considero interesante que los comandos se recuerden en esta sesión, pero no quiero que se guarden entre sesiones. En estos casos podemos limitar a 0 el valor de &lt;code&gt;HISTFILESIZE&lt;/code&gt;, con lo que el fichero &lt;code&gt;.bash_history&lt;/code&gt; quedaría vacío; otra opción es hacer un &lt;code&gt;unset&lt;/code&gt; de &lt;code&gt;HISTFILE&lt;/code&gt; para que el fichero no se guarde, y por lo tanto lo podamos eliminar sin que se recree.&lt;/p&gt;
+&lt;p&gt;Para hacer estos &lt;code&gt;set&lt;/code&gt; y &lt;code&gt;unset&lt;/code&gt; permanentes, voy a utilizar el fichero &lt;code&gt;.bashrc&lt;/code&gt;, que nos permite ejecutarlos automáticamente en cada incio de sesión de &lt;strong&gt;bash&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@server:~$ tail -1 .bashrc
+&lt;span class="nb"&gt;unset&lt;/span&gt; HISTFILE
+gerard@server:~$ . .bashrc
+gerard@server:~$ rm .bash_history
+gerard@server:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto no vamos a volver a ver el molesto fichero, aunque mantenemos el historial de la sesión actual, que por defecto en &lt;strong&gt;Debian&lt;/strong&gt; se indica en el mismo fichero:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@server:~$ cat .bashrc
+...
+&lt;span class="c1"&gt;# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)&lt;/span&gt;
+&lt;span class="nv"&gt;HISTSIZE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1000&lt;/span&gt;
+&lt;span class="nv"&gt;HISTFILESIZE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2000&lt;/span&gt;
+...
+&lt;span class="nb"&gt;unset&lt;/span&gt; HISTFILE
+gerard@server:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso recordaríamos un máximo de 1000 comandos durante la sesión, pero no entre sesiones.&lt;/p&gt;
+&lt;h2&gt;Otros shells&lt;/h2&gt;
+&lt;p&gt;Ya hemos visto como se puede hacer con &lt;strong&gt;bash&lt;/strong&gt;, pero no siempre tenemos un &lt;em&gt;shell&lt;/em&gt; tan configurable; yo mismo utilizo mucho &lt;strong&gt;Alpine Linux&lt;/strong&gt; y su &lt;em&gt;shell&lt;/em&gt; no admite estas variables.&lt;/p&gt;
+&lt;p&gt;Si os pasa esto, tenéis dos opciones:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Quitar todos los permisos de escritura en el fichero, para que la lista no se pueda escribir en el mismo (con lo que se perdería entre sesiones)&lt;/li&gt;
+&lt;li&gt;Sustituir el fichero &lt;code&gt;.ash_history&lt;/code&gt; o similar por un &lt;em&gt;soft link&lt;/em&gt; a &lt;code&gt;/dev/null&lt;/code&gt;; esto hará que no se escriba nada y, si se lee, devolverá 0 bytes (interpretado como 0 comandos).&lt;/li&gt;
+&lt;/ul&gt;</content><category term="bash"></category><category term="histfile"></category></entry><entry><title>Verificando contraseñas manualmente en Linux</title><link href="http://www.linuxsysadmin.ml/2018/08/verificando-contrasenas-manualmente-en-linux.html" rel="alternate"></link><published>2018-08-20T10:00:00+02:00</published><updated>2018-08-20T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-08-20:/2018/08/verificando-contrasenas-manualmente-en-linux.html</id><summary type="html">&lt;p&gt;El otro día recibí una petición inusual; un usuario no se acordaba de su contraseña y quería que se la descifrara de los ficheros de sistema. Como eso no es factible, y tras mi negativa, él me dijo que no sabía si era una de una lista, lo que comprobé …&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día recibí una petición inusual; un usuario no se acordaba de su contraseña y quería que se la descifrara de los ficheros de sistema. Como eso no es factible, y tras mi negativa, él me dijo que no sabía si era una de una lista, lo que comprobé.&lt;/p&gt;
 &lt;p&gt;Las contraseñas en &lt;strong&gt;Linux&lt;/strong&gt; no se guardan; lo que se guarda es un &lt;em&gt;hash&lt;/em&gt; de las mismas en el fichero &lt;code&gt;/etc/shadow&lt;/code&gt;, y para verificarlas solo hay que hacer el mismo procedimiento de &lt;em&gt;hash&lt;/em&gt;, para luego comparar los resultados.&lt;/p&gt;
 &lt;h2&gt;Un ejemplo&lt;/h2&gt;
 &lt;p&gt;El usuario &lt;strong&gt;zeus&lt;/strong&gt; ha perdido su contraseña y por lo tanto no puede acceder a &lt;strong&gt;olympus&lt;/strong&gt;. Como administrador, puedo ver lo que hay en &lt;code&gt;/etc/shadow&lt;/code&gt;:&lt;/p&gt;
