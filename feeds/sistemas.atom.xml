@@ -1,5 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-08-13T09:00:00+02:00</updated><entry><title>Cambiando la posición del fichero authorized_keys</title><link href="http://www.linuxsysadmin.ml/2018/08/cambiando-la-posicion-del-fichero-authorized-keys.html" rel="alternate"></link><published>2018-08-13T09:00:00+02:00</published><updated>2018-08-13T09:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-08-13:/2018/08/cambiando-la-posicion-del-fichero-authorized-keys.html</id><summary type="html">&lt;p&gt;Un requerimiento de seguridad estándar en mi trabajo, es que los servidores SFTP no permitan la autenticación con &lt;em&gt;passwords&lt;/em&gt; normales, y estamos obligados a usar autenticación por claves. El otro día tuvimos una queja de un usuario que no podía entrar porque había eliminado su carpeta &lt;code&gt;.ssh&lt;/code&gt; de forma consciente …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Un requerimiento de seguridad estándar en mi trabajo, es que los servidores SFTP no permitan la autenticación con &lt;em&gt;passwords&lt;/em&gt; normales, y estamos obligados a usar autenticación por claves. El otro día tuvimos una queja de un usuario que no podía entrar porque había eliminado su carpeta &lt;code&gt;.ssh&lt;/code&gt; de forma consciente.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-09-10T10:00:00+02:00</updated><entry><title>Una unidad de red remota con SSHFS</title><link href="http://www.linuxsysadmin.ml/2018/09/una-unidad-de-red-remota-con-sshfs.html" rel="alternate"></link><published>2018-09-10T10:00:00+02:00</published><updated>2018-09-10T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-09-10:/2018/09/una-unidad-de-red-remota-con-sshfs.html</id><summary type="html">&lt;p&gt;Es muy cómodo dejar un fichero en una carpeta local y saber que ese fichero está a salvo, en la nube; seguramente los que utilizáis un servicio de sincronización en la nube váis a estar de acuerdo. La empresas no suelen permitirlo, pero podéis utilizar un servicio local por &lt;strong&gt;SSH …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Es muy cómodo dejar un fichero en una carpeta local y saber que ese fichero está a salvo, en la nube; seguramente los que utilizáis un servicio de sincronización en la nube váis a estar de acuerdo. La empresas no suelen permitirlo, pero podéis utilizar un servicio local por &lt;strong&gt;SSH&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;El ingenio se llama &lt;strong&gt;SSHFS&lt;/strong&gt; y lanza las operaciones de lectura y escritura contra una máquina remota que solamente debe ofrecer &lt;strong&gt;SSH&lt;/strong&gt;, de forma que para nosotros parece que se trate de un sistema de ficheros local.&lt;/p&gt;
+&lt;h2&gt;El servidor&lt;/h2&gt;
+&lt;p&gt;Para utilizar &lt;strong&gt;SSHFS&lt;/strong&gt; solo necesitamos un servidor que ofrezca &lt;strong&gt;SSH&lt;/strong&gt;, aunque también funciona por &lt;strong&gt;SFTP&lt;/strong&gt;. Como comodidad adicional, vamos a utilizar &lt;a href="http://www.linuxsysadmin.ml/2016/05/autenticacion-ssh-por-claves.html"&gt;autenticacíon por claves&lt;/a&gt;. Como conisderación de seguridad, vamos a enjaular al usuario que guarde los datos y lo vamos a lmitar a &lt;strong&gt;SFTP&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: Se asume que el servidor ya tiene el servidor &lt;strong&gt;SSH&lt;/strong&gt; instalado; de no ser así, basta con hacer un &lt;code&gt;sudo apt install openssh-server&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Lo primero es crear un usuario para que &lt;strong&gt;SSHFS&lt;/strong&gt; pueda entrar al servidor por &lt;strong&gt;SSH&lt;/strong&gt;/&lt;strong&gt;SFTP&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@server:~$ sudo adduser nas
+...
+gerard@server:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Le asignamos la parte pública de la clave &lt;strong&gt;SSH&lt;/strong&gt; en el fichero &lt;code&gt;~/.ssh/authorized_keys&lt;/code&gt; para evitar que tengamos que introducir la contraseña cada vez que montemos la carpeta remota en el cliente, y para evitar ataques de fuerza bruta.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;nas@server:~$ cat .ssh/authorized_keys
+ssh-rsa ...
+nas@server:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este punto, ya podríamos entrar, pero como hemos decidido enjaular, tenemos que ajustar algunos permisos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;La carpeta en donde lo enjaulemos (su &lt;em&gt;home&lt;/em&gt;) debe pertenecer a &lt;strong&gt;root&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Esto nos obliga a tener una carpeta de trabajo en donde nuestro usuario pueda escribir&lt;/li&gt;
+&lt;li&gt;Vamos a cambiar el propietario de la carpeta &lt;code&gt;.ssh&lt;/code&gt; para evitar que este usuario &lt;a href="http://www.linuxsysadmin.ml/2018/08/cambiando-la-posicion-del-fichero-authorized-keys.html"&gt;la pueda eliminar&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Con todo esto, la carpeta nos va a quedar así:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;nas@server:/home$ tree -I gerard -augp
+.
+└── &lt;span class="o"&gt;[&lt;/span&gt;drwxr-xr-x root     root    &lt;span class="o"&gt;]&lt;/span&gt;  nas
+    ├── &lt;span class="o"&gt;[&lt;/span&gt;drwxr-xr-x nas      nas     &lt;span class="o"&gt;]&lt;/span&gt;  archives
+    └── &lt;span class="o"&gt;[&lt;/span&gt;drwxr-xr-x root     root    &lt;span class="o"&gt;]&lt;/span&gt;  .ssh
+        └── &lt;span class="o"&gt;[&lt;/span&gt;-rw-r--r-- root     root    &lt;span class="o"&gt;]&lt;/span&gt;  authorized_keys
+
+&lt;span class="m"&gt;3&lt;/span&gt; directories, &lt;span class="m"&gt;1&lt;/span&gt; file
+nas@server:/home$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Estamos listos para enjaular; modificamos el fichero &lt;code&gt;/etc/ssh/sshd_config&lt;/code&gt; para enjaular a este usuario:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@server:~$ cat /etc/ssh/sshd_config
+...
+Match User nas
+        ChrootDirectory /home/%u
+        ForceCommand internal-sftp
+gerard@server:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos queda recargar el servicio &lt;strong&gt;SSH&lt;/strong&gt; para que lea la nueva configuración.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@server:~$ sudo service ssh restart
+gerard@server:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;El cliente&lt;/h2&gt;
+&lt;p&gt;Para poder montar el sistema de ficheros remoto, se necesita el paquete &lt;strong&gt;sshfs&lt;/strong&gt;, así que lo instalamos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@client:~$ sudo apt-get install sshfs
+...
+gerard@client:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Necesitamos una carpeta en donde montar el sistema de ficheros remoto, que llamaremos &lt;code&gt;NAS&lt;/code&gt;; como no la tengo, la creo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@client:~$ mkdir NAS
+gerard@client:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para montar la carpeta remota solo necesitamos un comando; asumimos que la parte privada de la clave &lt;strong&gt;SSH&lt;/strong&gt; está en &lt;code&gt;.ssh/id_rsa&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@client:~$ sshfs nas@server:/archives NAS -o &lt;span class="nv"&gt;idmap&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;user
+gerard@client:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A partir de ahora podemos trabajar en la carpeta como si de una carpeta local se tratara, por ejemplo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@client:~$ &lt;span class="nb"&gt;cd&lt;/span&gt; NAS/
+gerard@client:~/NAS$ &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="m"&gt;123&lt;/span&gt; &amp;gt; file
+gerard@client:~/NAS$ touch emptyfile
+gerard@client:~/NAS$ ls -lh
+total &lt;span class="m"&gt;4&lt;/span&gt;,0K
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; nas nas &lt;span class="m"&gt;0&lt;/span&gt; ago  &lt;span class="m"&gt;8&lt;/span&gt; &lt;span class="m"&gt;12&lt;/span&gt;:25 emptyfile
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; nas nas &lt;span class="m"&gt;4&lt;/span&gt; ago  &lt;span class="m"&gt;8&lt;/span&gt; &lt;span class="m"&gt;12&lt;/span&gt;:25 file
+gerard@client:~/NAS$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y como es de esperar, estos ficheros han acabado en el servidor:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@server:~$ tree -augp /home/nas/
+/home/nas/
+├── &lt;span class="o"&gt;[&lt;/span&gt;drwxr-xr-x nas      nas     &lt;span class="o"&gt;]&lt;/span&gt;  archives
+│   ├── &lt;span class="o"&gt;[&lt;/span&gt;-rw-r--r-- nas      nas     &lt;span class="o"&gt;]&lt;/span&gt;  emptyfile
+│   └── &lt;span class="o"&gt;[&lt;/span&gt;-rw-r--r-- nas      nas     &lt;span class="o"&gt;]&lt;/span&gt;  file
+└── &lt;span class="o"&gt;[&lt;/span&gt;drwxr-xr-x root     root    &lt;span class="o"&gt;]&lt;/span&gt;  .ssh
+    └── &lt;span class="o"&gt;[&lt;/span&gt;-rw-r--r-- root     root    &lt;span class="o"&gt;]&lt;/span&gt;  authorized_keys
+
+&lt;span class="m"&gt;2&lt;/span&gt; directories, &lt;span class="m"&gt;3&lt;/span&gt; files
+gerard@server:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En el momento que nos cansemos de utilizar la unidad de red, solo tenemos que desmontarla, y la seguiremos viendo con lo que tenía antes del montaje.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@client:~$ fusermount -u NAS
+gerard@client:~$ ls -lh NAS/
+total &lt;span class="m"&gt;0&lt;/span&gt;
+gerard@client:~$
+&lt;/pre&gt;&lt;/div&gt;</content><category term="unidad"></category><category term="remota"></category><category term="ssh"></category><category term="sshfs"></category></entry><entry><title>Cambiando la posición del fichero authorized_keys</title><link href="http://www.linuxsysadmin.ml/2018/08/cambiando-la-posicion-del-fichero-authorized-keys.html" rel="alternate"></link><published>2018-08-13T09:00:00+02:00</published><updated>2018-08-13T09:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-08-13:/2018/08/cambiando-la-posicion-del-fichero-authorized-keys.html</id><summary type="html">&lt;p&gt;Un requerimiento de seguridad estándar en mi trabajo, es que los servidores SFTP no permitan la autenticación con &lt;em&gt;passwords&lt;/em&gt; normales, y estamos obligados a usar autenticación por claves. El otro día tuvimos una queja de un usuario que no podía entrar porque había eliminado su carpeta &lt;code&gt;.ssh&lt;/code&gt; de forma consciente …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Un requerimiento de seguridad estándar en mi trabajo, es que los servidores SFTP no permitan la autenticación con &lt;em&gt;passwords&lt;/em&gt; normales, y estamos obligados a usar autenticación por claves. El otro día tuvimos una queja de un usuario que no podía entrar porque había eliminado su carpeta &lt;code&gt;.ssh&lt;/code&gt; de forma consciente.&lt;/p&gt;
 &lt;p&gt;En casos como este no nos queda más remedio que reirnos un rato y restablecer su fichero &lt;code&gt;authorized_keys&lt;/code&gt; desde un &lt;em&gt;backup&lt;/em&gt;. Sin embargo, hay varias preguntas que se nos deberían plantear en estos casos:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;¿Por qué este usuario tenía permisos para escribir la carpeta &lt;code&gt;.ssh&lt;/code&gt;?&lt;/li&gt;
