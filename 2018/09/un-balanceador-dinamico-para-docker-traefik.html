@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>debian - Linux Sysadmin</title>
+    <title>Un balanceador dinámico para Docker: traefik - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,23 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.ml/2018/09/un-balanceador-dinamico-para-docker-traefik.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="debian" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="traefik,docker,balanceador" />
+        <meta name="description" content="Cuando escalamos nuestros servicios o añadimos nuevos en Docker, suele ser un problema la configuración del balanceador. Se necesita modificar su configuración y reiniciarlo para que la nueva configuración aplique. Con el tiempo han aparecido nuevas soluciones para simplificar estos casos, con configuraciones dinámicas. Una de estas soluciones es Traefik …" />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.ml"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Un balanceador dinámico para Docker: traefik"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.ml/2018/09/un-balanceador-dinamico-para-docker-traefik.html"/>
+        <meta property="og:description" content="Cuando escalamos nuestros servicios o añadimos nuevos en Docker, suele ser un problema la configuración del balanceador. Se necesita modificar su configuración y reiniciarlo para que la nueva configuración aplique. Con el tiempo han aparecido nuevas soluciones para simplificar estos casos, con configuraciones dinámicas. Una de estas soluciones es Traefik …"/>
+        <meta property="article:published_time" content="2018-09-17" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="traefik" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:tag" content="balanceador" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,6 +41,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -78,11 +87,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.ml/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
-        <li class="active">debian</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.ml/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Un balanceador dinámico para Docker: traefik</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -95,88 +104,233 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2018/03/un-gateway-con-debian-iptables-y-dnsmasq.html">Un gateway con Debian, iptables y dnsmasq</a></h2>
-                <div class="summary"><p>En algunas ocasiones no nos basta con tener un servidor único. Queremos tener un conjunto de servidores que se comuniquen abiertamente entre ellos usando una red privada, pero solo queremos exponer al mundo una sola dirección IP. El resto de servidores necesitan acceso a internet a través de un representante …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/03/un-gateway-con-debian-iptables-y-dnsmasq.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/12/manteniendo-la-version-de-paquetes-en-debian-y-ubuntu.html">Manteniendo la versión de paquetes en Debian y Ubuntu</a></h2>
-                <div class="summary"><p>Una de las operaciones más rutinarias que podemos tener como administradores de sistemas Linux es la actualización de un servidor. Mecánicamente lanzas <strong>apt-get upgrade</strong> y te quedas tan tranquilo con la tarea completa. Poco después te encuentras con alguien cabreado porque alguna librería o servicio no va adecuadamente como antes …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/12/manteniendo-la-version-de-paquetes-en-debian-y-ubuntu.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/07/montando-un-servidor-docker-con-debian-stretch.html">Montando un servidor docker con Debian Stretch</a></h2>
-                <div class="summary"><p>Finalmente ha sucedido: ha llegado el esperado lanzamiento de <strong>Debian Stretch</strong>. Como buen linuxero no me he podido resistir a hacer alguna instalación para probar, aunque solo sea como una máquina virtual. Su función, determinada por mi actual flujo de trabajo, va a ser como servidor de <strong>docker</strong> con <strong>docker-compose …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/07/montando-un-servidor-docker-con-debian-stretch.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/02/compartiendo-carpetas-con-nfs.html">Compartiendo carpetas con NFS</a></h2>
-                <div class="summary"><p>Son muchas las veces que queremos tener una carpeta disponible en todas las máquinas que usamos habitualmente, sea una unidad de <em>backup</em>, o sea una carpeta de intercambio de fotos. Disponemos de servidores tipo FTP, pero es mas cómodo tener una unidad remota como una carpeta mas de nuestra máquina …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/02/compartiendo-carpetas-con-nfs.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html">Crear jaulas de forma fácil basadas en Debian y Ubuntu con debootstrap</a></h2>
-                <div class="summary"><p>Cuando creamos jaulas nos enfrentamos siempre al mismo dilema: usar una imagen de dudoso origen o perder nuestro tiempo investigando y buscando librerías que falten. Sin embargo, hay una forma mejor, que es descargar un sistema básico con herramientas oficiales que nos van a dar hasta un gestor de paquetes …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/09/crear-jaulas-de-forma-facil-basadas-en-debian-y-ubuntu-con-debootstrap.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/05/mongodb-sharding-con-ansible.html">MongoDB sharding con ansible</a></h2>
-                <div class="summary"><p>Como ya vimos en un artículo anterior, los <em>replica sets</em> nos ofrecen alta disponibilidad para nuestros despliegues de <strong>mongodb</strong>. Sin embargo, algunas veces, necesitamos que nuestro <em>cluster</em> ofrezca alto rendimiento, y esto se consigue mediante <em>sharding</em>. Como no queremos renunciar a la alta disponibilidad, podemos aplicar ambas; hoy explicamos como …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/05/mongodb-sharding-con-ansible.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/04/un-escritorio-minimo-con-debian.html">Un escritorio mínimo con Debian</a></h2>
-                <div class="summary"><p>Harto de distribuciones para escritorio cargados con aplicaciones que no se usan, decidí que esta vez iba a instalar un escritorio de trabajo partiendo de una <em>Debian netinstall</em>. El resto va a ser instalar las aplicaciones justas y necesarias para nuestro trabajo diario. En este artículo describo como lo hice …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/04/un-escritorio-minimo-con-debian.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Consultando una base de datos Oracle en python</a></h2>
-                <div class="summary"><p>El otro día estuve optimizando unos <em>scripts</em> hechos en <em>bash</em> que había hecho otro. Como resultado del lenguaje usado era un caos de comandos, muchos de ellos para limpiar la salida y darle la forma adecuada. Los reescribí en <em>python</em> usando la librería <strong>cx_Oracle</strong>, que compilé en un fichero <em>wheel …</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/04/consultando-una-base-de-datos-oracle-en-python.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">Sistemas de ficheros multicapa con aufs</a></h2>
-                <div class="summary"><p>Trabajando con contenedores tenemos una parte que se repite: el sistema de ficheros base, que copiamos siempre. Otras veces nos puede interesar hacer un sistema capaz de descartar los cambios desde un punto inicial. Podemos crear una capa base de solo lectura y añadir otra capa de cambios con <strong>aufs …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/03/sistemas-de-ficheros-multicapa-con-aufs.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/03/creando-un-entorno-escalable-4.html">Creando un entorno escalable (IV)</a></h2>
-                <div class="summary"><p>Acabamos el artículo anterior de esta serie con las aplicaciones corriendo en sus respectivas máquinas. En este artículo vamos a poner una fachada a todo el sistema, mediante un <em>proxy HTTP</em> que haga las funciones de terminación <em>SSL</em> y de <em>balanceador</em>, exponiendo todo el sistema en una sola dirección IP …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/03/creando-un-entorno-escalable-4.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.ml/2018/09/un-balanceador-dinamico-para-docker-traefik.html"
+                       rel="bookmark"
+                       title="Permalink to Un balanceador dinámico para Docker: traefik">
+                        Un balanceador dinámico para Docker: traefik
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2018-09-17T10:00:00+02:00"> 2018-09-17</time>
+    </span>
 
-        <ul class="pagination">
-                <li class="prev disabled"><a href="#">&laquo;</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.ml/tag/debian.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/tag/debian2.html">2</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/tag/debian3.html">3</a></li>
-                <li class="next"><a
-                        href="http://www.linuxsysadmin.ml/tag/debian2.html">&raquo;</a></li>
-        </ul>
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 6 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.ml/category/sistemas.html">Sistemas</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.ml/tag/traefik.html">traefik</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/docker.html">docker</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/balanceador.html">balanceador</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>Cuando escalamos nuestros servicios o añadimos nuevos en <strong>Docker</strong>, suele ser un problema la configuración del balanceador. Se necesita modificar su configuración y reiniciarlo para que la nueva configuración aplique. Con el tiempo han aparecido nuevas soluciones para simplificar estos casos, con configuraciones dinámicas. Una de estas soluciones es <strong>Traefik</strong>.</p>
+<p><strong>Traefik</strong> es un proxy reverso y balanceador moderno que facilita el despliegue de microservicios. Se integra con algunos componentes de nuestra infraestructura (<strong>Docker</strong>, <strong>Docker Swarm</strong>, <strong>Kubernetes</strong>, <strong>Consul</strong>, <strong>Amazon ECS</strong>, ...) y se configura automáticamente leyendo sus metadatos. Suele bastar con apuntar <strong>Traefik</strong> al orquestador que usemos.</p>
+<h2>Un ejemplo con Docker</h2>
+<p><strong>Traefik</strong> es un binario único hecho en lenguaje <strong>Go</strong> y como viene siendo habitual, lo podemos instalar simplemente "tirándolo por ahí". También se nos ofrece como una imagen oficial de <strong>Docker</strong>. Vamos a usar esta última por simplicidad.</p>
+<p>Lo primero que tenemos que tener en cuenta es que <strong>Traefik</strong> va a pasar las peticiones a otros servicios, y para ello tiene que poder alcanzarlos. En el caso de <strong>Docker</strong> sin cluster, los contenedores tienen conectividad si estan en la misma red. Eso se puede conseguir de dos formas:</p>
+<ul>
+<li>Ponemos todos los servicios en el mismo <em>docker-compose.yml</em> para que vayan todos a la misma red</li>
+<li>Definimos una red global para que varios <em>docker-compose.yml</em> se encarguen solamente de sus servicios relevantes.</li>
+</ul>
+<p><strong>NOTA</strong>: Optamos por la segunda para separar los servicios por proyectos; así podemos reiniciarlos fácilmente sin afectar a sus vecinos.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace$ docker network create global
+ebd9af59c9d2c8e2ce61db17885b777a343a6b354465f2a5b4cddba5bf92b9b7
+gerard@atlantis:~/workspace$
+</pre></div>
+
+
+<h3>El balanceador</h3>
+<p>Ahora necesitamos levantar el contenedor que va a ejecutar <strong>Traefik</strong>, y por comodidad, lo haremos con <strong>docker-compose</strong>.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace$ cat traefik/docker-compose.yml
+version: <span class="s1">&#39;3&#39;</span>
+services:
+  traefik:
+    image: traefik
+    command: --api --docker --docker.exposedbydefault<span class="o">=</span><span class="nb">false</span>
+    ports:
+      - <span class="s2">&quot;80:80&quot;</span>
+      - <span class="s2">&quot;8080:8080&quot;</span>
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - global
+networks:
+  global:
+     external: <span class="nb">true</span>
+gerard@atlantis:~/workspace$
+</pre></div>
+
+
+<p>Básicamente instruimos a <strong>Traefik</strong> para que use <strong>Docker</strong>, le mapeamos el <em>socket</em> para que pueda consultar los metadatos de los servicios. Como detalle adicional levantamos el <em>dashboard</em> con el <em>flag</em> <code>--api</code>, lo enchufamos a la red <code>global</code> que hemos creado antes y -por preferencia personal- no exponemos ningún servicio por defecto.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace$ <span class="o">(</span><span class="nb">cd</span> traefik/ <span class="o">&amp;&amp;</span> docker-compose up -d<span class="o">)</span>
+Creating traefik_traefik_1 ... <span class="k">done</span>
+gerard@atlantis:~/workspace$
+</pre></div>
+
+
+<p>Y con esto ya podemos acceder al <em>dashboard</em> en <a href="http://localhost:8080/">http://localhost:8080/</a>, aunque no tenemos ningún dominio registrado, con lo que obtendremos errores 404 en el puerto 80.</p>
+<h3>Un servicio de ejemplo</h3>
+<p>Para la demostración, vamos a utilizar una imagen que vuelca el <em>hostname</em> el contenedor; eso nos sirve para verificar el balanceo. Como no quiero reinventar la rueda, y para agilizar, vamos a utilizar la imagen <code>emilevauge/whoami</code> que podemos sacar de <em>DockerHub</em>.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace$ cat whoami/docker-compose.yml
+version: <span class="s1">&#39;3&#39;</span>
+services:
+  whoami:
+    image: emilevauge/whoami
+    labels:
+      - <span class="s2">&quot;traefik.frontend.rule=Host:whoami.docker.localhost&quot;</span>
+      - <span class="s2">&quot;traefik.enable=true&quot;</span>
+    networks:
+      - global
+networks:
+  global:
+    external: <span class="nb">true</span>
+gerard@atlantis:~/workspace$
+</pre></div>
+
+
+<p>Un punto interesante de mencionar es que <strong>Traefik</strong> viene con una configuración estándar, pero se puede modificar algunas cosas que afectan a los contenedores mediante <em>labels</em>.</p>
+<p>La más evidente es <code>traefik.enable</code>, que sobreescribe el comportamiente de no exponer por defecto los servicios; con ello evitamos que se expongan servicios que no deseamos hacer públicos (bases de datos, depliegues bue-green, otros servicios, ...).</p>
+<p>Otra <em>label</em> interesante es <code>traefik.frontend.rule</code> que básicamente indica que este contenedor es uno de los miembros del <em>pool</em> de balanceo cuando se pida el <em>host</em> indicado. Una <em>label</em> que podemos necesitar es <code>traefik.port</code>, que indica contra que puerto del contenedor hay que lanzar las peticiones; por defecto se pasan al puerto 80 (que es donde escucha la imagen elegida).</p>
+<p><strong>NOTA</strong>: Para una lista completa, podemos ir a <a href="https://docs.traefik.io/configuration/backends/docker/#on-containers">la documentación</a>.</p>
+<p>Levantamos el servicio con una sola instancia de momento:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace$ <span class="o">(</span><span class="nb">cd</span> whoami/ <span class="o">&amp;&amp;</span> docker-compose up -d<span class="o">)</span>
+Creating whoami_whoami_1 ... <span class="k">done</span>
+gerard@atlantis:~/workspace$
+</pre></div>
+
+
+<p>Comprobamos que funciona como esperamos:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace$ curl http://localhost:80/
+<span class="m">404</span> page not found
+gerard@atlantis:~/workspace$ curl -H <span class="s2">&quot;Host: whoami.docker.localhost&quot;</span> http://localhost:80/
+Hostname: 831400b7faf2
+IP: <span class="m">127</span>.0.0.1
+IP: <span class="m">172</span>.25.0.3
+GET / HTTP/1.1
+Host: whoami.docker.localhost
+User-Agent: curl/7.52.1
+Accept: */*
+Accept-Encoding: gzip
+X-Forwarded-For: <span class="m">172</span>.25.0.1
+X-Forwarded-Host: whoami.docker.localhost
+X-Forwarded-Port: <span class="m">80</span>
+X-Forwarded-Proto: http
+X-Forwarded-Server: dd0bdbb8d6fb
+X-Real-Ip: <span class="m">172</span>.25.0.1
+
+gerard@atlantis:~/workspace$
+</pre></div>
+
+
+<p>Y vemos como, sin tocar el balanceador, ha aparecido un nuevo <em>virtualhost</em> que pasa las peticiones a nuestro contenedor. Ahora vamos a escalar el servicio:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace$ <span class="o">(</span><span class="nb">cd</span> whoami/ <span class="o">&amp;&amp;</span> docker-compose up -d --scale <span class="nv">whoami</span><span class="o">=</span><span class="m">4</span><span class="o">)</span>
+Starting whoami_whoami_1 ... <span class="k">done</span>
+Creating whoami_whoami_2 ... <span class="k">done</span>
+Creating whoami_whoami_3 ... <span class="k">done</span>
+Creating whoami_whoami_4 ... <span class="k">done</span>
+gerard@atlantis:~/workspace$
+</pre></div>
+
+
+<p>Y así sin tocar nada más, <strong>Traefik</strong> se ha dado cuenta del cambio en el número de contenedores y ha añadido los 3 nuevos en el <em>pool</em> de balanceo de <code>whoami.docker.localhost</code>, como indican sus <em>labels</em>:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace$ <span class="k">for</span> i in <span class="k">$(</span>seq <span class="m">1</span> <span class="m">8</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span> curl -sH <span class="s2">&quot;Host: whoami.docker.localhost&quot;</span> http://localhost:80/ <span class="p">|</span> grep Hostname<span class="p">;</span> <span class="k">done</span>
+Hostname: 831400b7faf2
+Hostname: 7de8d5739178
+Hostname: 01aa52cb5c66
+Hostname: 4f64cac4a4d2
+Hostname: 831400b7faf2
+Hostname: 7de8d5739178
+Hostname: 01aa52cb5c66
+Hostname: 4f64cac4a4d2
+gerard@atlantis:~/workspace$
+</pre></div>
+
+
+<p>Y estas son las <em>labels</em> de cada contenedor:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace$ <span class="k">for</span> c in whoami_whoami_<span class="o">{</span><span class="m">1</span>,2,3,4<span class="o">}</span><span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="nv">$c</span><span class="p">;</span> docker inspect <span class="si">${</span><span class="nv">c</span><span class="si">}</span> <span class="p">|</span> grep traefik<span class="p">;</span> <span class="k">done</span>
+whoami_whoami_1
+                <span class="s2">&quot;traefik.enable&quot;</span>: <span class="s2">&quot;true&quot;</span>,
+                <span class="s2">&quot;traefik.frontend.rule&quot;</span>: <span class="s2">&quot;Host:whoami.docker.localhost&quot;</span>
+whoami_whoami_2
+                <span class="s2">&quot;traefik.enable&quot;</span>: <span class="s2">&quot;true&quot;</span>,
+                <span class="s2">&quot;traefik.frontend.rule&quot;</span>: <span class="s2">&quot;Host:whoami.docker.localhost&quot;</span>
+whoami_whoami_3
+                <span class="s2">&quot;traefik.enable&quot;</span>: <span class="s2">&quot;true&quot;</span>,
+                <span class="s2">&quot;traefik.frontend.rule&quot;</span>: <span class="s2">&quot;Host:whoami.docker.localhost&quot;</span>
+whoami_whoami_4
+                <span class="s2">&quot;traefik.enable&quot;</span>: <span class="s2">&quot;true&quot;</span>,
+                <span class="s2">&quot;traefik.frontend.rule&quot;</span>: <span class="s2">&quot;Host:whoami.docker.localhost&quot;</span>
+gerard@atlantis:~/workspace$
+</pre></div>
+
+
+<p><strong>TRUCO</strong>: No es necesario que tengáis un solo tipo de contenedores con la <em>label</em> del <em>host</em>. Se puede hacer un balanceo de contenedores distintos, con distintos puertos y funciones. Esto es útil en el caso de un cambio de versión sin corte; basta con añadir la nueva versión con otro <em>docker-compose.yml</em> y retirar el servicio viejo poco después.</p>
+<h2>Conclusión</h2>
+<p>Con la facilidad que supone crear un <em>docker-compose.yml</em> para añadir un nuevo <em>virtualhost</em> en <strong>Traefik</strong>, podemos desplegar servicios y microservicios sin mucha complicación, y sin estar pendientes del balanceador. Eso reduce la necesidad de un administrador dedicado, pero hace que las cosas se puedan descontrolar fácilmente.</p>
+<p>Cuando os déis cuenta que el servidor único con <strong>Docker</strong> se os queda corto, váis a necesitar un cluster más adecuado, como <strong>Docker Swarm</strong> o <strong>Kubernetes</strong>. La integración de <strong>Traefik</strong> con ambos es muy simple, y no váis a necesitar mucha más investigación.</p>
+<p>Cabe mencionar que <strong>Traefik</strong> se integra también con varis servidores de SSL (por ejemplo <strong>LetsEncrypt</strong>) y nos puede gestionar fácilmente la terminación SSL y las redirecciones de un protocolo a otro. Tampoco hemos hablado del magnífico <em>dashboard</em> y de sus métricas; creo que os encantará verlo a vosotros mismos.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.ml/2016/06/balanceando-peticiones-con-haproxy.html">Balanceando peticiones con HAProxy</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2018/07/un-servidor-pypi-local-con-docker.html">Un servidor pypi local con Docker</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2018/07/mongodb-sharding-con-docker.html">MongoDB sharding con docker</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'un-balanceador-dinamico-para-docker-traefik';
+                var disqus_url = 'http://www.linuxsysadmin.ml/2018/09/un-balanceador-dinamico-para-docker-traefik.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>

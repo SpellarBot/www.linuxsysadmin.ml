@@ -1,5 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-09-10T10:00:00+02:00</updated><entry><title>Una unidad de red remota con SSHFS</title><link href="http://www.linuxsysadmin.ml/2018/09/una-unidad-de-red-remota-con-sshfs.html" rel="alternate"></link><published>2018-09-10T10:00:00+02:00</published><updated>2018-09-10T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-09-10:/2018/09/una-unidad-de-red-remota-con-sshfs.html</id><summary type="html">&lt;p&gt;Es muy cómodo dejar un fichero en una carpeta local y saber que ese fichero está a salvo, en la nube; seguramente los que utilizáis un servicio de sincronización en la nube váis a estar de acuerdo. La empresas no suelen permitirlo, pero podéis utilizar un servicio local por &lt;strong&gt;SSH …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Es muy cómodo dejar un fichero en una carpeta local y saber que ese fichero está a salvo, en la nube; seguramente los que utilizáis un servicio de sincronización en la nube váis a estar de acuerdo. La empresas no suelen permitirlo, pero podéis utilizar un servicio local por &lt;strong&gt;SSH&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-09-17T10:00:00+02:00</updated><entry><title>Un balanceador dinámico para Docker: traefik</title><link href="http://www.linuxsysadmin.ml/2018/09/un-balanceador-dinamico-para-docker-traefik.html" rel="alternate"></link><published>2018-09-17T10:00:00+02:00</published><updated>2018-09-17T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-09-17:/2018/09/un-balanceador-dinamico-para-docker-traefik.html</id><summary type="html">&lt;p&gt;Cuando escalamos nuestros servicios o añadimos nuevos en &lt;strong&gt;Docker&lt;/strong&gt;, suele ser un problema la configuración del balanceador. Se necesita modificar su configuración y reiniciarlo para que la nueva configuración aplique. Con el tiempo han aparecido nuevas soluciones para simplificar estos casos, con configuraciones dinámicas. Una de estas soluciones es &lt;strong&gt;Traefik …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando escalamos nuestros servicios o añadimos nuevos en &lt;strong&gt;Docker&lt;/strong&gt;, suele ser un problema la configuración del balanceador. Se necesita modificar su configuración y reiniciarlo para que la nueva configuración aplique. Con el tiempo han aparecido nuevas soluciones para simplificar estos casos, con configuraciones dinámicas. Una de estas soluciones es &lt;strong&gt;Traefik&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Traefik&lt;/strong&gt; es un proxy reverso y balanceador moderno que facilita el despliegue de microservicios. Se integra con algunos componentes de nuestra infraestructura (&lt;strong&gt;Docker&lt;/strong&gt;, &lt;strong&gt;Docker Swarm&lt;/strong&gt;, &lt;strong&gt;Kubernetes&lt;/strong&gt;, &lt;strong&gt;Consul&lt;/strong&gt;, &lt;strong&gt;Amazon ECS&lt;/strong&gt;, ...) y se configura automáticamente leyendo sus metadatos. Suele bastar con apuntar &lt;strong&gt;Traefik&lt;/strong&gt; al orquestador que usemos.&lt;/p&gt;
+&lt;h2&gt;Un ejemplo con Docker&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Traefik&lt;/strong&gt; es un binario único hecho en lenguaje &lt;strong&gt;Go&lt;/strong&gt; y como viene siendo habitual, lo podemos instalar simplemente "tirándolo por ahí". También se nos ofrece como una imagen oficial de &lt;strong&gt;Docker&lt;/strong&gt;. Vamos a usar esta última por simplicidad.&lt;/p&gt;
+&lt;p&gt;Lo primero que tenemos que tener en cuenta es que &lt;strong&gt;Traefik&lt;/strong&gt; va a pasar las peticiones a otros servicios, y para ello tiene que poder alcanzarlos. En el caso de &lt;strong&gt;Docker&lt;/strong&gt; sin cluster, los contenedores tienen conectividad si estan en la misma red. Eso se puede conseguir de dos formas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Ponemos todos los servicios en el mismo &lt;em&gt;docker-compose.yml&lt;/em&gt; para que vayan todos a la misma red&lt;/li&gt;
+&lt;li&gt;Definimos una red global para que varios &lt;em&gt;docker-compose.yml&lt;/em&gt; se encarguen solamente de sus servicios relevantes.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: Optamos por la segunda para separar los servicios por proyectos; así podemos reiniciarlos fácilmente sin afectar a sus vecinos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ docker network create global
+ebd9af59c9d2c8e2ce61db17885b777a343a6b354465f2a5b4cddba5bf92b9b7
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;El balanceador&lt;/h3&gt;
+&lt;p&gt;Ahora necesitamos levantar el contenedor que va a ejecutar &lt;strong&gt;Traefik&lt;/strong&gt;, y por comodidad, lo haremos con &lt;strong&gt;docker-compose&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ cat traefik/docker-compose.yml
+version: &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;
+services:
+  traefik:
+    image: traefik
+    command: --api --docker --docker.exposedbydefault&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;false&lt;/span&gt;
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;80:80&amp;quot;&lt;/span&gt;
+      - &lt;span class="s2"&gt;&amp;quot;8080:8080&amp;quot;&lt;/span&gt;
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - global
+networks:
+  global:
+     external: &lt;span class="nb"&gt;true&lt;/span&gt;
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Básicamente instruimos a &lt;strong&gt;Traefik&lt;/strong&gt; para que use &lt;strong&gt;Docker&lt;/strong&gt;, le mapeamos el &lt;em&gt;socket&lt;/em&gt; para que pueda consultar los metadatos de los servicios. Como detalle adicional levantamos el &lt;em&gt;dashboard&lt;/em&gt; con el &lt;em&gt;flag&lt;/em&gt; &lt;code&gt;--api&lt;/code&gt;, lo enchufamos a la red &lt;code&gt;global&lt;/code&gt; que hemos creado antes y -por preferencia personal- no exponemos ningún servicio por defecto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; traefik/ &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; docker-compose up -d&lt;span class="o"&gt;)&lt;/span&gt;
+Creating traefik_traefik_1 ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto ya podemos acceder al &lt;em&gt;dashboard&lt;/em&gt; en &lt;a href="http://localhost:8080/"&gt;http://localhost:8080/&lt;/a&gt;, aunque no tenemos ningún dominio registrado, con lo que obtendremos errores 404 en el puerto 80.&lt;/p&gt;
+&lt;h3&gt;Un servicio de ejemplo&lt;/h3&gt;
+&lt;p&gt;Para la demostración, vamos a utilizar una imagen que vuelca el &lt;em&gt;hostname&lt;/em&gt; el contenedor; eso nos sirve para verificar el balanceo. Como no quiero reinventar la rueda, y para agilizar, vamos a utilizar la imagen &lt;code&gt;emilevauge/whoami&lt;/code&gt; que podemos sacar de &lt;em&gt;DockerHub&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ cat whoami/docker-compose.yml
+version: &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;
+services:
+  whoami:
+    image: emilevauge/whoami
+    labels:
+      - &lt;span class="s2"&gt;&amp;quot;traefik.frontend.rule=Host:whoami.docker.localhost&amp;quot;&lt;/span&gt;
+      - &lt;span class="s2"&gt;&amp;quot;traefik.enable=true&amp;quot;&lt;/span&gt;
+    networks:
+      - global
+networks:
+  global:
+    external: &lt;span class="nb"&gt;true&lt;/span&gt;
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Un punto interesante de mencionar es que &lt;strong&gt;Traefik&lt;/strong&gt; viene con una configuración estándar, pero se puede modificar algunas cosas que afectan a los contenedores mediante &lt;em&gt;labels&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;La más evidente es &lt;code&gt;traefik.enable&lt;/code&gt;, que sobreescribe el comportamiente de no exponer por defecto los servicios; con ello evitamos que se expongan servicios que no deseamos hacer públicos (bases de datos, depliegues bue-green, otros servicios, ...).&lt;/p&gt;
+&lt;p&gt;Otra &lt;em&gt;label&lt;/em&gt; interesante es &lt;code&gt;traefik.frontend.rule&lt;/code&gt; que básicamente indica que este contenedor es uno de los miembros del &lt;em&gt;pool&lt;/em&gt; de balanceo cuando se pida el &lt;em&gt;host&lt;/em&gt; indicado. Una &lt;em&gt;label&lt;/em&gt; que podemos necesitar es &lt;code&gt;traefik.port&lt;/code&gt;, que indica contra que puerto del contenedor hay que lanzar las peticiones; por defecto se pasan al puerto 80 (que es donde escucha la imagen elegida).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: Para una lista completa, podemos ir a &lt;a href="https://docs.traefik.io/configuration/backends/docker/#on-containers"&gt;la documentación&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Levantamos el servicio con una sola instancia de momento:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; whoami/ &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; docker-compose up -d&lt;span class="o"&gt;)&lt;/span&gt;
+Creating whoami_whoami_1 ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Comprobamos que funciona como esperamos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ curl http://localhost:80/
+&lt;span class="m"&gt;404&lt;/span&gt; page not found
+gerard@atlantis:~/workspace$ curl -H &lt;span class="s2"&gt;&amp;quot;Host: whoami.docker.localhost&amp;quot;&lt;/span&gt; http://localhost:80/
+Hostname: 831400b7faf2
+IP: &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1
+IP: &lt;span class="m"&gt;172&lt;/span&gt;.25.0.3
+GET / HTTP/1.1
+Host: whoami.docker.localhost
+User-Agent: curl/7.52.1
+Accept: */*
+Accept-Encoding: gzip
+X-Forwarded-For: &lt;span class="m"&gt;172&lt;/span&gt;.25.0.1
+X-Forwarded-Host: whoami.docker.localhost
+X-Forwarded-Port: &lt;span class="m"&gt;80&lt;/span&gt;
+X-Forwarded-Proto: http
+X-Forwarded-Server: dd0bdbb8d6fb
+X-Real-Ip: &lt;span class="m"&gt;172&lt;/span&gt;.25.0.1
+
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y vemos como, sin tocar el balanceador, ha aparecido un nuevo &lt;em&gt;virtualhost&lt;/em&gt; que pasa las peticiones a nuestro contenedor. Ahora vamos a escalar el servicio:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; whoami/ &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; docker-compose up -d --scale &lt;span class="nv"&gt;whoami&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+Starting whoami_whoami_1 ... &lt;span class="k"&gt;done&lt;/span&gt;
+Creating whoami_whoami_2 ... &lt;span class="k"&gt;done&lt;/span&gt;
+Creating whoami_whoami_3 ... &lt;span class="k"&gt;done&lt;/span&gt;
+Creating whoami_whoami_4 ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y así sin tocar nada más, &lt;strong&gt;Traefik&lt;/strong&gt; se ha dado cuenta del cambio en el número de contenedores y ha añadido los 3 nuevos en el &lt;em&gt;pool&lt;/em&gt; de balanceo de &lt;code&gt;whoami.docker.localhost&lt;/code&gt;, como indican sus &lt;em&gt;labels&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ &lt;span class="k"&gt;for&lt;/span&gt; i in &lt;span class="k"&gt;$(&lt;/span&gt;seq &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="m"&gt;8&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; curl -sH &lt;span class="s2"&gt;&amp;quot;Host: whoami.docker.localhost&amp;quot;&lt;/span&gt; http://localhost:80/ &lt;span class="p"&gt;|&lt;/span&gt; grep Hostname&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;done&lt;/span&gt;
+Hostname: 831400b7faf2
+Hostname: 7de8d5739178
+Hostname: 01aa52cb5c66
+Hostname: 4f64cac4a4d2
+Hostname: 831400b7faf2
+Hostname: 7de8d5739178
+Hostname: 01aa52cb5c66
+Hostname: 4f64cac4a4d2
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y estas son las &lt;em&gt;labels&lt;/em&gt; de cada contenedor:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ &lt;span class="k"&gt;for&lt;/span&gt; c in whoami_whoami_&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;,2,3,4&lt;span class="o"&gt;}&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="nv"&gt;$c&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; docker inspect &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;c&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; grep traefik&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;done&lt;/span&gt;
+whoami_whoami_1
+                &lt;span class="s2"&gt;&amp;quot;traefik.enable&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;true&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;traefik.frontend.rule&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Host:whoami.docker.localhost&amp;quot;&lt;/span&gt;
+whoami_whoami_2
+                &lt;span class="s2"&gt;&amp;quot;traefik.enable&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;true&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;traefik.frontend.rule&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Host:whoami.docker.localhost&amp;quot;&lt;/span&gt;
+whoami_whoami_3
+                &lt;span class="s2"&gt;&amp;quot;traefik.enable&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;true&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;traefik.frontend.rule&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Host:whoami.docker.localhost&amp;quot;&lt;/span&gt;
+whoami_whoami_4
+                &lt;span class="s2"&gt;&amp;quot;traefik.enable&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;true&amp;quot;&lt;/span&gt;,
+                &lt;span class="s2"&gt;&amp;quot;traefik.frontend.rule&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Host:whoami.docker.localhost&amp;quot;&lt;/span&gt;
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: No es necesario que tengáis un solo tipo de contenedores con la &lt;em&gt;label&lt;/em&gt; del &lt;em&gt;host&lt;/em&gt;. Se puede hacer un balanceo de contenedores distintos, con distintos puertos y funciones. Esto es útil en el caso de un cambio de versión sin corte; basta con añadir la nueva versión con otro &lt;em&gt;docker-compose.yml&lt;/em&gt; y retirar el servicio viejo poco después.&lt;/p&gt;
+&lt;h2&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Con la facilidad que supone crear un &lt;em&gt;docker-compose.yml&lt;/em&gt; para añadir un nuevo &lt;em&gt;virtualhost&lt;/em&gt; en &lt;strong&gt;Traefik&lt;/strong&gt;, podemos desplegar servicios y microservicios sin mucha complicación, y sin estar pendientes del balanceador. Eso reduce la necesidad de un administrador dedicado, pero hace que las cosas se puedan descontrolar fácilmente.&lt;/p&gt;
+&lt;p&gt;Cuando os déis cuenta que el servidor único con &lt;strong&gt;Docker&lt;/strong&gt; se os queda corto, váis a necesitar un cluster más adecuado, como &lt;strong&gt;Docker Swarm&lt;/strong&gt; o &lt;strong&gt;Kubernetes&lt;/strong&gt;. La integración de &lt;strong&gt;Traefik&lt;/strong&gt; con ambos es muy simple, y no váis a necesitar mucha más investigación.&lt;/p&gt;
+&lt;p&gt;Cabe mencionar que &lt;strong&gt;Traefik&lt;/strong&gt; se integra también con varis servidores de SSL (por ejemplo &lt;strong&gt;LetsEncrypt&lt;/strong&gt;) y nos puede gestionar fácilmente la terminación SSL y las redirecciones de un protocolo a otro. Tampoco hemos hablado del magnífico &lt;em&gt;dashboard&lt;/em&gt; y de sus métricas; creo que os encantará verlo a vosotros mismos.&lt;/p&gt;</content><category term="traefik"></category><category term="docker"></category><category term="balanceador"></category></entry><entry><title>Una unidad de red remota con SSHFS</title><link href="http://www.linuxsysadmin.ml/2018/09/una-unidad-de-red-remota-con-sshfs.html" rel="alternate"></link><published>2018-09-10T10:00:00+02:00</published><updated>2018-09-10T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-09-10:/2018/09/una-unidad-de-red-remota-con-sshfs.html</id><summary type="html">&lt;p&gt;Es muy cómodo dejar un fichero en una carpeta local y saber que ese fichero está a salvo, en la nube; seguramente los que utilizáis un servicio de sincronización en la nube váis a estar de acuerdo. La empresas no suelen permitirlo, pero podéis utilizar un servicio local por &lt;strong&gt;SSH …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Es muy cómodo dejar un fichero en una carpeta local y saber que ese fichero está a salvo, en la nube; seguramente los que utilizáis un servicio de sincronización en la nube váis a estar de acuerdo. La empresas no suelen permitirlo, pero podéis utilizar un servicio local por &lt;strong&gt;SSH&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;El ingenio se llama &lt;strong&gt;SSHFS&lt;/strong&gt; y lanza las operaciones de lectura y escritura contra una máquina remota que solamente debe ofrecer &lt;strong&gt;SSH&lt;/strong&gt;, de forma que para nosotros parece que se trate de un sistema de ficheros local.&lt;/p&gt;
 &lt;h2&gt;El servidor&lt;/h2&gt;
 &lt;p&gt;Para utilizar &lt;strong&gt;SSHFS&lt;/strong&gt; solo necesitamos un servidor que ofrezca &lt;strong&gt;SSH&lt;/strong&gt;, aunque también funciona por &lt;strong&gt;SFTP&lt;/strong&gt;. Como comodidad adicional, vamos a utilizar &lt;a href="http://www.linuxsysadmin.ml/2016/05/autenticacion-ssh-por-claves.html"&gt;autenticacíon por claves&lt;/a&gt;. Como conisderación de seguridad, vamos a enjaular al usuario que guarde los datos y lo vamos a lmitar a &lt;strong&gt;SFTP&lt;/strong&gt;.&lt;/p&gt;
