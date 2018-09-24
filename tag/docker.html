@@ -96,6 +96,13 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
+                <h2><a href="http://www.linuxsysadmin.ml/2018/09/un-contenedor-multiservicio-con-docker-y-s6.html">Un contenedor multiservicio con docker y s6</a></h2>
+                <div class="summary"><p>Lo he vuelto a hacer: a pesar de que es una antipráctica de <strong>docker</strong>, me veo tentado a ejecutar varios servicios en mis contenedores. Solo lo hago cuando estos servicios tienen un objetivo común, como servir PHP (nginx/php-fpm); para ello necesitamos un gestor de procesos. Hoy hablaremos de <strong>s6 …</strong></p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/09/un-contenedor-multiservicio-con-docker-y-s6.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://www.linuxsysadmin.ml/2018/09/un-balanceador-dinamico-para-docker-traefik.html">Un balanceador dinámico para Docker: traefik</a></h2>
                 <div class="summary"><p>Cuando escalamos nuestros servicios o añadimos nuevos en <strong>Docker</strong>, suele ser un problema la configuración del balanceador. Se necesita modificar su configuración y reiniciarlo para que la nueva configuración aplique. Con el tiempo han aparecido nuevas soluciones para simplificar estos casos, con configuraciones dinámicas. Una de estas soluciones es <strong>Traefik …</strong></p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/09/un-balanceador-dinamico-para-docker-traefik.html">Seguir leyendo</a>
@@ -158,13 +165,6 @@ Linux Sysadmin            </a>
                 </div>
             </article>
             <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2018/03/entornos-de-trabajo-en-contenedores-docker.html">Entornos de trabajo en contenedores Docker</a></h2>
-                <div class="summary"><p>Cuando usamos herramientas concretas para todos los miembros de un mismo equipo, suele ser problemático instalarlo en sus equipos. Por la ausencia de instalación y su gran reproducibilidad, es cada vez más frecuente distribuir esas herramientas en una imagen de <strong>Docker</strong>, aunque esto no garantiza estar libres de otros problemas …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/03/entornos-de-trabajo-en-contenedores-docker.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
 
         <ul class="pagination">
                 <li class="prev disabled"><a href="#">&laquo;</a></li>
@@ -176,6 +176,8 @@ Linux Sysadmin            </a>
                             href="http://www.linuxsysadmin.ml/tag/docker3.html">3</a></li>
                     <li class=""><a
                             href="http://www.linuxsysadmin.ml/tag/docker4.html">4</a></li>
+                    <li class=""><a
+                            href="http://www.linuxsysadmin.ml/tag/docker5.html">5</a></li>
                 <li class="next"><a
                         href="http://www.linuxsysadmin.ml/tag/docker2.html">&raquo;</a></li>
         </ul>
@@ -595,6 +597,11 @@ Linux Sysadmin            </a>
                             rsync
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.ml/tag/s6.html">
+                            s6
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.ml/tag/script.html">
                             script
@@ -663,11 +670,6 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-2">
                         <a href="http://www.linuxsysadmin.ml/tag/systemd.html">
                             systemd
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.ml/tag/temporal.html">
-                            temporal
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

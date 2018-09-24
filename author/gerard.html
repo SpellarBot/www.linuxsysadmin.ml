@@ -95,6 +95,13 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
+                <h2><a href="http://www.linuxsysadmin.ml/2018/09/un-contenedor-multiservicio-con-docker-y-s6.html">Un contenedor multiservicio con docker y s6</a></h2>
+                <div class="summary"><p>Lo he vuelto a hacer: a pesar de que es una antipráctica de <strong>docker</strong>, me veo tentado a ejecutar varios servicios en mis contenedores. Solo lo hago cuando estos servicios tienen un objetivo común, como servir PHP (nginx/php-fpm); para ello necesitamos un gestor de procesos. Hoy hablaremos de <strong>s6 …</strong></p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/09/un-contenedor-multiservicio-con-docker-y-s6.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://www.linuxsysadmin.ml/2018/09/un-balanceador-dinamico-para-docker-traefik.html">Un balanceador dinámico para Docker: traefik</a></h2>
                 <div class="summary"><p>Cuando escalamos nuestros servicios o añadimos nuevos en <strong>Docker</strong>, suele ser un problema la configuración del balanceador. Se necesita modificar su configuración y reiniciarlo para que la nueva configuración aplique. Con el tiempo han aparecido nuevas soluciones para simplificar estos casos, con configuraciones dinámicas. Una de estas soluciones es <strong>Traefik …</strong></p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/09/un-balanceador-dinamico-para-docker-traefik.html">Seguir leyendo</a>
@@ -154,13 +161,6 @@ Linux Sysadmin            </a>
                 <h2><a href="http://www.linuxsysadmin.ml/2018/07/ampliando-la-memoria-swap-mediante-swapfiles.html">Ampliando la memoria swap mediante swapfiles</a></h2>
                 <div class="summary"><p>Como ya sabéis, para escribir artículos, utilizo <strong>VirtualBox</strong>. Últimamente no paro de clonar la misma imagen base una y otra vez, lo que me da un particionado idéntico. Sin embargo, cuando se trata de memoria <em>swap</em>, no todas las instáncias clonadas necesitan la misma <em>swap</em> y cambiarlo no es fácil …</p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/07/ampliando-la-memoria-swap-mediante-swapfiles.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2018/07/explorando-los-tokens-jwt.html">Explorando los tokens JWT</a></h2>
-                <div class="summary"><p>Hace mucho tiempo que me fascinan las APIs REST; sin embargo siempre he pasado de sistemas de autenticación en mis proyectos personales. Cuando me puse en serio a investigar sobre este tema, descubrí la autenticación basada en <em>tokens</em>, y especialmente, los <strong>JSON Web Tokens</strong>, que es lo que explico hoy …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/07/explorando-los-tokens-jwt.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
@@ -618,6 +618,11 @@ Linux Sysadmin            </a>
                             rsync
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.ml/tag/s6.html">
+                            s6
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.ml/tag/script.html">
                             script
@@ -686,11 +691,6 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-2">
                         <a href="http://www.linuxsysadmin.ml/tag/systemd.html">
                             systemd
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.ml/tag/temporal.html">
-                            temporal
                         </a>
                     </li>
                     <li class="list-group-item tag-4">

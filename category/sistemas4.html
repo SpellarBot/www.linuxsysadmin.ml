@@ -98,6 +98,13 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
+                <h2><a href="http://www.linuxsysadmin.ml/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html">Un entorno web estático con nginx, rsync y docker</a></h2>
+                <div class="summary"><p>Hemos hablado de generar nuestro contenido HTML estático con otras herramientas, y finalmente ha llegado la hora de servirlo. Normalmente, los ficheros que cambian tal y como vamos generando páginas son pocos y nos interesa copiarlo de forma remota, pero no podemos hacerlo con <strong>docker</strong> porque hacen falta dos servicios …</p>
+                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/03/un-entorno-web-estatico-con-nginx-rsync-y-docker.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="http://www.linuxsysadmin.ml/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html">Múltiples servicios en un mismo contenedor Docker</a></h2>
                 <div class="summary"><p>Como ya sabemos, un contenedor <strong>docker</strong> solo puede ejecutar un proceso, y su finalización implica la parada del contenedor. Sin embargo, a veces nos puede interesar cargar los contenedores con algún servicio más, para hacerlos autosuficientes. Para ello, nos podemos ayudar de un <em>gestor de procesos</em>, como por ejemplo, <strong>runit …</strong></p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html">Seguir leyendo</a>
@@ -157,13 +164,6 @@ Linux Sysadmin            </a>
                 <h2><a href="http://www.linuxsysadmin.ml/2016/06/balanceando-peticiones-con-haproxy.html">Balanceando peticiones con HAProxy</a></h2>
                 <div class="summary"><p>Cuando tenemos un entorno grande o con previsiones de crecimiento, nos interesa poder poner a trabajar varios servidores similares. En casos así nos hace falta un <strong>balanceador de carga</strong>, que actúa como un agente de tráfico, dirigiendo las peticiones que él mismo recibe a los diferentes servidores, por ejemplo, <strong>haproxy …</strong></p>
                     <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/06/balanceando-peticiones-con-haproxy.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/06/preparando-un-servidor-de-repositorios-git.html">Preparando un servidor de repositorios GIT</a></h2>
-                <div class="summary"><p>Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando <strong>git</strong> y <strong>ssh …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/06/preparando-un-servidor-de-repositorios-git.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
@@ -602,6 +602,11 @@ Linux Sysadmin            </a>
                             rsync
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="http://www.linuxsysadmin.ml/tag/s6.html">
+                            s6
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="http://www.linuxsysadmin.ml/tag/script.html">
                             script
@@ -670,11 +675,6 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-2">
                         <a href="http://www.linuxsysadmin.ml/tag/systemd.html">
                             systemd
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
-                        <a href="http://www.linuxsysadmin.ml/tag/temporal.html">
-                            temporal
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
