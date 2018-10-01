@@ -1,5 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-09-24T10:00:00+02:00</updated><entry><title>Un contenedor multiservicio con docker y s6</title><link href="http://www.linuxsysadmin.ml/2018/09/un-contenedor-multiservicio-con-docker-y-s6.html" rel="alternate"></link><published>2018-09-24T10:00:00+02:00</published><updated>2018-09-24T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-09-24:/2018/09/un-contenedor-multiservicio-con-docker-y-s6.html</id><summary type="html">&lt;p&gt;Lo he vuelto a hacer: a pesar de que es una antipráctica de &lt;strong&gt;docker&lt;/strong&gt;, me veo tentado a ejecutar varios servicios en mis contenedores. Solo lo hago cuando estos servicios tienen un objetivo común, como servir PHP (nginx/php-fpm); para ello necesitamos un gestor de procesos. Hoy hablaremos de &lt;strong&gt;s6 …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Lo he vuelto a hacer: a pesar de que es una antipráctica de &lt;strong&gt;docker&lt;/strong&gt;, me veo tentado a ejecutar varios servicios en mis contenedores. Solo lo hago cuando estos servicios tienen un objetivo común, como servir PHP (nginx/php-fpm); para ello necesitamos un gestor de procesos. Hoy hablaremos de &lt;strong&gt;s6&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-10-01T10:00:00+02:00</updated><entry><title>DNSmasq como una utilidad de cache DNS local usando Docker</title><link href="http://www.linuxsysadmin.ml/2018/10/dnsmasq-como-una-utilidad-de-cache-dns-local-usando-docker.html" rel="alternate"></link><published>2018-10-01T10:00:00+02:00</published><updated>2018-10-01T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-10-01:/2018/10/dnsmasq-como-una-utilidad-de-cache-dns-local-usando-docker.html</id><summary type="html">&lt;p&gt;Ya vimos en otros artículos lo fácilmente que podemos utilizar &lt;strong&gt;dnsmasq&lt;/strong&gt; en un &lt;em&gt;gateway&lt;/em&gt; para ayudar a los servidores a que se conozcan entre sí por nombre y como una forma de ocultar el DNS real de la red interna. Sin embargo es una caché excelente para un sistema aislado …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ya vimos en otros artículos lo fácilmente que podemos utilizar &lt;strong&gt;dnsmasq&lt;/strong&gt; en un &lt;em&gt;gateway&lt;/em&gt; para ayudar a los servidores a que se conozcan entre sí por nombre y como una forma de ocultar el DNS real de la red interna. Sin embargo es una caché excelente para un sistema aislado.&lt;/p&gt;
+&lt;p&gt;Cualquier sistema, sea un servidor o no, puede utilizar un proceso &lt;strong&gt;dnsmasq&lt;/strong&gt; local como caché y como forma de resolver por nombre entornos que todavia no tienen un DNS disponible en internet. Realmente es un proceso que no consume casi ninguna memoria y nos puede ayudar mucho en caso de una caída del DNS global, o en caso de desconectarnos de la red por cualquier motivo.&lt;/p&gt;
+&lt;p&gt;Lo que suele ser problemático es instalarlo en nuestro sistema, por un tema de permisos o de conflictos; en estos casos podemos confiar en convertirlo en un contenedor, que no pasa de los 5mb de disco.&lt;/p&gt;
+&lt;h2&gt;La imagen con DNSmasq&lt;/h2&gt;
+&lt;p&gt;La imagen en sí misma no oculta ninguna complicación; se trata de instalar &lt;strong&gt;dnsmasq&lt;/strong&gt; en nuestro sistema base y asegurarnos que ejectua en &lt;em&gt;foreground&lt;/em&gt;. Para evitar una imagen muy grande, podemos utilizar &lt;strong&gt;Alpine Linux&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dnsmasq$ cat build/Dockerfile
+FROM alpine:3.8
+RUN apk add --no-cache dnsmasq
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/sbin/dnsmasq&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-k&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@atlantis:~/workspace/dnsmasq$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para construir y levantar el servicio, podemos utilizar &lt;strong&gt;docker-compose&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dnsmasq$ cat docker-compose.yml
+version: &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;
+services:
+  dnsmasq:
+    image: dnsmasq
+    build: build
+    container_name: dnsmasq
+    hostname: dnsmasq
+    cap_add:
+      - NET_ADMIN
+    network_mode: host
+    restart: always
+    volumes:
+      - ./hosts:/etc/hosts:ro
+gerard@atlantis:~/workspace/dnsmasq$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dnsmasq$ docker-compose build
+Building dnsmasq
+...
+Successfully tagged dnsmasq:latest
+gerard@atlantis:~/workspace/dnsmasq$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+...
+dnsmasq             latest              b43fd1b79394        &lt;span class="m"&gt;7&lt;/span&gt; minutes ago       &lt;span class="m"&gt;4&lt;/span&gt;.76MB
+...
+gerard@atlantis:~/workspace/dnsmasq$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos nuestra imagen.&lt;/p&gt;
+&lt;h2&gt;Ejecutando el contenedor&lt;/h2&gt;
+&lt;p&gt;Como decisión de diseño, he preferido montar el fichero &lt;code&gt;/etc/hosts&lt;/code&gt; desde una carpeta local, para poder modificarlo a placer y sin tener permisos de superusuario.&lt;/p&gt;
+&lt;p&gt;Levantamos el servicio encima de la red local; de esta forma, crearemos la ilusión de que &lt;strong&gt;dnsmasq&lt;/strong&gt; corre en la misma máquina que la va a utilizar directamente en &lt;em&gt;localhost&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: &lt;strong&gt;dnsmasq&lt;/strong&gt; utiliza algunas operaciones especiales de redes. Podéis ejecutar en modo privilegiado (&lt;code&gt;--privileged&lt;/code&gt;) o podéis darle la &lt;em&gt;capability&lt;/em&gt; &lt;code&gt;NET_ADMIN&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dnsmasq$ docker-compose up -d
+Creating dnsmasq ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@atlantis:~/workspace/dnsmasq$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos el servicio &lt;strong&gt;dnsmasq&lt;/strong&gt; accesible desde nuestro servidor, en el puerto estándar:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dnsmasq$ ss -lnt &lt;span class="p"&gt;|&lt;/span&gt; grep &lt;span class="m"&gt;53&lt;/span&gt;
+LISTEN     &lt;span class="m"&gt;0&lt;/span&gt;      &lt;span class="m"&gt;32&lt;/span&gt;           *:53                       *:*
+LISTEN     &lt;span class="m"&gt;0&lt;/span&gt;      &lt;span class="m"&gt;32&lt;/span&gt;          :::53                      :::*
+gerard@atlantis:~/workspace/dnsmasq$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Utilizando el nuevo servidor DNS&lt;/h2&gt;
+&lt;p&gt;Solo falta indicar que el servidor DNS que nuestra máquina debe utilizar es &lt;em&gt;localhost&lt;/em&gt; en &lt;code&gt;/etc/resolv.conf&lt;/code&gt;, posiblemente seguido de otros. De esta forma, la primera petición DNS fallará, se irá a buscar en el siguiente servidor, y se guardará en &lt;em&gt;caché&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dnsmasq$ cat /etc/resolv.conf
+domain ...
+search ...
+nameserver &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1
+nameserver ...
+nameserver ...
+gerard@atlantis:~/workspace/dnsmasq$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En el caso de utilizar DHCP para obtener dirección IP automáticamente, el fichero &lt;code&gt;/etc/resolv.conf&lt;/code&gt; se sobreescribe con lo que nos pase el &lt;em&gt;router&lt;/em&gt;. Podemos instruir al cliente de DHCP para que siempre nos añada &lt;em&gt;localhost&lt;/em&gt; en el fichero (es lo que tuve que hacer yo).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dnsmasq$ cat /etc/dhcp/dhclient.conf 
+...
+prepend domain-name-servers &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1&lt;span class="p"&gt;;&lt;/span&gt;
+gerard@atlantis:~/workspace/dnsmasq$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Probando el servidor DNS&lt;/h2&gt;
+&lt;p&gt;El paso más interesante de este &lt;em&gt;setup&lt;/em&gt; es la capacidad de &lt;em&gt;cachear&lt;/em&gt; las peticiones DNS, y esto lo podemos probar haciendo simplemente varias peticiones:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@atlantis:~# dig www.linuxsysadmin.ml
+...
+&lt;span class="p"&gt;;;&lt;/span&gt; Query time: &lt;span class="m"&gt;30&lt;/span&gt; msec
+&lt;span class="p"&gt;;;&lt;/span&gt; SERVER: &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1#53&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;127&lt;/span&gt;.0.0.1&lt;span class="o"&gt;)&lt;/span&gt;
+...
+root@atlantis:~# dig www.linuxsysadmin.ml
+...
+&lt;span class="p"&gt;;;&lt;/span&gt; Query time: &lt;span class="m"&gt;0&lt;/span&gt; msec
+&lt;span class="p"&gt;;;&lt;/span&gt; SERVER: &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1#53&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;127&lt;/span&gt;.0.0.1&lt;span class="o"&gt;)&lt;/span&gt;
+...
+root@atlantis:~# dig www.linuxsysadmin.ml
+...
+&lt;span class="p"&gt;;;&lt;/span&gt; Query time: &lt;span class="m"&gt;0&lt;/span&gt; msec
+&lt;span class="p"&gt;;;&lt;/span&gt; SERVER: &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1#53&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;127&lt;/span&gt;.0.0.1&lt;span class="o"&gt;)&lt;/span&gt;
+...
+root@atlantis:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemo ver claramente dos cosas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Estamos utilizando nuestro servidor local DNS&lt;/li&gt;
+&lt;li&gt;La primera petición no está en &lt;em&gt;caché&lt;/em&gt; y tarda un poco, pero el resto son inmediatas&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;La otra funcionalidad que ganamos con &lt;strong&gt;dnsmasq&lt;/strong&gt; es la de resolver nombres desde el fichero &lt;code&gt;/etc/hosts&lt;/code&gt; del contenedor. Para evitarme modificar sistemas de ficheros privilegiados, el &lt;em&gt;docker-compose.yml&lt;/em&gt; añade este fichero desde un fichero local, que podemos modificar a placer segun nuestros gustos (no os olvidéis de reiniciar el contenedor para que pille los cambios).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dnsmasq$ cat hosts
+&lt;span class="m"&gt;127&lt;/span&gt;.0.0.1 test.api.local
+&lt;span class="m"&gt;10&lt;/span&gt;.0.0.3 auth.api.private
+gerard@atlantis:~/workspace/dnsmasq$ docker-compose restart
+Restarting dnsmasq ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@atlantis:~/workspace/dnsmasq$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto podemos resolver dominios que no existen fuera de nuestra red, con la comodidad de hacerlo por nombre, y sin modificar direcciones IP si los recolocamos en otros servidores.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@atlantis:~# dig test.api.local +short
+&lt;span class="m"&gt;127&lt;/span&gt;.0.0.1
+root@atlantis:~# dig auth.api.private +short
+&lt;span class="m"&gt;10&lt;/span&gt;.0.0.3
+root@atlantis:~#
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto ya podemos decir que lo tenemos todo funcionando.&lt;/p&gt;</content><category term="dnsmasq"></category><category term="docker"></category></entry><entry><title>Un contenedor multiservicio con docker y s6</title><link href="http://www.linuxsysadmin.ml/2018/09/un-contenedor-multiservicio-con-docker-y-s6.html" rel="alternate"></link><published>2018-09-24T10:00:00+02:00</published><updated>2018-09-24T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-09-24:/2018/09/un-contenedor-multiservicio-con-docker-y-s6.html</id><summary type="html">&lt;p&gt;Lo he vuelto a hacer: a pesar de que es una antipráctica de &lt;strong&gt;docker&lt;/strong&gt;, me veo tentado a ejecutar varios servicios en mis contenedores. Solo lo hago cuando estos servicios tienen un objetivo común, como servir PHP (nginx/php-fpm); para ello necesitamos un gestor de procesos. Hoy hablaremos de &lt;strong&gt;s6 …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Lo he vuelto a hacer: a pesar de que es una antipráctica de &lt;strong&gt;docker&lt;/strong&gt;, me veo tentado a ejecutar varios servicios en mis contenedores. Solo lo hago cuando estos servicios tienen un objetivo común, como servir PHP (nginx/php-fpm); para ello necesitamos un gestor de procesos. Hoy hablaremos de &lt;strong&gt;s6&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Hasta ahora, el servicio que utilizaba era &lt;a href="http://www.linuxsysadmin.ml/2017/03/multiples-servicios-en-un-mismo-contenedor-docker.html"&gt;runit&lt;/a&gt;, pero existe un servicio similar llamado &lt;strong&gt;s6&lt;/strong&gt; que además sirve como &lt;a href="http://www.linuxsysadmin.ml/2017/09/un-proceso-inicial-para-docker-tini-y-dumb-init.html"&gt;&lt;em&gt;init&lt;/em&gt; correcto&lt;/a&gt; para &lt;strong&gt;docker&lt;/strong&gt;. Por supuesto, no he podido resistir la tentación de darle un intento, y el resultado me ha gustado.&lt;/p&gt;
 &lt;h2&gt;Funcionamiento de s6&lt;/h2&gt;
 &lt;p&gt;Cuando ejecutamos &lt;strong&gt;s6&lt;/strong&gt;, ejecutamos el binario &lt;code&gt;s6-svscan&lt;/code&gt; que monitoriza una carpeta concreta. En esta carpeta tenemos una subcarpeta por servicio; cada subcarpeta es la definición de un servicio y &lt;code&gt;s6-svscan&lt;/code&gt; va a lanzar sobre la misma el proceso &lt;code&gt;s6-supervise&lt;/code&gt;, que se encarga de mantener ese proceso concreto.&lt;/p&gt;
@@ -40,7 +169,7 @@ gerard@atlantis:~/workspace/miniserver$
 
 
 &lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: No ponemos &lt;em&gt;scripts&lt;/em&gt; de &lt;code&gt;finish&lt;/code&gt; en los servicios porque no queremos hacer nada cuando acaben, más allá de su reinicio por parte de &lt;strong&gt;s6&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Si la caída de un servicio es suficientemente grave como para querer para el contenedor, podéis poner &lt;code&gt;s6-svscanctl -t /etc/s6&lt;/code&gt; en el script &lt;code&gt;finish&lt;/code&gt; de ese servicio para parar &lt;strong&gt;s6&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Si la caída de un servicio es suficientemente grave como para querer parar el contenedor, podéis poner &lt;code&gt;s6-svscanctl -t /etc/s6&lt;/code&gt; en el script &lt;code&gt;finish&lt;/code&gt; de ese servicio para parar &lt;strong&gt;s6&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Lo importante de los &lt;em&gt;scripts&lt;/em&gt; de &lt;code&gt;run&lt;/code&gt; es que no acaben, lo que se interpreta como servicio acabado (y candidato a levantar de nuevo). Este paradigma no nos es nuevo en &lt;strong&gt;docker&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;En cuanto a los &lt;em&gt;scripts&lt;/em&gt; en sí mismos, no hacen nada especialmente complicado:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/miniserver$ cat s6/nginx/run

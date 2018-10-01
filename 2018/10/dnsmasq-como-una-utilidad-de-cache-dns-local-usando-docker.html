@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>docker - Linux Sysadmin</title>
+    <title>DNSmasq como una utilidad de cache DNS local usando Docker - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,22 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.ml/2018/10/dnsmasq-como-una-utilidad-de-cache-dns-local-usando-docker.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="docker" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="dnsmasq,docker" />
+        <meta name="description" content="Ya vimos en otros artículos lo fácilmente que podemos utilizar dnsmasq en un gateway para ayudar a los servidores a que se conozcan entre sí por nombre y como una forma de ocultar el DNS real de la red interna. Sin embargo es una caché excelente para un sistema aislado …" />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.ml"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="DNSmasq como una utilidad de cache DNS local usando Docker"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.ml/2018/10/dnsmasq-como-una-utilidad-de-cache-dns-local-usando-docker.html"/>
+        <meta property="og:description" content="Ya vimos en otros artículos lo fácilmente que podemos utilizar dnsmasq en un gateway para ayudar a los servidores a que se conozcan entre sí por nombre y como una forma de ocultar el DNS real de la red interna. Sin embargo es una caché excelente para un sistema aislado …"/>
+        <meta property="article:published_time" content="2018-10-01" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="dnsmasq" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -34,6 +40,8 @@
 
 
 
+        <link href="http://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Sistemas ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -78,11 +86,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.ml/tags.html" title="Tags de Linux Sysadmin">Tags</a></li>
-        <li class="active">docker</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.ml/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">DNSmasq como una utilidad de cache DNS local usando Docker</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -95,93 +103,215 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/02/sincronizando-ficheros-con-owncloud.html">Sincronizando ficheros con ownCloud</a></h2>
-                <div class="summary"><p>Finalmente ha sucedido: el ingeniero de seguridad de la empresa ha decidido cerrar servicios de sincronizado de ficheros, dejando inútiles servicios como <strong>Dropbox</strong>, <strong>Mega</strong> y otros. Sin embargo, cualquier bloqueo que se haga mediante el dominio hace que sea imposible cerrar todos estos servicios, e incluso podemos poner el nuestro …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/02/sincronizando-ficheros-con-owncloud.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2017/01/un-registro-local-de-docker.html">Un registro local de Docker</a></h2>
-                <div class="summary"><p>He llegado a ese momento en el que el número de imágenes <strong>docker</strong> que he construido se me ha ido de las manos. Ya no pueden seguir ocupando espacio en mi local, así que me he decidido a montar mi propio registro de imágenes, para mi uso y disfrute privado …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2017/01/un-registro-local-de-docker.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/11/visualizando-graficamente-el-estado-de-nuestro-servidor-con-telegraf-influxdb-y-chronograf.html">Visualizando gráficamente el estado de nuestro servidor con Telegraf, InfluxDB y Chronograf</a></h2>
-                <div class="summary"><p>No hay nada mas visualmente atractivo que ver nuestros servidores en tiempo real mediante gráficos temporales, y existen algunas buenas herramientas ya hechas. Necesitaremos un agente que recolecte los datos del servidor y los envíe a una base de datos temporales, para que se pueden dibujar en una página web …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/11/visualizando-graficamente-el-estado-de-nuestro-servidor-con-telegraf-influxdb-y-chronograf.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/10/microservicios-con-docker-compose.html">Microservicios con docker-compose</a></h2>
-                <div class="summary"><p><strong>Docker</strong> es una gran herramienta para levantar contenedores aislados, pero en el mundo real nos encontramos con despliegues mas complejos, que requieren varias imágenes trabajando en conjunto. En este caso, levantar los contenedores puede ser una auténtica pesadilla. Para automatizar estos casos podemos utilizar un <em>orquestador</em>, como por ejemplo, <strong>docker-compose …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/10/microservicios-con-docker-compose.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html">Separando el build y el runtime con contenedores Docker</a></h2>
-                <div class="summary"><p>Cuando montamos un contenedor <strong>Docker</strong> para servir una aplicación cualquiera, solemos poner un montón de dependencias necesarias solamente para compilar el paquete o para empaquetar sus librerías. Esto supone un gasto innecesario en espacio y en tiempo de ejecución; usando contenedores desechables podemos agilizar este proceso de forma altamente considerable …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/10/separando-el-build-y-el-runtime-con-contenedores-docker.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html">Lanzando playbooks de Ansible desde Jenkins</a></h2>
-                <div class="summary"><p>Somos muchos los amantes del terminal para ejecutar nuestras tareas, sea con <strong>Ansible</strong> o con otras herramientas. A veces nos puede convenir dotar la herramienta de un entorno gráfico o web para que lo hagan otras personas. Aunque ya existe como producto <strong>Ansible Tower</strong>, su precio es prohibitivo para muchos …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/09/imagenes-docker-reusables-mediante-configuraciones-dinamicas.html">Imágenes docker reusables mediante configuraciones dinámicas</a></h2>
-                <div class="summary"><p>Muchos de los servicios que necesitamos son siempre los mismos, cambiando solamente algunos parámetros. Incluso los mismos servicios pueden sufrir variaciones en su configuración, por ejemplo, un balanceador al que se añaden o quitan <em>hosts</em>. Siguiendo las prácticas de <a href="http://12factor.net/es/">12factor</a> podemos ahorrar trabajo, mediante el uso de variables de entorno …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/09/imagenes-docker-reusables-mediante-configuraciones-dinamicas.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/07/tipos-de-volumenes-en-docker.html">Tipos de volúmenes en Docker</a></h2>
-                <div class="summary"><p>Una de las mas importantes funcionalidades de <strong>Docker</strong> son los volúmenes. Estos no son mas que carpetas en nuestro sistema de ficheros y son capaces de sobrevivir al ciclo de vida normal del contenedor. Eso nos permite, entre otras cosas, compartir varios ficheros con otros contenedores o con el <em>host …</em></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/07/tipos-de-volumenes-en-docker.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/06/balanceando-peticiones-con-haproxy.html">Balanceando peticiones con HAProxy</a></h2>
-                <div class="summary"><p>Cuando tenemos un entorno grande o con previsiones de crecimiento, nos interesa poder poner a trabajar varios servidores similares. En casos así nos hace falta un <strong>balanceador de carga</strong>, que actúa como un agente de tráfico, dirigiendo las peticiones que él mismo recibe a los diferentes servidores, por ejemplo, <strong>haproxy …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/06/balanceando-peticiones-con-haproxy.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2016/06/preparando-un-servidor-de-repositorios-git.html">Preparando un servidor de repositorios GIT</a></h2>
-                <div class="summary"><p>Algunas veces tenemos necesidad de crear un proyecto con un equipo pequeño y necesitamos versionarlo en un sitio accesible para todos los participantes involucrados. El precio de soluciones en la nube suele ser prohibitivo, y montar una solución gráfica puede ser demasiado. Lo podemos hacer simplemente usando <strong>git</strong> y <strong>ssh …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2016/06/preparando-un-servidor-de-repositorios-git.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.ml/2018/10/dnsmasq-como-una-utilidad-de-cache-dns-local-usando-docker.html"
+                       rel="bookmark"
+                       title="Permalink to DNSmasq como una utilidad de cache DNS local usando Docker">
+                        DNSmasq como una utilidad de cache DNS local usando Docker
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2018-10-01T10:00:00+02:00"> 2018-10-01</time>
+    </span>
 
-        <ul class="pagination">
-                <li class="prev"><a href="http://www.linuxsysadmin.ml/tag/docker3.html">&laquo;</a>
-                </li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/tag/docker.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/tag/docker2.html">2</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/tag/docker3.html">3</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.ml/tag/docker4.html">4</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/tag/docker5.html">5</a></li>
-                <li class="next"><a
-                        href="http://www.linuxsysadmin.ml/tag/docker5.html">&raquo;</a></li>
-        </ul>
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 4 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.ml/category/sistemas.html">Sistemas</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.ml/tag/dnsmasq.html">dnsmasq</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/docker.html">docker</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>Ya vimos en otros artículos lo fácilmente que podemos utilizar <strong>dnsmasq</strong> en un <em>gateway</em> para ayudar a los servidores a que se conozcan entre sí por nombre y como una forma de ocultar el DNS real de la red interna. Sin embargo es una caché excelente para un sistema aislado.</p>
+<p>Cualquier sistema, sea un servidor o no, puede utilizar un proceso <strong>dnsmasq</strong> local como caché y como forma de resolver por nombre entornos que todavia no tienen un DNS disponible en internet. Realmente es un proceso que no consume casi ninguna memoria y nos puede ayudar mucho en caso de una caída del DNS global, o en caso de desconectarnos de la red por cualquier motivo.</p>
+<p>Lo que suele ser problemático es instalarlo en nuestro sistema, por un tema de permisos o de conflictos; en estos casos podemos confiar en convertirlo en un contenedor, que no pasa de los 5mb de disco.</p>
+<h2>La imagen con DNSmasq</h2>
+<p>La imagen en sí misma no oculta ninguna complicación; se trata de instalar <strong>dnsmasq</strong> en nuestro sistema base y asegurarnos que ejectua en <em>foreground</em>. Para evitar una imagen muy grande, podemos utilizar <strong>Alpine Linux</strong>.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace/dnsmasq$ cat build/Dockerfile
+FROM alpine:3.8
+RUN apk add --no-cache dnsmasq
+CMD <span class="o">[</span><span class="s2">&quot;/usr/sbin/dnsmasq&quot;</span>, <span class="s2">&quot;-k&quot;</span><span class="o">]</span>
+gerard@atlantis:~/workspace/dnsmasq$
+</pre></div>
+
+
+<p>Para construir y levantar el servicio, podemos utilizar <strong>docker-compose</strong>:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace/dnsmasq$ cat docker-compose.yml
+version: <span class="s1">&#39;3&#39;</span>
+services:
+  dnsmasq:
+    image: dnsmasq
+    build: build
+    container_name: dnsmasq
+    hostname: dnsmasq
+    cap_add:
+      - NET_ADMIN
+    network_mode: host
+    restart: always
+    volumes:
+      - ./hosts:/etc/hosts:ro
+gerard@atlantis:~/workspace/dnsmasq$
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace/dnsmasq$ docker-compose build
+Building dnsmasq
+...
+Successfully tagged dnsmasq:latest
+gerard@atlantis:~/workspace/dnsmasq$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+...
+dnsmasq             latest              b43fd1b79394        <span class="m">7</span> minutes ago       <span class="m">4</span>.76MB
+...
+gerard@atlantis:~/workspace/dnsmasq$
+</pre></div>
+
+
+<p>Y con esto tenemos nuestra imagen.</p>
+<h2>Ejecutando el contenedor</h2>
+<p>Como decisión de diseño, he preferido montar el fichero <code>/etc/hosts</code> desde una carpeta local, para poder modificarlo a placer y sin tener permisos de superusuario.</p>
+<p>Levantamos el servicio encima de la red local; de esta forma, crearemos la ilusión de que <strong>dnsmasq</strong> corre en la misma máquina que la va a utilizar directamente en <em>localhost</em>.</p>
+<p><strong>NOTA</strong>: <strong>dnsmasq</strong> utiliza algunas operaciones especiales de redes. Podéis ejecutar en modo privilegiado (<code>--privileged</code>) o podéis darle la <em>capability</em> <code>NET_ADMIN</code>.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace/dnsmasq$ docker-compose up -d
+Creating dnsmasq ... <span class="k">done</span>
+gerard@atlantis:~/workspace/dnsmasq$
+</pre></div>
+
+
+<p>Y con esto tenemos el servicio <strong>dnsmasq</strong> accesible desde nuestro servidor, en el puerto estándar:</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace/dnsmasq$ ss -lnt <span class="p">|</span> grep <span class="m">53</span>
+LISTEN     <span class="m">0</span>      <span class="m">32</span>           *:53                       *:*
+LISTEN     <span class="m">0</span>      <span class="m">32</span>          :::53                      :::*
+gerard@atlantis:~/workspace/dnsmasq$
+</pre></div>
+
+
+<h2>Utilizando el nuevo servidor DNS</h2>
+<p>Solo falta indicar que el servidor DNS que nuestra máquina debe utilizar es <em>localhost</em> en <code>/etc/resolv.conf</code>, posiblemente seguido de otros. De esta forma, la primera petición DNS fallará, se irá a buscar en el siguiente servidor, y se guardará en <em>caché</em>.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace/dnsmasq$ cat /etc/resolv.conf
+domain ...
+search ...
+nameserver <span class="m">127</span>.0.0.1
+nameserver ...
+nameserver ...
+gerard@atlantis:~/workspace/dnsmasq$
+</pre></div>
+
+
+<p>En el caso de utilizar DHCP para obtener dirección IP automáticamente, el fichero <code>/etc/resolv.conf</code> se sobreescribe con lo que nos pase el <em>router</em>. Podemos instruir al cliente de DHCP para que siempre nos añada <em>localhost</em> en el fichero (es lo que tuve que hacer yo).</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace/dnsmasq$ cat /etc/dhcp/dhclient.conf 
+...
+prepend domain-name-servers <span class="m">127</span>.0.0.1<span class="p">;</span>
+gerard@atlantis:~/workspace/dnsmasq$
+</pre></div>
+
+
+<h2>Probando el servidor DNS</h2>
+<p>El paso más interesante de este <em>setup</em> es la capacidad de <em>cachear</em> las peticiones DNS, y esto lo podemos probar haciendo simplemente varias peticiones:</p>
+<div class="highlight"><pre><span></span>root@atlantis:~# dig www.linuxsysadmin.ml
+...
+<span class="p">;;</span> Query time: <span class="m">30</span> msec
+<span class="p">;;</span> SERVER: <span class="m">127</span>.0.0.1#53<span class="o">(</span><span class="m">127</span>.0.0.1<span class="o">)</span>
+...
+root@atlantis:~# dig www.linuxsysadmin.ml
+...
+<span class="p">;;</span> Query time: <span class="m">0</span> msec
+<span class="p">;;</span> SERVER: <span class="m">127</span>.0.0.1#53<span class="o">(</span><span class="m">127</span>.0.0.1<span class="o">)</span>
+...
+root@atlantis:~# dig www.linuxsysadmin.ml
+...
+<span class="p">;;</span> Query time: <span class="m">0</span> msec
+<span class="p">;;</span> SERVER: <span class="m">127</span>.0.0.1#53<span class="o">(</span><span class="m">127</span>.0.0.1<span class="o">)</span>
+...
+root@atlantis:~#
+</pre></div>
+
+
+<p>Podemo ver claramente dos cosas:</p>
+<ul>
+<li>Estamos utilizando nuestro servidor local DNS</li>
+<li>La primera petición no está en <em>caché</em> y tarda un poco, pero el resto son inmediatas</li>
+</ul>
+<p>La otra funcionalidad que ganamos con <strong>dnsmasq</strong> es la de resolver nombres desde el fichero <code>/etc/hosts</code> del contenedor. Para evitarme modificar sistemas de ficheros privilegiados, el <em>docker-compose.yml</em> añade este fichero desde un fichero local, que podemos modificar a placer segun nuestros gustos (no os olvidéis de reiniciar el contenedor para que pille los cambios).</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~/workspace/dnsmasq$ cat hosts
+<span class="m">127</span>.0.0.1 test.api.local
+<span class="m">10</span>.0.0.3 auth.api.private
+gerard@atlantis:~/workspace/dnsmasq$ docker-compose restart
+Restarting dnsmasq ... <span class="k">done</span>
+gerard@atlantis:~/workspace/dnsmasq$
+</pre></div>
+
+
+<p>Y con esto podemos resolver dominios que no existen fuera de nuestra red, con la comodidad de hacerlo por nombre, y sin modificar direcciones IP si los recolocamos en otros servidores.</p>
+<div class="highlight"><pre><span></span>root@atlantis:~# dig test.api.local +short
+<span class="m">127</span>.0.0.1
+root@atlantis:~# dig auth.api.private +short
+<span class="m">10</span>.0.0.3
+root@atlantis:~#
+</pre></div>
+
+
+<p>Y con esto ya podemos decir que lo tenemos todo funcionando.</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.ml/2018/03/un-gateway-con-debian-iptables-y-dnsmasq.html">Un gateway con Debian, iptables y dnsmasq</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2016/02/un-proxy-dns-con-dnsmasq.html">Un proxy DNS con dnsmasq</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2018/09/un-contenedor-multiservicio-con-docker-y-s6.html">Un contenedor multiservicio con docker y s6</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'dnsmasq-como-una-utilidad-de-cache-dns-local-usando-docker';
+                var disqus_url = 'http://www.linuxsysadmin.ml/2018/10/dnsmasq-como-una-utilidad-de-cache-dns-local-usando-docker.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
