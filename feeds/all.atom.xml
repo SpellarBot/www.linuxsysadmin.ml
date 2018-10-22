@@ -1,5 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-10-16T10:00:00+02:00</updated><entry><title>Trucos simples de CSS para que tu página se vea aceptable</title><link href="http://www.linuxsysadmin.ml/2018/10/trucos-simples-de-css-para-que-tu-pagina-se-vea-aceptable.html" rel="alternate"></link><published>2018-10-16T10:00:00+02:00</published><updated>2018-10-16T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-10-16:/2018/10/trucos-simples-de-css-para-que-tu-pagina-se-vea-aceptable.html</id><summary type="html">&lt;p&gt;Todos estamos hartos de ver páginas web con distracciones por todos lados: anuncios, &lt;em&gt;popups&lt;/em&gt;, menús desplegables y horribles &lt;em&gt;scripts&lt;/em&gt; de &lt;em&gt;javascript&lt;/em&gt;. Eso hace que el contenido no llegue al usuario final y por lo tanto, no se queden con ganas de volver. Eso no significa tener una página HTML básica …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Todos estamos hartos de ver páginas web con distracciones por todos lados: anuncios, &lt;em&gt;popups&lt;/em&gt;, menús desplegables y horribles &lt;em&gt;scripts&lt;/em&gt; de &lt;em&gt;javascript&lt;/em&gt;. Eso hace que el contenido no llegue al usuario final y por lo tanto, no se queden con ganas de volver. Eso no significa tener una página HTML básica.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-10-22T10:00:00+02:00</updated><entry><title>Una alternativa a dig: probando drill</title><link href="http://www.linuxsysadmin.ml/2018/10/una-alternativa-a-dig-probando-drill.html" rel="alternate"></link><published>2018-10-22T10:00:00+02:00</published><updated>2018-10-22T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-10-22:/2018/10/una-alternativa-a-dig-probando-drill.html</id><summary type="html">&lt;p&gt;Cuando trabajas con terceras partes, los problemas relacionados con la resolución DNS son demasiado habituales. Muchas veces utilizan DNS internos y cuando nos pasan los datos de conexión remota, no funciona nada. En estos casos, el procedimiento suele pasar por verificar primero la resolución DNS antes que la conectividad remota …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando trabajas con terceras partes, los problemas relacionados con la resolución DNS son demasiado habituales. Muchas veces utilizan DNS internos y cuando nos pasan los datos de conexión remota, no funciona nada. En estos casos, el procedimiento suele pasar por verificar primero la resolución DNS antes que la conectividad remota.&lt;/p&gt;
+&lt;p&gt;Para todas aquellas verificaciones que se lanzan contra los DNS, mi herramienta favorita &lt;em&gt;era&lt;/em&gt; &lt;strong&gt;dig&lt;/strong&gt;. Es completa, veraz, y te da toda la información de una sola pasada.&lt;/p&gt;
+&lt;p&gt;Sin embargo, el otro día encontré su talón de aquiles: para no instalar nada en mi máquina, utilicé un contenedor de &lt;strong&gt;docker&lt;/strong&gt;, por supesto con &lt;strong&gt;Alpine Linux&lt;/strong&gt;. Para aquellos que no lo sepáis, &lt;strong&gt;Alpine Linux&lt;/strong&gt; usa una implementación de funciones DNS algo distinta de la habitual, y ello causa problemas relacionados con DNS.&lt;/p&gt;
+&lt;p&gt;Aunque mejor lo mostramos en un ejemplo: partiremos de un contenedor &lt;strong&gt;Alpine Linux&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ docker run -ti --rm alpine:3.8
+/ &lt;span class="c1"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;El problema&lt;/h2&gt;
+&lt;p&gt;En este punto, el contenedor no tiene la herramienta &lt;strong&gt;dig&lt;/strong&gt; instalada, aunque lo podemos corregir de forma fácil:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/ &lt;span class="c1"&gt;# apk add --no-cache bind-tools&lt;/span&gt;
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.8/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.8/community/x86_64/APKINDEX.tar.gz
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;/5&lt;span class="o"&gt;)&lt;/span&gt; Installing libgcc &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;.4.0-r8&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;/5&lt;span class="o"&gt;)&lt;/span&gt; Installing json-c &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.13.1-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;/5&lt;span class="o"&gt;)&lt;/span&gt; Installing libxml2 &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.9.8-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;/5&lt;span class="o"&gt;)&lt;/span&gt; Installing bind-libs &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;9&lt;/span&gt;.12.2_p1-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;/5&lt;span class="o"&gt;)&lt;/span&gt; Installing bind-tools &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;9&lt;/span&gt;.12.2_p1-r0&lt;span class="o"&gt;)&lt;/span&gt;
+Executing busybox-1.28.4-r1.trigger
+OK: &lt;span class="m"&gt;9&lt;/span&gt; MiB in &lt;span class="m"&gt;18&lt;/span&gt; packages
+/ &lt;span class="c1"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lanzamos una &lt;em&gt;query&lt;/em&gt; DNS bastante normal, y obtenemos los resultados.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/ &lt;span class="c1"&gt;# dig www.google.com&lt;/span&gt;
+
+&lt;span class="p"&gt;;&lt;/span&gt; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG &lt;span class="m"&gt;9&lt;/span&gt;.12.2-P1 &amp;lt;&amp;lt;&amp;gt;&amp;gt; www.google.com
+&lt;span class="p"&gt;;;&lt;/span&gt; global options: +cmd
+&lt;span class="p"&gt;;;&lt;/span&gt; Got answer:
+&lt;span class="p"&gt;;;&lt;/span&gt; -&amp;gt;&amp;gt;HEADER&lt;span class="s"&gt;&amp;lt;&amp;lt;- opco&lt;/span&gt;de: QUERY, status: FORMERR, id: &lt;span class="m"&gt;60730&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; flags: qr rd&lt;span class="p"&gt;;&lt;/span&gt; QUERY: &lt;span class="m"&gt;1&lt;/span&gt;, ANSWER: &lt;span class="m"&gt;0&lt;/span&gt;, AUTHORITY: &lt;span class="m"&gt;0&lt;/span&gt;, ADDITIONAL: &lt;span class="m"&gt;1&lt;/span&gt;
+...
+/ &lt;span class="c1"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Leemos la respuesta y vemos algo raro: "ANSWER: 0". No, no se ha acabado el mundo, Google funciona bien, pero nuestra herramienta no.&lt;/p&gt;
+&lt;p&gt;Esto pasa porque &lt;strong&gt;musl libc&lt;/strong&gt; se limita a lanzar la &lt;em&gt;query&lt;/em&gt; contra el primer servidor DNS de nuestro &lt;code&gt;/etc/resolv.conf&lt;/code&gt;, que no es el único.&lt;/p&gt;
+&lt;h2&gt;La alternativa&lt;/h2&gt;
+&lt;p&gt;Estaba yo a punto de tirar la toalla y usar un contenedor con otra distribución, pero topé casi por casualidad con otra herramienta: &lt;strong&gt;drill&lt;/strong&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The name drill is a pun on dig. With drill you should be able get even more information than with dig.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Se trata de una versión mejorada de &lt;strong&gt;dig&lt;/strong&gt;, así que vale la pena intentarlo de nuevo:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/ &lt;span class="c1"&gt;# apk add --no-cache drill&lt;/span&gt;
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.8/main/x86_64/APKINDEX.tar.gz
+fetch http://dl-cdn.alpinelinux.org/alpine/v3.8/community/x86_64/APKINDEX.tar.gz
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;/2&lt;span class="o"&gt;)&lt;/span&gt; Installing ldns &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.7.0-r0&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;/2&lt;span class="o"&gt;)&lt;/span&gt; Installing drill &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.7.0-r0&lt;span class="o"&gt;)&lt;/span&gt;
+Executing busybox-1.28.4-r1.trigger
+OK: &lt;span class="m"&gt;10&lt;/span&gt; MiB in &lt;span class="m"&gt;20&lt;/span&gt; packages
+/ &lt;span class="c1"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La misma &lt;em&gt;query&lt;/em&gt; nos da un resultado correcto:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;/ &lt;span class="c1"&gt;# drill www.google.com&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; -&amp;gt;&amp;gt;HEADER&lt;span class="s"&gt;&amp;lt;&amp;lt;- opco&lt;/span&gt;de: QUERY, rcode: NOERROR, id: &lt;span class="m"&gt;46447&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; flags: qr rd ra &lt;span class="p"&gt;;&lt;/span&gt; QUERY: &lt;span class="m"&gt;1&lt;/span&gt;, ANSWER: &lt;span class="m"&gt;1&lt;/span&gt;, AUTHORITY: &lt;span class="m"&gt;0&lt;/span&gt;, ADDITIONAL: &lt;span class="m"&gt;0&lt;/span&gt;
+&lt;span class="p"&gt;;;&lt;/span&gt; QUESTION SECTION:
+&lt;span class="p"&gt;;;&lt;/span&gt; www.google.com.      IN      A
+
+&lt;span class="p"&gt;;;&lt;/span&gt; ANSWER SECTION:
+www.google.com. &lt;span class="m"&gt;97&lt;/span&gt;      IN      A       &lt;span class="m"&gt;216&lt;/span&gt;.58.201.228
+...
+/ &lt;span class="c1"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Tenemos dos herramientas para consulta de DNS, que son &lt;strong&gt;dig&lt;/strong&gt; y &lt;strong&gt;drill&lt;/strong&gt;. Considerando que &lt;strong&gt;drill&lt;/strong&gt; es más completa y más correcta que &lt;strong&gt;dig&lt;/strong&gt;, no hay siquiera punto de comparación.&lt;/p&gt;
+&lt;p&gt;A nivel de dependencias necesarias, &lt;strong&gt;drill&lt;/strong&gt; también sobresale: necesita menos paquetes y nos da contenedores más pequeños:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ docker ps -s
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES               SIZE
+e4fa4f7afb11        alpine:3.8          &lt;span class="s2"&gt;&amp;quot;/bin/sh&amp;quot;&lt;/span&gt;           &lt;span class="m"&gt;40&lt;/span&gt; seconds ago      Up &lt;span class="m"&gt;39&lt;/span&gt; seconds                           dig                 &lt;span class="m"&gt;5&lt;/span&gt;.05MB &lt;span class="o"&gt;(&lt;/span&gt;virtual &lt;span class="m"&gt;9&lt;/span&gt;.47MB&lt;span class="o"&gt;)&lt;/span&gt;
+9f9a7b248f62        alpine:3.8          &lt;span class="s2"&gt;&amp;quot;/bin/sh&amp;quot;&lt;/span&gt;           &lt;span class="m"&gt;43&lt;/span&gt; seconds ago      Up &lt;span class="m"&gt;42&lt;/span&gt; seconds                           drill               &lt;span class="m"&gt;1&lt;/span&gt;.7MB &lt;span class="o"&gt;(&lt;/span&gt;virtual &lt;span class="m"&gt;6&lt;/span&gt;.12MB&lt;span class="o"&gt;)&lt;/span&gt;
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Así pues, bienvenido &lt;strong&gt;drill&lt;/strong&gt; y hasta otra &lt;strong&gt;dig&lt;/strong&gt;.&lt;/p&gt;</content><category term="drill"></category><category term="dig"></category><category term="dns"></category></entry><entry><title>Trucos simples de CSS para que tu página se vea aceptable</title><link href="http://www.linuxsysadmin.ml/2018/10/trucos-simples-de-css-para-que-tu-pagina-se-vea-aceptable.html" rel="alternate"></link><published>2018-10-16T10:00:00+02:00</published><updated>2018-10-16T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-10-16:/2018/10/trucos-simples-de-css-para-que-tu-pagina-se-vea-aceptable.html</id><summary type="html">&lt;p&gt;Todos estamos hartos de ver páginas web con distracciones por todos lados: anuncios, &lt;em&gt;popups&lt;/em&gt;, menús desplegables y horribles &lt;em&gt;scripts&lt;/em&gt; de &lt;em&gt;javascript&lt;/em&gt;. Eso hace que el contenido no llegue al usuario final y por lo tanto, no se queden con ganas de volver. Eso no significa tener una página HTML básica …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Todos estamos hartos de ver páginas web con distracciones por todos lados: anuncios, &lt;em&gt;popups&lt;/em&gt;, menús desplegables y horribles &lt;em&gt;scripts&lt;/em&gt; de &lt;em&gt;javascript&lt;/em&gt;. Eso hace que el contenido no llegue al usuario final y por lo tanto, no se queden con ganas de volver. Eso no significa tener una página HTML básica.&lt;/p&gt;
 &lt;p&gt;Para aquellas páginas que estén más interesadas en ser leídas que en aportar beneficios, no se necesita nada de esto; la simplicidad en estos casos es un plus: no se necesita prácticamente nada más que títulos, párrafos e imágenes.&lt;/p&gt;
 &lt;p&gt;Todos sabemos que una página web que solo use &lt;em&gt;tags&lt;/em&gt; de HTML, no es atractiva visualmente, pero está libre de distracciones completamente. Podemos ver &lt;a href="/2018/10/trucos-simples-de-css-para-que-tu-pagina-se-vea-aceptable/css_basic_skeleton.html"&gt;un ejemplo&lt;/a&gt; de este tipo de páginas.&lt;/p&gt;
 &lt;p&gt;A partir de este esqueleto, se puede complicar el diseño tanto como queramos, hasta llegar a la ilegibilidad. Sin embargo, hay un punto medio que se puede conseguir con pocos conocimientos de CSS y, aún así, dar sensación de profesionalidad y de simpleza buscada adrede. Para los impacientes, podemos ver el resultado &lt;a href="/2018/10/trucos-simples-de-css-para-que-tu-pagina-se-vea-aceptable/css_basic_styled.html"&gt;aquí&lt;/a&gt;.&lt;/p&gt;
