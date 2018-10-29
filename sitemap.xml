@@ -5,42 +5,49 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/</loc>
-<lastmod>2018-10-22T09:40:45-00:00</lastmod>
+<lastmod>2018-10-29T10:03:37-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2018-10-22T09:40:45-00:00</lastmod>
+<lastmod>2018-10-29T10:03:37-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2018-10-22T09:40:45-00:00</lastmod>
+<lastmod>2018-10-29T10:03:37-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2018-10-22T09:40:45-00:00</lastmod>
+<lastmod>2018-10-29T10:03:37-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2018-10-22T09:40:45-00:00</lastmod>
+<lastmod>2018-10-29T10:03:37-00:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>http://www.linuxsysadmin.ml/curriculum.html</loc>
-<lastmod>2018-10-22T09:40:45-00:00</lastmod>
+<lastmod>2018-10-29T10:03:37-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/2018/10/usando-traefik-en-un-cluster-de-docker-swarm.html</loc>
+<lastmod>2018-10-29T10:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1188,7 +1195,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/category/sistemas.html</loc>
-<lastmod>2018-10-01T10:00:00-00:15</lastmod>
+<lastmod>2018-10-29T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1196,6 +1203,27 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.ml/category/virtualizacion.html</loc>
 <lastmod>2016-05-23T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/tag/traefik.html</loc>
+<lastmod>2018-10-29T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/tag/docker.html</loc>
+<lastmod>2018-10-29T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>http://www.linuxsysadmin.ml/tag/swarm.html</loc>
+<lastmod>2018-10-29T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1257,13 +1285,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>http://www.linuxsysadmin.ml/tag/docker.html</loc>
-<lastmod>2018-10-01T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
 <loc>http://www.linuxsysadmin.ml/tag/s6.html</loc>
 <lastmod>2018-09-24T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -1280,13 +1301,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/ssh.html</loc>
 <lastmod>2018-09-24T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>http://www.linuxsysadmin.ml/tag/traefik.html</loc>
-<lastmod>2018-09-17T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1616,13 +1630,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://www.linuxsysadmin.ml/tag/contenedor.html</loc>
 <lastmod>2018-04-16T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>http://www.linuxsysadmin.ml/tag/swarm.html</loc>
-<lastmod>2018-04-09T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -3078,7 +3085,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>http://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2018-10-22T10:00:00-00:15</lastmod>
+<lastmod>2018-10-29T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

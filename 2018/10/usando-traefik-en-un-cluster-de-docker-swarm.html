@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Sistemas - Linux Sysadmin</title>
+    <title>Usando Traefik en un cluster de Docker Swarm - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,16 +9,23 @@
 
 
 
+<link rel="canonical" href="http://www.linuxsysadmin.ml/2018/10/usando-traefik-en-un-cluster-de-docker-swarm.html">
 
-    <meta name="author" content="Gerard" />
-    <meta name="keywords" content="Sistemas" />
+        <meta name="author" content="Gerard" />
+        <meta name="keywords" content="traefik,docker,swarm" />
+        <meta name="description" content="Hace unas semanas, hablamos de un balanceador que trabaja muy bien con docker. Se trataba de traefik y nos permitía olvidarnos de su configuración, que él mismo podía extraer de los metadatos de los contenedores y reconfigurarse dinámicamente. Hoy vamos a explicar como funciona con un cluster de docker swarm …" />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="http://www.linuxsysadmin.ml"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Usando Traefik en un cluster de Docker Swarm"/>
+        <meta property="og:url" content="http://www.linuxsysadmin.ml/2018/10/usando-traefik-en-un-cluster-de-docker-swarm.html"/>
+        <meta property="og:description" content="Hace unas semanas, hablamos de un balanceador que trabaja muy bien con docker. Se trataba de traefik y nos permitía olvidarnos de su configuración, que él mismo podía extraer de los metadatos de los contenedores y reconfigurarse dinámicamente. Hoy vamos a explicar como funciona con un cluster de docker swarm …"/>
+        <meta property="article:published_time" content="2018-10-29" />
+            <meta property="article:section" content="Sistemas" />
+            <meta property="article:tag" content="traefik" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:tag" content="swarm" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -80,11 +87,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-    <ol class="breadcrumb">
-        <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-        <li><a href="http://www.linuxsysadmin.ml/categories.html" title="Categorías de Linux Sysadmin">Categorías</a></li>
-        <li class="active">Sistemas</li>
-    </ol>
+            <ol class="breadcrumb">
+                <li><a href="http://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="http://www.linuxsysadmin.ml/category/sistemas.html" title="Sistemas">Sistemas</a></li>
+                <li class="active">Usando Traefik en un cluster de Docker Swarm</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -97,94 +104,233 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2018/10/usando-traefik-en-un-cluster-de-docker-swarm.html">Usando Traefik en un cluster de Docker Swarm</a></h2>
-                <div class="summary"><p>Hace unas semanas, hablamos de un balanceador que trabaja muy bien con <strong>docker</strong>. Se trataba de <strong>traefik</strong> y nos permitía olvidarnos de su configuración, que él mismo podía extraer de los metadatos de los contenedores y reconfigurarse dinámicamente. Hoy vamos a explicar como funciona con un <em>cluster</em> de <strong>docker swarm …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/10/usando-traefik-en-un-cluster-de-docker-swarm.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2018/10/dnsmasq-como-una-utilidad-de-cache-dns-local-usando-docker.html">DNSmasq como una utilidad de cache DNS local usando Docker</a></h2>
-                <div class="summary"><p>Ya vimos en otros artículos lo fácilmente que podemos utilizar <strong>dnsmasq</strong> en un <em>gateway</em> para ayudar a los servidores a que se conozcan entre sí por nombre y como una forma de ocultar el DNS real de la red interna. Sin embargo es una caché excelente para un sistema aislado …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/10/dnsmasq-como-una-utilidad-de-cache-dns-local-usando-docker.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2018/09/un-contenedor-multiservicio-con-docker-y-s6.html">Un contenedor multiservicio con docker y s6</a></h2>
-                <div class="summary"><p>Lo he vuelto a hacer: a pesar de que es una antipráctica de <strong>docker</strong>, me veo tentado a ejecutar varios servicios en mis contenedores. Solo lo hago cuando estos servicios tienen un objetivo común, como servir PHP (nginx/php-fpm); para ello necesitamos un gestor de procesos. Hoy hablaremos de <strong>s6 …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/09/un-contenedor-multiservicio-con-docker-y-s6.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2018/09/un-balanceador-dinamico-para-docker-traefik.html">Un balanceador dinámico para Docker: traefik</a></h2>
-                <div class="summary"><p>Cuando escalamos nuestros servicios o añadimos nuevos en <strong>Docker</strong>, suele ser un problema la configuración del balanceador. Se necesita modificar su configuración y reiniciarlo para que la nueva configuración aplique. Con el tiempo han aparecido nuevas soluciones para simplificar estos casos, con configuraciones dinámicas. Una de estas soluciones es <strong>Traefik …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/09/un-balanceador-dinamico-para-docker-traefik.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2018/09/una-unidad-de-red-remota-con-sshfs.html">Una unidad de red remota con SSHFS</a></h2>
-                <div class="summary"><p>Es muy cómodo dejar un fichero en una carpeta local y saber que ese fichero está a salvo, en la nube; seguramente los que utilizáis un servicio de sincronización en la nube váis a estar de acuerdo. La empresas no suelen permitirlo, pero podéis utilizar un servicio local por <strong>SSH …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/09/una-unidad-de-red-remota-con-sshfs.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2018/08/cambiando-la-posicion-del-fichero-authorized-keys.html">Cambiando la posición del fichero authorized_keys</a></h2>
-                <div class="summary"><p>Un requerimiento de seguridad estándar en mi trabajo, es que los servidores SFTP no permitan la autenticación con <em>passwords</em> normales, y estamos obligados a usar autenticación por claves. El otro día tuvimos una queja de un usuario que no podía entrar porque había eliminado su carpeta <code>.ssh</code> de forma consciente …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/08/cambiando-la-posicion-del-fichero-authorized-keys.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2018/07/un-servidor-pypi-local-con-docker.html">Un servidor pypi local con Docker</a></h2>
-                <div class="summary"><p>Estaba yo el otro día investigando una nueva librería de <strong>python</strong>, pero necesitaba de otra librería que se compilaba. Harto de perder el tiempo compilando cada vez esta librería, recuperé un antiguo artículo que me permitía distribuir el archivo <em>wheel</em> ya compilado tantas veces yo quisiera; como no, usando <strong>docker …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/07/un-servidor-pypi-local-con-docker.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2018/07/mongodb-sharding-con-docker.html">MongoDB sharding con docker</a></h2>
-                <div class="summary"><p>El otro día estaba revisando viejos artículos, y me tropecé con <a href="http://www.linuxsysadmin.ml/2016/05/mongodb-sharding-con-ansible.html">uno anterior</a>. Este estaba montado con <strong>ansible</strong>, y se me pasó por la cabeza reescribirlo usando contenedores con <strong>docker</strong>. Así pues, vamos a montar exactamente el mismo <em>cluster</em>, pero con el cambio que la última revolución tecnológica nos aporta …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/07/mongodb-sharding-con-docker.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2018/06/un-reciclaje-de-tomcat-usando-docker.html">Un reciclaje de Tomcat usando Docker</a></h2>
-                <div class="summary"><p>Hace poco he cambiado de trabajo por motivos personales. En mi nueva posición me he encontrado con un cambio en las tecnologías usadas; lo que me he encontrado es algo que hacía tiempo que no tocaba: basan sus sistemas en <strong>Java</strong> y <strong>Tomcat</strong>. He necesitado un ligero reciclaje en ellos …</p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/06/un-reciclaje-de-tomcat-usando-docker.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://www.linuxsysadmin.ml/2018/06/un-servidor-git-con-frontal-web-gitea.html">Un servidor git con frontal web: Gitea</a></h2>
-                <div class="summary"><p>Los servidores de <strong>git</strong> son muy útiles, pero si solo lo accedemos mediante terminal, se quedan limitados a pocos usuarios avanzados. Sin embargo, las soluciones con interfaz web, como <strong>GitHub</strong> llegan a todo tipo de usuarios. En un intento de abaratar costes, se han hecho varios clones, entre ellos, <strong>Gitea …</strong></p>
-                    <a class="btn btn-default btn-xs" href="http://www.linuxsysadmin.ml/2018/06/un-servidor-git-con-frontal-web-gitea.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://www.linuxsysadmin.ml/2018/10/usando-traefik-en-un-cluster-de-docker-swarm.html"
+                       rel="bookmark"
+                       title="Permalink to Usando Traefik en un cluster de Docker Swarm">
+                        Usando Traefik en un cluster de Docker Swarm
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2018-10-29T10:00:00+01:00"> 2018-10-29</time>
+    </span>
 
-        <ul class="pagination">
-                <li class="prev disabled"><a href="#">&laquo;</a></li>
-                    <li class="active"><a
-                            href="http://www.linuxsysadmin.ml/category/sistemas.html">1</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/category/sistemas2.html">2</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/category/sistemas3.html">3</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/category/sistemas4.html">4</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/category/sistemas5.html">5</a></li>
-                    <li class=""><a
-                            href="http://www.linuxsysadmin.ml/category/sistemas6.html">6</a></li>
-                <li class="next"><a
-                        href="http://www.linuxsysadmin.ml/category/sistemas2.html">&raquo;</a></li>
-        </ul>
+
+            <span class="label label-default">Autor</span>
+            <a href="http://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 5 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="http://www.linuxsysadmin.ml/category/sistemas.html">Sistemas</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://www.linuxsysadmin.ml/tag/traefik.html">traefik</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/docker.html">docker</a>
+        /
+	<a href="http://www.linuxsysadmin.ml/tag/swarm.html">swarm</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>Hace unas semanas, hablamos de un balanceador que trabaja muy bien con <strong>docker</strong>. Se trataba de <strong>traefik</strong> y nos permitía olvidarnos de su configuración, que él mismo podía extraer de los metadatos de los contenedores y reconfigurarse dinámicamente. Hoy vamos a explicar como funciona con un <em>cluster</em> de <strong>docker swarm</strong>.</p>
+<p>Para ello vamos a partir de un <em>swarm</em> bastante simple de dos nodos (un <em>manager</em> y un <em>worker</em>). No es el ideal, pero es lo mínimo que puedo virtualizar sin acabar con los recursos de mi máquina y sin complicar demasiado las cosas.</p>
+<div class="highlight"><pre><span></span>gerard@manager:~$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+d9uluevfbh7vftbnhf2upmdnw *   manager             Ready               Active              Leader              <span class="m">18</span>.06.1-ce
+83tb1sa8l1z06h7vl6c4f4ucd     worker              Ready               Active                                  <span class="m">18</span>.06.1-ce
+gerard@manager:~$
+</pre></div>
+
+
+<p>Para asegurar que el balanceador está en la misma red que los contenedores (y por lo tanto, les pueda pasar peticiones), vamos a crear una red <em>overlay</em> que permita comunicarse a todos los contenedores de forma independiente del <em>host</em> en el que se encuentren.</p>
+<div class="highlight"><pre><span></span>gerard@manager:~$ docker network create --driver<span class="o">=</span>overlay traefik-net
+pe1s0yl4r402jagfgapmo10oc
+gerard@manager:~$
+</pre></div>
+
+
+<p><strong>AVISO</strong>: Por algún motivo, este comando creó una red que en el mismo rango que la red de los servidores del <em>swarm</em>. Esto da muchos problemas de comunicación en el futuro. Simplemente cread otra, para que la dirección de red cambie.</p>
+<h2>El balanceador</h2>
+<p>Levantar el balanceador es tan fácil como poner un contenedor que ejecute la imagen oficial <strong>traefik</strong>; partimos del artículo anterior sobre <a href="http://www.linuxsysadmin.ml/2018/09/un-balanceador-dinamico-para-docker-traefik.html">este servicio</a>. El único <em>flag</em> añadido es <code>--docker.swarmMode</code>, que es el que indica que el balanceador tiene que sacar los metadatos del <em>cluster swarm</em>.</p>
+<p>Para poder leer la información del <em>cluster</em>, es condición necesaria que se ejecute en un <em>manager</em>. Ello lo podemos conseguir mediante las <em>constraints</em> de <em>placement</em>. Otra decisión de diseño es que voy a ejecutar un <strong>traefik</strong> en cada <em>manager</em> con <code>mode: global</code> y con las restricciones anteriores (aunque en este caso solo hay uno).</p>
+<p>También quiero quiero que el puerto 8080 de cada <em>manager</em> sea ese <strong>traefik</strong> concreto (<code>mode: host</code>), y no el balanceador <em>ingress</em> que viene por defecto. Por supuesto, el balanceador va a estar en la red de servicio antes creada, en donde también pondremos los contenedores de servicio.</p>
+<div class="highlight"><pre><span></span>gerard@manager:~/traefik$ cat docker-compose.yml
+version: <span class="s1">&#39;3.2&#39;</span>
+services:
+  traefik:
+    image: traefik
+    command: --api --docker --docker.swarmMode --docker.exposedbydefault<span class="o">=</span><span class="nb">false</span>
+    ports:
+      - target: <span class="m">80</span>
+        published: <span class="m">80</span>
+        protocol: tcp
+        mode: host
+      - target: <span class="m">8080</span>
+        published: <span class="m">8080</span>
+        protocol: tcp
+        mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - traefik-net
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role <span class="o">==</span> manager
+networks:
+  traefik-net:
+    external: <span class="nb">true</span>
+gerard@manager:~/traefik$
+</pre></div>
+
+
+<p>Desplegamos el <em>stack</em> de un solo servicio que hemos creado y verificamos que está corriendo en todos los <em>managers</em>:</p>
+<div class="highlight"><pre><span></span>gerard@manager:~/traefik$ docker stack deploy -c docker-compose.yml traefik
+Creating service traefik_traefik
+gerard@manager:~/traefik$
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>gerard@manager:~/traefik$ docker stack ps traefik
+ID                  NAME                                        IMAGE               NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
+k83hxjvqmp6n        traefik_traefik.d9uluevfbh7vftbnhf2upmdnw   traefik:latest      manager             Running             Running <span class="m">12</span> minutes ago                     
+gerard@manager:~/traefik$
+</pre></div>
+
+
+<p>Podemos ver que <strong>traefik</strong> responde solo en la máquina en la que está ejecutando, y no en el resto. Así nos ahorramos balancear el balanceador.</p>
+<div class="highlight"><pre><span></span>gerard@gateway:~$ curl http://manager:8080/
+&lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;/dashboard/&quot;</span>&gt;Found&lt;/a&gt;.
+gerard@gateway:~$ curl http://worker:8080/
+curl: <span class="o">(</span><span class="m">7</span><span class="o">)</span> Failed to connect to worker port <span class="m">8080</span>: Conexión rehusada
+gerard@gateway:~$
+</pre></div>
+
+
+<p>Y con esto el balanceador está listo.</p>
+<h2>Un servicio de ejemplo</h2>
+<p>Desde el punto de vista de los servicios, no cambia nada; cada <strong>traefik</strong> se actualizará con lo que lea de los metadatos del <em>cluster</em>. Solo hay que recordar que debe estar en la misma red que los balanceadores...</p>
+<div class="highlight"><pre><span></span>gerard@manager:~/whoami$ cat docker-compose.yml
+version: <span class="s1">&#39;3&#39;</span>
+services:
+  whoami:
+    image: emilevauge/whoami
+    networks:
+      - traefik-net
+    deploy:
+      replicas: <span class="m">4</span>
+      labels:
+        traefik.frontend.rule: Host:whoami.docker.localhost
+        traefik.port: <span class="m">80</span>
+        traefik.enable: <span class="s2">&quot;true&quot;</span>
+networks:
+  traefik-net:
+    external: <span class="nb">true</span>
+gerard@manager:~/whoami$
+</pre></div>
+
+
+<p>Tras desplegar el servicio y ver que todas las instáncias están funcionando, podremos empezar las pruebas.</p>
+<div class="highlight"><pre><span></span>gerard@manager:~/whoami$ docker stack deploy -c docker-compose.yml whoami
+Creating service whoami_whoami
+gerard@manager:~/whoami$
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>gerard@manager:~/whoami$ docker stack ps whoami
+ID                  NAME                  IMAGE                      NODE                DESIRED STATE       CURRENT STATE             ERROR               PORTS
+hgsz3vgfyorj        whoami_whoami.1       emilevauge/whoami:latest   worker              Running             Running <span class="m">30</span> minutes ago
+ita8jth3nxvn        whoami_whoami.2       emilevauge/whoami:latest   manager             Running             Running <span class="m">22</span> minutes ago
+pib7gf0dixjl        whoami_whoami.3       emilevauge/whoami:latest   worker              Running             Running <span class="m">2</span> minutes ago
+s9c965gqq2gy        whoami_whoami.4       emilevauge/whoami:latest   manager             Running             Running <span class="m">2</span> minutes ago
+gerard@manager:~/whoami$
+</pre></div>
+
+
+<p>Las pruebas son tan simples como verificar que realmente se está balanceando entre todos los contenedores que, debido a la imagen usada, es trivial.</p>
+<div class="highlight"><pre><span></span>gerard@gateway:~$ curl -sH <span class="s2">&quot;Host: whoami.docker.localhost&quot;</span> http://manager/ <span class="p">|</span> grep Hostname
+Hostname: 8c98d5545ce6
+gerard@gateway:~$ curl -sH <span class="s2">&quot;Host: whoami.docker.localhost&quot;</span> http://manager/ <span class="p">|</span> grep Hostname
+Hostname: a9b2b58e98bb
+gerard@gateway:~$ curl -sH <span class="s2">&quot;Host: whoami.docker.localhost&quot;</span> http://manager/ <span class="p">|</span> grep Hostname
+Hostname: 2eb66b929b01
+gerard@gateway:~$ curl -sH <span class="s2">&quot;Host: whoami.docker.localhost&quot;</span> http://manager/ <span class="p">|</span> grep Hostname
+Hostname: 9040b20f948e
+gerard@gateway:~$ curl -sH <span class="s2">&quot;Host: whoami.docker.localhost&quot;</span> http://manager/ <span class="p">|</span> grep Hostname
+Hostname: 8c98d5545ce6
+gerard@gateway:~$ curl -sH <span class="s2">&quot;Host: whoami.docker.localhost&quot;</span> http://manager/ <span class="p">|</span> grep Hostname
+Hostname: a9b2b58e98bb
+gerard@gateway:~$ curl -sH <span class="s2">&quot;Host: whoami.docker.localhost&quot;</span> http://manager/ <span class="p">|</span> grep Hostname
+Hostname: 2eb66b929b01
+gerard@gateway:~$ curl -sH <span class="s2">&quot;Host: whoami.docker.localhost&quot;</span> http://manager/ <span class="p">|</span> grep Hostname
+Hostname: 9040b20f948e
+gerard@gateway:~$
+</pre></div>
+
+
+<p>Para desplegar el servicio no se necesita tocar el balanceador; aquí reside la fuerza de <strong>traefik</strong>. De hecho, podemos desplegar un <em>stack</em> nuevo con una segunda versión, y al rato eliminar el viejo; con eso tendríamos un despliegue sin cortes y, con un poco de juego de etiquetas, un <a href="http://www.linuxsysadmin.ml/2018/05/despliegues-sin-corte-de-servicio-blue-green-deployments.html">blue-green deployment</a> sin complicaciones.</p>
+<h2>Otras posibles mejoras</h2>
+<p>Esta es una lista con las ideas que todavía quedan en el tintero, y que pueden ayudarnos a crear el <em>cluster</em> perfecto, aunque no las he implementado:</p>
+<ul>
+<li>Incrementar los <em>managers</em> para tener alta disponibilidad, tanto del balanceador, como del <em>swarm</em></li>
+<li>Se van a necesitar más nodos <em>worker</em> para repartir la carga de contenedores y servicios</li>
+<li>Se recomienda limitar el despliegue de servicios solamente en nodos <em>workers</em></li>
+<li>Podemos tener un IP flotante entre los <em>managers</em> usando algo como <strong>keepalived</strong></li>
+</ul>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="http://www.linuxsysadmin.ml/2018/09/un-balanceador-dinamico-para-docker-traefik.html">Un balanceador dinámico para Docker: traefik</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2018/04/alta-disponibilidad-con-docker-swarm.html">Alta disponibilidad con Docker Swarm</a></li>
+        <li><a href="http://www.linuxsysadmin.ml/2017/11/uso-basico-de-un-cluster-docker-swarm.html">Uso básico de un cluster Docker Swarm</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'usando-traefik-en-un-cluster-de-docker-swarm';
+                var disqus_url = 'http://www.linuxsysadmin.ml/2018/10/usando-traefik-en-un-cluster-de-docker-swarm.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
