@@ -1,5 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-10-29T10:00:00+01:00</updated><entry><title>Usando Traefik en un cluster de Docker Swarm</title><link href="http://www.linuxsysadmin.ml/2018/10/usando-traefik-en-un-cluster-de-docker-swarm.html" rel="alternate"></link><published>2018-10-29T10:00:00+01:00</published><updated>2018-10-29T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-10-29:/2018/10/usando-traefik-en-un-cluster-de-docker-swarm.html</id><summary type="html">&lt;p&gt;Hace unas semanas, hablamos de un balanceador que trabaja muy bien con &lt;strong&gt;docker&lt;/strong&gt;. Se trataba de &lt;strong&gt;traefik&lt;/strong&gt; y nos permitía olvidarnos de su configuración, que él mismo podía extraer de los metadatos de los contenedores y reconfigurarse dinámicamente. Hoy vamos a explicar como funciona con un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;docker swarm …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hace unas semanas, hablamos de un balanceador que trabaja muy bien con &lt;strong&gt;docker&lt;/strong&gt;. Se trataba de &lt;strong&gt;traefik&lt;/strong&gt; y nos permitía olvidarnos de su configuración, que él mismo podía extraer de los metadatos de los contenedores y reconfigurarse dinámicamente. Hoy vamos a explicar como funciona con un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;docker swarm&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="http://www.linuxsysadmin.ml/" rel="alternate"></link><link href="http://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>http://www.linuxsysadmin.ml/</id><updated>2018-11-05T10:00:00+01:00</updated><entry><title>Verificando peticiones JSON con jsonschema</title><link href="http://www.linuxsysadmin.ml/2018/11/verificando-peticiones-json-con-jsonschema.html" rel="alternate"></link><published>2018-11-05T10:00:00+01:00</published><updated>2018-11-05T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-11-05:/2018/11/verificando-peticiones-json-con-jsonschema.html</id><summary type="html">&lt;p&gt;A medida que las empresas confían más y más en las APIs REST, los datos que viajan en formato JSON ha incrementado notablemente. Con este incremento, los errores por mensajes mal formados también se ha incrementado; esto nos obliga a validar los mensajes, no solamente de sintaxis, sino de semántica …&lt;/p&gt;</summary><content type="html">&lt;p&gt;A medida que las empresas confían más y más en las APIs REST, los datos que viajan en formato JSON ha incrementado notablemente. Con este incremento, los errores por mensajes mal formados también se ha incrementado; esto nos obliga a validar los mensajes, no solamente de sintaxis, sino de semántica.&lt;/p&gt;
+&lt;p&gt;Y es que no podemos permitirnos que nuestros procesos fallen porque alguien ha enviado un &lt;em&gt;payload&lt;/em&gt; que no es JSON, pero tampoco podemos dejar de filtrar aquellos mensages que, aun siendo JSON válidos, no cumplen con las especificaciones necesarias para cumplir el contrato de nuestras APIs.&lt;/p&gt;
+&lt;p&gt;Investigando un poco, parece ser que ya hay una especificación formal para validar mensajes JSON de acuerdo a un &lt;em&gt;schema&lt;/em&gt;; mas información &lt;a href="https://json-schema.org/"&gt;aquí&lt;/a&gt;. Como no podía ser menos, &lt;strong&gt;python&lt;/strong&gt; incluye varias implementaciones de un validador; concretamente nos vamos a centrar en &lt;strong&gt;jsonschema&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2&gt;Exponiendo el problema&lt;/h2&gt;
+&lt;p&gt;Supongamos que queremos consumir el mensaje de un &lt;em&gt;endpoint&lt;/em&gt; de &lt;em&gt;login&lt;/em&gt;, en donde esperamos un JSON tipo "object" con dos campos de texto, el "user" y el "password". Como ejemplo, me limitaré a sacarlos por pantalla:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ cat run.py
+&lt;span class="c1"&gt;#!/usr/bin/env python3&lt;/span&gt;
+
+import sys
+import json
+
+&lt;span class="nv"&gt;payload&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; json.load&lt;span class="o"&gt;(&lt;/span&gt;sys.stdin&lt;span class="o"&gt;)&lt;/span&gt;
+print&lt;span class="o"&gt;(&lt;/span&gt;payload&lt;span class="o"&gt;)&lt;/span&gt;
+
+&lt;span class="nv"&gt;user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; payload.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;user&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="nv"&gt;password&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; payload.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;password&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+print&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;%s / %s&amp;#39;&lt;/span&gt; % &lt;span class="o"&gt;(&lt;/span&gt;user, password&lt;span class="o"&gt;))&lt;/span&gt;
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para probar este &lt;em&gt;script&lt;/em&gt;, vamos a poner un conjunto de posibles entradas con variedad de posibles problemas:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ cat inputs/no_json
+hello world
+gerard@atlantis:~/workspace$ cat inputs/string_json
+&amp;quot;lorem ipsum&amp;quot;
+gerard@atlantis:~/workspace$ cat inputs/bad_dict_json
+{&amp;quot;user&amp;quot;: true}
+gerard@atlantis:~/workspace$ cat inputs/good_dict_json
+{&amp;quot;user&amp;quot;: &amp;quot;gerard&amp;quot;, &amp;quot;password&amp;quot;: &amp;quot;s3cr3t&amp;quot;}
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El primer ejemplo es el más evidente; el mensaje no cumple con la sintaxis JSON, así que ni lo podeemos leer. De hecho, no necesitamos un &lt;em&gt;schema&lt;/em&gt; para descartarlo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ ./run.py &amp;lt; inputs/no_json
+Traceback &lt;span class="o"&gt;(&lt;/span&gt;most recent call last&lt;span class="o"&gt;)&lt;/span&gt;:
+  File &lt;span class="s2"&gt;&amp;quot;./run.py&amp;quot;&lt;/span&gt;, line &lt;span class="m"&gt;6&lt;/span&gt;, in &amp;lt;module&amp;gt;
+    &lt;span class="nv"&gt;payload&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; json.load&lt;span class="o"&gt;(&lt;/span&gt;sys.stdin&lt;span class="o"&gt;)&lt;/span&gt;
+  File &lt;span class="s2"&gt;&amp;quot;/usr/lib/python3.5/json/__init__.py&amp;quot;&lt;/span&gt;, line &lt;span class="m"&gt;268&lt;/span&gt;, in load
+    &lt;span class="nv"&gt;parse_constant&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;parse_constant, &lt;span class="nv"&gt;object_pairs_hook&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;object_pairs_hook, **kw&lt;span class="o"&gt;)&lt;/span&gt;
+  File &lt;span class="s2"&gt;&amp;quot;/usr/lib/python3.5/json/__init__.py&amp;quot;&lt;/span&gt;, line &lt;span class="m"&gt;319&lt;/span&gt;, in loads
+    &lt;span class="k"&gt;return&lt;/span&gt; _default_decoder.decode&lt;span class="o"&gt;(&lt;/span&gt;s&lt;span class="o"&gt;)&lt;/span&gt;
+  File &lt;span class="s2"&gt;&amp;quot;/usr/lib/python3.5/json/decoder.py&amp;quot;&lt;/span&gt;, line &lt;span class="m"&gt;339&lt;/span&gt;, in decode
+    obj, &lt;span class="nv"&gt;end&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; self.raw_decode&lt;span class="o"&gt;(&lt;/span&gt;s, &lt;span class="nv"&gt;idx&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;_w&lt;span class="o"&gt;(&lt;/span&gt;s, &lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;.end&lt;span class="o"&gt;())&lt;/span&gt;
+  File &lt;span class="s2"&gt;&amp;quot;/usr/lib/python3.5/json/decoder.py&amp;quot;&lt;/span&gt;, line &lt;span class="m"&gt;357&lt;/span&gt;, in raw_decode
+    raise JSONDecodeError&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Expecting value&amp;quot;&lt;/span&gt;, s, err.value&lt;span class="o"&gt;)&lt;/span&gt; from None
+json.decoder.JSONDecodeError: Expecting value: line &lt;span class="m"&gt;1&lt;/span&gt; column &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;char &lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El segundo ejemplo es un JSON válido como tal, pero no cumple con nuestros requisitos de campos. Aunque podemos leerlo, no es un diccionario, y por lo tanto no podemos sacar los campos necesarios.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ ./run.py &amp;lt; inputs/string_json
+lorem ipsum
+Traceback &lt;span class="o"&gt;(&lt;/span&gt;most recent call last&lt;span class="o"&gt;)&lt;/span&gt;:
+  File &lt;span class="s2"&gt;&amp;quot;./run.py&amp;quot;&lt;/span&gt;, line &lt;span class="m"&gt;9&lt;/span&gt;, in &amp;lt;module&amp;gt;
+    &lt;span class="nv"&gt;user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; payload.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;user&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+AttributeError: &lt;span class="s1"&gt;&amp;#39;str&amp;#39;&lt;/span&gt; object has no attribute &lt;span class="s1"&gt;&amp;#39;get&amp;#39;&lt;/span&gt;
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El tercer caso es un JSON válido, un objeto, pero no incluye el campo "password", con lo que no nos vale. Además, el campo "user" no es una cadena de texto, y puede que eso sea un problema en el futuro. Hay que remarcar que no nos supone un problema en este momento, pero eventualmente lo será.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ ./run.py &amp;lt; inputs/bad_dict_json
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;user&amp;#39;&lt;/span&gt;: True&lt;span class="o"&gt;}&lt;/span&gt;
+True / None
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finalmente tenemos un ejemplo bueno, que funciona y que cumpliría con nuestras expectativas. Este es el único caso que deberíamos dar por bueno.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace$ ./run.py &amp;lt; inputs/good_dict_json
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;password&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;s3cr3t&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;user&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;gerard&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard / s3cr3t
+gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Jsonschema al rescate&lt;/h2&gt;
+&lt;p&gt;Una de las librerías que implementan la validación de un &lt;em&gt;schema&lt;/em&gt; JSON es, como su nombre indica, &lt;strong&gt;jsonschema&lt;/strong&gt;. No viene en la librería estándar, así que lo instalamos (cosa que he hecho en un &lt;em&gt;virtualenv&lt;/em&gt;).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace$ pip install jsonschema
+Collecting jsonschema
+  Downloading https://files.pythonhosted.org/packages/77/de/47e35a97b2b05c2fadbec67d44cfcdcd09b8086951b331d82de90d2912da/jsonschema-2.6.0-py2.py3-none-any.whl
+Installing collected packages: jsonschema
+Successfully installed jsonschema-2.6.0
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La más importante de todas las funciones de &lt;strong&gt;jsonschema&lt;/strong&gt; es &lt;code&gt;validate()&lt;/code&gt; que es una función que recibe el mensaje y el &lt;em&gt;schema&lt;/em&gt; y puede acabar en una excepción (si el mensaje no cumple con el &lt;em&gt;schema&lt;/em&gt;) o normalmente (si el mensaje cumple con el &lt;em&gt;schema&lt;/em&gt;). La documentación completa está &lt;a href="https://python-jsonschema.readthedocs.io/en/latest/"&gt;aquí&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Nuestro &lt;em&gt;script&lt;/em&gt; solo necesita declarar el &lt;em&gt;schema&lt;/em&gt; e invocar la función; con un simple bloque &lt;code&gt;try/except&lt;/code&gt; sabremos si la sintaxis y la semántica del mensaje son válidas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace$ cat run_schema.py
+&lt;span class="c1"&gt;#!/usr/bin/env python3&lt;/span&gt;
+
+import sys
+import json
+import jsonschema
+
+&lt;span class="nv"&gt;login_schema&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;type&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;object&amp;#39;&lt;/span&gt;,
+    &lt;span class="s1"&gt;&amp;#39;required&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;username&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;password&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;,
+    &lt;span class="s1"&gt;&amp;#39;properties&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;username&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;type&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;string&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;,
+        &lt;span class="s1"&gt;&amp;#39;password&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;type&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;string&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;,
+    &lt;span class="o"&gt;}&lt;/span&gt;,
+    &lt;span class="s1"&gt;&amp;#39;additionalProperties&amp;#39;&lt;/span&gt;: False,
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+def check_json_schema&lt;span class="o"&gt;(&lt;/span&gt;input, schema&lt;span class="o"&gt;)&lt;/span&gt;:
+    try:
+        &lt;span class="nv"&gt;payload&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; json.loads&lt;span class="o"&gt;(&lt;/span&gt;input&lt;span class="o"&gt;)&lt;/span&gt;
+        jsonschema.validate&lt;span class="o"&gt;(&lt;/span&gt;payload, schema&lt;span class="o"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; True
+    except &lt;span class="o"&gt;(&lt;/span&gt;json.decoder.JSONDecodeError, jsonschema.exceptions.ValidationError&lt;span class="o"&gt;)&lt;/span&gt;:
+        &lt;span class="k"&gt;return&lt;/span&gt; False
+
+&lt;span class="nv"&gt;input&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; sys.stdin.read&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; check_json_schema&lt;span class="o"&gt;(&lt;/span&gt;input, login_schema&lt;span class="o"&gt;)&lt;/span&gt;:
+    &lt;span class="nv"&gt;user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; payload.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;user&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+    &lt;span class="nv"&gt;password&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; payload.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;password&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+    print&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;%s / %s&amp;#39;&lt;/span&gt; % &lt;span class="o"&gt;(&lt;/span&gt;user, password&lt;span class="o"&gt;))&lt;/span&gt;
+&lt;span class="k"&gt;else&lt;/span&gt;:
+    print&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;ERROR&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Efectivamente, solo el caso bueno nos permitiría seguir, ya que los demás no tienen sentido para nuestro caso de uso. La excepción &lt;code&gt;ValidationError&lt;/code&gt; incluye los detalles de lo que falló.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace$ ./run_schema.py &amp;lt; inputs/no_json
+ERROR
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace$ ./run_schema.py &amp;lt; inputs/string_json
+ERROR
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace$ ./run_schema.py &amp;lt; inputs/bad_dict_json
+ERROR
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace$ ./run.py &amp;lt; inputs/good_dict_json
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;user&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;gerard&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;password&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;s3cr3t&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard / s3cr3t
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Uso en APIs&lt;/h2&gt;
+&lt;p&gt;No es muy habitual procesar ficheros JSON en un &lt;em&gt;script&lt;/em&gt;, pero si hacemos una API, podemos esperar entradas de todo tipo. El estándar REST nos invita a responder un "400 Bad Request" cuando la petición no es la que se espera, y vamos a abusar de ello.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace$ cat app.py
+import falcon
+import jsonschema
+
+&lt;span class="nv"&gt;login_schema&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;type&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;object&amp;#39;&lt;/span&gt;,
+    &lt;span class="s1"&gt;&amp;#39;required&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;user&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;password&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;,
+    &lt;span class="s1"&gt;&amp;#39;properties&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;user&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;type&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;string&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;,
+        &lt;span class="s1"&gt;&amp;#39;password&amp;#39;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;type&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;string&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;,
+    &lt;span class="o"&gt;}&lt;/span&gt;,
+    &lt;span class="s1"&gt;&amp;#39;additionalProperties&amp;#39;&lt;/span&gt;: False,
+&lt;span class="o"&gt;}&lt;/span&gt;
+
+def check_json_schema&lt;span class="o"&gt;(&lt;/span&gt;payload, schema&lt;span class="o"&gt;)&lt;/span&gt;:
+    try:
+        jsonschema.validate&lt;span class="o"&gt;(&lt;/span&gt;payload, schema&lt;span class="o"&gt;)&lt;/span&gt;
+    except jsonschema.exceptions.ValidationError:
+        raise falcon.HTTPBadRequest&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Bad JSON schema&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+class LoginResource:
+    def on_post&lt;span class="o"&gt;(&lt;/span&gt;self, req, resp&lt;span class="o"&gt;)&lt;/span&gt;:
+        check_json_schema&lt;span class="o"&gt;(&lt;/span&gt;req.media, login_schema&lt;span class="o"&gt;)&lt;/span&gt;
+        resp.media &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;status&amp;#39;&lt;/span&gt;: &lt;span class="s1"&gt;&amp;#39;logged&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+
+&lt;span class="nv"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; falcon.API&lt;span class="o"&gt;()&lt;/span&gt;
+app.add_route&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/login&amp;#39;&lt;/span&gt;, LoginResource&lt;span class="o"&gt;())&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Servimos nuestra API de ejemplo y probamos algunas entradas, solo para verificar que todo funciona:&lt;/p&gt;
+&lt;p&gt;El primer ejemplo, es un objecto al que le faltan campos, así que lo rechazamos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ curl -i -H &lt;span class="s2"&gt;&amp;quot;Content-type: application/json&amp;quot;&lt;/span&gt; -X POST http://localhost:8000/login/ --data &lt;span class="s1"&gt;&amp;#39;{&amp;quot;user&amp;quot;: &amp;quot;gerard&amp;quot;}&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+HTTP/1.1 &lt;span class="m"&gt;400&lt;/span&gt; Bad Request
+...
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;title&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Bad JSON schema&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El segundo ejemplo es un objecto con los campos correctos, pero uno de ellos es numérico, así que lo rechazamos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nt"&gt;gerard&lt;/span&gt;&lt;span class="p"&gt;@&lt;/span&gt;&lt;span class="k"&gt;atlantis&lt;/span&gt;&lt;span class="o"&gt;:~$&lt;/span&gt; &lt;span class="nt"&gt;curl&lt;/span&gt; &lt;span class="nt"&gt;-i&lt;/span&gt; &lt;span class="nt"&gt;-H&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Content-type: application/json&amp;quot;&lt;/span&gt; &lt;span class="nt"&gt;-X&lt;/span&gt; &lt;span class="nt"&gt;POST&lt;/span&gt; &lt;span class="nt"&gt;http&lt;/span&gt;&lt;span class="o"&gt;://&lt;/span&gt;&lt;span class="nt"&gt;localhost&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="nd"&gt;8000&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;login&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="nt"&gt;--data&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{&amp;quot;user&amp;quot;: &amp;quot;gerard&amp;quot;, &amp;quot;password&amp;quot;: 123}&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nt"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+&lt;span class="nt"&gt;HTTP&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nt"&gt;1&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nc"&gt;1&lt;/span&gt; &lt;span class="nt"&gt;400&lt;/span&gt; &lt;span class="nt"&gt;Bad&lt;/span&gt; &lt;span class="nt"&gt;Request&lt;/span&gt;
+&lt;span class="o"&gt;...&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="err"&gt;&amp;quot;title&amp;quot;:&lt;/span&gt; &lt;span class="err"&gt;&amp;quot;Bad&lt;/span&gt; &lt;span class="err"&gt;JSON&lt;/span&gt; &lt;span class="err"&gt;schema&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="nt"&gt;gerard&lt;/span&gt;&lt;span class="p"&gt;@&lt;/span&gt;&lt;span class="k"&gt;atlantis&lt;/span&gt;&lt;span class="o"&gt;:~$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El tercer ejemplo, aunque es correcto, incluye un campo de más. El validador lo rechaza en virtud de la propiedad &lt;code&gt;additionalProperties: false&lt;/code&gt;. Esto es una preferencia personal y os la podéis saltar, ignorando los campos extras.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ curl -i -H &lt;span class="s2"&gt;&amp;quot;Content-type: application/json&amp;quot;&lt;/span&gt; -X POST http://localhost:8000/login/ --data &lt;span class="s1"&gt;&amp;#39;{&amp;quot;user&amp;quot;: &amp;quot;gerard&amp;quot;, &amp;quot;password&amp;quot;: &amp;quot;123&amp;quot;, &amp;quot;other&amp;quot;: &amp;quot;field&amp;quot;}&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+HTTP/1.1 &lt;span class="m"&gt;400&lt;/span&gt; Bad Request
+...
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;title&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;Bad JSON schema&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finalmente le ponemos un caso correcto, y vemos que funciona como es debido.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ curl -i -H &lt;span class="s2"&gt;&amp;quot;Content-type: application/json&amp;quot;&lt;/span&gt; -X POST http://localhost:8000/login/ --data &lt;span class="s1"&gt;&amp;#39;{&amp;quot;user&amp;quot;: &amp;quot;gerard&amp;quot;, &amp;quot;password&amp;quot;: &amp;quot;123&amp;quot;}&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+HTTP/1.1 &lt;span class="m"&gt;200&lt;/span&gt; OK
+...
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;status&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;logged&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: El &lt;em&gt;framework&lt;/em&gt; &lt;strong&gt;falcon&lt;/strong&gt; ya dispone de un decorador &lt;code&gt;falcon.media.validators.jsonschema&lt;/code&gt; que hace lo mismo. He optado por describir el caso general, por ser más útil en otras situaciones.&lt;/p&gt;</content><category term="JSON"></category><category term="python"></category><category term="jsonschema"></category></entry><entry><title>Usando Traefik en un cluster de Docker Swarm</title><link href="http://www.linuxsysadmin.ml/2018/10/usando-traefik-en-un-cluster-de-docker-swarm.html" rel="alternate"></link><published>2018-10-29T10:00:00+01:00</published><updated>2018-10-29T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-10-29:/2018/10/usando-traefik-en-un-cluster-de-docker-swarm.html</id><summary type="html">&lt;p&gt;Hace unas semanas, hablamos de un balanceador que trabaja muy bien con &lt;strong&gt;docker&lt;/strong&gt;. Se trataba de &lt;strong&gt;traefik&lt;/strong&gt; y nos permitía olvidarnos de su configuración, que él mismo podía extraer de los metadatos de los contenedores y reconfigurarse dinámicamente. Hoy vamos a explicar como funciona con un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;docker swarm …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Hace unas semanas, hablamos de un balanceador que trabaja muy bien con &lt;strong&gt;docker&lt;/strong&gt;. Se trataba de &lt;strong&gt;traefik&lt;/strong&gt; y nos permitía olvidarnos de su configuración, que él mismo podía extraer de los metadatos de los contenedores y reconfigurarse dinámicamente. Hoy vamos a explicar como funciona con un &lt;em&gt;cluster&lt;/em&gt; de &lt;strong&gt;docker swarm&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Para ello vamos a partir de un &lt;em&gt;swarm&lt;/em&gt; bastante simple de dos nodos (un &lt;em&gt;manager&lt;/em&gt; y un &lt;em&gt;worker&lt;/em&gt;). No es el ideal, pero es lo mínimo que puedo virtualizar sin acabar con los recursos de mi máquina y sin complicar demasiado las cosas.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@manager:~$ docker node ls
 ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
