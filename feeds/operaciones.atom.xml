@@ -1,5 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2018-10-22T10:00:00+02:00</updated><entry><title>Una alternativa a dig: probando drill</title><link href="https://www.linuxsysadmin.ml/2018/10/una-alternativa-a-dig-probando-drill.html" rel="alternate"></link><published>2018-10-22T10:00:00+02:00</published><updated>2018-10-22T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-10-22:/2018/10/una-alternativa-a-dig-probando-drill.html</id><summary type="html">&lt;p&gt;Cuando trabajas con terceras partes, los problemas relacionados con la resolución DNS son demasiado habituales. Muchas veces utilizan DNS internos y cuando nos pasan los datos de conexión remota, no funciona nada. En estos casos, el procedimiento suele pasar por verificar primero la resolución DNS antes que la conectividad remota …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando trabajas con terceras partes, los problemas relacionados con la resolución DNS son demasiado habituales. Muchas veces utilizan DNS internos y cuando nos pasan los datos de conexión remota, no funciona nada. En estos casos, el procedimiento suele pasar por verificar primero la resolución DNS antes que la conectividad remota.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2018-11-12T10:00:00+01:00</updated><entry><title>Un entorno de jenkins distribuido en contenedores</title><link href="https://www.linuxsysadmin.ml/2018/11/un-entorno-de-jenkins-distribuido-en-contenedores.html" rel="alternate"></link><published>2018-11-12T10:00:00+01:00</published><updated>2018-11-12T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-11-12:/2018/11/un-entorno-de-jenkins-distribuido-en-contenedores.html</id><summary type="html">&lt;p&gt;Estaba yo el otro día intentando montar un &lt;strong&gt;jenkins&lt;/strong&gt; con acceso al binario de &lt;strong&gt;docker&lt;/strong&gt; y &lt;strong&gt;python&lt;/strong&gt;. Como no quería instalar &lt;strong&gt;jenkins&lt;/strong&gt;, me limité a extender la imagen &lt;a href="https://hub.docker.com/r/jenkins/jenkins/"&gt;jenkins/jenkins&lt;/a&gt; para dotarlo de las herramientas necesarias, como &lt;a href="https://www.linuxsysadmin.ml/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html"&gt;ya hicimos con ansible&lt;/a&gt; que, aunque funciona, no es ni elegante ni escalable …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Estaba yo el otro día intentando montar un &lt;strong&gt;jenkins&lt;/strong&gt; con acceso al binario de &lt;strong&gt;docker&lt;/strong&gt; y &lt;strong&gt;python&lt;/strong&gt;. Como no quería instalar &lt;strong&gt;jenkins&lt;/strong&gt;, me limité a extender la imagen &lt;a href="https://hub.docker.com/r/jenkins/jenkins/"&gt;jenkins/jenkins&lt;/a&gt; para dotarlo de las herramientas necesarias, como &lt;a href="https://www.linuxsysadmin.ml/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html"&gt;ya hicimos con ansible&lt;/a&gt; que, aunque funciona, no es ni elegante ni escalable.&lt;/p&gt;
+&lt;p&gt;El resultado es una imagen que hace demasiadas cosas, no es modular y un cambio requiere la recreación de la herramienta completa. Así que se me ocurrió otra forma de hacer las cosas, teniendo en cuenta que la herramienta funciona en modo &lt;em&gt;master/slave&lt;/em&gt;. Básicamente se trata de dejar al &lt;strong&gt;jenkins&lt;/strong&gt; como &lt;em&gt;master&lt;/em&gt; y delegar los &lt;em&gt;jobs&lt;/em&gt; a otros contenedores con las herramientas necesarias.&lt;/p&gt;
+&lt;p&gt;Para estos &lt;em&gt;workers&lt;/em&gt; solo necesitamos un contenedor con &lt;strong&gt;SSH&lt;/strong&gt; y &lt;strong&gt;Java&lt;/strong&gt;. El resto de herramientas serían las necesarias para lanzar los comandos que conforman nuestro &lt;em&gt;job&lt;/em&gt;. Veamos un ejemplo.&lt;/p&gt;
+&lt;h2&gt;El master: Jenkins&lt;/h2&gt;
+&lt;p&gt;Lo primero que necesitamos es que el &lt;strong&gt;jenkins&lt;/strong&gt; y sus &lt;em&gt;slaves&lt;/em&gt; estén en la misma red; el &lt;em&gt;master&lt;/em&gt; va a empujar los comandos a los &lt;em&gt;slaves&lt;/em&gt; mediante &lt;strong&gt;SSH&lt;/strong&gt;. Crearemos una red tipo "bridge" de usuario, que nos garantiza que los contenedores resuelvan DNS por su nombre.&lt;/p&gt;
+&lt;p&gt;Normalmente dejaría que lo hiciera &lt;strong&gt;docker-compose&lt;/strong&gt;, pero pretendo separar el entorno en varios &lt;em&gt;docker-compose.yml&lt;/em&gt; para poder actualizar los &lt;em&gt;workers&lt;/em&gt; según su tipo. En caso de utilizar &lt;strong&gt;docker swarm&lt;/strong&gt;, podríamos usar una red &lt;em&gt;overlay&lt;/em&gt; para que sea irrelevante en las comunicaciones el nodo de &lt;em&gt;swarm&lt;/em&gt; en el que estén desplegados.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ docker network create jenkins
+898c8a3b77761ac4a886d0a7a2546bfc475fc3ae1280cf1ddc37a55b2057c084
+gerard@atlantis:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Sobre esta red solamente necesitamos levantar el &lt;strong&gt;jenkins&lt;/strong&gt; usando la imagen &lt;code&gt;jenkins/jenkins&lt;/code&gt;, en la versión y sistema operativo deseado. Solamente vamos a usar un volúmen para mantener las configuraciones de forma persistente, y vamos a publicar el puerto de &lt;strong&gt;jenkins&lt;/strong&gt; para su uso por parte de otras máquinas de nuestra red.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/jenkins$ cat docker-compose.yml
+version: &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;
+services:
+  jenkins:
+    image: jenkins/jenkins:alpine
+    container_name: jenkins
+    hostname: jenkins
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    networks:
+      jenkins: &lt;span class="o"&gt;{}&lt;/span&gt;
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;8080:8080&amp;quot;&lt;/span&gt;
+volumes:
+  jenkins_home:
+networks:
+  jenkins:
+    external: &lt;span class="nb"&gt;true&lt;/span&gt;
+gerard@atlantis:~/workspace/jenkins$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Levantamos el &lt;strong&gt;jenkins&lt;/strong&gt; con &lt;code&gt;docker-compose up -d&lt;/code&gt; y nos vamos a su panel de trabajo en &lt;a href="http://atlantis:8080/"&gt;http://atlantis:8080/&lt;/a&gt;. La primera vez nos va a hacer varias preguntas para crear el usuario de administración y demás; esto es un &lt;strong&gt;jenkins&lt;/strong&gt; normal.&lt;/p&gt;
+&lt;h2&gt;Unos slaves de ejemplo&lt;/h2&gt;
+&lt;p&gt;Los &lt;em&gt;slaves&lt;/em&gt; son solamente máquinas con &lt;strong&gt;SSH&lt;/strong&gt; y &lt;strong&gt;Java&lt;/strong&gt; instalados; por supuesto, para entrar por &lt;strong&gt;SSH&lt;/strong&gt;, &lt;strong&gt;jenkins&lt;/strong&gt; va a necesitar un usuario y una contraseña Para no levantar más máquinas virtuales, vamos a crear estos &lt;em&gt;slaves&lt;/em&gt; como contenedores &lt;strong&gt;docker&lt;/strong&gt;, con un usuario y &lt;em&gt;password&lt;/em&gt; configurables (por si hubiera que cambiarlos en un futuro).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/base_worker$ cat Dockerfile
+FROM alpine:3.8
+RUN apk add --no-cache openssh openjdk8-jre
+COPY start.sh /
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/start.sh&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@atlantis:~/workspace/base_worker$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/base_worker$ cat start.sh
+&lt;span class="c1"&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class="k"&gt;for&lt;/span&gt; key in rsa ecdsa ed25519&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="nb"&gt;test&lt;/span&gt; -e /etc/ssh/ssh_host_&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;key&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;_key &lt;span class="o"&gt;||&lt;/span&gt; ssh-keygen -t &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;key&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt; -N &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt; -f /etc/ssh/ssh_host_&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;key&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;_key -q
+&lt;span class="k"&gt;done&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;SSH_USER&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+    adduser -D &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;SSH_USER&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
+    &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;SSH_USER&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;:&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;SSH_PASSWORD&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; chpasswd
+&lt;span class="k"&gt;fi&lt;/span&gt;
+
+&lt;span class="nb"&gt;exec&lt;/span&gt; /usr/sbin/sshd -D -e
+gerard@atlantis:~/workspace/base_worker$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Construimos la imagen y le damos el &lt;em&gt;tag&lt;/em&gt; &lt;code&gt;worker:base&lt;/code&gt;. Lo vamos a utilizar tal cual, pero una estrategia interesante sería extender esta imagen para añadir lo que se pueda necesitar. Eso daría pie a varios contenedores con diferentes herramientas de compilación; cada &lt;em&gt;job&lt;/em&gt; de &lt;strong&gt;jenkins&lt;/strong&gt; se configurará para usar las que puedan satisfacer sus comandos de construcción.&lt;/p&gt;
+&lt;p&gt;Levantar dos instancias de estos &lt;em&gt;workers&lt;/em&gt; no entraña ninguna dificultad; lo importante es el &lt;code&gt;container_name&lt;/code&gt;, que es el nombre de DNS de la máquina dentro de la red &lt;code&gt;jenkins&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/workers$ cat docker-compose.yml
+version: &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;
+services:
+  worker01:
+    image: worker:base
+    build: ../base_worker
+    container_name: worker01
+    hostname: worker01
+    environment:
+      SSH_USER: jenkins
+      SSH_PASSWORD: s3cr3t
+    networks:
+      jenkins: &lt;span class="o"&gt;{}&lt;/span&gt;
+  worker02:
+    image: worker:base
+    build: ../base_worker
+    container_name: worker02
+    hostname: worker02
+    environment:
+      SSH_USER: jenkins
+      SSH_PASSWORD: s3cr3t
+    networks:
+      jenkins: &lt;span class="o"&gt;{}&lt;/span&gt;
+networks:
+  jenkins:
+    external: &lt;span class="nb"&gt;true&lt;/span&gt;
+gerard@atlantis:~/workspace/workers$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De nuevo, levantamos ls &lt;em&gt;workers&lt;/em&gt; con &lt;code&gt;docker-compose up -d&lt;/code&gt; y ya los tenemos listos para ser usados.&lt;/p&gt;
+&lt;h2&gt;Configurando Jenkins con los nuevos slaves&lt;/h2&gt;
+&lt;p&gt;Para que &lt;strong&gt;jenkins&lt;/strong&gt; pueda controlar &lt;em&gt;slaves&lt;/em&gt; por &lt;strong&gt;SSH&lt;/strong&gt;, se necesita instalar el &lt;strong&gt;SSH Slaves plugin&lt;/strong&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Administrar Jenkins &amp;gt; Administrar Plugins &amp;gt; Todos los plugins&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Reiniciamos el &lt;strong&gt;jenkins&lt;/strong&gt; y ya tenemos todo lo necesario para seguir.&lt;/p&gt;
+&lt;p&gt;Ahora se necesita configurar los nuevos nodos para que &lt;strong&gt;jenkins&lt;/strong&gt; los pueda monitorizar y controlar:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Administrar Jenkins &amp;gt; Administrar Nodos &amp;gt; Nuevo nodo&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Aquí solo hay que dar un nombre para identificarlo, el tipo "Permanent Agent" y el botón "OK". En la siguiente pantalla hay que rellenar la carpeta de trabajo, el nombre del equipo y las credenciales SSH. Tras guardar, solo queda esperar que el agente esté &lt;em&gt;online&lt;/em&gt; en la siguiente pantalla.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: Cuidado con la "Host Key Verification Strategy", que suele dar problemas de acceso por SSH. Yo suelo poner "Non verifying Verification Strategy".&lt;/p&gt;
+&lt;p&gt;Al configurar cada proyecto, podremos elegir ejecutar en nodos concretos, con la opción "Restringir dónde se puede ejecutar este proyecto.". Esto nos permite elegir los nodos que puedan cumplir con nuestro &lt;em&gt;build&lt;/em&gt;; por ejemplo elegir un nodo con &lt;strong&gt;docker&lt;/strong&gt; para hacer un &lt;code&gt;docker build&lt;/code&gt; y un &lt;code&gt;docker push&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Con la imagen de &lt;em&gt;slave&lt;/em&gt; que hemos utilizado tenemos &lt;strong&gt;Java JRE&lt;/strong&gt; y los binarios propios de un &lt;strong&gt;Alpine Linux&lt;/strong&gt; básico, así que no esperéis mucho más...&lt;/p&gt;</content><category term="jenkins"></category><category term="docker"></category><category term="master"></category><category term="slave"></category></entry><entry><title>Una alternativa a dig: probando drill</title><link href="https://www.linuxsysadmin.ml/2018/10/una-alternativa-a-dig-probando-drill.html" rel="alternate"></link><published>2018-10-22T10:00:00+02:00</published><updated>2018-10-22T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-10-22:/2018/10/una-alternativa-a-dig-probando-drill.html</id><summary type="html">&lt;p&gt;Cuando trabajas con terceras partes, los problemas relacionados con la resolución DNS son demasiado habituales. Muchas veces utilizan DNS internos y cuando nos pasan los datos de conexión remota, no funciona nada. En estos casos, el procedimiento suele pasar por verificar primero la resolución DNS antes que la conectividad remota …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando trabajas con terceras partes, los problemas relacionados con la resolución DNS son demasiado habituales. Muchas veces utilizan DNS internos y cuando nos pasan los datos de conexión remota, no funciona nada. En estos casos, el procedimiento suele pasar por verificar primero la resolución DNS antes que la conectividad remota.&lt;/p&gt;
 &lt;p&gt;Para todas aquellas verificaciones que se lanzan contra los DNS, mi herramienta favorita &lt;em&gt;era&lt;/em&gt; &lt;strong&gt;dig&lt;/strong&gt;. Es completa, veraz, y te da toda la información de una sola pasada.&lt;/p&gt;
 &lt;p&gt;Sin embargo, el otro día encontré su talón de aquiles: para no instalar nada en mi máquina, utilicé un contenedor de &lt;strong&gt;docker&lt;/strong&gt;, por supesto con &lt;strong&gt;Alpine Linux&lt;/strong&gt;. Para aquellos que no lo sepáis, &lt;strong&gt;Alpine Linux&lt;/strong&gt; usa una implementación de funciones DNS algo distinta de la habitual, y ello causa problemas relacionados con DNS.&lt;/p&gt;
 &lt;p&gt;Aunque mejor lo mostramos en un ejemplo: partiremos de un contenedor &lt;strong&gt;Alpine Linux&lt;/strong&gt;.&lt;/p&gt;
