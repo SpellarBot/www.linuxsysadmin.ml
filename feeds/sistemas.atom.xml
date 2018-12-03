@@ -1,5 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2018-11-19T10:00:00+01:00</updated><entry><title>Un registro docker privado por HTTPS con autenticación básica</title><link href="https://www.linuxsysadmin.ml/2018/11/un-registro-docker-privado-por-https-con-autenticacion-basica.html" rel="alternate"></link><published>2018-11-19T10:00:00+01:00</published><updated>2018-11-19T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-11-19:/2018/11/un-registro-docker-privado-por-https-con-autenticacion-basica.html</id><summary type="html">&lt;p&gt;Cuando usamos integración continua o despliegues en varios servidores y usamos &lt;strong&gt;docker&lt;/strong&gt;, se hace importante tener una fuente de imágenes de donde descargar las nuestras propias. Aquí entra en juego la confidencialidad, y es necesario pagar la capa privada de un registro, o podemos simplemente crear un registro nuestro propio …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando usamos integración continua o despliegues en varios servidores y usamos &lt;strong&gt;docker&lt;/strong&gt;, se hace importante tener una fuente de imágenes de donde descargar las nuestras propias. Aquí entra en juego la confidencialidad, y es necesario pagar la capa privada de un registro, o podemos simplemente crear un registro nuestro propio.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Sistemas</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/sistemas.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2018-12-03T10:00:00+01:00</updated><entry><title>Montando una wiki interna con MediaWiki y Docker</title><link href="https://www.linuxsysadmin.ml/2018/12/montando-una-wiki-interna-con-mediawiki-y-docker.html" rel="alternate"></link><published>2018-12-03T10:00:00+01:00</published><updated>2018-12-03T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-12-03:/2018/12/montando-una-wiki-interna-con-mediawiki-y-docker.html</id><summary type="html">&lt;p&gt;Tras cambiar de equipo de trabajo, me encuentro con un repositorio de información procedimental consistente en una carpeta compartida con varias versiones de documentos que hacen referencia al mismo procedimiento. Esto convierte la tarea de buscar un procedimiento en un infierno, por no mencionar el gran esfuerzo de mantenerlos actualizados …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Tras cambiar de equipo de trabajo, me encuentro con un repositorio de información procedimental consistente en una carpeta compartida con varias versiones de documentos que hacen referencia al mismo procedimiento. Esto convierte la tarea de buscar un procedimiento en un infierno, por no mencionar el gran esfuerzo de mantenerlos actualizados.&lt;/p&gt;
+&lt;p&gt;Lo normal es que las empresas te pongan pegas porque propones una herramienta no autorizada, o "porque siempre se ha utilizado esto"; no me son excusas nuevas. Lo que me tocó las narices en esta situación es que la excusa era más que cutre: "montar esto va a llevar mucho tiempo".&lt;/p&gt;
+&lt;p&gt;Así pues, y en virtud de tan necias palabras he decidido hacer este artículo: montar una aplicación PHP clásica con &lt;strong&gt;Docker&lt;/strong&gt;, con una inversión temporal negligible porque todo está en la librería estándar o creado por un tercero.&lt;/p&gt;
+&lt;h2&gt;Una wiki de estar por casa&lt;/h2&gt;
+&lt;p&gt;En el equipo somos un número tirando a pequeño de chicos de operaciones, de variado conocimiento y experiencia. Pero desengañémonos: me quiero ir de vacaciones y no tener que hacerlo con un móvil y un portátil. Muchas cosas deben estar en manos de colaboradores más o menos capaces.&lt;/p&gt;
+&lt;p&gt;No es tan importante el motor de &lt;em&gt;wiki&lt;/em&gt; como lo es el procedimiento y la facilidad de acceso y modificación. Como amantes del software libre y gracias a su presencia en &lt;a href="https://hub.docker.com/_/mediawiki/"&gt;DockerHub&lt;/a&gt;, la solución casi obligada es &lt;strong&gt;MediaWiki&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Aunque esta &lt;em&gt;wiki&lt;/em&gt; puede funcionar con una base de datos &lt;strong&gt;SQLite&lt;/strong&gt;, parece más natural utilizar la compañera clásica de un sistema &lt;strong&gt;LAMP&lt;/strong&gt;, aunque como los tiempos varian, he elegido &lt;strong&gt;MariaDB&lt;/strong&gt;, también en la librería oficial de &lt;strong&gt;DockerHub&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;El &lt;em&gt;setup&lt;/em&gt; no puede ser más simple:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Una base de datos tipo &lt;strong&gt;MySQL&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Un contendor &lt;strong&gt;MediaWiki&lt;/strong&gt;, configurado para apuntar a la base de datos&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Por simplicidad, vamos a utilizar &lt;strong&gt;docker-compose&lt;/strong&gt; para levantar ambos servicios (o el &lt;em&gt;stack&lt;/em&gt; si usáis &lt;strong&gt;Docker Swarm&lt;/strong&gt;). Este es el fichero &lt;em&gt;docker-compose.yml&lt;/em&gt; que he utilizado:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/tools/wiki$ cat docker-compose.yml
+version: &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;
+services:
+  wiki_ops:
+    image: mediawiki
+    container_name: wiki_ops
+    hostname: wiki_ops
+    ports:
+      - &lt;span class="m"&gt;8080&lt;/span&gt;:80
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    hostname: mariadb
+    environment:
+      MYSQL_DATABASE: wiki_ops
+      MYSQL_USER: wiki_ops
+      MYSQL_PASSWORD: changeme
+      MYSQL_RANDOM_ROOT_PASSWORD: &lt;span class="s2"&gt;&amp;quot;yes&amp;quot;&lt;/span&gt;
+gerard@atlantis:~/tools/wiki$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/tools/wiki$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;wiki_default&amp;quot;&lt;/span&gt; with the default driver
+Creating wiki_ops ... &lt;span class="k"&gt;done&lt;/span&gt;
+Creating mariadb  ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@atlantis:~/tools/wiki$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El resultado lo podemos ver en &lt;a href="http://atlantis:8080/"&gt;http://atlantis:8080/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: No me voy a meter en manejar volúmenes, reinicios y otras cuestiones como múltiples instancias o balancedores; esto solo va a alargar el artículo innecesariamente.&lt;/p&gt;
+&lt;h2&gt;Configurando nuestra instancia&lt;/h2&gt;
+&lt;p&gt;Cuando vamos a la página web con un navegador, el &lt;em&gt;software&lt;/em&gt; se da cuenta que no existe una configuración local, es decir, que no tenemos nuestra wiki configurada. La reacción programada es la de levantar el asistente de configuración.&lt;/p&gt;
+&lt;p&gt;La configuración es trivial, de acuerdo a los parámetros de nuestro &lt;em&gt;docker-compose.yml&lt;/em&gt;, siendo los de la base de datos los más importantes. Si completamos el asistente, descargaremos un fichero &lt;code&gt;LocalSettings.php&lt;/code&gt; que deberemos colocar en &lt;code&gt;/var/www/html/&lt;/code&gt;; yo lo he hecho mediante un &lt;em&gt;file volume&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/tools/wiki$ tree
+.
+├── docker-compose.yml
+└── LocalSettings.php
+
+&lt;span class="m"&gt;0&lt;/span&gt; directories, &lt;span class="m"&gt;2&lt;/span&gt; files
+gerard@atlantis:~/tools/wiki$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/tools/wiki$ cat docker-compose.yml
+version: &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;
+services:
+  wiki_ops:
+    image: mediawiki
+    container_name: wiki_ops
+    hostname: wiki_ops
+    volumes:
+      - ./LocalSettings.php:/var/www/html/LocalSettings.php
+    ports:
+      - &lt;span class="m"&gt;8080&lt;/span&gt;:80
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    hostname: mariadb
+    environment:
+      MYSQL_DATABASE: wiki_ops
+      MYSQL_USER: wiki_ops
+      MYSQL_PASSWORD: changeme
+      MYSQL_RANDOM_ROOT_PASSWORD: &lt;span class="s2"&gt;&amp;quot;yes&amp;quot;&lt;/span&gt;
+gerard@atlantis:~/tools/wiki$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/tools/wiki$ docker-compose up -d
+mariadb is up-to-date
+Recreating wiki_ops ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@atlantis:~/tools/wiki$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos nuestra &lt;em&gt;wiki&lt;/em&gt;, gracias a &lt;strong&gt;Docker&lt;/strong&gt;. ¿Os ha parecido mucho tiempo?&lt;/p&gt;</content><category term="wiki"></category><category term="docker"></category><category term="mediawiki"></category><category term="mariadb"></category><category term="mysql"></category></entry><entry><title>Un registro docker privado por HTTPS con autenticación básica</title><link href="https://www.linuxsysadmin.ml/2018/11/un-registro-docker-privado-por-https-con-autenticacion-basica.html" rel="alternate"></link><published>2018-11-19T10:00:00+01:00</published><updated>2018-11-19T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-11-19:/2018/11/un-registro-docker-privado-por-https-con-autenticacion-basica.html</id><summary type="html">&lt;p&gt;Cuando usamos integración continua o despliegues en varios servidores y usamos &lt;strong&gt;docker&lt;/strong&gt;, se hace importante tener una fuente de imágenes de donde descargar las nuestras propias. Aquí entra en juego la confidencialidad, y es necesario pagar la capa privada de un registro, o podemos simplemente crear un registro nuestro propio …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cuando usamos integración continua o despliegues en varios servidores y usamos &lt;strong&gt;docker&lt;/strong&gt;, se hace importante tener una fuente de imágenes de donde descargar las nuestras propias. Aquí entra en juego la confidencialidad, y es necesario pagar la capa privada de un registro, o podemos simplemente crear un registro nuestro propio.&lt;/p&gt;
 &lt;p&gt;Si el registro está abierto a nuestra red corporativa, somos vulnerables a ataques maliciosos por parte de empleados descontentos o traviesos. En estos casos se recomienda utilizar TLS para encriptar las comunicaciones y activar autenticación para que no nos puedan reescribir las imágenes.&lt;/p&gt;
 &lt;p&gt;Hacerlo no es muy complicado y solo vamos a tener que hacerlo una vez; vale la pena y así dejamos un punto de preocupación menos en nuestra infraestructura. Vamos a partir del siguiente escenario:&lt;/p&gt;
 &lt;ul&gt;
