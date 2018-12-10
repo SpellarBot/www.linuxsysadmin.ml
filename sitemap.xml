@@ -5,42 +5,49 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/</loc>
-<lastmod>2018-12-03T08:15:12-00:00</lastmod>
+<lastmod>2018-12-10T08:33:21-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2018-12-03T08:15:12-00:00</lastmod>
+<lastmod>2018-12-10T08:33:21-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2018-12-03T08:15:12-00:00</lastmod>
+<lastmod>2018-12-10T08:33:21-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2018-12-03T08:15:12-00:00</lastmod>
+<lastmod>2018-12-10T08:33:21-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2018-12-03T08:15:12-00:00</lastmod>
+<lastmod>2018-12-10T08:33:21-00:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/curriculum.html</loc>
-<lastmod>2018-12-03T08:15:12-00:00</lastmod>
+<lastmod>2018-12-10T08:33:21-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/2018/12/enviando-mensajes-a-slack-desde-python-usando-webhooks.html</loc>
+<lastmod>2018-12-10T10:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1202,7 +1209,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/category/desarrollo.html</loc>
-<lastmod>2018-11-26T10:00:00-00:15</lastmod>
+<lastmod>2018-12-10T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1238,6 +1245,27 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://www.linuxsysadmin.ml/category/virtualizacion.html</loc>
 <lastmod>2016-05-23T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/tag/python.html</loc>
+<lastmod>2018-12-10T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/tag/slack.html</loc>
+<lastmod>2018-12-10T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/tag/webhooks.html</loc>
+<lastmod>2018-12-10T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1286,13 +1314,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tag/mongodb.html</loc>
-<lastmod>2018-11-26T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://www.linuxsysadmin.ml/tag/python.html</loc>
 <lastmod>2018-11-26T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -3183,7 +3204,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2018-12-03T10:00:00-00:15</lastmod>
+<lastmod>2018-12-10T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
