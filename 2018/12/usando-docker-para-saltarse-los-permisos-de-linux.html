@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>Artículos de Gerard - Linux Sysadmin</title>
+    <title>Usando Docker para saltarse los permisos de Linux - Linux Sysadmin</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -9,15 +9,23 @@
 
 
 
+<link rel="canonical" href="https://www.linuxsysadmin.ml/2018/12/usando-docker-para-saltarse-los-permisos-de-linux.html">
 
         <meta name="author" content="Gerard" />
+        <meta name="keywords" content="docker,permisos,linux" />
+        <meta name="description" content="Según el paradigma de externalización de mi empresa, todos los sistemas son gestionados por un tercero, a base de cambios. Por petición mia, tengo un usuario nominal de SSH y puedo entrar a mirar logs y configuraciones, pero no todas. Lo que no saben es que puedo hacer de todo …" />
 
-    <!-- Open Graph tags -->
         <meta property="og:site_name" content="Linux Sysadmin" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="Linux Sysadmin"/>
-        <meta property="og:url" content="https://www.linuxsysadmin.ml"/>
-        <meta property="og:description" content="Linux Sysadmin"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Usando Docker para saltarse los permisos de Linux"/>
+        <meta property="og:url" content="https://www.linuxsysadmin.ml/2018/12/usando-docker-para-saltarse-los-permisos-de-linux.html"/>
+        <meta property="og:description" content="Según el paradigma de externalización de mi empresa, todos los sistemas son gestionados por un tercero, a base de cambios. Por petición mia, tengo un usuario nominal de SSH y puedo entrar a mirar logs y configuraciones, pero no todas. Lo que no saben es que puedo hacer de todo …"/>
+        <meta property="article:published_time" content="2018-12-17" />
+            <meta property="article:section" content="Operaciones" />
+            <meta property="article:tag" content="docker" />
+            <meta property="article:tag" content="permisos" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:author" content="Gerard" />
 
 
     <!-- Bootstrap -->
@@ -33,6 +41,8 @@
 
 
 
+        <link href="https://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" type="application/atom+xml" rel="alternate"
+              title="Linux Sysadmin Operaciones ATOM Feed"/>
 
     <!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
     <script type="text/javascript">
@@ -77,11 +87,11 @@ Linux Sysadmin            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-        <ol class="breadcrumb">
-            <li><a href="https://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
-            <li><a href="https://www.linuxsysadmin.ml/authors.html" title="Autores de Linux Sysadmin">Autores</a></li>
-            <li class="active">Gerard</li>
-        </ol>
+            <ol class="breadcrumb">
+                <li><a href="https://www.linuxsysadmin.ml" title="Linux Sysadmin"><i class="fa fa-home fa-lg"></i></a></li>
+                <li><a href="https://www.linuxsysadmin.ml/category/operaciones.html" title="Operaciones">Operaciones</a></li>
+                <li class="active">Usando Docker para saltarse los permisos de Linux</li>
+            </ol>
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <!-- Banner linuxsysadmin -->
@@ -94,117 +104,139 @@ Linux Sysadmin            </a>
 (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 
-            <article>
-                <h2><a href="https://www.linuxsysadmin.ml/2016/08/creando-roles-con-ansible.html">Creando roles con ansible</a></h2>
-                <div class="summary"><p>Ya vimos que es muy fácil crear varias máquinas iguales con <strong>ansible</strong>. A veces nos puede interesar disponer de recetas y decidir en un <em>playbook</em> general cuales de ellas ponemos en cada servidor. Una receta podría añadir un servidor de aplicaciones mientras que otra podría habilitarnos una bases de datos …</p>
-                    <a class="btn btn-default btn-xs" href="https://www.linuxsysadmin.ml/2016/08/creando-roles-con-ansible.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="https://www.linuxsysadmin.ml/2016/08/generando-passwords-complejas-con-python.html">Generando passwords complejas con python</a></h2>
-                <div class="summary"><p>Todos hemos trabajado en empresas que tienen curiosas políticas de seguridad. La cosa es mas cierta en la generación de <em>passwords</em>, cuando te piden mayúsculas, minúsculas, dígitos y otros símbolos arcanos. Cuando los administradores tenemos que asignarlas a miles, ya no es divertido y tenemos que generarlas de forma automática …</p>
-                    <a class="btn btn-default btn-xs" href="https://www.linuxsysadmin.ml/2016/08/generando-passwords-complejas-con-python.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="https://www.linuxsysadmin.ml/2016/08/encriptando-datos-sensibles-con-ansible.html">Encriptando datos sensibles con Ansible</a></h2>
-                <div class="summary"><p>Si usamos <strong>ansible</strong> para configurar otras máquinas tenemos pleno poder para acceder a otras, sea mediante claves SSH o por accesos remotos normales. En este último caso, conviene aplicar un poco de seguridad para evitar que un posible intruso acceda libremente. Para esto podemos encriptar la información sensible con <strong>ansible-vault …</strong></p>
-                    <a class="btn btn-default btn-xs" href="https://www.linuxsysadmin.ml/2016/08/encriptando-datos-sensibles-con-ansible.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="https://www.linuxsysadmin.ml/2016/08/escribiendo-bots-para-telegram.html">Escribiendo bots para Telegram</a></h2>
-                <div class="summary"><p>Aunque no está muy extendido, <strong>Telegram</strong> es un magnífico cliente de mensajería instantánea. Tiene varios puntos a favor, como por ejemplo seguridad, rapidez y su condición de <em>libre</em>. Lo que no se conoce tanto es que dispone de una <em>API</em> para crear <em>bots</em> que pueden responder automáticamente a sus usuarios …</p>
-                    <a class="btn btn-default btn-xs" href="https://www.linuxsysadmin.ml/2016/08/escribiendo-bots-para-telegram.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="https://www.linuxsysadmin.ml/2016/08/el-servidor-de-aplicaciones-uwsgi.html">El servidor de aplicaciones uWSGI</a></h2>
-                <div class="summary"><p>Estaba yo el otro día buscando un servidor de aplicaciones para aplicaciones <em>python</em>, y entre todas las opciones encontré uno que es una auténtica joya: <strong>uWSGI</strong>. Se trata de un servidor modular, que permite servir un amplio abanico de posibilidades en cuanto a lenguajes se refiere, usando un <em>plugin</em> adecuado …</p>
-                    <a class="btn btn-default btn-xs" href="https://www.linuxsysadmin.ml/2016/08/el-servidor-de-aplicaciones-uwsgi.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="https://www.linuxsysadmin.ml/2016/07/un-escritorio-con-archlinux.html">Un escritorio con Archlinux</a></h2>
-                <div class="summary"><p>En <a href="https://www.linuxsysadmin.ml/2016/04/un-escritorio-minimo-con-debian.html">otro articulo</a> vimos como instalar <strong>Archlinux</strong>. Como tantas otras distribuciones nos vale para servidor y como distribución de escritorio. Sin embargo, debido a su filosofía como <em>rolling release</em>, puede asustarnos un poco como servidor; aunque tener un escritorio "a la última" es un caramelo que muy pocos podemos rechazar …</p>
-                    <a class="btn btn-default btn-xs" href="https://www.linuxsysadmin.ml/2016/07/un-escritorio-con-archlinux.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="https://www.linuxsysadmin.ml/2016/07/tipos-de-volumenes-en-docker.html">Tipos de volúmenes en Docker</a></h2>
-                <div class="summary"><p>Una de las mas importantes funcionalidades de <strong>Docker</strong> son los volúmenes. Estos no son mas que carpetas en nuestro sistema de ficheros y son capaces de sobrevivir al ciclo de vida normal del contenedor. Eso nos permite, entre otras cosas, compartir varios ficheros con otros contenedores o con el <em>host …</em></p>
-                    <a class="btn btn-default btn-xs" href="https://www.linuxsysadmin.ml/2016/07/tipos-de-volumenes-en-docker.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="https://www.linuxsysadmin.ml/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html">Dirección IP compartida manualmente entre servidores</a></h2>
-                <div class="summary"><p>Cuando hablamos de alta disponibilidad, uno de los métodos mas utilizados es el <strong>failover</strong>. La idea es que una de las máquinas es la que asume la totalidad del servicio, y el resto están preparadas para ejercer la misma función en el caso de que la primera deje de funcionar …</p>
-                    <a class="btn btn-default btn-xs" href="https://www.linuxsysadmin.ml/2016/07/direccion-ip-compartida-manualmente-entre-servidores.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="https://www.linuxsysadmin.ml/2016/07/instalando-una-maquina-con-archlinux.html">Instalando una máquina con Archlinux</a></h2>
-                <div class="summary"><p>Hoy quiero presentar una distribución de <em>linux</em> que es una maravilla; es rápida, altamente actualizada, y lo último en innovación. Se trata de una distribución tipo <em>rolling</em>, con una filosofía de última tendencia que es especialmente útil en un entorno no tan crítico, como puede ser una máquina tipo escritorio …</p>
-                    <a class="btn btn-default btn-xs" href="https://www.linuxsysadmin.ml/2016/07/instalando-una-maquina-con-archlinux.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="https://www.linuxsysadmin.ml/2016/06/balanceando-peticiones-con-haproxy.html">Balanceando peticiones con HAProxy</a></h2>
-                <div class="summary"><p>Cuando tenemos un entorno grande o con previsiones de crecimiento, nos interesa poder poner a trabajar varios servidores similares. En casos así nos hace falta un <strong>balanceador de carga</strong>, que actúa como un agente de tráfico, dirigiendo las peticiones que él mismo recibe a los diferentes servidores, por ejemplo, <strong>haproxy …</strong></p>
-                    <a class="btn btn-default btn-xs" href="https://www.linuxsysadmin.ml/2016/06/balanceando-peticiones-con-haproxy.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="https://www.linuxsysadmin.ml/2018/12/usando-docker-para-saltarse-los-permisos-de-linux.html"
+                       rel="bookmark"
+                       title="Permalink to Usando Docker para saltarse los permisos de Linux">
+                        Usando Docker para saltarse los permisos de Linux
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Fecha</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2018-12-17T10:00:00+01:00"> 2018-12-17</time>
+    </span>
 
-        <ul class="pagination">
-                <li class="prev"><a href="https://www.linuxsysadmin.ml/author/gerard12.html">&laquo;</a>
-                </li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard.html">1</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard2.html">2</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard3.html">3</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard4.html">4</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard5.html">5</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard6.html">6</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard7.html">7</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard8.html">8</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard9.html">9</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard10.html">10</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard11.html">11</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard12.html">12</a></li>
-                    <li class="active"><a
-                            href="https://www.linuxsysadmin.ml/author/gerard13.html">13</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard14.html">14</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard15.html">15</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard16.html">16</a></li>
-                    <li class=""><a
-                            href="https://www.linuxsysadmin.ml/author/gerard17.html">17</a></li>
-                <li class="next"><a
-                        href="https://www.linuxsysadmin.ml/author/gerard14.html">&raquo;</a></li>
-        </ul>
+
+            <span class="label label-default">Autor</span>
+            <a href="https://www.linuxsysadmin.ml/author/gerard.html"><i class="fa fa-user"></i> Gerard</a>
+
+        <span class="label label-default">Tiempo de lectura</span> 3 minutos
+        <span class="label label-default">Categoría</span>
+        <a href="https://www.linuxsysadmin.ml/category/operaciones.html">Operaciones</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="https://www.linuxsysadmin.ml/tag/docker.html">docker</a>
+        /
+	<a href="https://www.linuxsysadmin.ml/tag/permisos.html">permisos</a>
+        /
+	<a href="https://www.linuxsysadmin.ml/tag/linux.html">linux</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>Según el paradigma de externalización de mi empresa, todos los sistemas son gestionados por un tercero, a base de cambios. Por petición mia, tengo un usuario nominal de SSH y puedo entrar a mirar logs y configuraciones, pero no todas. Lo que no saben es que puedo hacer de todo.</p>
+<p>El otro día intenté mirar una configuración de sistema (concretamente el <code>/etc/ssh/sshd_config</code>) para ver si había una configuración específica de enjaulado de los usuarios, puesto que se trata de un SFTP público.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:/etc/ssh$ cat sshd_config
+cat: sshd_config: Permiso denegado
+gerard@atlantis:/etc/ssh$
+</pre></div>
+
+
+<p>No se quien es el paranoico que pidió estos permisos, pero me toca pasar por el aro; o bien solicito que me lo pasen, o bien pido permisos de <em>sudo</em> o similar. Pero hay una manera que no va a tardar días, y que los técnicos que lo llevan no han controlado: el servidor tiene <strong>docker</strong> instalado, y mi usuario pertenece al grupo.</p>
+<p>Eso me permite ejecutar un contenedor con el <em>uid</em> que yo quiera, siendo el <em>uid</em> por defecto el "0" que es el usuario <strong>root</strong>.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~$ docker run -ti --rm -u <span class="m">70</span> alpine:3.8
+/ $ grep <span class="m">70</span> /etc/passwd
+postgres:x:70:70::/var/lib/postgresql:/bin/sh
+/ $ whoami
+postgres
+/ $ id
+<span class="nv">uid</span><span class="o">=</span><span class="m">70</span><span class="o">(</span>postgres<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span><span class="m">70</span><span class="o">(</span>postgres<span class="o">)</span>
+/ $
+</pre></div>
+
+
+<p><strong>NOTA</strong>: La traducción entre el <em>uid</em> "70" y el usuario "postgres" se hace en base al fichero <code>/etc/passwd</code> <strong>del contenedor</strong>.</p>
+<p>Solo nos queda montar el sistema de ficheros del servidor en una carpeta cualquiera como un volumen y así puedo ver y modificar lo que ya quiera.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~$ docker run -ti --rm -v /:/host alpine:3.8
+/ <span class="c1"># whoami</span>
+root
+/ <span class="c1"># cat /host/etc/ssh/sshd_config</span>
+<span class="c1">#       $OpenBSD: sshd_config,v 1.100 2016/08/15 12:32:04 naddy Exp $</span>
+
+<span class="c1"># This is the sshd server system-wide configuration file.  See</span>
+<span class="c1"># sshd_config(5) for more information.</span>
+...
+/ <span class="c1">#</span>
+</pre></div>
+
+
+<p>Si solo pretendéis ver, montad el volúmen con la opción <em>readonly</em>, y os váis a evitar elgún error que os pueda delatar. Sin embargo, si váis a hacer modificaciones meditadas y conscientes, adelante.</p>
+<div class="highlight"><pre><span></span>gerard@atlantis:~$ docker run -ti --rm -v /:/host:ro alpine:3.8
+/ <span class="c1"># whoami</span>
+root
+/ <span class="c1"># rm /host/etc/ssh/sshd_config</span>
+rm: remove <span class="s1">&#39;/host/etc/ssh/sshd_config&#39;</span>? y
+rm: can<span class="s1">&#39;t remove &#39;</span>/host/etc/ssh/sshd_config<span class="s1">&#39;: Read-only file system</span>
+<span class="s1">/ # echo &#39;</span>destroyed<span class="s1">&#39; &gt; /host/etc/ssh/sshd_config</span>
+<span class="s1">/bin/sh: can&#39;</span>t create /host/etc/ssh/sshd_config: Read-only file system
+/ <span class="c1"># truncate -s 0 /host/etc/ssh/sshd_config</span>
+truncate: /host/etc/ssh/sshd_config: open: Read-only file system
+/ <span class="c1">#</span>
+</pre></div>
+
+
+<p>Recordad que lo que hagáis a partir de aquí queda bajo vuestra propia responsabilidad... Sed cautos</p>
+            </div>
+            <!-- /.entry-content -->
+<section class="well" id="related-posts">
+    <h4>Posts relacionados:</h4>
+    <ul>
+        <li><a href="https://www.linuxsysadmin.ml/2017/08/problemas-de-escritura-con-openshift.html">Problemas de escritura con openshift</a></li>
+        <li><a href="https://www.linuxsysadmin.ml/2017/07/montando-un-servidor-docker-con-debian-stretch.html">Montando un servidor docker con Debian Stretch</a></li>
+        <li><a href="https://www.linuxsysadmin.ml/2016/06/preparando-un-servidor-de-repositorios-git.html">Preparando un servidor de repositorios GIT</a></li>
+    </ul>
+</section>
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'linuxsysadmin-gmb'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'usando-docker-para-saltarse-los-permisos-de-linux';
+                var disqus_url = 'https://www.linuxsysadmin.ml/2018/12/usando-docker-para-saltarse-los-permisos-de-linux.html';
+
+            var disqus_config = function () {
+                this.language = "es";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>

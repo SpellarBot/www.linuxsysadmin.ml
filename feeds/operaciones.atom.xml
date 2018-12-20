@@ -1,5 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2018-11-12T10:00:00+01:00</updated><entry><title>Un entorno de jenkins distribuido en contenedores</title><link href="https://www.linuxsysadmin.ml/2018/11/un-entorno-de-jenkins-distribuido-en-contenedores.html" rel="alternate"></link><published>2018-11-12T10:00:00+01:00</published><updated>2018-11-12T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-11-12:/2018/11/un-entorno-de-jenkins-distribuido-en-contenedores.html</id><summary type="html">&lt;p&gt;Estaba yo el otro día intentando montar un &lt;strong&gt;jenkins&lt;/strong&gt; con acceso al binario de &lt;strong&gt;docker&lt;/strong&gt; y &lt;strong&gt;python&lt;/strong&gt;. Como no quería instalar &lt;strong&gt;jenkins&lt;/strong&gt;, me limité a extender la imagen &lt;a href="https://hub.docker.com/r/jenkins/jenkins/"&gt;jenkins/jenkins&lt;/a&gt; para dotarlo de las herramientas necesarias, como &lt;a href="https://www.linuxsysadmin.ml/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html"&gt;ya hicimos con ansible&lt;/a&gt; que, aunque funciona, no es ni elegante ni escalable …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Estaba yo el otro día intentando montar un &lt;strong&gt;jenkins&lt;/strong&gt; con acceso al binario de &lt;strong&gt;docker&lt;/strong&gt; y &lt;strong&gt;python&lt;/strong&gt;. Como no quería instalar &lt;strong&gt;jenkins&lt;/strong&gt;, me limité a extender la imagen &lt;a href="https://hub.docker.com/r/jenkins/jenkins/"&gt;jenkins/jenkins&lt;/a&gt; para dotarlo de las herramientas necesarias, como &lt;a href="https://www.linuxsysadmin.ml/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html"&gt;ya hicimos con ansible&lt;/a&gt; que, aunque funciona, no es ni elegante ni escalable.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2018-12-17T10:00:00+01:00</updated><entry><title>Usando Docker para saltarse los permisos de Linux</title><link href="https://www.linuxsysadmin.ml/2018/12/usando-docker-para-saltarse-los-permisos-de-linux.html" rel="alternate"></link><published>2018-12-17T10:00:00+01:00</published><updated>2018-12-17T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-12-17:/2018/12/usando-docker-para-saltarse-los-permisos-de-linux.html</id><summary type="html">&lt;p&gt;Según el paradigma de externalización de mi empresa, todos los sistemas son gestionados por un tercero, a base de cambios. Por petición mia, tengo un usuario nominal de SSH y puedo entrar a mirar logs y configuraciones, pero no todas. Lo que no saben es que puedo hacer de todo …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Según el paradigma de externalización de mi empresa, todos los sistemas son gestionados por un tercero, a base de cambios. Por petición mia, tengo un usuario nominal de SSH y puedo entrar a mirar logs y configuraciones, pero no todas. Lo que no saben es que puedo hacer de todo.&lt;/p&gt;
+&lt;p&gt;El otro día intenté mirar una configuración de sistema (concretamente el &lt;code&gt;/etc/ssh/sshd_config&lt;/code&gt;) para ver si había una configuración específica de enjaulado de los usuarios, puesto que se trata de un SFTP público.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:/etc/ssh$ cat sshd_config
+cat: sshd_config: Permiso denegado
+gerard@atlantis:/etc/ssh$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;No se quien es el paranoico que pidió estos permisos, pero me toca pasar por el aro; o bien solicito que me lo pasen, o bien pido permisos de &lt;em&gt;sudo&lt;/em&gt; o similar. Pero hay una manera que no va a tardar días, y que los técnicos que lo llevan no han controlado: el servidor tiene &lt;strong&gt;docker&lt;/strong&gt; instalado, y mi usuario pertenece al grupo.&lt;/p&gt;
+&lt;p&gt;Eso me permite ejecutar un contenedor con el &lt;em&gt;uid&lt;/em&gt; que yo quiera, siendo el &lt;em&gt;uid&lt;/em&gt; por defecto el "0" que es el usuario &lt;strong&gt;root&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ docker run -ti --rm -u &lt;span class="m"&gt;70&lt;/span&gt; alpine:3.8
+/ $ grep &lt;span class="m"&gt;70&lt;/span&gt; /etc/passwd
+postgres:x:70:70::/var/lib/postgresql:/bin/sh
+/ $ whoami
+postgres
+/ $ id
+&lt;span class="nv"&gt;uid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;70&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;postgres&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;gid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;70&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;postgres&lt;span class="o"&gt;)&lt;/span&gt;
+/ $
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: La traducción entre el &lt;em&gt;uid&lt;/em&gt; "70" y el usuario "postgres" se hace en base al fichero &lt;code&gt;/etc/passwd&lt;/code&gt; &lt;strong&gt;del contenedor&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Solo nos queda montar el sistema de ficheros del servidor en una carpeta cualquiera como un volumen y así puedo ver y modificar lo que ya quiera.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ docker run -ti --rm -v /:/host alpine:3.8
+/ &lt;span class="c1"&gt;# whoami&lt;/span&gt;
+root
+/ &lt;span class="c1"&gt;# cat /host/etc/ssh/sshd_config&lt;/span&gt;
+&lt;span class="c1"&gt;#       $OpenBSD: sshd_config,v 1.100 2016/08/15 12:32:04 naddy Exp $&lt;/span&gt;
+
+&lt;span class="c1"&gt;# This is the sshd server system-wide configuration file.  See&lt;/span&gt;
+&lt;span class="c1"&gt;# sshd_config(5) for more information.&lt;/span&gt;
+...
+/ &lt;span class="c1"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si solo pretendéis ver, montad el volúmen con la opción &lt;em&gt;readonly&lt;/em&gt;, y os váis a evitar elgún error que os pueda delatar. Sin embargo, si váis a hacer modificaciones meditadas y conscientes, adelante.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ docker run -ti --rm -v /:/host:ro alpine:3.8
+/ &lt;span class="c1"&gt;# whoami&lt;/span&gt;
+root
+/ &lt;span class="c1"&gt;# rm /host/etc/ssh/sshd_config&lt;/span&gt;
+rm: remove &lt;span class="s1"&gt;&amp;#39;/host/etc/ssh/sshd_config&amp;#39;&lt;/span&gt;? y
+rm: can&lt;span class="s1"&gt;&amp;#39;t remove &amp;#39;&lt;/span&gt;/host/etc/ssh/sshd_config&lt;span class="s1"&gt;&amp;#39;: Read-only file system&lt;/span&gt;
+&lt;span class="s1"&gt;/ # echo &amp;#39;&lt;/span&gt;destroyed&lt;span class="s1"&gt;&amp;#39; &amp;gt; /host/etc/ssh/sshd_config&lt;/span&gt;
+&lt;span class="s1"&gt;/bin/sh: can&amp;#39;&lt;/span&gt;t create /host/etc/ssh/sshd_config: Read-only file system
+/ &lt;span class="c1"&gt;# truncate -s 0 /host/etc/ssh/sshd_config&lt;/span&gt;
+truncate: /host/etc/ssh/sshd_config: open: Read-only file system
+/ &lt;span class="c1"&gt;#&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Recordad que lo que hagáis a partir de aquí queda bajo vuestra propia responsabilidad... Sed cautos&lt;/p&gt;</content><category term="docker"></category><category term="permisos"></category><category term="linux"></category></entry><entry><title>Un entorno de jenkins distribuido en contenedores</title><link href="https://www.linuxsysadmin.ml/2018/11/un-entorno-de-jenkins-distribuido-en-contenedores.html" rel="alternate"></link><published>2018-11-12T10:00:00+01:00</published><updated>2018-11-12T10:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-11-12:/2018/11/un-entorno-de-jenkins-distribuido-en-contenedores.html</id><summary type="html">&lt;p&gt;Estaba yo el otro día intentando montar un &lt;strong&gt;jenkins&lt;/strong&gt; con acceso al binario de &lt;strong&gt;docker&lt;/strong&gt; y &lt;strong&gt;python&lt;/strong&gt;. Como no quería instalar &lt;strong&gt;jenkins&lt;/strong&gt;, me limité a extender la imagen &lt;a href="https://hub.docker.com/r/jenkins/jenkins/"&gt;jenkins/jenkins&lt;/a&gt; para dotarlo de las herramientas necesarias, como &lt;a href="https://www.linuxsysadmin.ml/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html"&gt;ya hicimos con ansible&lt;/a&gt; que, aunque funciona, no es ni elegante ni escalable …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Estaba yo el otro día intentando montar un &lt;strong&gt;jenkins&lt;/strong&gt; con acceso al binario de &lt;strong&gt;docker&lt;/strong&gt; y &lt;strong&gt;python&lt;/strong&gt;. Como no quería instalar &lt;strong&gt;jenkins&lt;/strong&gt;, me limité a extender la imagen &lt;a href="https://hub.docker.com/r/jenkins/jenkins/"&gt;jenkins/jenkins&lt;/a&gt; para dotarlo de las herramientas necesarias, como &lt;a href="https://www.linuxsysadmin.ml/2016/09/lanzando-playbooks-de-ansible-desde-jenkins.html"&gt;ya hicimos con ansible&lt;/a&gt; que, aunque funciona, no es ni elegante ni escalable.&lt;/p&gt;
 &lt;p&gt;El resultado es una imagen que hace demasiadas cosas, no es modular y un cambio requiere la recreación de la herramienta completa. Así que se me ocurrió otra forma de hacer las cosas, teniendo en cuenta que la herramienta funciona en modo &lt;em&gt;master/slave&lt;/em&gt;. Básicamente se trata de dejar al &lt;strong&gt;jenkins&lt;/strong&gt; como &lt;em&gt;master&lt;/em&gt; y delegar los &lt;em&gt;jobs&lt;/em&gt; a otros contenedores con las herramientas necesarias.&lt;/p&gt;
 &lt;p&gt;Para estos &lt;em&gt;workers&lt;/em&gt; solo necesitamos un contenedor con &lt;strong&gt;SSH&lt;/strong&gt; y &lt;strong&gt;Java&lt;/strong&gt;. El resto de herramientas serían las necesarias para lanzar los comandos que conforman nuestro &lt;em&gt;job&lt;/em&gt;. Veamos un ejemplo.&lt;/p&gt;
 &lt;h2&gt;El master: Jenkins&lt;/h2&gt;

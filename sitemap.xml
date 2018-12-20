@@ -5,42 +5,49 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/</loc>
-<lastmod>2018-12-10T08:33:21-00:00</lastmod>
+<lastmod>2018-12-20T07:56:27-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2018-12-10T08:33:21-00:00</lastmod>
+<lastmod>2018-12-20T07:56:27-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2018-12-10T08:33:21-00:00</lastmod>
+<lastmod>2018-12-20T07:56:27-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2018-12-10T08:33:21-00:00</lastmod>
+<lastmod>2018-12-20T07:56:27-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2018-12-10T08:33:21-00:00</lastmod>
+<lastmod>2018-12-20T07:56:27-00:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/curriculum.html</loc>
-<lastmod>2018-12-10T08:33:21-00:00</lastmod>
+<lastmod>2018-12-20T07:56:27-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/2018/12/usando-docker-para-saltarse-los-permisos-de-linux.html</loc>
+<lastmod>2018-12-17T10:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1223,7 +1230,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/category/operaciones.html</loc>
-<lastmod>2018-11-12T10:00:00-00:15</lastmod>
+<lastmod>2018-12-17T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1245,6 +1252,27 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://www.linuxsysadmin.ml/category/virtualizacion.html</loc>
 <lastmod>2016-05-23T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/tag/docker.html</loc>
+<lastmod>2018-12-17T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/tag/permisos.html</loc>
+<lastmod>2018-12-17T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/tag/linux.html</loc>
+<lastmod>2018-12-17T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1272,13 +1300,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tag/wiki.html</loc>
-<lastmod>2018-12-03T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://www.linuxsysadmin.ml/tag/docker.html</loc>
 <lastmod>2018-12-03T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -1573,13 +1594,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tag/alpine.html</loc>
-<lastmod>2018-07-30T09:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://www.linuxsysadmin.ml/tag/linux.html</loc>
 <lastmod>2018-07-30T09:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -2189,13 +2203,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tag/openshift.html</loc>
-<lastmod>2017-08-21T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://www.linuxsysadmin.ml/tag/permisos.html</loc>
 <lastmod>2017-08-21T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -3204,7 +3211,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2018-12-10T10:00:00-00:15</lastmod>
+<lastmod>2018-12-17T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
