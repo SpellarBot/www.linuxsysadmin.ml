@@ -7433,7 +7433,7 @@ root@packager:~/workspace#
 &lt;li&gt;&lt;strong&gt;Obligatorios&lt;/strong&gt;:&lt;ul&gt;
 &lt;li&gt;Package&lt;/li&gt;
 &lt;li&gt;Version&lt;/li&gt;
-&lt;li&gt;Architecture compilado los binarios&lt;/li&gt;
+&lt;li&gt;Architecture&lt;/li&gt;
 &lt;li&gt;Maintainer&lt;/li&gt;
 &lt;li&gt;Description&lt;/li&gt;
 &lt;/ul&gt;

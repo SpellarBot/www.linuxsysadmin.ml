@@ -5,42 +5,49 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/</loc>
-<lastmod>2018-12-20T07:56:27-00:00</lastmod>
+<lastmod>2019-01-07T09:46:43-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2018-12-20T07:56:27-00:00</lastmod>
+<lastmod>2019-01-07T09:46:43-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2018-12-20T07:56:27-00:00</lastmod>
+<lastmod>2019-01-07T09:46:43-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2018-12-20T07:56:27-00:00</lastmod>
+<lastmod>2019-01-07T09:46:43-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2018-12-20T07:56:27-00:00</lastmod>
+<lastmod>2019-01-07T09:46:43-00:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/curriculum.html</loc>
-<lastmod>2018-12-20T07:56:27-00:00</lastmod>
+<lastmod>2019-01-07T09:46:43-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/2019/01/usando-el-servidor-integrado-de-php-en-un-contenedor-docker.html</loc>
+<lastmod>2019-01-07T10:00:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1244,7 +1251,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/category/sistemas.html</loc>
-<lastmod>2018-12-03T10:00:00-00:15</lastmod>
+<lastmod>2019-01-07T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1258,7 +1265,14 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tag/docker.html</loc>
-<lastmod>2018-12-17T10:00:00-00:15</lastmod>
+<lastmod>2019-01-07T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/tag/php.html</loc>
+<lastmod>2019-01-07T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -2524,13 +2538,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>https://www.linuxsysadmin.ml/tag/php.html</loc>
-<lastmod>2017-03-06T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
 <loc>https://www.linuxsysadmin.ml/tag/failover.html</loc>
 <lastmod>2017-02-27T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
@@ -3211,7 +3218,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2018-12-17T10:00:00-00:15</lastmod>
+<lastmod>2019-01-07T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
