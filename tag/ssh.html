@@ -96,6 +96,13 @@ Linux Sysadmin            </a>
 </script>
 
             <article>
+                <h2><a href="https://www.linuxsysadmin.ml/2019/01/protegiendo-sistemas-linux-con-una-autenticacion-de-dos-factores.html">Protegiendo sistemas Linux con una autenticación de dos factores</a></h2>
+                <div class="summary"><p>El otro día tuve un auditor de seguridad imponiendo sus criterios arbitrarios; quería que cierto servidor seguro no fuera accesible si no era con una autenticación de 2 factores. Aunque personalmente no lo veo útil, me tocó ceder a sus exigencias y aquí he anotado como lo hice: con <strong>libpam-google-authenticator …</strong></p>
+                    <a class="btn btn-default btn-xs" href="https://www.linuxsysadmin.ml/2019/01/protegiendo-sistemas-linux-con-una-autenticacion-de-dos-factores.html">Seguir leyendo</a>
+                </div>
+            </article>
+            <hr/>
+            <article>
                 <h2><a href="https://www.linuxsysadmin.ml/2018/09/un-contenedor-multiservicio-con-docker-y-s6.html">Un contenedor multiservicio con docker y s6</a></h2>
                 <div class="summary"><p>Lo he vuelto a hacer: a pesar de que es una antipráctica de <strong>docker</strong>, me veo tentado a ejecutar varios servicios en mis contenedores. Solo lo hago cuando estos servicios tienen un objetivo común, como servir PHP (nginx/php-fpm); para ello necesitamos un gestor de procesos. Hoy hablaremos de <strong>s6 …</strong></p>
                     <a class="btn btn-default btn-xs" href="https://www.linuxsysadmin.ml/2018/09/un-contenedor-multiservicio-con-docker-y-s6.html">Seguir leyendo</a>
@@ -155,13 +162,6 @@ Linux Sysadmin            </a>
                 <h2><a href="https://www.linuxsysadmin.ml/2017/07/autenticacion-centralizada-por-claves-ssh.html">Autenticación centralizada por claves SSH</a></h2>
                 <div class="summary"><p>Ya vimos en <a href="https://www.linuxsysadmin.ml/2016/05/autenticacion-ssh-por-claves.html">un artículo anterior</a> como autenticar las sesiones <strong>SSH</strong> mediante claves locales en la máquina. Sin embargo, esto no es práctico cuando tenemos muchos servidores, y hay que replicar esas claves en todos ellos. Hoy vamos a ver como usar un <em>script</em> que pueda sacar las claves dinámicamente …</p>
                     <a class="btn btn-default btn-xs" href="https://www.linuxsysadmin.ml/2017/07/autenticacion-centralizada-por-claves-ssh.html">Seguir leyendo</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="https://www.linuxsysadmin.ml/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html">Exponiendo puertos TCP a través de un firewall con ngrok</a></h2>
-                <div class="summary"><p>A veces tenemos la necesidad de exponer en internet algún puerto TCP de forma temporal, para hacer <em>testing</em> o alguna <em>demo</em>. Ya vimos como podemos hacer esto mediante <a href="https://www.linuxsysadmin.ml/2016/10/creando-tuneles-con-ssh.html">túneles SSH reversos</a>, aunque no siempre disponemos de un dominio público. En estos casos podemos usar un sistema de túneles llamado <strong>ngrok …</strong></p>
-                    <a class="btn btn-default btn-xs" href="https://www.linuxsysadmin.ml/2017/06/exponiendo-puertos-tcp-a-traves-de-un-firewall-con-ngrok.html">Seguir leyendo</a>
                 </div>
             </article>
             <hr/>
@@ -416,6 +416,11 @@ Linux Sysadmin            </a>
                             git
                         </a>
                     </li>
+                    <li class="list-group-item tag-4">
+                        <a href="https://www.linuxsysadmin.ml/tag/google.html">
+                            google
+                        </a>
+                    </li>
                     <li class="list-group-item tag-3">
                         <a href="https://www.linuxsysadmin.ml/tag/haproxy.html">
                             haproxy
@@ -492,11 +497,6 @@ Linux Sysadmin            </a>
                         </a>
                     </li>
                     <li class="list-group-item tag-4">
-                        <a href="https://www.linuxsysadmin.ml/tag/master.html">
-                            master
-                        </a>
-                    </li>
-                    <li class="list-group-item tag-4">
                         <a href="https://www.linuxsysadmin.ml/tag/mediawiki.html">
                             mediawiki
                         </a>
@@ -529,6 +529,11 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-3">
                         <a href="https://www.linuxsysadmin.ml/tag/nmap.html">
                             nmap
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="https://www.linuxsysadmin.ml/tag/pam.html">
+                            pam
                         </a>
                     </li>
                     <li class="list-group-item tag-3">
@@ -631,11 +636,6 @@ Linux Sysadmin            </a>
                             slack
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
-                        <a href="https://www.linuxsysadmin.ml/tag/slave.html">
-                            slave
-                        </a>
-                    </li>
                     <li class="list-group-item tag-3">
                         <a href="https://www.linuxsysadmin.ml/tag/squashfs.html">
                             squashfs
@@ -671,11 +671,6 @@ Linux Sysadmin            </a>
                             tcp
                         </a>
                     </li>
-                    <li class="list-group-item tag-4">
-                        <a href="https://www.linuxsysadmin.ml/tag/tls.html">
-                            tls
-                        </a>
-                    </li>
                     <li class="list-group-item tag-3">
                         <a href="https://www.linuxsysadmin.ml/tag/traefik.html">
                             traefik
@@ -684,6 +679,11 @@ Linux Sysadmin            </a>
                     <li class="list-group-item tag-2">
                         <a href="https://www.linuxsysadmin.ml/tag/tunel.html">
                             túnel
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-4">
+                        <a href="https://www.linuxsysadmin.ml/tag/two-factor.html">
+                            two-factor
                         </a>
                     </li>
                     <li class="list-group-item tag-3">
@@ -750,7 +750,7 @@ Linux Sysadmin            </a>
    <div class="container">
       <hr>
       <div class="row">
-         <div class="col-xs-10">&copy; 2018 Gerard
+         <div class="col-xs-10">&copy; 2019 Gerard
             &middot; Generado por <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
             <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
             <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
