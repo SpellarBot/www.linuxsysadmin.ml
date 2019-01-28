@@ -1,5 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-01-22T09:00:00+01:00</updated><entry><title>Protegiendo sistemas Linux con una autenticación de dos factores</title><link href="https://www.linuxsysadmin.ml/2019/01/protegiendo-sistemas-linux-con-una-autenticacion-de-dos-factores.html" rel="alternate"></link><published>2019-01-22T09:00:00+01:00</published><updated>2019-01-22T09:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-01-22:/2019/01/protegiendo-sistemas-linux-con-una-autenticacion-de-dos-factores.html</id><summary type="html">&lt;p&gt;El otro día tuve un auditor de seguridad imponiendo sus criterios arbitrarios; quería que cierto servidor seguro no fuera accesible si no era con una autenticación de 2 factores. Aunque personalmente no lo veo útil, me tocó ceder a sus exigencias y aquí he anotado como lo hice: con &lt;strong&gt;libpam-google-authenticator …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día tuve un auditor de seguridad imponiendo sus criterios arbitrarios; quería que cierto servidor seguro no fuera accesible si no era con una autenticación de 2 factores. Aunque personalmente no lo veo útil, me tocó ceder a sus exigencias y aquí he anotado como lo hice: con &lt;strong&gt;libpam-google-authenticator&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-01-28T09:00:00+01:00</updated><entry><title>Generando entropía con rng-tools</title><link href="https://www.linuxsysadmin.ml/2019/01/generando-entropia-con-rng-tools.html" rel="alternate"></link><published>2019-01-28T09:00:00+01:00</published><updated>2019-01-28T09:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-01-28:/2019/01/generando-entropia-con-rng-tools.html</id><summary type="html">&lt;p&gt;Cada vez que intento crear claves GPG me doy por vencido y paso de hacerlo. El motivo es que es un proceso que tarda una barbaridad, especialmente en los entornos virtuales por los que me suelo mover. Eso es porque el dispositivo &lt;code&gt;/dev/random&lt;/code&gt; no recibe suficiente aleatoriedad sin ayuda …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cada vez que intento crear claves GPG me doy por vencido y paso de hacerlo. El motivo es que es un proceso que tarda una barbaridad, especialmente en los entornos virtuales por los que me suelo mover. Eso es porque el dispositivo &lt;code&gt;/dev/random&lt;/code&gt; no recibe suficiente aleatoriedad sin ayuda.&lt;/p&gt;
+&lt;p&gt;Pero esto ha cambiado últimamente; he descubierto un servicio capaz de generar entropía suficiente para que el generador del sistema &lt;code&gt;/dev/random&lt;/code&gt; se llene rápidamente. Se trata de &lt;strong&gt;rng-tools&lt;/strong&gt; y su existencia ha simplificado la mía notablemente.&lt;/p&gt;
+&lt;p&gt;Normalmente utilizo el otro generador del sistema &lt;code&gt;/dev/urandom&lt;/code&gt;, que genera números pseudoaleatorios en función de un algoritmo matemático. Esto es suficiente para mí, pero para algunas herramientas del sistema es insuficiente, y por ello utilizan números puramente aleatorios.&lt;/p&gt;
+&lt;h2&gt;El problema&lt;/h2&gt;
+&lt;p&gt;Vamos a generar una clave GPG para un uso cualquiera; esto es ahora irrelevante. Lanzamos el comando adecuado y vemos la sugerencia:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~/workspace$ gpg --gen-key
+gpg &lt;span class="o"&gt;(&lt;/span&gt;GnuPG&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt;.1.18&lt;span class="p"&gt;;&lt;/span&gt; Copyright &lt;span class="o"&gt;(&lt;/span&gt;C&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;2017&lt;/span&gt; Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Note: Use &lt;span class="s2"&gt;&amp;quot;gpg --full-generate-key&amp;quot;&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; a full featured key generation dialog.
+
+GnuPG needs to construct a user ID to identify your key.
+
+Real name: Gerard Monells
+Email address: gerard.monells@gmail.com
+You selected this USER-ID:
+    &lt;span class="s2"&gt;&amp;quot;Gerard Monells &amp;lt;gerard.monells@gmail.com&amp;gt;&amp;quot;&lt;/span&gt;
+
+Change &lt;span class="o"&gt;(&lt;/span&gt;N&lt;span class="o"&gt;)&lt;/span&gt;ame, &lt;span class="o"&gt;(&lt;/span&gt;E&lt;span class="o"&gt;)&lt;/span&gt;mail, or &lt;span class="o"&gt;(&lt;/span&gt;O&lt;span class="o"&gt;)&lt;/span&gt;kay/&lt;span class="o"&gt;(&lt;/span&gt;Q&lt;span class="o"&gt;)&lt;/span&gt;uit? o
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;type&lt;/span&gt; on the keyboard, move the mouse, utilize the
+disks&lt;span class="o"&gt;)&lt;/span&gt; during the prime generation&lt;span class="p"&gt;;&lt;/span&gt; this gives the random number
+generator a better chance to gain enough entropy.
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Al final, tras más de 1 hora esperando, nos cansamos de esperar y cancelamos la generación de la clave.&lt;/p&gt;
+&lt;h2&gt;La solución&lt;/h2&gt;
+&lt;p&gt;Por defecto, &lt;code&gt;/dev/random&lt;/code&gt; es muy lento, porque recoge entropía de los &lt;em&gt;drivers&lt;/em&gt; de los dispositivos y de otras fuentes lentas. El binario &lt;strong&gt;rngd&lt;/strong&gt; permite usar fuentes de entropía más rápidas, principalmente generadores de números aleatorios por &lt;em&gt;hardware&lt;/em&gt;, presentes en los procesadores modernos, por ejemplo, los procesadores AMD, los Intel, e incluso los ARM de las &lt;em&gt;Raspberry pi&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Aunque nuestro servidor virtual no tenga acceso a tales dispositivos, no son las únicas fuentes; nos vamos a beneficiar de una generación de números aleatorios mayor aunque nos los tengamos. Para ello, solo necesitamos tener instalado el paquete &lt;strong&gt;rng-tools&lt;/strong&gt; y el binario &lt;code&gt;rngd&lt;/code&gt; ejecutando.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~/workspace$ sudo apt install rng-tools
+...
+gerard@shangrila:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si no queréis ensuciar el sistema operativo, podéis ejecutarlo en un contenedor &lt;strong&gt;docker&lt;/strong&gt;; como comparten &lt;em&gt;kernel&lt;/em&gt;, el contenedor generará entropía para todo el que comparta el mismo &lt;em&gt;kernel&lt;/em&gt;, incluído el sistema &lt;em&gt;host&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;En el caso de &lt;strong&gt;docker&lt;/strong&gt;, solo hace falta recordar que el binario debe correr en &lt;em&gt;foreground&lt;/em&gt; y que necesita ejecutar con el &lt;em&gt;flag&lt;/em&gt; &lt;code&gt;--privileged&lt;/code&gt;, para poder acceder a los recursos del &lt;em&gt;kernel&lt;/em&gt; compartido con el resto de contenedores.&lt;/p&gt;
+&lt;p&gt;Aquí os dejo mi receta:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~/workspace/rngtools$ cat Dockerfile
+FROM alpine:3.8
+RUN apk add --no-cache tini rng-tools
+ENTRYPOINT &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/sbin/tini&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;--&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+CMD &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/usr/sbin/rngd&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;-f&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@shangrila:~/workspace/rngtools$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~/workspace/rngtools$ docker build -t rngtools .
+Sending build context to Docker daemon  &lt;span class="m"&gt;2&lt;/span&gt;.048kB
+...
+Successfully built 0b89a6d118ca
+Successfully tagged rngtools:latest
+gerard@shangrila:~/workspace/rngtools$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y lo ejecutamos cada vez que necesitemos más entropía:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~/workspace/rngtools$ docker run -ti --rm --privileged rngtools
+Failed to init entropy &lt;span class="nb"&gt;source&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;: Hardware RNG Device
+
+Failed to init entropy &lt;span class="nb"&gt;source&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;: TPM RNG Device
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esto es normal, porque no tenemos dispositivos &lt;em&gt;hardware&lt;/em&gt; especiales, pero aún así, nos podemos beneficiar de la entropía generada.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~/workspace$ gpg --gen-key
+gpg &lt;span class="o"&gt;(&lt;/span&gt;GnuPG&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt;.1.18&lt;span class="p"&gt;;&lt;/span&gt; Copyright &lt;span class="o"&gt;(&lt;/span&gt;C&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;2017&lt;/span&gt; Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Note: Use &lt;span class="s2"&gt;&amp;quot;gpg --full-generate-key&amp;quot;&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; a full featured key generation dialog.
+
+GnuPG needs to construct a user ID to identify your key.
+
+Real name: Gerard Monells
+Email address: gerard.monells@gmail.com
+You selected this USER-ID:
+    &lt;span class="s2"&gt;&amp;quot;Gerard Monells &amp;lt;gerard.monells@gmail.com&amp;gt;&amp;quot;&lt;/span&gt;
+
+Change &lt;span class="o"&gt;(&lt;/span&gt;N&lt;span class="o"&gt;)&lt;/span&gt;ame, &lt;span class="o"&gt;(&lt;/span&gt;E&lt;span class="o"&gt;)&lt;/span&gt;mail, or &lt;span class="o"&gt;(&lt;/span&gt;O&lt;span class="o"&gt;)&lt;/span&gt;kay/&lt;span class="o"&gt;(&lt;/span&gt;Q&lt;span class="o"&gt;)&lt;/span&gt;uit? o
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;type&lt;/span&gt; on the keyboard, move the mouse, utilize the
+disks&lt;span class="o"&gt;)&lt;/span&gt; during the prime generation&lt;span class="p"&gt;;&lt;/span&gt; this gives the random number
+generator a better chance to gain enough entropy.
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;type&lt;/span&gt; on the keyboard, move the mouse, utilize the
+disks&lt;span class="o"&gt;)&lt;/span&gt; during the prime generation&lt;span class="p"&gt;;&lt;/span&gt; this gives the random number
+generator a better chance to gain enough entropy.
+gpg: key 14C7309FFCC0D402 marked as ultimately trusted
+gpg: directory &lt;span class="s1"&gt;&amp;#39;/home/gerard/.gnupg/openpgp-revocs.d&amp;#39;&lt;/span&gt; created
+gpg: revocation certificate stored as &lt;span class="s1"&gt;&amp;#39;/home/gerard/.gnupg/openpgp-revocs.d/2AD87663273458D451D2E68114C7309FFCC0D402.rev&amp;#39;&lt;/span&gt;
+public and secret key created and signed.
+
+pub   rsa3072 &lt;span class="m"&gt;2019&lt;/span&gt;-01-10 &lt;span class="o"&gt;[&lt;/span&gt;SC&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;expires: &lt;span class="m"&gt;2021&lt;/span&gt;-01-09&lt;span class="o"&gt;]&lt;/span&gt;
+      2AD87663273458D451D2E68114C7309FFCC0D402
+      2AD87663273458D451D2E68114C7309FFCC0D402
+uid                      Gerard Monells &amp;lt;gerard.monells@gmail.com&amp;gt;
+sub   rsa3072 &lt;span class="m"&gt;2019&lt;/span&gt;-01-10 &lt;span class="o"&gt;[&lt;/span&gt;E&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;expires: &lt;span class="m"&gt;2021&lt;/span&gt;-01-09&lt;span class="o"&gt;]&lt;/span&gt;
+
+gerard@shangrila:~/workspace$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos nuestra clave generada de forma rápida.&lt;/p&gt;</content><category term="gpg"></category><category term="entropía"></category><category term="rng-tools"></category></entry><entry><title>Protegiendo sistemas Linux con una autenticación de dos factores</title><link href="https://www.linuxsysadmin.ml/2019/01/protegiendo-sistemas-linux-con-una-autenticacion-de-dos-factores.html" rel="alternate"></link><published>2019-01-22T09:00:00+01:00</published><updated>2019-01-22T09:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-01-22:/2019/01/protegiendo-sistemas-linux-con-una-autenticacion-de-dos-factores.html</id><summary type="html">&lt;p&gt;El otro día tuve un auditor de seguridad imponiendo sus criterios arbitrarios; quería que cierto servidor seguro no fuera accesible si no era con una autenticación de 2 factores. Aunque personalmente no lo veo útil, me tocó ceder a sus exigencias y aquí he anotado como lo hice: con &lt;strong&gt;libpam-google-authenticator …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;El otro día tuve un auditor de seguridad imponiendo sus criterios arbitrarios; quería que cierto servidor seguro no fuera accesible si no era con una autenticación de 2 factores. Aunque personalmente no lo veo útil, me tocó ceder a sus exigencias y aquí he anotado como lo hice: con &lt;strong&gt;libpam-google-authenticator&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;El reto no es para nada complejo; un sistema Linux moderno utiliza para autenticarse un sistema llamado &lt;strong&gt;PAM&lt;/strong&gt; (&lt;em&gt;Pluggable Authentication Modules&lt;/em&gt;) y solo es necesario añadir un módulo que haga el tipo de autenticación que más nos convenga.&lt;/p&gt;
 &lt;p&gt;Para una autenticación de 2 factores, &lt;strong&gt;Google&lt;/strong&gt; nos lo pone fácil, usando una aplicación móvil generadora de &lt;em&gt;tokens&lt;/em&gt; que su módulo &lt;strong&gt;libpam-google-authenticator&lt;/strong&gt; acepta o no, dependiendo de las configuraciones reinantes.&lt;/p&gt;
 &lt;p&gt;Así sin más preámbulos, procedemos a instalar dicho paquete (esto se hizo en un sistema &lt;strong&gt;Debian Stretch&lt;/strong&gt;, pero debería valer para cualquier &lt;strong&gt;Debian&lt;/strong&gt;, &lt;strong&gt;Ubuntu&lt;/strong&gt; o derivado):&lt;/p&gt;
