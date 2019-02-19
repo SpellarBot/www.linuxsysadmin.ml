@@ -1,5 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-01-28T09:00:00+01:00</updated><entry><title>Generando entropía con rng-tools</title><link href="https://www.linuxsysadmin.ml/2019/01/generando-entropia-con-rng-tools.html" rel="alternate"></link><published>2019-01-28T09:00:00+01:00</published><updated>2019-01-28T09:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-01-28:/2019/01/generando-entropia-con-rng-tools.html</id><summary type="html">&lt;p&gt;Cada vez que intento crear claves GPG me doy por vencido y paso de hacerlo. El motivo es que es un proceso que tarda una barbaridad, especialmente en los entornos virtuales por los que me suelo mover. Eso es porque el dispositivo &lt;code&gt;/dev/random&lt;/code&gt; no recibe suficiente aleatoriedad sin ayuda …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cada vez que intento crear claves GPG me doy por vencido y paso de hacerlo. El motivo es que es un proceso que tarda una barbaridad, especialmente en los entornos virtuales por los que me suelo mover. Eso es porque el dispositivo &lt;code&gt;/dev/random&lt;/code&gt; no recibe suficiente aleatoriedad sin ayuda.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-02-19T19:00:00+01:00</updated><entry><title>Forzar rangos de IPs prohibidas para Docker</title><link href="https://www.linuxsysadmin.ml/2019/02/forzar-rangos-de-ips-prohibidas-para-docker.html" rel="alternate"></link><published>2019-02-19T19:00:00+01:00</published><updated>2019-02-19T19:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-02-19:/2019/02/forzar-rangos-de-ips-prohibidas-para-docker.html</id><summary type="html">&lt;p&gt;Tras cambiar de oficina en mi trabajo, vuelvo a tener el dudoso honor de trabajar tras un &lt;em&gt;proxy&lt;/em&gt;. Como viene siendo habitual, me puse un servidor &lt;strong&gt;Virtualbox&lt;/strong&gt; con &lt;strong&gt;Debian&lt;/strong&gt; para disponer de las opciones que una máquina auxiliar me ofrece, pero no fue hasta instalar &lt;strong&gt;Docker&lt;/strong&gt; que estalló el desastre …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Tras cambiar de oficina en mi trabajo, vuelvo a tener el dudoso honor de trabajar tras un &lt;em&gt;proxy&lt;/em&gt;. Como viene siendo habitual, me puse un servidor &lt;strong&gt;Virtualbox&lt;/strong&gt; con &lt;strong&gt;Debian&lt;/strong&gt; para disponer de las opciones que una máquina auxiliar me ofrece, pero no fue hasta instalar &lt;strong&gt;Docker&lt;/strong&gt; que estalló el desastre.&lt;/p&gt;
+&lt;p&gt;Y el caso es que tenía el servidor básico funcionando, bien configurado, con acceso a internet y sin problemas. Fuí a instalar &lt;strong&gt;Docker&lt;/strong&gt; y todo parecía correcto, con las configuraciones de &lt;em&gt;proxy&lt;/em&gt; adecuadas. De repente intento comprobar la red solicitando una página web cualquiera, y... ¡sorpresa!&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~$ curl http://www.google.es/
+curl: &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; Failed to connect to proxy.acme.biz port &lt;span class="m"&gt;3128&lt;/span&gt;: No existe ninguna ruta hasta el &lt;span class="sb"&gt;`&lt;/span&gt;host&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;
+gerard@shangrila:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Por supuesto, lo primero tras un error de este estilo es mirar la tabla de rutas, a ver que es lo que aplica para resolver esta ruta:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~$ ip route
+default via &lt;span class="m"&gt;10&lt;/span&gt;.0.2.2 dev enp0s3
+&lt;span class="m"&gt;10&lt;/span&gt;.0.2.0/24 dev enp0s3 proto kernel scope link src &lt;span class="m"&gt;10&lt;/span&gt;.0.2.15
+&lt;span class="m"&gt;169&lt;/span&gt;.254.0.0/16 dev enp0s3 scope link metric &lt;span class="m"&gt;1000&lt;/span&gt;
+&lt;span class="m"&gt;172&lt;/span&gt;.17.0.0/16 dev docker0 proto kernel scope link src &lt;span class="m"&gt;172&lt;/span&gt;.17.0.1 linkdown
+gerard@shangrila:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y es que la IP del &lt;em&gt;proxy&lt;/em&gt; es privada, estando en el rango 172.17.x.x; concretamente estaba en la 172.17.10.20. De esta forma, todas las peticiones al &lt;em&gt;proxy&lt;/em&gt; caen en la última ruta, y entran en el dominio de &lt;strong&gt;Docker&lt;/strong&gt;, que por supuesto, no tiene ningún contenedor con esa dirección IP.&lt;/p&gt;
+&lt;p&gt;Visto esto solo queda instruir a &lt;strong&gt;Docker&lt;/strong&gt; para que no haga uso de ese rango. Parece difícil, pero no lo es; &lt;strong&gt;Docker&lt;/strong&gt; decide que el rango está ocupado o no mirando la tabla de rutas, con mejor o menor acierto.&lt;/p&gt;
+&lt;p&gt;El truco es simple: consiste en hacer creer a &lt;strong&gt;Docker&lt;/strong&gt; que ese bloque está ocupado, añadiendo algo a la tabla de rutas. En principio, la regla caería en la zona &lt;strong&gt;default&lt;/strong&gt;, saldría por el dispositivo &lt;strong&gt;enp0s3&lt;/strong&gt; y utilizaría el &lt;em&gt;gateway&lt;/em&gt; &lt;strong&gt;10.0.2.2&lt;/strong&gt;. Hagamos un bloque con el rango 172.17.0.0/16 que haga exactamente eso.&lt;/p&gt;
+&lt;p&gt;Lo primero es parar el servicio de &lt;strong&gt;Docker&lt;/strong&gt;, y eliminar su carpeta de datos en &lt;code&gt;/var/lib/docker&lt;/code&gt;. Esto nos permitirá trabajar sin &lt;strong&gt;Docker&lt;/strong&gt; recuerde nada en el inicio y que olvide cualquier red que ya haya podido crear.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: Esto va a eliminar configuraciones, imágenes, redes, volúmenes y contenedores; yo partía de un servidor vacío.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~$ sudo service docker stop
+&lt;span class="o"&gt;[&lt;/span&gt;sudo&lt;span class="o"&gt;]&lt;/span&gt; password &lt;span class="k"&gt;for&lt;/span&gt; gerard:
+gerard@shangrila:~$ sudo rm -R /var/lib/docker/
+gerard@shangrila:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Tenemos que conseguir preconfigurar una ruta, que es relativamente simple y bien documentado; en mi caso concreto se trata de un servidor &lt;strong&gt;Debian&lt;/strong&gt; y la documentación me hizo añadir la ruta en &lt;code&gt;/etc/network/interfaces&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~$ cat /etc/network/interfaces
+...
+allow-hotplug enp0s3
+iface enp0s3 inet dhcp
+        post-up ip route add &lt;span class="m"&gt;172&lt;/span&gt;.17.0.0/16 dev enp0s3 via &lt;span class="m"&gt;10&lt;/span&gt;.0.2.2
+...
+gerard@shangrila:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para descartar los cambios residuales y aplicar los nuevos, me limité a reiniciar el servidor.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~$ sudo reboot
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Tras el reinicio, se puede ver que la ruta ha aplicado, y que &lt;strong&gt;Docker&lt;/strong&gt; ha tenido que configurarse en otro rango libre:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~$ ip route
+default via &lt;span class="m"&gt;10&lt;/span&gt;.0.2.2 dev enp0s3
+&lt;span class="m"&gt;10&lt;/span&gt;.0.2.0/24 dev enp0s3 proto kernel scope link src &lt;span class="m"&gt;10&lt;/span&gt;.0.2.15
+&lt;span class="m"&gt;169&lt;/span&gt;.254.0.0/16 dev enp0s3 scope link metric &lt;span class="m"&gt;1000&lt;/span&gt;
+&lt;span class="m"&gt;172&lt;/span&gt;.17.0.0/16 via &lt;span class="m"&gt;10&lt;/span&gt;.0.2.2 dev enp0s3
+&lt;span class="m"&gt;172&lt;/span&gt;.18.0.0/16 dev docker0 proto kernel scope link src &lt;span class="m"&gt;172&lt;/span&gt;.18.0.1 linkdown
+gerard@shangrila:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~$ docker inspect bridge
+&lt;span class="o"&gt;[&lt;/span&gt;
+    &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="s2"&gt;&amp;quot;Name&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;bridge&amp;quot;&lt;/span&gt;,
+...
+        &lt;span class="s2"&gt;&amp;quot;IPAM&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;{&lt;/span&gt;
+            &lt;span class="s2"&gt;&amp;quot;Driver&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;default&amp;quot;&lt;/span&gt;,
+            &lt;span class="s2"&gt;&amp;quot;Options&amp;quot;&lt;/span&gt;: null,
+            &lt;span class="s2"&gt;&amp;quot;Config&amp;quot;&lt;/span&gt;: &lt;span class="o"&gt;[&lt;/span&gt;
+                &lt;span class="o"&gt;{&lt;/span&gt;
+                    &lt;span class="s2"&gt;&amp;quot;Subnet&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;172.18.0.0/16&amp;quot;&lt;/span&gt;
+                &lt;span class="o"&gt;}&lt;/span&gt;
+            &lt;span class="o"&gt;]&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;,
+...
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;]&lt;/span&gt;
+gerard@shangrila:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos queda comprobar que el problema inicial, que era la falta de acceso a internet, se ha solucionado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~$ curl -I http://www.google.es/
+HTTP/1.1 &lt;span class="m"&gt;200&lt;/span&gt; OK
+...
+X-Cache: MISS from proxy.acme.biz
+X-Cache-Lookup: MISS from proxy.acme.biz:3128
+Via: &lt;span class="m"&gt;1&lt;/span&gt;.1 proxy.acme.biz &lt;span class="o"&gt;(&lt;/span&gt;squid&lt;span class="o"&gt;)&lt;/span&gt;
+Connection: keep-alive
+
+gerard@shangrila:~$
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto hemos acabado.&lt;/p&gt;</content><category term="docker"></category><category term="proxy"></category></entry><entry><title>Generando entropía con rng-tools</title><link href="https://www.linuxsysadmin.ml/2019/01/generando-entropia-con-rng-tools.html" rel="alternate"></link><published>2019-01-28T09:00:00+01:00</published><updated>2019-01-28T09:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-01-28:/2019/01/generando-entropia-con-rng-tools.html</id><summary type="html">&lt;p&gt;Cada vez que intento crear claves GPG me doy por vencido y paso de hacerlo. El motivo es que es un proceso que tarda una barbaridad, especialmente en los entornos virtuales por los que me suelo mover. Eso es porque el dispositivo &lt;code&gt;/dev/random&lt;/code&gt; no recibe suficiente aleatoriedad sin ayuda …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cada vez que intento crear claves GPG me doy por vencido y paso de hacerlo. El motivo es que es un proceso que tarda una barbaridad, especialmente en los entornos virtuales por los que me suelo mover. Eso es porque el dispositivo &lt;code&gt;/dev/random&lt;/code&gt; no recibe suficiente aleatoriedad sin ayuda.&lt;/p&gt;
 &lt;p&gt;Pero esto ha cambiado últimamente; he descubierto un servicio capaz de generar entropía suficiente para que el generador del sistema &lt;code&gt;/dev/random&lt;/code&gt; se llene rápidamente. Se trata de &lt;strong&gt;rng-tools&lt;/strong&gt; y su existencia ha simplificado la mía notablemente.&lt;/p&gt;
 &lt;p&gt;Normalmente utilizo el otro generador del sistema &lt;code&gt;/dev/urandom&lt;/code&gt;, que genera números pseudoaleatorios en función de un algoritmo matemático. Esto es suficiente para mí, pero para algunas herramientas del sistema es insuficiente, y por ello utilizan números puramente aleatorios.&lt;/p&gt;
 &lt;h2&gt;El problema&lt;/h2&gt;
