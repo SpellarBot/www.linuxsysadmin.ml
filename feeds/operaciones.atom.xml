@@ -1,5 +1,317 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-02-19T19:00:00+01:00</updated><entry><title>Forzar rangos de IPs prohibidas para Docker</title><link href="https://www.linuxsysadmin.ml/2019/02/forzar-rangos-de-ips-prohibidas-para-docker.html" rel="alternate"></link><published>2019-02-19T19:00:00+01:00</published><updated>2019-02-19T19:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-02-19:/2019/02/forzar-rangos-de-ips-prohibidas-para-docker.html</id><summary type="html">&lt;p&gt;Tras cambiar de oficina en mi trabajo, vuelvo a tener el dudoso honor de trabajar tras un &lt;em&gt;proxy&lt;/em&gt;. Como viene siendo habitual, me puse un servidor &lt;strong&gt;Virtualbox&lt;/strong&gt; con &lt;strong&gt;Debian&lt;/strong&gt; para disponer de las opciones que una máquina auxiliar me ofrece, pero no fue hasta instalar &lt;strong&gt;Docker&lt;/strong&gt; que estalló el desastre …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Tras cambiar de oficina en mi trabajo, vuelvo a tener el dudoso honor de trabajar tras un &lt;em&gt;proxy&lt;/em&gt;. Como viene siendo habitual, me puse un servidor &lt;strong&gt;Virtualbox&lt;/strong&gt; con &lt;strong&gt;Debian&lt;/strong&gt; para disponer de las opciones que una máquina auxiliar me ofrece, pero no fue hasta instalar &lt;strong&gt;Docker&lt;/strong&gt; que estalló el desastre.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-04-05T10:00:00+02:00</updated><entry><title>Ensamblando un livecd con Debian y xorriso</title><link href="https://www.linuxsysadmin.ml/2019/04/ensamblando-un-livecd-con-debian-y-xorriso.html" rel="alternate"></link><published>2019-04-05T10:00:00+02:00</published><updated>2019-04-05T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-04-05:/2019/04/ensamblando-un-livecd-con-debian-y-xorriso.html</id><summary type="html">&lt;p&gt;Últimamente me he visto obligado a virtualizar en una máquina distinta de la habitual por un problema técnico; esto no sería un problema de no ser porque la arquitectura es de 32 bits. Eso me deja sin ninguna distribución prefabricada con la herramienta &lt;code&gt;zerofree&lt;/code&gt; y me obliga a hacer una …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Últimamente me he visto obligado a virtualizar en una máquina distinta de la habitual por un problema técnico; esto no sería un problema de no ser porque la arquitectura es de 32 bits. Eso me deja sin ninguna distribución prefabricada con la herramienta &lt;code&gt;zerofree&lt;/code&gt; y me obliga a hacer una.&lt;/p&gt;
+&lt;p&gt;Ya lo hice una vez, tal como muestro en &lt;a href="https://www.linuxsysadmin.ml/2015/12/creacion-de-un-livecd-con-debian.html"&gt;este otro artículo&lt;/a&gt;, pero las herramientas han cambiado mucho y era necesario hacer un artículo nuevo actualizado. El cambio principal es la sustitución de &lt;code&gt;genisoimage&lt;/code&gt; por &lt;code&gt;xorriso&lt;/code&gt;; también actualizo la versión de &lt;strong&gt;Debian&lt;/strong&gt; a &lt;strong&gt;stretch&lt;/strong&gt;, aunque esto no cambia el proceso de creación del &lt;em&gt;livecd&lt;/em&gt;.&lt;/p&gt;
+&lt;h2&gt;Preparación del entorno de trabajo&lt;/h2&gt;
+&lt;p&gt;Empezamos instalando las herramientas necesarias:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~$ sudo apt install debootstrap isolinux squashfs-tools xorriso
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias       
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes adicionales:
+  libburn4 libisoburn1 libisofs6 libjte1 liblzo2-2 syslinux-common
+Paquetes sugeridos:
+  jigit cdck
+Se instalarán los siguientes paquetes NUEVOS:
+  debootstrap isolinux libburn4 libisoburn1 libisofs6 libjte1 liblzo2-2 squashfs-tools
+  syslinux-common xorriso
+&lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;10&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
+Se necesita descargar &lt;span class="m"&gt;2&lt;/span&gt;.715 kB de archivos.
+Se utilizarán &lt;span class="m"&gt;7&lt;/span&gt;.072 kB de espacio de disco adicional después de esta operación.
+¿Desea continuar? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
+...
+gerard@builder:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para tener el entorno estructurado, vamos a crear una carpeta contenedora y vamos a trabajar desde la misma.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~$ mkdir live_boot
+gerard@builder:~$ &lt;span class="nb"&gt;cd&lt;/span&gt; live_boot/
+gerard@builder:~/live_boot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En esta carpeta vamos a acumular otras subcarpetas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;image&lt;/code&gt; &amp;rarr; Esta carpeta es la que utiliza &lt;code&gt;xorriso&lt;/code&gt; para montar la imagen iso, y tiene dos subcarpetas:&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;image/isolinux&lt;/code&gt; &amp;rarr; Carpeta con la configuración del &lt;code&gt;bootloader&lt;/code&gt; &lt;strong&gt;isolinux&lt;/strong&gt; y los módulos que pueda necesitar&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;image/live&lt;/code&gt; &amp;rarr; Carpeta que alberga el &lt;em&gt;kernel&lt;/em&gt;, el &lt;em&gt;initrd&lt;/em&gt; y el sistema de ficheros del sistema &lt;em&gt;live&lt;/em&gt; en formato &lt;strong&gt;squashfs&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;chroot&lt;/code&gt; &amp;rarr; Carpeta en donde vamos a hacer el &lt;code&gt;debootstrap&lt;/code&gt; del sistema de ficheros del sistema &lt;em&gt;live&lt;/em&gt;, antes de comprimirlo con &lt;strong&gt;squashfs&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Vamos a empezar por crear la estructura necesaria para la imagen. Sin embargo, no vamos a crear la carpeta &lt;code&gt;chroot&lt;/code&gt;, ya que se va a crear con el mismo comando &lt;code&gt;debootstrap&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~/live_boot$ sudo mkdir -p image/&lt;span class="o"&gt;{&lt;/span&gt;live,isolinux&lt;span class="o"&gt;}&lt;/span&gt;
+gerard@builder:~/live_boot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Preparación del bootloader&lt;/h2&gt;
+&lt;p&gt;Esta es la parte más fácil y rápida del proceso; la hacemos cuanto antes y nos la quitamos de encima. Si en un futuro recreamos el sistema &lt;em&gt;live&lt;/em&gt;, seguramente no vamos a tener que cambiar esto, e incluso nos puede servir para un sistema &lt;em&gt;live&lt;/em&gt; completamente distinto.&lt;/p&gt;
+&lt;p&gt;La parte de los módulos no ocupa demasiado (no llega a 1 mb); personalmente prefiero copiarlos todos y que no falten.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~/live_boot$ sudo cp /usr/lib/ISOLINUX/isolinux.bin image/isolinux/
+gerard@builder:~/live_boot$ sudo cp /usr/lib/syslinux/modules/bios/* image/isolinux/
+gerard@builder:~/live_boot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El &lt;em&gt;bootloader&lt;/em&gt; necesita un fichero de configuración para definir el menú de entrada, y &lt;strong&gt;isolinux&lt;/strong&gt; no es la excepción. Pongo uno sencillo y bastante genérico:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~/live_boot$ cat image/isolinux/isolinux.cfg 
+UI menu.c32
+
+prompt &lt;span class="m"&gt;0&lt;/span&gt;
+menu title Debian Zerofree
+
+timeout &lt;span class="m"&gt;30&lt;/span&gt;
+
+label Debian Live
+menu label ^Debian Live
+menu default
+kernel /live/vmlinuz
+append &lt;span class="nv"&gt;initrd&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/live/initrd &lt;span class="nv"&gt;boot&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;live
+gerard@builder:~/live_boot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y eso es todo.&lt;/p&gt;
+&lt;h2&gt;El sistema de ficheros raíz&lt;/h2&gt;
+&lt;p&gt;La forma oficial de crear un sistema raíz &lt;strong&gt;Debian&lt;/strong&gt; es utilizar &lt;strong&gt;debootstrap&lt;/strong&gt;. Para minimizar el tamaño del sistema de ficheros (y por lo tanto, del &lt;em&gt;livecd&lt;/em&gt;), he optado por utilizar la variante &lt;em&gt;minbase&lt;/em&gt; que limita los paquetes que entiende como "sistema base"; el resto tendrán que entrar como dependencias de lo que instalemos. Este comando va a crear el sistema base en la carpeta &lt;code&gt;chroot&lt;/code&gt;, que ya indicábamos al principio del artículo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~/live_boot$ sudo debootstrap --variant&lt;span class="o"&gt;=&lt;/span&gt;minbase stretch chroot
+I: Retrieving InRelease 
+I: Retrieving Release 
+I: Retrieving Release.gpg 
+I: Checking Release signature
+I: Valid Release signature &lt;span class="o"&gt;(&lt;/span&gt;key id 067E3C456BAE240ACEE88F6FEF0F382A1A7B6500&lt;span class="o"&gt;)&lt;/span&gt;
+I: Retrieving Packages 
+I: Validating Packages 
+...
+I: Base system installed successfully.
+gerard@builder:~/live_boot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para acabar de configurar el sistema base, vamos a entrar en la jaula creada y para ello necesitamos montar los sistemas de ficheros del sistema:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~/live_boot$ sudo mount -o &lt;span class="nb"&gt;bind&lt;/span&gt; /proc/ chroot/proc/
+gerard@builder:~/live_boot$ sudo mount -o &lt;span class="nb"&gt;bind&lt;/span&gt; /sys/ chroot/sys/
+gerard@builder:~/live_boot$ sudo mount -o &lt;span class="nb"&gt;bind&lt;/span&gt; /dev/ chroot/dev/
+gerard@builder:~/live_boot$ sudo mount -o &lt;span class="nb"&gt;bind&lt;/span&gt; /dev/pts/ chroot/dev/pts/
+gerard@builder:~/live_boot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Usamos el comando &lt;code&gt;chroot&lt;/code&gt; para entrar en la jaula, que está en la carpeta del mismo nombre:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~/live_boot$ sudo chroot chroot/
+root@builder:/# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: Hasta nuevo aviso, todos los comandos se ejecutan dentro de la jaula.&lt;/p&gt;
+&lt;p&gt;Vamos a habilitar al usuario &lt;code&gt;root&lt;/code&gt; asignándole una contraseña. Esto nos permitirá acceder al sistema usando este usuario. Lo recomendable sería un usuario normal, tal vez con permisos de &lt;code&gt;sudo&lt;/code&gt;; en este caso voy a saltarme esta práctica.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@builder:/# passwd
+Enter new UNIX password: 
+Retype new UNIX password: 
+passwd: password updated successfully
+root@builder:/# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Modificamos la configuración relativa al nombre del sistema &lt;em&gt;live&lt;/em&gt; para que le quede un nombre apropiado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@builder:/# &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;zerofree&amp;quot;&lt;/span&gt; &amp;gt; /etc/hostname
+root@builder:/# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para que el sistema &lt;em&gt;live&lt;/em&gt; pueda arrancar, vamos a necesitar algunos paquetes más: un &lt;em&gt;kernel&lt;/em&gt;, los &lt;em&gt;scripts&lt;/em&gt; para hacer un &lt;em&gt;live boot&lt;/em&gt; y el paquete &lt;code&gt;systemd-sysv&lt;/code&gt; que nos va a proveer del binario necesario &lt;code&gt;/sbin/init&lt;/code&gt;, que es el que se ejecuta al acabar de cargar el &lt;em&gt;kernel&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@builder:/# apt install linux-image-686 live-boot systemd-sysv
+Reading package lists... Done
+Building dependency tree... Done
+...  
+Do you want to &lt;span class="k"&gt;continue&lt;/span&gt;? &lt;span class="o"&gt;[&lt;/span&gt;Y/n&lt;span class="o"&gt;]&lt;/span&gt; y
+...
+update-initramfs: Generating /boot/initrd.img-4.9.0-8-686
+live-boot: core filesystems devices utils udev blockdev dns.
+root@builder:/# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;También voy a instalar las herramientas que motivaron la creación del &lt;em&gt;livecd&lt;/em&gt;, que en este caso es &lt;strong&gt;zerofree&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@builder:/# apt install zerofree
+...
+root@builder:/# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para reducir aún más el tamaño del sistema de ficheros hacemos algunas limpiezas, como por ejemplo de listados de paquetes y paquetes descargados. Aquí se podría borrar mucho más, pero nuevamente voy a lo fácil y seguro.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@builder:/# cat /dev/null &amp;gt; /etc/apt/sources.list
+root@builder:/# apt update
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+All packages are up to date.
+root@builder:/# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@builder:/# apt clean
+root@builder:/# 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como ya no tenemos nada más que hacer en la jaula, salimos de la misma:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;root@builder:/# &lt;span class="nb"&gt;exit&lt;/span&gt;
+&lt;span class="nb"&gt;exit&lt;/span&gt;
+gerard@builder:~/live_boot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: Todos los comandos que siguen se ejecutan fuera de la jaula.&lt;/p&gt;
+&lt;p&gt;Desmontamos los sistemas de ficheros del sistema, porque la jaula no los necesita y no queremos que queden ocupando espacio cuando comprimamos el sistema de ficheros.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~/live_boot$ sudo umount chroot/dev/pts/
+gerard@builder:~/live_boot$ sudo umount chroot/dev/
+gerard@builder:~/live_boot$ sudo umount chroot/sys/
+gerard@builder:~/live_boot$ sudo umount chroot/proc/
+gerard@builder:~/live_boot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si se necesita modificar alguna configuración a &lt;em&gt;posteriori&lt;/em&gt;, no siempre es necesario entrar de nuevo en la jaula; basta con modificar el fichero, relativo a la carpeta de la jaula. En mi caso, me olvidé de modificar el &lt;code&gt;.bash_history&lt;/code&gt;, y poner una lista de comandos me permite recuperarlos con las flechas direccionales; esto es muy cómodo cuando vas a lanzar los mismos comandos una y otra vez.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~/live_boot$ sudo cat chroot/root/.bash_history
+zerofree /dev/sda1
+poweroff
+gerard@builder:~/live_boot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto nos queda el sistema de ficheros. Es interesante guardar la carpeta &lt;code&gt;chroot&lt;/code&gt; después de comprimir el sistema de ficheros (aunque no se use), ya que si algo no está a nuestro gusto podemos rectificarlo y comprimir de nuevo, reduciendo el tiempo considerablemente.&lt;/p&gt;
+&lt;h2&gt;Ensamblando la imagen .iso&lt;/h2&gt;
+&lt;p&gt;Llegados a este punto, solo necesitamos rellenar la carpeta &lt;code&gt;image/live&lt;/code&gt;, puesto que &lt;code&gt;image/isolinux&lt;/code&gt; ya tiene lo que necesitamos. Esta carpeta solo necesita 3 ficheros:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;El &lt;em&gt;kernel&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;El &lt;em&gt;initrd&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;El sistema de ficheros comprimido&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Los dos primeros están instalados en la jaula, porque pusimos la imagen de &lt;em&gt;kernel&lt;/em&gt; que nos pareció adecuada; simplemente nos los copiamos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~/live_boot$ sudo cp chroot/boot/vmlinuz-4.9.0-8-686 image/live/vmlinuz
+gerard@builder:~/live_boot$ sudo cp chroot/boot/initrd.img-4.9.0-8-686 image/live/initrd
+gerard@builder:~/live_boot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El sistema de ficheros comprimido tampoco tiene mucho más problema; solo hay que tener en cuenta que &lt;strong&gt;isolinux&lt;/strong&gt; no puede leer el &lt;em&gt;kernel&lt;/em&gt; del fichero comprimido. Esto nos obliga a poner el &lt;em&gt;kernel&lt;/em&gt; fuera del sistema comprimido (esto es el paso anterior), y nos permite excluirlo del fichero comprimido.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~/live_boot$ sudo mksquashfs chroot image/live/filesystem.squashfs -e boot
+Parallel mksquashfs: Using &lt;span class="m"&gt;1&lt;/span&gt; processor
+Creating &lt;span class="m"&gt;4&lt;/span&gt;.0 filesystem on image/live/filesystem.squashfs, block size &lt;span class="m"&gt;131072&lt;/span&gt;.
+...
+gerard@builder:~/live_boot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si lo hemos hecho bien, nos va a quedar una estructura similar a esta (excluyo la carpeta &lt;code&gt;chroot&lt;/code&gt; por legibilidad, ya que no se usa para nada de ahora en adelante):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~/live_boot$ tree -Ih chroot
+.
+└── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;.0K&lt;span class="o"&gt;]&lt;/span&gt;  image
+    ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;.0K&lt;span class="o"&gt;]&lt;/span&gt;  isolinux
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.6K&lt;span class="o"&gt;]&lt;/span&gt;  cat.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt; 24K&lt;span class="o"&gt;]&lt;/span&gt;  chain.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.2K&lt;span class="o"&gt;]&lt;/span&gt;  cmd.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;.6K&lt;span class="o"&gt;]&lt;/span&gt;  cmenu.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.5K&lt;span class="o"&gt;]&lt;/span&gt;  config.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;.1K&lt;span class="o"&gt;]&lt;/span&gt;  cptime.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;.4K&lt;span class="o"&gt;]&lt;/span&gt;  cpu.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.7K&lt;span class="o"&gt;]&lt;/span&gt;  cpuid.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.7K&lt;span class="o"&gt;]&lt;/span&gt;  cpuidtest.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.6K&lt;span class="o"&gt;]&lt;/span&gt;  debug.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;.0K&lt;span class="o"&gt;]&lt;/span&gt;  dhcp.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.0K&lt;span class="o"&gt;]&lt;/span&gt;  disk.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;8&lt;/span&gt;.4K&lt;span class="o"&gt;]&lt;/span&gt;  dmi.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt; 12K&lt;span class="o"&gt;]&lt;/span&gt;  dmitest.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;.2K&lt;span class="o"&gt;]&lt;/span&gt;  elf.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.7K&lt;span class="o"&gt;]&lt;/span&gt;  ethersel.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt; 10K&lt;span class="o"&gt;]&lt;/span&gt;  gfxboot.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.6K&lt;span class="o"&gt;]&lt;/span&gt;  gpxecmd.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;161K&lt;span class="o"&gt;]&lt;/span&gt;  hdt.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;.6K&lt;span class="o"&gt;]&lt;/span&gt;  hexdump.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.8K&lt;span class="o"&gt;]&lt;/span&gt;  host.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.7K&lt;span class="o"&gt;]&lt;/span&gt;  ifcpu64.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;.0K&lt;span class="o"&gt;]&lt;/span&gt;  ifcpu.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;.2K&lt;span class="o"&gt;]&lt;/span&gt;  ifmemdsk.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.9K&lt;span class="o"&gt;]&lt;/span&gt;  ifplop.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt; 40K&lt;span class="o"&gt;]&lt;/span&gt;  isolinux.bin
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="m"&gt;175&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;  isolinux.cfg
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.6K&lt;span class="o"&gt;]&lt;/span&gt;  kbdmap.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;.8K&lt;span class="o"&gt;]&lt;/span&gt;  kontron_wdt.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;114K&lt;span class="o"&gt;]&lt;/span&gt;  ldlinux.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt;.0K&lt;span class="o"&gt;]&lt;/span&gt;  lfs.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;178K&lt;span class="o"&gt;]&lt;/span&gt;  libcom32.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt; 65K&lt;span class="o"&gt;]&lt;/span&gt;  libgpl.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt; 99K&lt;span class="o"&gt;]&lt;/span&gt;  liblua.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt; 24K&lt;span class="o"&gt;]&lt;/span&gt;  libmenu.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt; 23K&lt;span class="o"&gt;]&lt;/span&gt;  libutil.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;.6K&lt;span class="o"&gt;]&lt;/span&gt;  linux.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.9K&lt;span class="o"&gt;]&lt;/span&gt;  ls.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;6&lt;/span&gt;.7K&lt;span class="o"&gt;]&lt;/span&gt;  lua.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;.0K&lt;span class="o"&gt;]&lt;/span&gt;  mboot.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.4K&lt;span class="o"&gt;]&lt;/span&gt;  meminfo.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt; 26K&lt;span class="o"&gt;]&lt;/span&gt;  menu.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;.3K&lt;span class="o"&gt;]&lt;/span&gt;  pci.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;.4K&lt;span class="o"&gt;]&lt;/span&gt;  pcitest.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.9K&lt;span class="o"&gt;]&lt;/span&gt;  pmload.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.6K&lt;span class="o"&gt;]&lt;/span&gt;  poweroff.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;.1K&lt;span class="o"&gt;]&lt;/span&gt;  prdhcp.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.5K&lt;span class="o"&gt;]&lt;/span&gt;  pwd.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt; 12K&lt;span class="o"&gt;]&lt;/span&gt;  pxechn.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.3K&lt;span class="o"&gt;]&lt;/span&gt;  reboot.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt; 13K&lt;span class="o"&gt;]&lt;/span&gt;  rosh.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.6K&lt;span class="o"&gt;]&lt;/span&gt;  sanboot.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;.1K&lt;span class="o"&gt;]&lt;/span&gt;  sdi.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt; 15K&lt;span class="o"&gt;]&lt;/span&gt;  sysdump.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;.4K&lt;span class="o"&gt;]&lt;/span&gt;  syslinux.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;.0K&lt;span class="o"&gt;]&lt;/span&gt;  vesa.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.1K&lt;span class="o"&gt;]&lt;/span&gt;  vesainfo.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt; 26K&lt;span class="o"&gt;]&lt;/span&gt;  vesamenu.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;.8K&lt;span class="o"&gt;]&lt;/span&gt;  vpdtest.c32
+    │   ├── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.4K&lt;span class="o"&gt;]&lt;/span&gt;  whichsys.c32
+    │   └── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;.5K&lt;span class="o"&gt;]&lt;/span&gt;  zzjson.c32
+    └── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt;.0K&lt;span class="o"&gt;]&lt;/span&gt;  live
+        ├── &lt;span class="o"&gt;[&lt;/span&gt;111M&lt;span class="o"&gt;]&lt;/span&gt;  filesystem.squashfs
+        ├── &lt;span class="o"&gt;[&lt;/span&gt; 18M&lt;span class="o"&gt;]&lt;/span&gt;  initrd
+        └── &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;.4M&lt;span class="o"&gt;]&lt;/span&gt;  vmlinuz
+
+&lt;span class="m"&gt;3&lt;/span&gt; directories, &lt;span class="m"&gt;64&lt;/span&gt; files
+gerard@builder:~/live_boot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si es así, lo tenemos todo; solo hace falta lanzar &lt;strong&gt;xorriso&lt;/strong&gt; para que nos lo empaquete todo en un fichero &lt;code&gt;.iso&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~/live_boot$ sudo xorriso -as mkisofs -r -J -joliet-long -l -cache-inodes -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin -partition_offset &lt;span class="m"&gt;16&lt;/span&gt; -A &lt;span class="s2"&gt;&amp;quot;Debian Live&amp;quot;&lt;/span&gt; -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size &lt;span class="m"&gt;4&lt;/span&gt; -boot-info-table -o debian-zerofree.iso image
+xorriso &lt;span class="m"&gt;1&lt;/span&gt;.4.6 : RockRidge filesystem manipulator, libburnia project.
+
+Drive current: -outdev &lt;span class="s1"&gt;&amp;#39;stdio:debian-zerofree.iso&amp;#39;&lt;/span&gt;
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: &lt;span class="m"&gt;0&lt;/span&gt; sessions, &lt;span class="m"&gt;0&lt;/span&gt; data blocks, &lt;span class="m"&gt;0&lt;/span&gt; data, 6676m free
+xorriso : NOTE : -as mkisofs: Ignored option &lt;span class="s1"&gt;&amp;#39;-cache-inodes&amp;#39;&lt;/span&gt;
+Added to ISO image: directory &lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/home/gerard/live_boot/image&amp;#39;&lt;/span&gt;
+xorriso : UPDATE : &lt;span class="m"&gt;66&lt;/span&gt; files added in &lt;span class="m"&gt;1&lt;/span&gt; seconds
+xorriso : UPDATE : &lt;span class="m"&gt;66&lt;/span&gt; files added in &lt;span class="m"&gt;1&lt;/span&gt; seconds
+xorriso : NOTE : Copying to System Area: &lt;span class="m"&gt;432&lt;/span&gt; bytes from file &lt;span class="s1"&gt;&amp;#39;/usr/lib/ISOLINUX/isohdpfx.bin&amp;#39;&lt;/span&gt;
+libisofs: NOTE : Aligned image size to cylinder size by &lt;span class="m"&gt;245&lt;/span&gt; blocks
+...  
+ISO image produced: &lt;span class="m"&gt;69120&lt;/span&gt; sectors
+Written to medium : &lt;span class="m"&gt;69120&lt;/span&gt; sectors at LBA &lt;span class="m"&gt;0&lt;/span&gt;
+Writing to &lt;span class="s1"&gt;&amp;#39;stdio:debian-zerofree.iso&amp;#39;&lt;/span&gt; completed successfully.
+
+gerard@builder:~/live_boot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto deberíamos tener el fichero generado en la misma carpeta.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@builder:~/live_boot$ ls -lh *.iso
+-rw-r--r-- &lt;span class="m"&gt;1&lt;/span&gt; root root 135M mar &lt;span class="m"&gt;26&lt;/span&gt; &lt;span class="m"&gt;20&lt;/span&gt;:18 debian-zerofree.iso
+gerard@builder:~/live_boot$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si no nos convence el resultado, bastaría con modificar la jaula a nuestro gusto, reempaquetar el sistema de ficheros, copiar el &lt;em&gt;kernel&lt;/em&gt; y el &lt;em&gt;initrd&lt;/em&gt; si han cambiado, y relanzar &lt;strong&gt;xorriso&lt;/strong&gt;.&lt;/p&gt;</content><category term="linux"></category><category term="debian"></category><category term="stretch"></category><category term="zerofree"></category><category term="debootstrap"></category><category term="squashfs"></category><category term="xorriso"></category><category term="isolinux"></category><category term="iso"></category><category term="livecd"></category></entry><entry><title>Forzar rangos de IPs prohibidas para Docker</title><link href="https://www.linuxsysadmin.ml/2019/02/forzar-rangos-de-ips-prohibidas-para-docker.html" rel="alternate"></link><published>2019-02-19T19:00:00+01:00</published><updated>2019-02-19T19:00:00+01:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-02-19:/2019/02/forzar-rangos-de-ips-prohibidas-para-docker.html</id><summary type="html">&lt;p&gt;Tras cambiar de oficina en mi trabajo, vuelvo a tener el dudoso honor de trabajar tras un &lt;em&gt;proxy&lt;/em&gt;. Como viene siendo habitual, me puse un servidor &lt;strong&gt;Virtualbox&lt;/strong&gt; con &lt;strong&gt;Debian&lt;/strong&gt; para disponer de las opciones que una máquina auxiliar me ofrece, pero no fue hasta instalar &lt;strong&gt;Docker&lt;/strong&gt; que estalló el desastre …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Tras cambiar de oficina en mi trabajo, vuelvo a tener el dudoso honor de trabajar tras un &lt;em&gt;proxy&lt;/em&gt;. Como viene siendo habitual, me puse un servidor &lt;strong&gt;Virtualbox&lt;/strong&gt; con &lt;strong&gt;Debian&lt;/strong&gt; para disponer de las opciones que una máquina auxiliar me ofrece, pero no fue hasta instalar &lt;strong&gt;Docker&lt;/strong&gt; que estalló el desastre.&lt;/p&gt;
 &lt;p&gt;Y el caso es que tenía el servidor básico funcionando, bien configurado, con acceso a internet y sin problemas. Fuí a instalar &lt;strong&gt;Docker&lt;/strong&gt; y todo parecía correcto, con las configuraciones de &lt;em&gt;proxy&lt;/em&gt; adecuadas. De repente intento comprobar la red solicitando una página web cualquiera, y... ¡sorpresa!&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@shangrila:~$ curl http://www.google.es/
 curl: &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;7&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; Failed to connect to proxy.acme.biz port &lt;span class="m"&gt;3128&lt;/span&gt;: No existe ninguna ruta hasta el &lt;span class="sb"&gt;`&lt;/span&gt;host&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;
