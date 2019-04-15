@@ -1,5 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-04-05T10:00:00+02:00</updated><entry><title>Ensamblando un livecd con Debian y xorriso</title><link href="https://www.linuxsysadmin.ml/2019/04/ensamblando-un-livecd-con-debian-y-xorriso.html" rel="alternate"></link><published>2019-04-05T10:00:00+02:00</published><updated>2019-04-05T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-04-05:/2019/04/ensamblando-un-livecd-con-debian-y-xorriso.html</id><summary type="html">&lt;p&gt;Últimamente me he visto obligado a virtualizar en una máquina distinta de la habitual por un problema técnico; esto no sería un problema de no ser porque la arquitectura es de 32 bits. Eso me deja sin ninguna distribución prefabricada con la herramienta &lt;code&gt;zerofree&lt;/code&gt; y me obliga a hacer una …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Últimamente me he visto obligado a virtualizar en una máquina distinta de la habitual por un problema técnico; esto no sería un problema de no ser porque la arquitectura es de 32 bits. Eso me deja sin ninguna distribución prefabricada con la herramienta &lt;code&gt;zerofree&lt;/code&gt; y me obliga a hacer una.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-04-15T10:00:00+02:00</updated><entry><title>Protegiendo servidores con iptables usando Shorewall</title><link href="https://www.linuxsysadmin.ml/2019/04/protegiendo-servidores-con-iptables-usando-shorewall.html" rel="alternate"></link><published>2019-04-15T10:00:00+02:00</published><updated>2019-04-15T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-04-15:/2019/04/protegiendo-servidores-con-iptables-usando-shorewall.html</id><summary type="html">&lt;p&gt;Cada vez que me toca proteger un servidor con &lt;strong&gt;iptables&lt;/strong&gt; me desanimo solo de pensarlo. No es que la herramienta sea mala (que me encanta), sino porque no es intuitiva y hay que tener en cuenta muchos casos raros. Por suerte hay utilidades que construyen el conjunto de reglas fácilmente …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cada vez que me toca proteger un servidor con &lt;strong&gt;iptables&lt;/strong&gt; me desanimo solo de pensarlo. No es que la herramienta sea mala (que me encanta), sino porque no es intuitiva y hay que tener en cuenta muchos casos raros. Por suerte hay utilidades que construyen el conjunto de reglas fácilmente.&lt;/p&gt;
+&lt;p&gt;Una de las herramientas que he utilizado en el pasado es &lt;a href="/tag/firehol.html"&gt;Firehol&lt;/a&gt;, pero últimamente he estado trabajando con otra muy interesante: &lt;a href="http://shorewall.org/"&gt;Shorewall&lt;/a&gt;. A pesar de necesitar tener &lt;strong&gt;perl&lt;/strong&gt; instalado, nos simplifica mucho la vida con una configuración simple, clara y concisa.&lt;/p&gt;
+&lt;p&gt;Los más importantes de estos ficheros de configuración son solamente 4 y se encuentran en &lt;code&gt;/etc/shorewall/&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;zones&lt;/code&gt; &amp;rarr; Aquí se define las zonas (o segmentos de red) en los que va a participar el &lt;em&gt;firewall&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;interfaces&lt;/code&gt; &amp;rarr; Aquí se asocian las zonas con las interfaces de red del &lt;em&gt;firewall&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;policy&lt;/code&gt; &amp;rarr; Políticas por defecto para los paquetes que se mueven entre dos zonas&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;rules&lt;/code&gt; &amp;rarr; Reglas específicas para aquellas comunicaciones que no siguen la política por defecto&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Un caso simple&lt;/h2&gt;
+&lt;p&gt;Supongamos que tenemos un servidor &lt;strong&gt;Debian Stretch&lt;/strong&gt;, que va a servir peticiones HTTP por el puerto 80, y se administra con SSH, por el puerto 22. Vamos a llamar a este servidor &lt;strong&gt;Bastion&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;El servidor &lt;strong&gt;Bastion&lt;/strong&gt; es un servidor solitario con una sola interfaz de red, que se llama &lt;code&gt;enp0s3&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@bastion:/etc/shorewall$ ip a
+&lt;span class="m"&gt;1&lt;/span&gt;: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;65536&lt;/span&gt; qdisc noqueue state UNKNOWN group default qlen &lt;span class="m"&gt;1&lt;/span&gt;
+    link/loopback &lt;span class="m"&gt;00&lt;/span&gt;:00:00:00:00:00 brd &lt;span class="m"&gt;00&lt;/span&gt;:00:00:00:00:00
+    inet &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+&lt;span class="m"&gt;2&lt;/span&gt;: enp0s3: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;1500&lt;/span&gt; qdisc pfifo_fast state UP group default qlen &lt;span class="m"&gt;1000&lt;/span&gt;
+    link/ether &lt;span class="m"&gt;08&lt;/span&gt;:00:27:f8:e9:01 brd ff:ff:ff:ff:ff:ff
+    inet &lt;span class="m"&gt;10&lt;/span&gt;.0.2.15/24 brd &lt;span class="m"&gt;10&lt;/span&gt;.0.2.255 scope global enp0s3
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fef8:e901/64 scope link 
+       valid_lft forever preferred_lft forever
+gerard@bastion:/etc/shorewall$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Empezaremos por proteger el resto de puertos con &lt;strong&gt;iptables&lt;/strong&gt;, utilizando &lt;strong&gt;shorewall&lt;/strong&gt; para simplificar. Como no lo tenemos instalado, lo instalamos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@bastion:~$ sudo apt install shorewall
+&lt;span class="o"&gt;[&lt;/span&gt;sudo&lt;span class="o"&gt;]&lt;/span&gt; password &lt;span class="k"&gt;for&lt;/span&gt; gerard: 
+Leyendo lista de paquetes... Hecho
+Creando árbol de dependencias       
+Leyendo la información de estado... Hecho
+Se instalarán los siguientes paquetes adicionales:
+  bc libnetfilter-cthelper0 libperl5.24 perl perl-modules-5.24 rename shorewall-core
+Paquetes sugeridos:
+  perl-doc libterm-readline-gnu-perl &lt;span class="p"&gt;|&lt;/span&gt; libterm-readline-perl-perl make shorewall-doc
+Se instalarán los siguientes paquetes NUEVOS:
+  bc libnetfilter-cthelper0 libperl5.24 perl perl-modules-5.24 rename shorewall shorewall-core
+&lt;span class="m"&gt;0&lt;/span&gt; actualizados, &lt;span class="m"&gt;8&lt;/span&gt; nuevos se instalarán, &lt;span class="m"&gt;0&lt;/span&gt; para eliminar y &lt;span class="m"&gt;0&lt;/span&gt; no actualizados.
+Se necesita descargar &lt;span class="m"&gt;7&lt;/span&gt;.378 kB de archivos.
+Se utilizarán &lt;span class="m"&gt;43&lt;/span&gt;,1 MB de espacio de disco adicional después de esta operación.
+¿Desea continuar? &lt;span class="o"&gt;[&lt;/span&gt;S/n&lt;span class="o"&gt;]&lt;/span&gt; s
+...
+gerard@bastion:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La configuración de &lt;strong&gt;shorewall&lt;/strong&gt; se hace modificando ficheros en la carpeta &lt;code&gt;/etc/shorewall/&lt;/code&gt;, en donde vamos a trabajar de ahora en adelante.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@bastion:~$ &lt;span class="nb"&gt;cd&lt;/span&gt; /etc/shorewall/
+gerard@bastion:/etc/shorewall$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como se trata de un servidor solitario, solo tiene una interfaz de red, lo que nos limita a dos "zonas", siendo el &lt;em&gt;firewall&lt;/em&gt; lo que queremos proteger de la red en la que se encuentra, que llamaremos &lt;code&gt;net&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@bastion:/etc/shorewall$ cat zones 
+fw firewall
+net ipv4
+gerard@bastion:/etc/shorewall$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a declarar la interfaz de red conectada a la zona &lt;code&gt;net&lt;/code&gt;. En este caso es una relación trivial, ya que solo tenemos una interfaz de red; otros casos con más interfaces si que necesitan revisar este fichero con cuidado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@bastion:/etc/shorewall$ cat interfaces 
+net enp0s3 detect dhcp,tcpflags,nosmurfs,routefilter,logmartians
+gerard@bastion:/etc/shorewall$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El siguiente fichero es el de políticas, o lo que hay que hacer para el tráfico para el que no se especifique una regla más específica. Opcionalmente se puede indicar el nivel de log, que nos va a generar líneas de log en &lt;code&gt;/var/log/syslog&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@bastion:/etc/shorewall$ cat policy 
+net all DROP info
+fw all ACCEPT
+all all REJECT info
+gerard@bastion:/etc/shorewall$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso se han definido 3 políticas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Se descartan las peticiones que vengan de la red, si no hay una regla que diga lo contrario.&lt;/li&gt;
+&lt;li&gt;Se permite que el &lt;em&gt;firewall&lt;/em&gt; establezca y mantenga tráfico a donde quiera.&lt;/li&gt;
+&lt;li&gt;La tercera es una regla a la que -en teoría- no se llega; se pone como protección por si nos dejáramos alguna combinación.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;El último paso es el de definir reglas específicas que no sigan las políticas. En nuestro servidor se permite acceder al servicio de SSH; no es lo más seguro, pero para la demostración nos vale.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@bastion:/etc/shorewall$ cat rules 
+ACCEPT net fw tcp &lt;span class="m"&gt;22&lt;/span&gt;
+gerard@bastion:/etc/shorewall$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: Este es el fichero que más vamos a modificar, según las necesidades del servicio. El resto no se deberían modificar casi nunca, a excepción de modificaciones &lt;em&gt;hardware&lt;/em&gt; o cambios de políticas.&lt;/p&gt;
+&lt;p&gt;Solamente nos falta iniciar el servicio &lt;code&gt;shorewall&lt;/code&gt; para que aplique las reglas que resulten de interpretar los ficheros de configuración.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@bastion:/etc/shorewall$ sudo systemctl start shorewall
+gerard@bastion:/etc/shorewall$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a hacer dos pruebas simples: una conexión SSH y una petición al servicio HTTP.&lt;/p&gt;
+&lt;p&gt;La primera es muy simple; basta con iniciar una nueva sesión SSH desde la red al &lt;em&gt;firewall&lt;/em&gt;. Como funciona, la damos por buena.&lt;/p&gt;
+&lt;p&gt;La segunda es lanzar una petición HTTP al puerto 80 de nuestro servidor, que va a dar un &lt;em&gt;timeout&lt;/em&gt;. Esto es así porque no hemos especificado ninguna regla que lo permita, y la política por defecto de la red al &lt;em&gt;firewall&lt;/em&gt; es DROP. Esto se puede ver en &lt;code&gt;/var/log/syslog&lt;/code&gt;, porque esa política incluye un &lt;em&gt;loglevel&lt;/em&gt; de &lt;em&gt;info&lt;/em&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@bastion:~$ sudo grep Shorewall /var/log/syslog &lt;span class="p"&gt;|&lt;/span&gt; tail -1
+Apr  &lt;span class="m"&gt;8&lt;/span&gt; &lt;span class="m"&gt;10&lt;/span&gt;:35:29 bastion kernel: &lt;span class="o"&gt;[&lt;/span&gt;  &lt;span class="m"&gt;268&lt;/span&gt;.309955&lt;span class="o"&gt;]&lt;/span&gt; Shorewall:net-fw:DROP:IN&lt;span class="o"&gt;=&lt;/span&gt;enp0s3 &lt;span class="nv"&gt;OUT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nv"&gt;MAC&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;08&lt;/span&gt;:00:27:f8:e9:01:52:54:00:12:35:02:08:00 &lt;span class="nv"&gt;SRC&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;.0.2.2 &lt;span class="nv"&gt;DST&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;.0.2.15 &lt;span class="nv"&gt;LEN&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;44&lt;/span&gt; &lt;span class="nv"&gt;TOS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0x00 &lt;span class="nv"&gt;PREC&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0x00 &lt;span class="nv"&gt;TTL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;64&lt;/span&gt; &lt;span class="nv"&gt;ID&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;7736&lt;/span&gt; &lt;span class="nv"&gt;PROTO&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;TCP &lt;span class="nv"&gt;SPT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;33066&lt;/span&gt; &lt;span class="nv"&gt;DPT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;80&lt;/span&gt; &lt;span class="nv"&gt;WINDOW&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;65535&lt;/span&gt; &lt;span class="nv"&gt;RES&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;0x00 SYN &lt;span class="nv"&gt;URGP&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt; 
+gerard@bastion:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Eso se puede modificar fácilmente editando el fichero de reglas y añadiendo una que lo permita:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@bastion:~$ cat /etc/shorewall/rules 
+ACCEPT net fw tcp &lt;span class="m"&gt;22&lt;/span&gt;
+ACCEPT net fw tcp &lt;span class="m"&gt;80&lt;/span&gt;
+gerard@bastion:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Recargamos el servicio &lt;strong&gt;shorewall&lt;/strong&gt; para que interprete la configuración nueva y cree las reglas necesarias para permitir o prohibir el tráfico implicado, de acuerdo con lo que hemos indicado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@bastion:~$ sudo systemctl restart shorewall
+gerard@bastion:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos nuestro servidor con una protección de red básica, pero mejor de lo que habríamos puesto a base de comandos &lt;strong&gt;iptables&lt;/strong&gt; manuales.&lt;/p&gt;</content><category term="linux"></category><category term="firewall"></category><category term="iptables"></category><category term="shorewall"></category><category term="perl"></category></entry><entry><title>Ensamblando un livecd con Debian y xorriso</title><link href="https://www.linuxsysadmin.ml/2019/04/ensamblando-un-livecd-con-debian-y-xorriso.html" rel="alternate"></link><published>2019-04-05T10:00:00+02:00</published><updated>2019-04-05T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-04-05:/2019/04/ensamblando-un-livecd-con-debian-y-xorriso.html</id><summary type="html">&lt;p&gt;Últimamente me he visto obligado a virtualizar en una máquina distinta de la habitual por un problema técnico; esto no sería un problema de no ser porque la arquitectura es de 32 bits. Eso me deja sin ninguna distribución prefabricada con la herramienta &lt;code&gt;zerofree&lt;/code&gt; y me obliga a hacer una …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Últimamente me he visto obligado a virtualizar en una máquina distinta de la habitual por un problema técnico; esto no sería un problema de no ser porque la arquitectura es de 32 bits. Eso me deja sin ninguna distribución prefabricada con la herramienta &lt;code&gt;zerofree&lt;/code&gt; y me obliga a hacer una.&lt;/p&gt;
 &lt;p&gt;Ya lo hice una vez, tal como muestro en &lt;a href="https://www.linuxsysadmin.ml/2015/12/creacion-de-un-livecd-con-debian.html"&gt;este otro artículo&lt;/a&gt;, pero las herramientas han cambiado mucho y era necesario hacer un artículo nuevo actualizado. El cambio principal es la sustitución de &lt;code&gt;genisoimage&lt;/code&gt; por &lt;code&gt;xorriso&lt;/code&gt;; también actualizo la versión de &lt;strong&gt;Debian&lt;/strong&gt; a &lt;strong&gt;stretch&lt;/strong&gt;, aunque esto no cambia el proceso de creación del &lt;em&gt;livecd&lt;/em&gt;.&lt;/p&gt;
 &lt;h2&gt;Preparación del entorno de trabajo&lt;/h2&gt;
 &lt;p&gt;Empezamos instalando las herramientas necesarias:&lt;/p&gt;
