@@ -1,5 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-04-15T10:00:00+02:00</updated><entry><title>Protegiendo servidores con iptables usando Shorewall</title><link href="https://www.linuxsysadmin.ml/2019/04/protegiendo-servidores-con-iptables-usando-shorewall.html" rel="alternate"></link><published>2019-04-15T10:00:00+02:00</published><updated>2019-04-15T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-04-15:/2019/04/protegiendo-servidores-con-iptables-usando-shorewall.html</id><summary type="html">&lt;p&gt;Cada vez que me toca proteger un servidor con &lt;strong&gt;iptables&lt;/strong&gt; me desanimo solo de pensarlo. No es que la herramienta sea mala (que me encanta), sino porque no es intuitiva y hay que tener en cuenta muchos casos raros. Por suerte hay utilidades que construyen el conjunto de reglas fácilmente …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cada vez que me toca proteger un servidor con &lt;strong&gt;iptables&lt;/strong&gt; me desanimo solo de pensarlo. No es que la herramienta sea mala (que me encanta), sino porque no es intuitiva y hay que tener en cuenta muchos casos raros. Por suerte hay utilidades que construyen el conjunto de reglas fácilmente.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-04-24T14:00:00+02:00</updated><entry><title>Construyendo firewalls complejos de varias patas con shorewall</title><link href="https://www.linuxsysadmin.ml/2019/04/construyendo-firewalls-complejos-de-varias-patas-con-shorewall.html" rel="alternate"></link><published>2019-04-24T14:00:00+02:00</published><updated>2019-04-24T14:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-04-24:/2019/04/construyendo-firewalls-complejos-de-varias-patas-con-shorewall.html</id><summary type="html">&lt;p&gt;Tras ver la facilidad con la que monté un &lt;em&gt;firewall&lt;/em&gt; para un servidor solitario usando &lt;strong&gt;shorewall&lt;/strong&gt;, he estado investigando sobre como hacer &lt;em&gt;firewalls&lt;/em&gt; dedicados que enruten el tráfico en mis redes. En este artículo expongo lo que llegué a conseguir, esperando que le sirva a alguien en un futuro cercano …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Tras ver la facilidad con la que monté un &lt;em&gt;firewall&lt;/em&gt; para un servidor solitario usando &lt;strong&gt;shorewall&lt;/strong&gt;, he estado investigando sobre como hacer &lt;em&gt;firewalls&lt;/em&gt; dedicados que enruten el tráfico en mis redes. En este artículo expongo lo que llegué a conseguir, esperando que le sirva a alguien en un futuro cercano.&lt;/p&gt;
+&lt;p&gt;Ya sabemos como instalar &lt;strong&gt;shorewall&lt;/strong&gt; y cuales son los 4 ficheros básicos de su configuración, y de lo que hay que poner en ellos. En caso de no ser así, recomiendo empezar por el artículo anterior a este sobre &lt;strong&gt;shorewall&lt;/strong&gt;, que es &lt;a href="https://www.linuxsysadmin.ml/2019/04/protegiendo-servidores-con-iptables-usando-shorewall.html"&gt;este&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Adicionalmente voy a especificar otros ficheros que se puedan necesitar, al tratarse de un &lt;em&gt;firewall&lt;/em&gt; un poco más complejo.&lt;/p&gt;
+&lt;h2&gt;Un firewall de dos patas&lt;/h2&gt;
+&lt;p&gt;El primer caso a contemplar es el más simple: un &lt;em&gt;firewall&lt;/em&gt; de dos patas, por el que circula en tráfico entre dos redes. Para ello vamos a poner una máquina con dos interfaces de red, una para esconder nuestra red local y otra para conectarse a una red de confiabilidad menor.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:/etc/shorewall$ ip a
+&lt;span class="m"&gt;1&lt;/span&gt;: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;65536&lt;/span&gt; qdisc noqueue state UNKNOWN group default qlen &lt;span class="m"&gt;1&lt;/span&gt;
+    link/loopback &lt;span class="m"&gt;00&lt;/span&gt;:00:00:00:00:00 brd &lt;span class="m"&gt;00&lt;/span&gt;:00:00:00:00:00
+    inet &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+&lt;span class="m"&gt;2&lt;/span&gt;: enp0s3: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;1500&lt;/span&gt; qdisc pfifo_fast state UP group default qlen &lt;span class="m"&gt;1000&lt;/span&gt;
+    link/ether &lt;span class="m"&gt;08&lt;/span&gt;:00:27:a4:3a:22 brd ff:ff:ff:ff:ff:ff
+    inet &lt;span class="m"&gt;10&lt;/span&gt;.0.2.15/24 brd &lt;span class="m"&gt;10&lt;/span&gt;.0.2.255 scope global enp0s3
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fea4:3a22/64 scope link 
+       valid_lft forever preferred_lft forever
+&lt;span class="m"&gt;3&lt;/span&gt;: enp0s8: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;1500&lt;/span&gt; qdisc pfifo_fast state UP group default qlen &lt;span class="m"&gt;1000&lt;/span&gt;
+    link/ether &lt;span class="m"&gt;08&lt;/span&gt;:00:27:e5:f9:ed brd ff:ff:ff:ff:ff:ff
+    inet &lt;span class="m"&gt;10&lt;/span&gt;.0.0.1/24 brd &lt;span class="m"&gt;10&lt;/span&gt;.0.0.255 scope global enp0s8
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fee5:f9ed/64 scope link 
+       valid_lft forever preferred_lft forever
+gerard@firewall:/etc/shorewall$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a definir los nombres con los que nos vamos a referir al &lt;em&gt;firewall&lt;/em&gt; y a los dos segmentos de red. En este caso, &lt;code&gt;net&lt;/code&gt; se refiere a la red menos confiable, &lt;code&gt;loc&lt;/code&gt; a nuestra red local y &lt;code&gt;fw&lt;/code&gt; al propio servidor &lt;em&gt;firewall&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:/etc/shorewall$ cat zones 
+fw firewall
+net ipv4
+loc ipv4
+gerard@firewall:/etc/shorewall$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Asociamos los nombres de las zonas con las interfaces de red adecuadas. Esto requiere un poco de conocimiento del &lt;em&gt;hardware&lt;/em&gt; y de como lo hemos enchufado. En mi caso, las suelo poner en orden de confiabilidad.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:/etc/shorewall$ cat interfaces 
+net enp0s3 detect dhcp,tcpflags,nosmurfs,routefilter,logmartians
+loc enp0s8 detect dhcp,tcpflags,nosmurfs,routefilter,logmartians
+gerard@firewall:/etc/shorewall$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De forma similar, defino las políticas por defecto que se usan en todas las configuraciones. De forma casi mecánica le asigno capacidad para salir a internet a todo el mundo, descarto paquetes del exterior al &lt;em&gt;firewall&lt;/em&gt; y a la red local, y rechazo todo el resto.&lt;/p&gt;
+&lt;p&gt;La política &lt;code&gt;REJECT&lt;/code&gt; corta también la conectividad, pero a diferencia de &lt;code&gt;DROP&lt;/code&gt;, lo hace de forma instantánea e informada, con lo que no hay &lt;em&gt;timeouts&lt;/em&gt; dentro de nuestros segmentos de red. Esto también hace menos frustrante para nuestros compañeros si se equivocan de puerto o no se ha habilitado una regla adecuada todavía.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:/etc/shorewall$ cat policy 
+net all DROP info
+fw all ACCEPT
+loc fw REJECT info
+loc net ACCEPT
+all all REJECT info
+gerard@firewall:/etc/shorewall$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vamos a asumir que nuestro &lt;em&gt;firewall&lt;/em&gt; tiene instalado &lt;strong&gt;dnsmasq&lt;/strong&gt;, como era el caso de &lt;a href="https://www.linuxsysadmin.ml/2018/03/un-gateway-con-debian-iptables-y-dnsmasq.html"&gt;este otro artículo&lt;/a&gt;. Adicionalmente, vamos a hacer &lt;code&gt;DNAT&lt;/code&gt; para pasar las peticiones que hagan al &lt;em&gt;firewall&lt;/em&gt; al puerto 80 a un servidor de la red local que sirva para ese fin (acordáos que es la IP pública de la red).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:/etc/shorewall$ cat rules 
+ACCEPT net fw tcp &lt;span class="m"&gt;22&lt;/span&gt;
+DNS&lt;span class="o"&gt;(&lt;/span&gt;ACCEPT&lt;span class="o"&gt;)&lt;/span&gt; loc fw
+DNAT net loc:10.0.0.2:80 tcp &lt;span class="m"&gt;80&lt;/span&gt;
+gerard@firewall:/etc/shorewall$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: Los siguientes dos ficheros de configuración no eran necesarios en caso de un servidor solitario, y por lo tanto, son añadidos al artículo anterior.&lt;/p&gt;
+&lt;p&gt;Lo primero es hacer &lt;code&gt;MASQUERADE&lt;/code&gt;, que es el proceso por el que los paquetes "adoptan" la dirección IP pública del &lt;em&gt;firewall&lt;/em&gt; para salir a través de él. De esta forma, los paquetes sabrán volver, y el &lt;em&gt;firewall&lt;/em&gt; los pasará al servidor original; sin esto, los paquetes no sabrían donde volver, ya que la red local queda oculta y normalmente tiene una dirección privada.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:/etc/shorewall$ cat snat 
+MASQUERADE &lt;span class="m"&gt;10&lt;/span&gt;.0.0.0/24 enp0s3
+gerard@firewall:/etc/shorewall$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Al haber varias interfaces de red implicadas, hay que activar el &lt;code&gt;IP_FORWARDING&lt;/code&gt; para permitir pasar paquetes de interfaz en interfaz. Esto se puede hacer a nivel de sistema con el fichero &lt;code&gt;/etc/sysctl.conf&lt;/code&gt;, o podemos delegarlo al servicio &lt;strong&gt;shorewall&lt;/strong&gt;, para que se active y desactive con el servicio mismo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:~$ grep IP_FORWARD /etc/shorewall/shorewall.conf 
+&lt;span class="c1"&gt;# IP_FORWARDING=Keep&lt;/span&gt;
+&lt;span class="nv"&gt;IP_FORWARDING&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;Yes
+gerard@firewall:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: La directiva &lt;code&gt;IP_FORWARDING&lt;/code&gt; solo puede aparecer una vez, y por ello hay que comentar la anterior. Si no se hace esto, el funcionamiento de la configuración es errático.&lt;/p&gt;
+&lt;p&gt;Finalmente activamos el servicio para que se levante tras cada reinicio.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:~$ sudo systemctl &lt;span class="nb"&gt;enable&lt;/span&gt; shorewall
+Synchronizing state of shorewall.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install &lt;span class="nb"&gt;enable&lt;/span&gt; shorewall
+gerard@firewall:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como hemos acabado, solo falta reiniciar el servidor; con reiniciar el servicio bastaría, pero me quiero asegurar de que levanta automáticamente.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:~$ sudo reboot
+...
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Un firewall de tres patas&lt;/h2&gt;
+&lt;p&gt;Este es otro caso de uso habitual, en instalaciones que tienen una red DMZ y una red local. En realidad no cambia gran cosa desde el caso de las dos patas, pero servirá de ejemplo de como ir añadiendo configuraciones.&lt;/p&gt;
+&lt;p&gt;Es servidor tiene tres interfaces de red, y siguiendo mi convención van a ir en orden de confiabilidad:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;enp0s3&lt;/code&gt; &amp;rarr; Red no confiable; vamos a llamar a su zona &lt;code&gt;net&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;enp0s8&lt;/code&gt; &amp;rarr; Red DMZ; vamos a llamar a su zona &lt;code&gt;dmz&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;enp0s9&lt;/code&gt; &amp;rarr; Red interna; vamos a llamar a su zona &lt;code&gt;loc&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Se pasa la configuración, para que se vean las direcciones del &lt;em&gt;firewall&lt;/em&gt; en las 3 patas y los bloques de direcciones IP asignadas a cada segmento.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:~$ ip a
+&lt;span class="m"&gt;1&lt;/span&gt;: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;65536&lt;/span&gt; qdisc noqueue state UNKNOWN group default qlen &lt;span class="m"&gt;1&lt;/span&gt;
+    link/loopback &lt;span class="m"&gt;00&lt;/span&gt;:00:00:00:00:00 brd &lt;span class="m"&gt;00&lt;/span&gt;:00:00:00:00:00
+    inet &lt;span class="m"&gt;127&lt;/span&gt;.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+&lt;span class="m"&gt;2&lt;/span&gt;: enp0s3: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;1500&lt;/span&gt; qdisc pfifo_fast state UP group default qlen &lt;span class="m"&gt;1000&lt;/span&gt;
+    link/ether &lt;span class="m"&gt;08&lt;/span&gt;:00:27:a4:3a:22 brd ff:ff:ff:ff:ff:ff
+    inet &lt;span class="m"&gt;10&lt;/span&gt;.0.2.15/24 brd &lt;span class="m"&gt;10&lt;/span&gt;.0.2.255 scope global enp0s3
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fea4:3a22/64 scope link 
+       valid_lft forever preferred_lft forever
+&lt;span class="m"&gt;3&lt;/span&gt;: enp0s8: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;1500&lt;/span&gt; qdisc pfifo_fast state UP group default qlen &lt;span class="m"&gt;1000&lt;/span&gt;
+    link/ether &lt;span class="m"&gt;08&lt;/span&gt;:00:27:e5:f9:ed brd ff:ff:ff:ff:ff:ff
+    inet &lt;span class="m"&gt;10&lt;/span&gt;.0.0.1/24 brd &lt;span class="m"&gt;10&lt;/span&gt;.0.0.255 scope global enp0s8
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fee5:f9ed/64 scope link 
+       valid_lft forever preferred_lft forever
+&lt;span class="m"&gt;4&lt;/span&gt;: enp0s9: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu &lt;span class="m"&gt;1500&lt;/span&gt; qdisc pfifo_fast state UP group default qlen &lt;span class="m"&gt;1000&lt;/span&gt;
+    link/ether &lt;span class="m"&gt;08&lt;/span&gt;:00:27:ef:0a:20 brd ff:ff:ff:ff:ff:ff
+    inet &lt;span class="m"&gt;10&lt;/span&gt;.0.1.1/24 brd &lt;span class="m"&gt;10&lt;/span&gt;.0.1.255 scope global enp0s9
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:feef:a20/64 scope link 
+       valid_lft forever preferred_lft forever
+gerard@firewall:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lo primero es no olvidarnos el &lt;code&gt;IP_FORWARD&lt;/code&gt;; lo ponemos ahora y listo. Es una configuraciñon que posiblemente no tocaremos nunca más...&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:~$ grep IP_FORWARD /etc/shorewall/shorewall.conf 
+&lt;span class="c1"&gt;# IP_FORWARDING=Keep&lt;/span&gt;
+&lt;span class="nv"&gt;IP_FORWARDING&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;Yes
+gerard@firewall:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Las zonas se declaran, una por línea; basta con añadir la zona correspondiente a la tercera interfaz de red.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:~$ cat /etc/shorewall/zones 
+fw firewall
+net ipv4
+loc ipv4
+dmz ipv4
+gerard@firewall:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Las interfaces también se declaran individualmente en cada línea; añadimos la nueva y listo. Hay que tener en cuenta la topología de la red; es crucial saber cuál esta enchufada en cada red.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:~$ cat /etc/shorewall/interfaces 
+net enp0s3 detect dhcp,tcpflags,nosmurfs,routefilter,logmartians
+dmz enp0s8 detect dhcp,tcpflags,nosmurfs,routefilter,logmartians
+loc enp0s9 detect dhcp,tcpflags,nosmurfs,routefilter,logmartians
+gerard@firewall:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Las políticas se complican; cuantas más zonas tenemos, más combinaciones entre ellas salen. Por suerte disponemos del &lt;em&gt;keyword&lt;/em&gt; &lt;code&gt;all&lt;/code&gt; que nos simplifica mucho las políticas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:~$ cat /etc/shorewall/policy 
+net all DROP info
+fw all ACCEPT
+all net ACCEPT
+all all REJECT info
+gerard@firewall:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Las reglas son similares al caso anterior, ya que solo hay que especificar lo que es estrictamente necesario. Es importante recalcar que se pueden indicar varias zonas, simplemente separándolas por comas.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:~$ cat /etc/shorewall/rules 
+ACCEPT net fw tcp &lt;span class="m"&gt;22&lt;/span&gt;
+DNS&lt;span class="o"&gt;(&lt;/span&gt;ACCEPT&lt;span class="o"&gt;)&lt;/span&gt; dmz,loc fw
+DNAT net dmz:10.0.0.2:80 tcp &lt;span class="m"&gt;80&lt;/span&gt;
+gerard@firewall:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Como ahora hay dos redes detrás del &lt;em&gt;firewall&lt;/em&gt;, tenemos que hacer el mecanismo de &lt;code&gt;MASQUERADE&lt;/code&gt; para ambas, de forma que puedan salir a internet y recibir las respuestas de vuelta.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:~$ cat /etc/shorewall/snat 
+MASQUERADE &lt;span class="m"&gt;10&lt;/span&gt;.0.0.0/24 enp0s3
+MASQUERADE &lt;span class="m"&gt;10&lt;/span&gt;.0.1.0/24 enp0s3
+gerard@firewall:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Uso de variables&lt;/h2&gt;
+&lt;p&gt;En un sistema de 3 o más patas se hace difícil de mantener las reglas que comunican todas las redes propias, especialmente porque las máquinas pueden cambiar sus direcciones, o pueden aparecer nuevos servidores de un tipo concreto. En este caso, es interesante saber que las reglas se pueden definir usando variables, que se declararían en el fichero &lt;code&gt;params&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Esto se observa fácilmente con un ejemplo: nuestro servidor web es en realidad un balanceador, que reparte las peticiones entre un número indeterminado de &lt;em&gt;backends&lt;/em&gt;. El balanceador está en la &lt;em&gt;dmz&lt;/em&gt; y los &lt;em&gt;backends&lt;/em&gt; en la red local, con lo que hay que habilitar una regla para evitar la política por defecto de &lt;code&gt;REJECT&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Definimos las variables en el fichero &lt;code&gt;/etc/shorewall/params&lt;/code&gt;, que pueden ser servidores solos o listas, separadas por comas. En realidad, durante la interpretación de reglas se hace una sustitución de dichas variables por sus cadenas, así que el formato importa poco, y depende del contexto en el que se inyecte.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:~$ sudo cat /etc/shorewall/params 
+&lt;span class="nv"&gt;WEBSERVER&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;.0.0.2
+&lt;span class="nv"&gt;BACKENDS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;.0.1.2,10.0.1.3
+gerard@firewall:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo faltaría añadir o modificar la regla para usar variables; de esta forma, solo habría que ir actualizando las listas en el fichero &lt;code&gt;params&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@firewall:~$ cat /etc/shorewall/rules 
+ACCEPT net fw tcp &lt;span class="m"&gt;22&lt;/span&gt;
+DNS&lt;span class="o"&gt;(&lt;/span&gt;ACCEPT&lt;span class="o"&gt;)&lt;/span&gt; dmz,loc fw
+DNAT net dmz:&lt;span class="nv"&gt;$WEBSERVER&lt;/span&gt;:80 tcp &lt;span class="m"&gt;80&lt;/span&gt;
+ACCEPT dmz:&lt;span class="nv"&gt;$WEBSERVER&lt;/span&gt; loc:&lt;span class="nv"&gt;$BACKENDS&lt;/span&gt; tcp &lt;span class="m"&gt;8080&lt;/span&gt;
+gerard@firewall:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Con &lt;strong&gt;shorewall&lt;/strong&gt; podemos hacer &lt;em&gt;firewalls&lt;/em&gt; con tantas patas como queramos, de forma fácil y rápida. Definir &lt;em&gt;ip_forwarding&lt;/em&gt;, &lt;em&gt;masquerade&lt;/em&gt;, zonas, interfaces y políticas es realmente simple. Añadir reglas es fácil y más aún con el uso de variables.&lt;/p&gt;
+&lt;p&gt;A partir de aquí tenemos el conocimento y las herramientas para extender el patrón de &lt;em&gt;firewall&lt;/em&gt; a tantas patas como queramos, aunque personalmente no usaría nunca más de tres, por la complejidad que suponen.&lt;/p&gt;</content><category term="linux"></category><category term="firewall"></category><category term="iptables"></category><category term="shorewall"></category><category term="perl"></category></entry><entry><title>Protegiendo servidores con iptables usando Shorewall</title><link href="https://www.linuxsysadmin.ml/2019/04/protegiendo-servidores-con-iptables-usando-shorewall.html" rel="alternate"></link><published>2019-04-15T10:00:00+02:00</published><updated>2019-04-15T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-04-15:/2019/04/protegiendo-servidores-con-iptables-usando-shorewall.html</id><summary type="html">&lt;p&gt;Cada vez que me toca proteger un servidor con &lt;strong&gt;iptables&lt;/strong&gt; me desanimo solo de pensarlo. No es que la herramienta sea mala (que me encanta), sino porque no es intuitiva y hay que tener en cuenta muchos casos raros. Por suerte hay utilidades que construyen el conjunto de reglas fácilmente …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Cada vez que me toca proteger un servidor con &lt;strong&gt;iptables&lt;/strong&gt; me desanimo solo de pensarlo. No es que la herramienta sea mala (que me encanta), sino porque no es intuitiva y hay que tener en cuenta muchos casos raros. Por suerte hay utilidades que construyen el conjunto de reglas fácilmente.&lt;/p&gt;
 &lt;p&gt;Una de las herramientas que he utilizado en el pasado es &lt;a href="/tag/firehol.html"&gt;Firehol&lt;/a&gt;, pero últimamente he estado trabajando con otra muy interesante: &lt;a href="http://shorewall.org/"&gt;Shorewall&lt;/a&gt;. A pesar de necesitar tener &lt;strong&gt;perl&lt;/strong&gt; instalado, nos simplifica mucho la vida con una configuración simple, clara y concisa.&lt;/p&gt;
 &lt;p&gt;Los más importantes de estos ficheros de configuración son solamente 4 y se encuentran en &lt;code&gt;/etc/shorewall/&lt;/code&gt;:&lt;/p&gt;
 &lt;ul&gt;

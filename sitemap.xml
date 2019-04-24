@@ -5,42 +5,49 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/</loc>
-<lastmod>2019-04-15T08:00:53-00:00</lastmod>
+<lastmod>2019-04-24T12:02:28-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2019-04-15T08:00:53-00:00</lastmod>
+<lastmod>2019-04-24T12:02:28-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2019-04-15T08:00:53-00:00</lastmod>
+<lastmod>2019-04-24T12:02:28-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2019-04-15T08:00:53-00:00</lastmod>
+<lastmod>2019-04-24T12:02:28-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2019-04-15T08:00:53-00:00</lastmod>
+<lastmod>2019-04-24T12:02:28-00:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/curriculum.html</loc>
-<lastmod>2019-04-15T08:00:53-00:00</lastmod>
+<lastmod>2019-04-24T12:02:28-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/2019/04/construyendo-firewalls-complejos-de-varias-patas-con-shorewall.html</loc>
+<lastmod>2019-04-24T14:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1293,7 +1300,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/category/sistemas.html</loc>
-<lastmod>2019-04-15T10:00:00-00:15</lastmod>
+<lastmod>2019-04-24T14:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1307,35 +1314,35 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tag/linux.html</loc>
-<lastmod>2019-04-15T10:00:00-00:15</lastmod>
+<lastmod>2019-04-24T14:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tag/firewall.html</loc>
-<lastmod>2019-04-15T10:00:00-00:15</lastmod>
+<lastmod>2019-04-24T14:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tag/iptables.html</loc>
-<lastmod>2019-04-15T10:00:00-00:15</lastmod>
+<lastmod>2019-04-24T14:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tag/shorewall.html</loc>
-<lastmod>2019-04-15T10:00:00-00:15</lastmod>
+<lastmod>2019-04-24T14:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tag/perl.html</loc>
-<lastmod>2019-04-15T10:00:00-00:15</lastmod>
+<lastmod>2019-04-24T14:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -3330,7 +3337,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2019-04-15T10:00:00-00:15</lastmod>
+<lastmod>2019-04-24T14:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
