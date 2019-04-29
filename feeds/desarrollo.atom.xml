@@ -347,7 +347,7 @@ gerard@atlantis:~$
 
 
 &lt;h2&gt;Cambiar la fuente del texto&lt;/h2&gt;
-&lt;p&gt;La fuente por defecto que llevan los navegadores es poco agradable a la vista; con cambiar la fuente es suficiente. Podemos poner una fuente propia, una de &lt;strong&gt;Google Fonts&lt;/strong&gt; o simplemente usar una família para que el navegador utilize la que le venga en gana.&lt;/p&gt;
+&lt;p&gt;La fuente por defecto que llevan los navegadores es poco agradable a la vista; con cambiar la fuente es suficiente. Podemos poner una fuente propia, una de &lt;strong&gt;Google Fonts&lt;/strong&gt; o simplemente usar una família para que el navegador utilice la que le venga en gana.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nt"&gt;body&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="k"&gt;font-family&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;sans-serif&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
