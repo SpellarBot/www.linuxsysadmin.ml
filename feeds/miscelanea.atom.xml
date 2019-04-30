@@ -1,5 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Miscelánea</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/miscelanea.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2018-10-08T10:00:00+02:00</updated><entry><title>He acabado migrando de python 2 a 3</title><link href="https://www.linuxsysadmin.ml/2018/10/he-acabado-migrando-de-python-2-a-3.html" rel="alternate"></link><published>2018-10-08T10:00:00+02:00</published><updated>2018-10-08T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-10-08:/2018/10/he-acabado-migrando-de-python-2-a-3.html</id><summary type="html">&lt;p&gt;He sido fan de &lt;strong&gt;python&lt;/strong&gt; desde hace muchos años. Inicialmente lo empecé a utilizar porque, junto a &lt;strong&gt;bash&lt;/strong&gt;, era la herramienta que venía por defecto en todos los servidores que administraba. Pero con el tiempo salió la versión 3, incompatible con la 2; al final me ha tocado migrar forzadamente …&lt;/p&gt;</summary><content type="html">&lt;p&gt;He sido fan de &lt;strong&gt;python&lt;/strong&gt; desde hace muchos años. Inicialmente lo empecé a utilizar porque, junto a &lt;strong&gt;bash&lt;/strong&gt;, era la herramienta que venía por defecto en todos los servidores que administraba. Pero con el tiempo salió la versión 3, incompatible con la 2; al final me ha tocado migrar forzadamente.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Miscelánea</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/miscelanea.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-04-30T10:00:00+02:00</updated><entry><title>Grabando sesiones de terminal con asciinema</title><link href="https://www.linuxsysadmin.ml/2019/04/grabando-sesiones-de-terminal-con-asciinema.html" rel="alternate"></link><published>2019-04-30T10:00:00+02:00</published><updated>2019-04-30T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-04-30:/2019/04/grabando-sesiones-de-terminal-con-asciinema.html</id><summary type="html">&lt;p&gt;Me defino como una persona de tecnología clásica, pero últimamente me ha dado una aire de modernillo y me he empezado a mirar el tema de los &lt;em&gt;podcasts&lt;/em&gt;. Como amante del terminal necesitaba conocer alguna herramienta que me permitiera hacer &lt;em&gt;casts&lt;/em&gt; de mi terminal y encontré uno interesante: es &lt;strong&gt;asciinema …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Me defino como una persona de tecnología clásica, pero últimamente me ha dado una aire de modernillo y me he empezado a mirar el tema de los &lt;em&gt;podcasts&lt;/em&gt;. Como amante del terminal necesitaba conocer alguna herramienta que me permitiera hacer &lt;em&gt;casts&lt;/em&gt; de mi terminal y encontré uno interesante: es &lt;strong&gt;asciinema&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;No tengo muy claro para qué lo voy a utilizar, ni siquiera si lo utilizaré, pero por el momento voy a dejar estas notas en este artículo para su uso futuro. Si alguien cree que le puede dar un uso interesante, soy todo oídos...&lt;/p&gt;
+&lt;p&gt;Lo primero es instalar la herramienta. Hay muchas maneras de instalar o usar la herramienta, tal como se indica en &lt;a href="https://asciinema.org/docs/installation"&gt;su documentación&lt;/a&gt;; desde paquetes para tu distribución favorita hasta un contenedor, pasando por una librería &lt;strong&gt;python&lt;/strong&gt;. Voy a utilizar esta última por comodidad:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ pip install asciinema
+Collecting asciinema
+  Using cached https://files.pythonhosted.org/packages/a7/71/771c859795e02c71c187546f34f7535487b97425bc1dad1e5f6ad2651357/asciinema-2.0.2.tar.gz
+Building wheels &lt;span class="k"&gt;for&lt;/span&gt; collected packages: asciinema
+  Running setup.py bdist_wheel &lt;span class="k"&gt;for&lt;/span&gt; asciinema ... error
+  Complete output from &lt;span class="nb"&gt;command&lt;/span&gt; /home/gerard/workspace/asciinematest/env/bin/python3 -u -c &lt;span class="s2"&gt;&amp;quot;import setuptools, tokenize;__file__=&amp;#39;/tmp/pip-build-l8bnaq6u/asciinema/setup.py&amp;#39;;f=getattr(tokenize, &amp;#39;open&amp;#39;, open)(__file__);code=f.read().replace(&amp;#39;\r\n&amp;#39;, &amp;#39;\n&amp;#39;);f.close();exec(compile(code, __file__, &amp;#39;exec&amp;#39;))&amp;quot;&lt;/span&gt; bdist_wheel -d /tmp/tmpv_6mhrv_pip-wheel- --python-tag cp35:
+  /usr/lib/python3.5/distutils/dist.py:261: UserWarning: Unknown distribution option: &lt;span class="s1"&gt;&amp;#39;long_description_content_type&amp;#39;&lt;/span&gt;
+    warnings.warn&lt;span class="o"&gt;(&lt;/span&gt;msg&lt;span class="o"&gt;)&lt;/span&gt;
+  usage: -c &lt;span class="o"&gt;[&lt;/span&gt;global_opts&lt;span class="o"&gt;]&lt;/span&gt; cmd1 &lt;span class="o"&gt;[&lt;/span&gt;cmd1_opts&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;cmd2 &lt;span class="o"&gt;[&lt;/span&gt;cmd2_opts&lt;span class="o"&gt;]&lt;/span&gt; ...&lt;span class="o"&gt;]&lt;/span&gt;
+     or: -c --help &lt;span class="o"&gt;[&lt;/span&gt;cmd1 cmd2 ...&lt;span class="o"&gt;]&lt;/span&gt;
+     or: -c --help-commands
+     or: -c cmd --help
+
+  error: invalid &lt;span class="nb"&gt;command&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;bdist_wheel&amp;#39;&lt;/span&gt;
+
+  ----------------------------------------
+  Failed building wheel &lt;span class="k"&gt;for&lt;/span&gt; asciinema
+  Running setup.py clean &lt;span class="k"&gt;for&lt;/span&gt; asciinema
+Failed to build asciinema
+Installing collected packages: asciinema
+  Running setup.py install &lt;span class="k"&gt;for&lt;/span&gt; asciinema ... &lt;span class="k"&gt;done&lt;/span&gt;
+Successfully installed asciinema-2.0.2
+gerard@atlantis:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Su uso no es muy complejo, pero en caso de duda, nos ofrece ayuda si se invoca sin parámetros:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ asciinema 
+usage: asciinema &lt;span class="o"&gt;[&lt;/span&gt;-h&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;--version&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;rec,play,cat,upload,auth&lt;span class="o"&gt;}&lt;/span&gt; ...
+
+Record and share your terminal sessions, the right way.
+
+positional arguments:
+  &lt;span class="o"&gt;{&lt;/span&gt;rec,play,cat,upload,auth&lt;span class="o"&gt;}&lt;/span&gt;
+    rec                 Record terminal session
+    play                Replay terminal session
+    cat                 Print full output of terminal session
+    upload              Upload locally saved terminal session to asciinema.org
+    auth                Manage recordings on asciinema.org account
+
+optional arguments:
+  -h, --help            show this &lt;span class="nb"&gt;help&lt;/span&gt; message and &lt;span class="nb"&gt;exit&lt;/span&gt;
+  --version             show program&lt;span class="err"&gt;&amp;#39;&lt;/span&gt;s version number and &lt;span class="nb"&gt;exit&lt;/span&gt;
+
+example usage:
+  Record terminal and upload it to asciinema.org:
+    asciinema rec
+  Record terminal to &lt;span class="nb"&gt;local&lt;/span&gt; file:
+    asciinema rec demo.cast
+  Record terminal and upload it to asciinema.org, specifying title:
+    asciinema rec -t &lt;span class="s2"&gt;&amp;quot;My git tutorial&amp;quot;&lt;/span&gt;
+  Record terminal to &lt;span class="nb"&gt;local&lt;/span&gt; file, limiting idle &lt;span class="nb"&gt;time&lt;/span&gt; to max &lt;span class="m"&gt;2&lt;/span&gt;.5 sec:
+    asciinema rec -i &lt;span class="m"&gt;2&lt;/span&gt;.5 demo.cast
+  Replay terminal recording from &lt;span class="nb"&gt;local&lt;/span&gt; file:
+    asciinema play demo.cast
+  Replay terminal recording hosted on asciinema.org:
+    asciinema play https://asciinema.org/a/difqlgx86ym6emrmd8u62yqu8
+  Print full output of recorded session:
+    asciinema cat demo.cast
+
+For &lt;span class="nb"&gt;help&lt;/span&gt; on a specific &lt;span class="nb"&gt;command&lt;/span&gt; run:
+  asciinema &amp;lt;command&amp;gt; -h
+gerard@atlantis:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La grabación de un fichero en local es muy simple; parámetros aparte, lo más simple quedaría así:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ asciinema rec free_memory.cast
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esto nos abre una sesión de &lt;em&gt;shell&lt;/em&gt; que será "grabada", aunque el fichero resultante es de texto plano y se puede modificar a mano con mucha paciencia. Por poner un ejemplo, voy a hacer un &lt;em&gt;cast&lt;/em&gt; de un vaciado de cachés de la memoria del sistema operativo; concretamente, lanzo estos comandos (y comentarios):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# Veamos la memoria ocupada en nuestro sistema:&lt;/span&gt;
+free -h
+&lt;span class="c1"&gt;# Intentemos vaciar las cachés&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="m"&gt;3&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee /proc/sys/vm/drop_caches
+&lt;span class="c1"&gt;# Y veamos el resultado:&lt;/span&gt;
+free -h
+&lt;span class="nb"&gt;exit&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Tras "salir" de esta sesión de terminal, volvemos a la sesión original, previo aviso de que nuestro &lt;em&gt;cast&lt;/em&gt; ha quedado grabado en el fichero indicado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;asciinema: recording finished
+asciinema: asciicast saved to free_memory.cast
+gerard@atlantis:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Este es nuestro &lt;em&gt;cast&lt;/em&gt;, y podemos reproducirlo, tanto localmente como en remoto si lo subimos a la nube. Como el comando es tan simple, le he añadido al ejemplo doble velocidad, con el &lt;em&gt;flag&lt;/em&gt; &lt;code&gt;-s 2&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ asciinema play free_memory.cast -s &lt;span class="m"&gt;2&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La página en donde se pueden subir los &lt;em&gt;casts&lt;/em&gt; es &lt;a href="https://asciinema.org/"&gt;https://asciinema.org/&lt;/a&gt; y podemos registrarnos en ella sin complicación ninguna. Una vez conectada la cuenta web con la herramienta de terminal mediante &lt;code&gt;asciinema auth&lt;/code&gt;, podemos subir nuestro &lt;em&gt;cast&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ asciinema upload free_memory.cast 
+View the recording at:
+
+    https://asciinema.org/a/3vdnfBAL8simwMtcPx2zkhQbZ
+
+gerard@atlantis:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En la página web se pueden editar algunos metadatos, como por ejemplo el título. Una vez hecho esto, la voy a hacer pública, para que todo el mundo pueda ver mi &lt;em&gt;cast&lt;/em&gt;, en caso de saber su dirección. Me voy a "share" y puedo encontrar varias formas de compartir mi &lt;em&gt;cast&lt;/em&gt;, como por ejemplo la dirección, un enlace, un enlace con imagen, o directamente incrustando un visor directamente; solo falta que distribuya el enlace o que lo añada a mi página para darlo a conocer al mundo.&lt;/p&gt;
+&lt;p&gt;Si a alguien le interesa el enlace, es &lt;a href="https://asciinema.org/a/241168"&gt;https://asciinema.org/a/241168&lt;/a&gt;, pero yo considero que la mejor forma de distribuir el &lt;em&gt;cast&lt;/em&gt; es con el visor incrustado, que necesita &lt;strong&gt;javascript&lt;/strong&gt; para funcionar, pero se integra muy bien con mi &lt;em&gt;blog&lt;/em&gt;.&lt;/p&gt;
+&lt;script id="asciicast-241168" src="https://asciinema.org/a/241168.js" async data-speed="4" data-rows="24"&gt;&lt;/script&gt;</content><category term="grabación"></category><category term="terminal"></category><category term="asciinema"></category></entry><entry><title>He acabado migrando de python 2 a 3</title><link href="https://www.linuxsysadmin.ml/2018/10/he-acabado-migrando-de-python-2-a-3.html" rel="alternate"></link><published>2018-10-08T10:00:00+02:00</published><updated>2018-10-08T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2018-10-08:/2018/10/he-acabado-migrando-de-python-2-a-3.html</id><summary type="html">&lt;p&gt;He sido fan de &lt;strong&gt;python&lt;/strong&gt; desde hace muchos años. Inicialmente lo empecé a utilizar porque, junto a &lt;strong&gt;bash&lt;/strong&gt;, era la herramienta que venía por defecto en todos los servidores que administraba. Pero con el tiempo salió la versión 3, incompatible con la 2; al final me ha tocado migrar forzadamente …&lt;/p&gt;</summary><content type="html">&lt;p&gt;He sido fan de &lt;strong&gt;python&lt;/strong&gt; desde hace muchos años. Inicialmente lo empecé a utilizar porque, junto a &lt;strong&gt;bash&lt;/strong&gt;, era la herramienta que venía por defecto en todos los servidores que administraba. Pero con el tiempo salió la versión 3, incompatible con la 2; al final me ha tocado migrar forzadamente.&lt;/p&gt;
 &lt;p&gt;La primera versión de &lt;strong&gt;python&lt;/strong&gt; salió en 1991, y la segunda versión se publicó en el año 2000. Cuando salió la versión 3 en el año 2008 se decidieron cambios en el lenguaje que lo hicieron incompatible con al versión 2, mucho más extendida. Como en el 2010 salió la versión 2.7, todos creimos que seguiríamos usando la segunda versión.&lt;/p&gt;
 &lt;p&gt;Las librerías existentes en la versión 2 tuvieron que adaptarse para soportar la nueva versión y la antigua, y habiendo cientos de ellas, el proceso encontró una severa resistencia, aunque con el tiempo casi todas las librerías han pasado por el aro.&lt;/p&gt;
 &lt;p&gt;Los desarrolladores tardaron todavía más en migrar de versión, puesto que les faltaban las librerías habituales en la nueva versión; en el mundo de sistemas la resistencia fue todavía mayor: casi todas las distribuciones usaban por defecto la versión 2, y los lentos ciclos de lanzamiento de sus versiones no ayudaron a mejorar la situación.&lt;/p&gt;
