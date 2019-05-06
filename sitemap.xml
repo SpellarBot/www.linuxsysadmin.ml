@@ -5,42 +5,49 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/</loc>
-<lastmod>2019-04-30T12:02:41-00:00</lastmod>
+<lastmod>2019-05-06T09:34:22-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2019-04-30T12:02:41-00:00</lastmod>
+<lastmod>2019-05-06T09:34:22-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2019-04-30T12:02:41-00:00</lastmod>
+<lastmod>2019-05-06T09:34:22-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2019-04-30T12:02:41-00:00</lastmod>
+<lastmod>2019-05-06T09:34:22-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2019-04-30T12:02:41-00:00</lastmod>
+<lastmod>2019-05-06T09:34:22-00:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/curriculum.html</loc>
-<lastmod>2019-04-30T12:02:41-00:00</lastmod>
+<lastmod>2019-05-06T09:34:22-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/2019/05/descubriendo-el-funcionamiento-de-zookeeper.html</loc>
+<lastmod>2019-05-06T10:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1307,7 +1314,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/category/sistemas.html</loc>
-<lastmod>2019-04-24T14:00:00-00:15</lastmod>
+<lastmod>2019-05-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1315,6 +1322,20 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://www.linuxsysadmin.ml/category/virtualizacion.html</loc>
 <lastmod>2016-05-23T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/tag/zookeeper.html</loc>
+<lastmod>2019-05-06T10:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/tag/cluster.html</loc>
+<lastmod>2019-05-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1909,13 +1930,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tag/sharding.html</loc>
-<lastmod>2018-07-02T09:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://www.linuxsysadmin.ml/tag/cluster.html</loc>
 <lastmod>2018-07-02T09:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -3358,7 +3372,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2019-04-30T10:00:00-00:15</lastmod>
+<lastmod>2019-05-06T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

@@ -1,5 +1,251 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-04-30T10:00:00+02:00</updated><entry><title>Grabando sesiones de terminal con asciinema</title><link href="https://www.linuxsysadmin.ml/2019/04/grabando-sesiones-de-terminal-con-asciinema.html" rel="alternate"></link><published>2019-04-30T10:00:00+02:00</published><updated>2019-04-30T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-04-30:/2019/04/grabando-sesiones-de-terminal-con-asciinema.html</id><summary type="html">&lt;p&gt;Me defino como una persona de tecnología clásica, pero últimamente me ha dado una aire de modernillo y me he empezado a mirar el tema de los &lt;em&gt;podcasts&lt;/em&gt;. Como amante del terminal necesitaba conocer alguna herramienta que me permitiera hacer &lt;em&gt;casts&lt;/em&gt; de mi terminal y encontré uno interesante: es &lt;strong&gt;asciinema …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Me defino como una persona de tecnología clásica, pero últimamente me ha dado una aire de modernillo y me he empezado a mirar el tema de los &lt;em&gt;podcasts&lt;/em&gt;. Como amante del terminal necesitaba conocer alguna herramienta que me permitiera hacer &lt;em&gt;casts&lt;/em&gt; de mi terminal y encontré uno interesante: es &lt;strong&gt;asciinema&lt;/strong&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/all.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-05-06T10:00:00+02:00</updated><entry><title>Descubriendo el funcionamiento de zookeeper</title><link href="https://www.linuxsysadmin.ml/2019/05/descubriendo-el-funcionamiento-de-zookeeper.html" rel="alternate"></link><published>2019-05-06T10:00:00+02:00</published><updated>2019-05-06T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-05-06:/2019/05/descubriendo-el-funcionamiento-de-zookeeper.html</id><summary type="html">&lt;p&gt;Tras probar algunos servicios pensados para la nube o para contenedores, veo que algunos de ellos dependen de una pieza central llamada &lt;strong&gt;zookeeper&lt;/strong&gt;. Como soy una persona curiosa, he decidido dedicar un artículo a entender como funciona este servicio, que se limita a guardar cosas de forma distribuida y redundante …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Tras probar algunos servicios pensados para la nube o para contenedores, veo que algunos de ellos dependen de una pieza central llamada &lt;strong&gt;zookeeper&lt;/strong&gt;. Como soy una persona curiosa, he decidido dedicar un artículo a entender como funciona este servicio, que se limita a guardar cosas de forma distribuida y redundante.&lt;/p&gt;
+&lt;p&gt;Se puede ver como un servicio en donde se guardan cadenas de &lt;em&gt;bytes&lt;/em&gt; en nodos, que a su vez se organizan jerárquicamente como si de una estructura de ficheros &lt;em&gt;Unix&lt;/em&gt; se tratara. De esta manera, podríamos tener en el &lt;em&gt;path&lt;/em&gt; &lt;code&gt;/myservice/config&lt;/code&gt; una cadena de carácteres, que podría ser la representación de dicha configuración, por ejemplo codificada en JSON.&lt;/p&gt;
+&lt;p&gt;La principal gracia de esta aproximación es la de tener una configuración centralizada para un conjunto de servicios que la recuperan de &lt;strong&gt;zookeeper&lt;/strong&gt;. Otra de las ventajas de este servicio es que está pensado para funcionar de forma distribuida y altamente redundante, con lo que la alta disponibilidad está garantizada.&lt;/p&gt;
+&lt;h2&gt;Levantando una instancia de zookeeper&lt;/h2&gt;
+&lt;p&gt;Levantar &lt;strong&gt;zookeeper&lt;/strong&gt; es tan fácil como descargar la distribución, enchufar una configuración y ejecutar un &lt;em&gt;script&lt;/em&gt;; más información para este método en &lt;a href="https://zookeeper.apache.org/doc/r3.4.14/zookeeperStarted.html"&gt;la documentación&lt;/a&gt;. Entre los requisitos se encuentra &lt;strong&gt;java&lt;/strong&gt; pero no estaba dispuesto a ensuciar mi máquina con instalaciones de &lt;em&gt;software&lt;/em&gt; que no voy a utilizar casi nunca.&lt;/p&gt;
+&lt;p&gt;Por ello, voy a echar mano de &lt;strong&gt;docker&lt;/strong&gt;, que lo tiene todo listo en una imagen oficial y me permite levantar un entorno de "usar y tirar", que bien me vale para la demostración. La imagen la podéis encontrar en &lt;a href="https://hub.docker.com/_/zookeeper/"&gt;DockerHub&lt;/a&gt;. Para el caso de una instancia sola, no hay mucha complicación; he usado &lt;strong&gt;docker-compose&lt;/strong&gt; por comodidad.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/zktest$ cat docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;
+services:
+  zookeeper:
+    image: zookeeper
+    container_name: zookeeper
+    hostname: zookeeper
+    ports:
+      - &lt;span class="s2"&gt;&amp;quot;2181:2181&amp;quot;&lt;/span&gt;
+gerard@atlantis:~/workspace/zktest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Levantamos con el comando habitual y, como hemos publicado el puerto, ya podremos trabajar como si lo tuviéramos localmente.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/zktest$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;zktest_default&amp;quot;&lt;/span&gt; with the default driver
+Creating zookeeper ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@atlantis:~/workspace/zktest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Trasteando con zookeeper&lt;/h2&gt;
+&lt;p&gt;Como tantos otros &lt;em&gt;datastores&lt;/em&gt;, &lt;strong&gt;zookeeper&lt;/strong&gt; viene con un cliente de terminal, que nos permite probar, administrar y ver lo que va pasando en nuestros datos; solo hay que ejecutar &lt;code&gt;zkCli.sh&lt;/code&gt;. Tened en cuenta este cliente está instalado dentro del contenedor.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/zktest$ docker &lt;span class="nb"&gt;exec&lt;/span&gt; -ti zookeeper zkCli.sh
+Connecting to localhost:2181
+...
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El sistema de &lt;em&gt;namespaces&lt;/em&gt; de &lt;strong&gt;zookeeper&lt;/strong&gt; funciona como un sistema de ficheros tipo &lt;em&gt;unix&lt;/em&gt; o &lt;em&gt;linux&lt;/em&gt;, con el carácter &lt;code&gt;/&lt;/code&gt; para separar nodos (equivalente de ficheros y carpetas). Cada uno de estos nodos, tiene un contenido (puede que vacío) y una lista de hijos (posiblemente también vacía). En este aspecto se comporta más como una estructura arborescente.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; ls /
+&lt;span class="o"&gt;[&lt;/span&gt;zookeeper&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; ls /zookeeper
+&lt;span class="o"&gt;[&lt;/span&gt;quota&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; ls /zookeeper/quota
+&lt;span class="o"&gt;[]&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;4&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Los contenidos en &lt;strong&gt;zookeeper&lt;/strong&gt; están pensados para ser leídos muchas veces, pero es algo más lento para escribir o modificar el contenido. Esto no nos evita que debamos crear antes algo de contenido.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;12&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; create /hello &lt;span class="s2"&gt;&amp;quot;world&amp;quot;&lt;/span&gt;
+Created /hello
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;13&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos ver el resultado listando los hijos del nodo raíz, y podemos consultar el contenido que acabámos de crear:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;13&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; ls /
+&lt;span class="o"&gt;[&lt;/span&gt;hello, zookeeper&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;14&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; get /hello
+world
+&lt;span class="nv"&gt;cZxid&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; 0x2
+&lt;span class="nv"&gt;ctime&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Wed Apr &lt;span class="m"&gt;10&lt;/span&gt; &lt;span class="m"&gt;11&lt;/span&gt;:05:17 GMT &lt;span class="m"&gt;2019&lt;/span&gt;
+&lt;span class="nv"&gt;mZxid&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; 0x2
+&lt;span class="nv"&gt;mtime&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; Wed Apr &lt;span class="m"&gt;10&lt;/span&gt; &lt;span class="m"&gt;11&lt;/span&gt;:05:17 GMT &lt;span class="m"&gt;2019&lt;/span&gt;
+&lt;span class="nv"&gt;pZxid&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; 0x2
+&lt;span class="nv"&gt;cversion&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;
+&lt;span class="nv"&gt;dataVersion&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;
+&lt;span class="nv"&gt;aclVersion&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;
+&lt;span class="nv"&gt;ephemeralOwner&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; 0x0
+&lt;span class="nv"&gt;dataLength&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;5&lt;/span&gt;
+&lt;span class="nv"&gt;numChildren&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;0&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De la misma forma, podemos borrar el nodo de forma fácil:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;15&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; delete /hello
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;16&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; ls /
+&lt;span class="o"&gt;[&lt;/span&gt;zookeeper&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;17&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Nada nos impide crear nodos dentro de otros nodos, así que vamos a crear una configuración para un servicio hipotético. El valor de la configuración es solamente una cadena de texto, y podemos poner lo que queramos; tanto su modificación como su interpretación dependen de la aplicación que los use. Para hacer el ejemplo legible y pequeño, voy a poner un objeto JSON.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;20&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; create /myapp &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt;
+Created /myapp
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;21&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; ls /
+&lt;span class="o"&gt;[&lt;/span&gt;zookeeper, myapp&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;22&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;23&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; create /myapp/config &lt;span class="s1"&gt;&amp;#39;{&amp;quot;DB_URL&amp;quot;: &amp;quot;mongodb://mongoserver:27017/myapp&amp;quot;}&amp;#39;&lt;/span&gt;
+Created /myapp/config
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;24&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Podemos verificar que dicha configuración se ha guardado:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;25&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; get /myapp/config
+&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;DB_URL&amp;quot;&lt;/span&gt;: &lt;span class="s2"&gt;&amp;quot;mongodb://mongoserver:27017/myapp&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+...  
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;26&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De hecho, nada nos impide crear más nodos colgando de &lt;code&gt;/myapp&lt;/code&gt;, demostrando así que esto es un árbol de datos.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;26&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; create /myapp/loglevel &lt;span class="s2"&gt;&amp;quot;WARN&amp;quot;&lt;/span&gt;
+Created /myapp/loglevel
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;27&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; get /myapp/loglevel
+WARN
+...  
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;28&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;También podemos ver que el nodo &lt;code&gt;/myapp&lt;/code&gt; tiene subnodos, pero estos ya no tienen nada más colgando, como evidencia la lista vacía de hijos:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;29&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; ls /myapp
+&lt;span class="o"&gt;[&lt;/span&gt;config, loglevel&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;30&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; ls /myapp/loglevel
+&lt;span class="o"&gt;[]&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;zk: localhost:2181&lt;span class="o"&gt;(&lt;/span&gt;CONNECTED&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="m"&gt;31&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1&gt;Utilizando zookeeper en nuestras aplicaciones&lt;/h1&gt;
+&lt;p&gt;Hay conectores de &lt;strong&gt;zookeeper&lt;/strong&gt; para una gran mayoría de lenguajes de programación, y todos ellos se basan en las mismas primitivas que hemos visto antes. Por ejemplo, en &lt;strong&gt;python&lt;/strong&gt; podemos usar &lt;strong&gt;kazoo&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/zktest$ cat requirements.txt 
+&lt;span class="nv"&gt;kazoo&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;.6.1
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/zktest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En cuanto a las operaciones, son las mismas, y solo cambia la sintaxis para adaptarse al lenguaje usado. Adicionalmente, podemos conectar a un servicio remoto, que con el cliente terminal no vimos porque lo hace por defecto al servidor local.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/zktest$ cat test.py 
+from kazoo.client import KazooClient
+
+&lt;span class="c1"&gt;# Conectamos&lt;/span&gt;
+&lt;span class="nv"&gt;zk&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; KazooClient&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;hosts&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;127.0.0.1:2181&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+zk.start&lt;span class="o"&gt;()&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Zookeeper vacío&lt;/span&gt;
+print&lt;span class="o"&gt;(&lt;/span&gt;zk.get_children&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;))&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Creamos un path y llenamos de datos&lt;/span&gt;
+zk.ensure_path&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/myapi/database&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+zk.create&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/myapi/database/host&amp;#39;&lt;/span&gt;, b&lt;span class="s1"&gt;&amp;#39;mongoserver&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+zk.create&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/myapi/database/port&amp;#39;&lt;/span&gt;, b&lt;span class="s1"&gt;&amp;#39;27017&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Listado de estructura&lt;/span&gt;
+print&lt;span class="o"&gt;(&lt;/span&gt;zk.get_children&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;))&lt;/span&gt;
+print&lt;span class="o"&gt;(&lt;/span&gt;zk.get_children&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/myapi&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;))&lt;/span&gt;
+print&lt;span class="o"&gt;(&lt;/span&gt;zk.get_children&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/myapi/database&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;))&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Consulta de contenidos&lt;/span&gt;
+&lt;span class="nv"&gt;host&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; zk.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/myapi/database/host&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)[&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="nv"&gt;port&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; zk.get&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/myapi/database/port&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)[&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+print&lt;span class="o"&gt;(&lt;/span&gt;host, port&lt;span class="o"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Limpiamos las claves de test&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; path in &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/myapi/database/host&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;/myapi/database/port&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;/myapi/database&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;/myapi&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;:
+    zk.delete&lt;span class="o"&gt;(&lt;/span&gt;path&lt;span class="o"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Desconectamos&lt;/span&gt;
+zk.stop&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/zktest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Estas operaciones han quedado englobadas en el objeto cliente, que se ha inicializado al principio del &lt;em&gt;script&lt;/em&gt; y se ha cerrado antes de acabar. Podemos ver el resultado de la ejecución, aunque en este caso ha optado por trocear la configuración en más subnodos, para no tener que serializarla.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/zktest$ python3 test.py 
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;zookeeper&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;zookeeper&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;myapi&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;database&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;host&amp;#39;&lt;/span&gt;, &lt;span class="s1"&gt;&amp;#39;port&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+b&lt;span class="s1"&gt;&amp;#39;mongoserver&amp;#39;&lt;/span&gt; b&lt;span class="s1"&gt;&amp;#39;27017&amp;#39;&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;env&lt;span class="o"&gt;)&lt;/span&gt; gerard@atlantis:~/workspace/zktest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Clusterización de zookeeper&lt;/h2&gt;
+&lt;p&gt;Como se ha comentado al principio del artículo, una de las virtudes de este servicio es su redundancia, que nos ofrece una alta disponibilidad casi total. Para ello, &lt;strong&gt;zookeeper&lt;/strong&gt; implementa un modelo de replicación distribuida de las operaciones, en donde la modificación real se autoriza mediante el &lt;em&gt;quorum&lt;/em&gt; de &lt;strong&gt;más de la mitad&lt;/strong&gt; de las instancias.&lt;/p&gt;
+&lt;p&gt;Si hacéis las cuentas, lo ideal es poner un número impar de instancias y a la vez, más de una para garantizar algún punto de fallo. Para no alargar el artículo innecesáriamente, voy a poner 3 instancias; nuevamente la imagen oficial nos ofrece una forma fácil de sobreescribir la configuración de cada intancia, usando variables de entorno.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/zktest$ cat docker-compose.cluster.yml 
+version: &lt;span class="s1"&gt;&amp;#39;3&amp;#39;&lt;/span&gt;
+services:
+  zookeeper1:
+    image: zookeeper
+    container_name: zookeeper1
+    hostname: zookeeper1
+    environment:
+      ZOO_MY_ID: &lt;span class="m"&gt;1&lt;/span&gt;
+      ZOO_SERVERS: server.1&lt;span class="o"&gt;=&lt;/span&gt;zookeeper1:2888:3888 server.2&lt;span class="o"&gt;=&lt;/span&gt;zookeeper2:2888:3888 server.3&lt;span class="o"&gt;=&lt;/span&gt;zookeeper3:2888:3888
+  zookeeper2:
+    image: zookeeper
+    container_name: zookeeper2
+    hostname: zookeeper2
+    environment:
+      ZOO_MY_ID: &lt;span class="m"&gt;2&lt;/span&gt;
+      ZOO_SERVERS: server.1&lt;span class="o"&gt;=&lt;/span&gt;zookeeper1:2888:3888 server.2&lt;span class="o"&gt;=&lt;/span&gt;zookeeper2:2888:3888 server.3&lt;span class="o"&gt;=&lt;/span&gt;zookeeper3:2888:3888
+  zookeeper3:
+    image: zookeeper
+    container_name: zookeeper3
+    hostname: zookeeper3
+    environment:
+      ZOO_MY_ID: &lt;span class="m"&gt;3&lt;/span&gt;
+      ZOO_SERVERS: server.1&lt;span class="o"&gt;=&lt;/span&gt;zookeeper1:2888:3888 server.2&lt;span class="o"&gt;=&lt;/span&gt;zookeeper2:2888:3888 server.3&lt;span class="o"&gt;=&lt;/span&gt;zookeeper3:2888:3888
+gerard@atlantis:~/workspace/zktest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo hay que levantar el &lt;em&gt;cluster&lt;/em&gt; usando &lt;strong&gt;docker-compose&lt;/strong&gt;, de acuerdo al procedimiento habitual:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/zktest$ docker-compose -f docker-compose.cluster.yml up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;zktest_default&amp;quot;&lt;/span&gt; with the default driver
+Creating zookeeper2 ... &lt;span class="k"&gt;done&lt;/span&gt;
+Creating zookeeper3 ... &lt;span class="k"&gt;done&lt;/span&gt;
+Creating zookeeper1 ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@atlantis:~/workspace/zktest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En la parte de verificación del funcionamiento del &lt;em&gt;cluster&lt;/em&gt; se nota algo más de dejadez por parte de los desarrolladores; la información ofrecida es mínima e insuficiente. En este caso nos conformaremos en saber que hay un &lt;em&gt;leader&lt;/em&gt; y que los otros dos son &lt;em&gt;followers&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/zktest$ docker &lt;span class="nb"&gt;exec&lt;/span&gt; -ti zookeeper1 zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /conf/zoo.cfg
+Mode: follower
+gerard@atlantis:~/workspace/zktest$ docker &lt;span class="nb"&gt;exec&lt;/span&gt; -ti zookeeper2 zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /conf/zoo.cfg
+Mode: follower
+gerard@atlantis:~/workspace/zktest$ docker &lt;span class="nb"&gt;exec&lt;/span&gt; -ti zookeeper3 zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /conf/zoo.cfg
+Mode: leader
+gerard@atlantis:~/workspace/zktest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para los que necesitan una prueba más del funcionamiento del &lt;em&gt;cluster&lt;/em&gt;, podemos mirar los logs, viendo lo que ha pasado con el proceso de elección de &lt;em&gt;leader&lt;/em&gt;. Con &lt;strong&gt;docker-compose&lt;/strong&gt;, esta operación es trivial:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/zktest$ docker-compose -f docker-compose.cluster.yml logs &lt;span class="p"&gt;|&lt;/span&gt; grep ELECTION
+zookeeper3    &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;2019&lt;/span&gt;-04-10 &lt;span class="m"&gt;12&lt;/span&gt;:05:20,713 &lt;span class="o"&gt;[&lt;/span&gt;myid:3&lt;span class="o"&gt;]&lt;/span&gt; - INFO  &lt;span class="o"&gt;[&lt;/span&gt;QuorumPeer&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nv"&gt;myid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;/0.0.0.0:2181:Leader@380&lt;span class="o"&gt;]&lt;/span&gt; - LEADING - LEADER ELECTION TOOK - &lt;span class="m"&gt;255&lt;/span&gt;
+zookeeper2    &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;2019&lt;/span&gt;-04-10 &lt;span class="m"&gt;12&lt;/span&gt;:05:20,709 &lt;span class="o"&gt;[&lt;/span&gt;myid:2&lt;span class="o"&gt;]&lt;/span&gt; - INFO  &lt;span class="o"&gt;[&lt;/span&gt;QuorumPeer&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nv"&gt;myid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;/0.0.0.0:2181:Follower@65&lt;span class="o"&gt;]&lt;/span&gt; - FOLLOWING - LEADER ELECTION TOOK - &lt;span class="m"&gt;988&lt;/span&gt;
+zookeeper1    &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="m"&gt;2019&lt;/span&gt;-04-10 &lt;span class="m"&gt;12&lt;/span&gt;:05:20,712 &lt;span class="o"&gt;[&lt;/span&gt;myid:1&lt;span class="o"&gt;]&lt;/span&gt; - INFO  &lt;span class="o"&gt;[&lt;/span&gt;QuorumPeer&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nv"&gt;myid&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;/0.0.0.0:2181:Follower@65&lt;span class="o"&gt;]&lt;/span&gt; - FOLLOWING - LEADER ELECTION TOOK - &lt;span class="m"&gt;310&lt;/span&gt;
+gerard@atlantis:~/workspace/zktest$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto hemos montado nuestro &lt;em&gt;cluster&lt;/em&gt;. Lo único que hay que tener en cuenta es la modificación de las cadenas de conexión al &lt;strong&gt;zookeeper&lt;/strong&gt; para que conozca a todos los posibles &lt;em&gt;leaders&lt;/em&gt;, tal como sea necesario volverlos a elegir. Esto solo debería pasar por caídas, paradas controladas o problemas &lt;em&gt;hardware&lt;/em&gt; de los nodos del &lt;em&gt;cluster&lt;/em&gt;.&lt;/p&gt;</content><category term="zookeeper"></category><category term="cluster"></category></entry><entry><title>Grabando sesiones de terminal con asciinema</title><link href="https://www.linuxsysadmin.ml/2019/04/grabando-sesiones-de-terminal-con-asciinema.html" rel="alternate"></link><published>2019-04-30T10:00:00+02:00</published><updated>2019-04-30T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-04-30:/2019/04/grabando-sesiones-de-terminal-con-asciinema.html</id><summary type="html">&lt;p&gt;Me defino como una persona de tecnología clásica, pero últimamente me ha dado una aire de modernillo y me he empezado a mirar el tema de los &lt;em&gt;podcasts&lt;/em&gt;. Como amante del terminal necesitaba conocer alguna herramienta que me permitiera hacer &lt;em&gt;casts&lt;/em&gt; de mi terminal y encontré uno interesante: es &lt;strong&gt;asciinema …&lt;/strong&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;Me defino como una persona de tecnología clásica, pero últimamente me ha dado una aire de modernillo y me he empezado a mirar el tema de los &lt;em&gt;podcasts&lt;/em&gt;. Como amante del terminal necesitaba conocer alguna herramienta que me permitiera hacer &lt;em&gt;casts&lt;/em&gt; de mi terminal y encontré uno interesante: es &lt;strong&gt;asciinema&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;No tengo muy claro para qué lo voy a utilizar, ni siquiera si lo utilizaré, pero por el momento voy a dejar estas notas en este artículo para su uso futuro. Si alguien cree que le puede dar un uso interesante, soy todo oídos...&lt;/p&gt;
 &lt;p&gt;Lo primero es instalar la herramienta. Hay muchas maneras de instalar o usar la herramienta, tal como se indica en &lt;a href="https://asciinema.org/docs/installation"&gt;su documentación&lt;/a&gt;; desde paquetes para tu distribución favorita hasta un contenedor, pasando por una librería &lt;strong&gt;python&lt;/strong&gt;. Voy a utilizar esta última por comodidad:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~$ pip install asciinema
@@ -108,7 +354,7 @@ gerard@atlantis:~$
 
 &lt;p&gt;En la página web se pueden editar algunos metadatos, como por ejemplo el título. Una vez hecho esto, la voy a hacer pública, para que todo el mundo pueda ver mi &lt;em&gt;cast&lt;/em&gt;, en caso de saber su dirección. Me voy a "share" y puedo encontrar varias formas de compartir mi &lt;em&gt;cast&lt;/em&gt;, como por ejemplo la dirección, un enlace, un enlace con imagen, o directamente incrustando un visor directamente; solo falta que distribuya el enlace o que lo añada a mi página para darlo a conocer al mundo.&lt;/p&gt;
 &lt;p&gt;Si a alguien le interesa el enlace, es &lt;a href="https://asciinema.org/a/241168"&gt;https://asciinema.org/a/241168&lt;/a&gt;, pero yo considero que la mejor forma de distribuir el &lt;em&gt;cast&lt;/em&gt; es con el visor incrustado, que necesita &lt;strong&gt;javascript&lt;/strong&gt; para funcionar, pero se integra muy bien con mi &lt;em&gt;blog&lt;/em&gt;.&lt;/p&gt;
-&lt;script id="asciicast-241168" src="https://asciinema.org/a/241168.js" async data-speed="4" data-rows="24"&gt;&lt;/script&gt;</content><category term="grabación"></category><category term="terminal"></category><category term="asciinema"></category></entry><entry><title>Construyendo firewalls complejos de varias patas con shorewall</title><link href="https://www.linuxsysadmin.ml/2019/04/construyendo-firewalls-complejos-de-varias-patas-con-shorewall.html" rel="alternate"></link><published>2019-04-24T14:00:00+02:00</published><updated>2019-04-24T14:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-04-24:/2019/04/construyendo-firewalls-complejos-de-varias-patas-con-shorewall.html</id><summary type="html">&lt;p&gt;Tras ver la facilidad con la que monté un &lt;em&gt;firewall&lt;/em&gt; para un servidor solitario usando &lt;strong&gt;shorewall&lt;/strong&gt;, he estado investigando sobre como hacer &lt;em&gt;firewalls&lt;/em&gt; dedicados que enruten el tráfico en mis redes. En este artículo expongo lo que llegué a conseguir, esperando que le sirva a alguien en un futuro cercano …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Tras ver la facilidad con la que monté un &lt;em&gt;firewall&lt;/em&gt; para un servidor solitario usando &lt;strong&gt;shorewall&lt;/strong&gt;, he estado investigando sobre como hacer &lt;em&gt;firewalls&lt;/em&gt; dedicados que enruten el tráfico en mis redes. En este artículo expongo lo que llegué a conseguir, esperando que le sirva a alguien en un futuro cercano.&lt;/p&gt;
+&lt;script id="asciicast-241168" src="https://asciinema.org/a/241168.js" async data-speed="4" data-rows="24"&gt;&lt;/script&gt;</content><category term="grabación"></category><category term="terminal"></category><category term="asciinema"></category></entry><entry><title>Construyendo firewalls complejos de varias patas con Shorewall</title><link href="https://www.linuxsysadmin.ml/2019/04/construyendo-firewalls-complejos-de-varias-patas-con-shorewall.html" rel="alternate"></link><published>2019-04-24T14:00:00+02:00</published><updated>2019-04-24T14:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-04-24:/2019/04/construyendo-firewalls-complejos-de-varias-patas-con-shorewall.html</id><summary type="html">&lt;p&gt;Tras ver la facilidad con la que monté un &lt;em&gt;firewall&lt;/em&gt; para un servidor solitario usando &lt;strong&gt;shorewall&lt;/strong&gt;, he estado investigando sobre como hacer &lt;em&gt;firewalls&lt;/em&gt; dedicados que enruten el tráfico en mis redes. En este artículo expongo lo que llegué a conseguir, esperando que le sirva a alguien en un futuro cercano …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Tras ver la facilidad con la que monté un &lt;em&gt;firewall&lt;/em&gt; para un servidor solitario usando &lt;strong&gt;shorewall&lt;/strong&gt;, he estado investigando sobre como hacer &lt;em&gt;firewalls&lt;/em&gt; dedicados que enruten el tráfico en mis redes. En este artículo expongo lo que llegué a conseguir, esperando que le sirva a alguien en un futuro cercano.&lt;/p&gt;
 &lt;p&gt;Ya sabemos como instalar &lt;strong&gt;shorewall&lt;/strong&gt; y cuales son los 4 ficheros básicos de su configuración, y de lo que hay que poner en ellos. En caso de no ser así, recomiendo empezar por el artículo anterior a este sobre &lt;strong&gt;shorewall&lt;/strong&gt;, que es &lt;a href="https://www.linuxsysadmin.ml/2019/04/protegiendo-servidores-con-iptables-usando-shorewall.html"&gt;este&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Adicionalmente voy a especificar otros ficheros que se puedan necesitar, al tratarse de un &lt;em&gt;firewall&lt;/em&gt; un poco más complejo.&lt;/p&gt;
 &lt;h2&gt;Un firewall de dos patas&lt;/h2&gt;
