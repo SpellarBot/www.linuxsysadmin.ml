@@ -1,5 +1,322 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-04-05T10:00:00+02:00</updated><entry><title>Ensamblando un livecd con Debian y xorriso</title><link href="https://www.linuxsysadmin.ml/2019/04/ensamblando-un-livecd-con-debian-y-xorriso.html" rel="alternate"></link><published>2019-04-05T10:00:00+02:00</published><updated>2019-04-05T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-04-05:/2019/04/ensamblando-un-livecd-con-debian-y-xorriso.html</id><summary type="html">&lt;p&gt;Últimamente me he visto obligado a virtualizar en una máquina distinta de la habitual por un problema técnico; esto no sería un problema de no ser porque la arquitectura es de 32 bits. Eso me deja sin ninguna distribución prefabricada con la herramienta &lt;code&gt;zerofree&lt;/code&gt; y me obliga a hacer una …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Últimamente me he visto obligado a virtualizar en una máquina distinta de la habitual por un problema técnico; esto no sería un problema de no ser porque la arquitectura es de 32 bits. Eso me deja sin ninguna distribución prefabricada con la herramienta &lt;code&gt;zerofree&lt;/code&gt; y me obliga a hacer una.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-05-16T17:00:00+02:00</updated><entry><title>Generando ficheros docker-compose parametrizables con docker-app</title><link href="https://www.linuxsysadmin.ml/2019/05/generando-ficheros-docker-compose-parametrizables-con-docker-app.html" rel="alternate"></link><published>2019-05-16T17:00:00+02:00</published><updated>2019-05-16T17:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-05-16:/2019/05/generando-ficheros-docker-compose-parametrizables-con-docker-app.html</id><summary type="html">&lt;p&gt;Casi siempre he utilizado &lt;strong&gt;docker-compose&lt;/strong&gt; en mi local, y eso me ayudó mucho cuando empecé a usar &lt;strong&gt;Docker Swarm&lt;/strong&gt;. El fichero &lt;code&gt;docker-compose.yml&lt;/code&gt; varía un poco en cada entorno y cada vez que se modifica se degrada respecto al original, por no mencionar el problema de mantener actualizadas las copias …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Casi siempre he utilizado &lt;strong&gt;docker-compose&lt;/strong&gt; en mi local, y eso me ayudó mucho cuando empecé a usar &lt;strong&gt;Docker Swarm&lt;/strong&gt;. El fichero &lt;code&gt;docker-compose.yml&lt;/code&gt; varía un poco en cada entorno y cada vez que se modifica se degrada respecto al original, por no mencionar el problema de mantener actualizadas las copias.&lt;/p&gt;
+&lt;p&gt;Luego vienen los destrozos, con compañeros que hacen desaparecer pedazos de fichero, especialmente la lista completa de variables de entorno necesarias. Por eso es necesario mantener un &lt;code&gt;docker-compose.yml&lt;/code&gt; único como si de una plantilla se tratara, y proveer alguna forma de sobreescribir los parámetros propios de cada entorno.&lt;/p&gt;
+&lt;p&gt;Vamos a suponer para este artículo que tenemos un &lt;em&gt;webservice&lt;/em&gt; en un contenedor. Por brevedad voy a utilizar un servidor que responda solamente con un texto parametrizable.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ cat docker-compose.yml 
+version: &lt;span class="s1"&gt;&amp;#39;3.2&amp;#39;&lt;/span&gt;
+services:
+  hello:
+    image: hashicorp/http-echo
+    command: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;-text&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;hello world&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+    ports:
+      - &lt;span class="m"&gt;5678&lt;/span&gt;:5678
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Lo levantamos y comprobamos que devuelve lo esperado:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ docker-compose up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;dockerapp_default&amp;quot;&lt;/span&gt; with the default driver
+Creating dockerapp_hello_1 ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ curl http://localhost:5678
+hello world
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Ahora empezad a pensar en varias copias del fichero, con modificaciones locales según el servidor o el entorno... En fin, mantenerlo o versionarlo es &lt;strong&gt;una auténtica pesadilla&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Para ello, los mismos desarrolladores de &lt;strong&gt;Docker&lt;/strong&gt; han pensado en una forma de parametrizar estos ficheros y, aunque todavía está muy verde, es un paso en la dirección correcta. Las llaman &lt;strong&gt;docker apps&lt;/strong&gt;, y &lt;a href="https://github.com/docker/app"&gt;esta es su documentación&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Vamos a empezar "instalando" el binario &lt;code&gt;docker-app&lt;/code&gt;, que no es más que descargarlo de &lt;a href="https://github.com/docker/app/releases"&gt;https://github.com/docker/app/releases&lt;/a&gt; y ponerlo en el &lt;em&gt;path&lt;/em&gt; del usuario que lo necesite. Personalmente, yo lo he puesto en &lt;code&gt;/usr/local/bin&lt;/code&gt;.&lt;/p&gt;
+&lt;h2&gt;Creando una docker app&lt;/h2&gt;
+&lt;p&gt;Una &lt;strong&gt;docker app&lt;/strong&gt; no es otra cosa que la unión de 3 partes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Metadatos de la aplicación: nombre, versión, mantenedores, ...&lt;/li&gt;
+&lt;li&gt;El fichero &lt;code&gt;docker-compose.yml&lt;/code&gt;, posiblemente con variables declaradas&lt;/li&gt;
+&lt;li&gt;Una sección de variables que, aunque se pueden sobreescribir, nos valen como "las habituales" que se usan por defecto&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Estas partes se pueden distribuir como 3 ficheros dentro de una carpeta, o como un solo fichero. Como es fácil de juntarlos y partirlos &lt;em&gt;a posteriori&lt;/em&gt;, vamos a empezar con uno solo. Esto nos simplifica las salidas, y no perdemos legibilidad por ser un ejemplo pequeño.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ docker-app init --single-file myapp
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esto nos genera un fichero con el nombre indicado y la extensión &lt;code&gt;.dockerapp&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ ls
+docker-compose.yml  myapp.dockerapp
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Este fichero está lleno de comentarios explicativos, pero creo personalmente que no hacen ninguna falta, así que no los mostraré. Veamos las 3 partes indicadas:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ cat myapp.dockerapp &lt;span class="p"&gt;|&lt;/span&gt; grep -v ^#
+version: &lt;span class="m"&gt;0&lt;/span&gt;.1.0
+name: myapp
+description: 
+maintainers:
+  - name: gerard
+    email: 
+
+---
+version: &lt;span class="s1"&gt;&amp;#39;3.2&amp;#39;&lt;/span&gt;
+services:
+  hello:
+    image: hashicorp/http-echo
+    command: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;-text&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;hello world&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+    ports:
+      - &lt;span class="m"&gt;5678&lt;/span&gt;:5678
+
+---
+&lt;span class="o"&gt;{}&lt;/span&gt;
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Es un buen momento para eliminar el fichero original, para mantener el ejemplo mínimo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ rm docker-compose.yml 
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ ls
+myapp.dockerapp
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;La idea es que un fichero tipo &lt;code&gt;docker-compose.yml&lt;/code&gt; se &lt;strong&gt;renderiza&lt;/strong&gt; a demanda:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ docker-app render
+version: &lt;span class="s2"&gt;&amp;quot;3.2&amp;quot;&lt;/span&gt;
+services:
+  hello:
+    command:
+    - -text
+    - hello world
+    image: hashicorp/http-echo
+    ports:
+    - mode: ingress
+      target: &lt;span class="m"&gt;5678&lt;/span&gt;
+      published: &lt;span class="m"&gt;5678&lt;/span&gt;
+      protocol: tcp
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Hasta aquí, no ha cambiado nada. Es el momento de sacarle provecho a la complejidad añadida.&lt;/p&gt;
+&lt;h2&gt;Introduciendo las variables&lt;/h2&gt;
+&lt;p&gt;Es normal que los entornos o servidores apliquen pequeños cambios en este fichero, y para ello, &lt;code&gt;docker-app&lt;/code&gt; introduce las variables. Se trata de declarar como variables lo que pueda cambiar, darles valores por defecto, y luego ya las sobreescribiremos si nos hace falta.&lt;/p&gt;
+&lt;p&gt;Por la sencillez del ejemplo, poco podemos cambiar; como ejemplo podemos usar el texto devuelto o el puerto en el que vamos a mapear el servicio en el servidor. Se trata de reemplazar los valores modificables de la segunda sección de la &lt;strong&gt;docker app&lt;/strong&gt; por variables de la forma &lt;code&gt;${variable}&lt;/code&gt;, dándole valores por defecto en la tercera sección de la &lt;strong&gt;docker app&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ cat myapp.dockerapp 
+version: &lt;span class="m"&gt;0&lt;/span&gt;.1.0
+name: myapp
+description: 
+maintainers:
+  - name: gerard
+    email: 
+
+---
+version: &lt;span class="s1"&gt;&amp;#39;3.2&amp;#39;&lt;/span&gt;
+services:
+  hello:
+    image: hashicorp/http-echo
+    command: &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;-text&amp;quot;&lt;/span&gt;, &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;text&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+    ports:
+      - &lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;port&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;:5678
+
+---
+text: hello world
+port: &lt;span class="m"&gt;5678&lt;/span&gt;
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si renderizamos la aplicación, no vamos a ver cambio ninguno:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ docker-app render
+version: &lt;span class="s2"&gt;&amp;quot;3.2&amp;quot;&lt;/span&gt;
+services:
+  hello:
+    command:
+    - -text
+    - hello world
+    image: hashicorp/http-echo
+    ports:
+    - mode: ingress
+      target: &lt;span class="m"&gt;5678&lt;/span&gt;
+      published: &lt;span class="m"&gt;5678&lt;/span&gt;
+      protocol: tcp
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Sobreescribiendo las variables&lt;/h2&gt;
+&lt;p&gt;Si necesitamos modificar alguna de las variables, &lt;code&gt;docker-app&lt;/code&gt; nos ofrece dos formas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Con un parámetro durante el &lt;em&gt;renderizado&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Con un fichero de cambios&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;La primera es la más fácil, necesitando solamente indicar el &lt;em&gt;flag&lt;/em&gt; &lt;code&gt;--set&lt;/code&gt; para indicar el cambio. Veamos la sobreescritura del puerto, pero dejando el texto por defecto:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ docker-app render --set &lt;span class="nv"&gt;port&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;8080&lt;/span&gt;
+version: &lt;span class="s2"&gt;&amp;quot;3.2&amp;quot;&lt;/span&gt;
+services:
+  hello:
+    command:
+    - -text
+    - hello world
+    image: hashicorp/http-echo
+    ports:
+    - mode: ingress
+      target: &lt;span class="m"&gt;5678&lt;/span&gt;
+      published: &lt;span class="m"&gt;8080&lt;/span&gt;
+      protocol: tcp
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Esta opción está bien para un caso aislado o prueba, pero si queremos versionar los cambios, no es lo recomendable. Para ello se nos ofrece la otra opción, que es creando un fichero de cambios:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ cat test.yml 
+text: lorem ipsum
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ docker-app render -f test.yml 
+version: &lt;span class="s2"&gt;&amp;quot;3.2&amp;quot;&lt;/span&gt;
+services:
+  hello:
+    command:
+    - -text
+    - lorem ipsum
+    image: hashicorp/http-echo
+    ports:
+    - mode: ingress
+      target: &lt;span class="m"&gt;5678&lt;/span&gt;
+      published: &lt;span class="m"&gt;5678&lt;/span&gt;
+      protocol: tcp
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Un caso práctico&lt;/h2&gt;
+&lt;p&gt;Vamos a suponer que tenemos 3 servidores, con las excepciones que siguen:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;serverA&lt;/strong&gt;: Es el servidor de desarrollo; vamos a cambiar el texto para que no hayan confusiones durante los tests&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;serverB&lt;/strong&gt;: Primera réplica de producción; como el puerto 5678 está ocupado, lo cambiamos por el 5679&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;serverC&lt;/strong&gt;: Segunda réplica de producción; este no necesita cambios respecto a la plantilla&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Así pues, vamos a organizar el repositorio en donde guardamos las configuraciones con un fichero plantilla, y 3 ficheros especificando las diferencias de cada instancia, que quedan así:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ cat dev.yml 
+text: lorem ipsum &lt;span class="o"&gt;(&lt;/span&gt;this is development&lt;span class="o"&gt;)&lt;/span&gt;
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ cat prod1.yml 
+port: &lt;span class="m"&gt;5679&lt;/span&gt;
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ cat prod2.yml 
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Vemos claramente que según el fichero usado se cumple con las necesidades específicas, pero manteniendo la plantilla unificada.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ docker-app render -f dev.yml 
+version: &lt;span class="s2"&gt;&amp;quot;3.2&amp;quot;&lt;/span&gt;
+services:
+  hello:
+    command:
+    - -text
+    - lorem ipsum &lt;span class="o"&gt;(&lt;/span&gt;this is development&lt;span class="o"&gt;)&lt;/span&gt;
+    image: hashicorp/http-echo
+    ports:
+    - mode: ingress
+      target: &lt;span class="m"&gt;5678&lt;/span&gt;
+      published: &lt;span class="m"&gt;5678&lt;/span&gt;
+      protocol: tcp
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ docker-app render -f prod1.yml 
+version: &lt;span class="s2"&gt;&amp;quot;3.2&amp;quot;&lt;/span&gt;
+services:
+  hello:
+    command:
+    - -text
+    - hello world
+    image: hashicorp/http-echo
+    ports:
+    - mode: ingress
+      target: &lt;span class="m"&gt;5678&lt;/span&gt;
+      published: &lt;span class="m"&gt;5679&lt;/span&gt;
+      protocol: tcp
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ docker-app render -f prod2.yml 
+version: &lt;span class="s2"&gt;&amp;quot;3.2&amp;quot;&lt;/span&gt;
+services:
+  hello:
+    command:
+    - -text
+    - hello world
+    image: hashicorp/http-echo
+    ports:
+    - mode: ingress
+      target: &lt;span class="m"&gt;5678&lt;/span&gt;
+      published: &lt;span class="m"&gt;5678&lt;/span&gt;
+      protocol: tcp
+gerard@atlantis:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Solo nos queda lanzar los comandos que los aplican en cada servidor, que a su vez, tendrá un clon del repositorio:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@serverA:~/workspace/dockerapp$ docker-app render -f dev.yml &lt;span class="p"&gt;|&lt;/span&gt; docker-compose -f - up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;dockerapp_default&amp;quot;&lt;/span&gt; with the default driver
+Creating dockerapp_hello_1 ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@serverA:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@serverA:~/workspace/dockerapp$ curl http://localhost:5678
+lorem ipsum &lt;span class="o"&gt;(&lt;/span&gt;this is development&lt;span class="o"&gt;)&lt;/span&gt;
+gerard@serverA:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@serverB:~/workspace/dockerapp$ docker-app render -f prod1.yml &lt;span class="p"&gt;|&lt;/span&gt; docker-compose -f - up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;dockerapp_default&amp;quot;&lt;/span&gt; with the default driver
+Creating dockerapp_hello_1 ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@serverB:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@serverB:~/workspace/dockerapp$ curl http://localhost:5679
+hello world
+gerard@serverB:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@serverC:~/workspace/dockerapp$ docker-app render -f prod2.yml &lt;span class="p"&gt;|&lt;/span&gt; docker-compose -f - up -d
+Creating network &lt;span class="s2"&gt;&amp;quot;dockerapp_default&amp;quot;&lt;/span&gt; with the default driver
+Creating dockerapp_hello_1 ... &lt;span class="k"&gt;done&lt;/span&gt;
+gerard@serverC:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@serverC:~/workspace/dockerapp$ curl http://localhost:5678
+hello world
+gerard@serverC:~/workspace/dockerapp$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto mantenemos un solo repositorio, una sola plantilla, y los cambios de forma centralizada y controlada.&lt;/p&gt;</content><category term="docker"></category><category term="docker-compose"></category><category term="swarm"></category><category term="docker-app"></category></entry><entry><title>Ensamblando un livecd con Debian y xorriso</title><link href="https://www.linuxsysadmin.ml/2019/04/ensamblando-un-livecd-con-debian-y-xorriso.html" rel="alternate"></link><published>2019-04-05T10:00:00+02:00</published><updated>2019-04-05T10:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-04-05:/2019/04/ensamblando-un-livecd-con-debian-y-xorriso.html</id><summary type="html">&lt;p&gt;Últimamente me he visto obligado a virtualizar en una máquina distinta de la habitual por un problema técnico; esto no sería un problema de no ser porque la arquitectura es de 32 bits. Eso me deja sin ninguna distribución prefabricada con la herramienta &lt;code&gt;zerofree&lt;/code&gt; y me obliga a hacer una …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Últimamente me he visto obligado a virtualizar en una máquina distinta de la habitual por un problema técnico; esto no sería un problema de no ser porque la arquitectura es de 32 bits. Eso me deja sin ninguna distribución prefabricada con la herramienta &lt;code&gt;zerofree&lt;/code&gt; y me obliga a hacer una.&lt;/p&gt;
 &lt;p&gt;Ya lo hice una vez, tal como muestro en &lt;a href="https://www.linuxsysadmin.ml/2015/12/creacion-de-un-livecd-con-debian.html"&gt;este otro artículo&lt;/a&gt;, pero las herramientas han cambiado mucho y era necesario hacer un artículo nuevo actualizado. El cambio principal es la sustitución de &lt;code&gt;genisoimage&lt;/code&gt; por &lt;code&gt;xorriso&lt;/code&gt;; también actualizo la versión de &lt;strong&gt;Debian&lt;/strong&gt; a &lt;strong&gt;stretch&lt;/strong&gt;, aunque esto no cambia el proceso de creación del &lt;em&gt;livecd&lt;/em&gt;.&lt;/p&gt;
 &lt;h2&gt;Preparación del entorno de trabajo&lt;/h2&gt;
 &lt;p&gt;Empezamos instalando las herramientas necesarias:&lt;/p&gt;

@@ -5,42 +5,49 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/</loc>
-<lastmod>2019-05-06T09:34:22-00:00</lastmod>
+<lastmod>2019-05-16T14:19:00-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/archives.html</loc>
-<lastmod>2019-05-06T09:34:22-00:00</lastmod>
+<lastmod>2019-05-16T14:19:00-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tags.html</loc>
-<lastmod>2019-05-06T09:34:22-00:00</lastmod>
+<lastmod>2019-05-16T14:19:00-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/categories.html</loc>
-<lastmod>2019-05-06T09:34:22-00:00</lastmod>
+<lastmod>2019-05-16T14:19:00-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/about.html</loc>
-<lastmod>2019-05-06T09:34:22-00:00</lastmod>
+<lastmod>2019-05-16T14:19:00-00:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://www.linuxsysadmin.ml/curriculum.html</loc>
-<lastmod>2019-05-06T09:34:22-00:00</lastmod>
+<lastmod>2019-05-16T14:19:00-00:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/2019/05/generando-ficheros-docker-compose-parametrizables-con-docker-app.html</loc>
+<lastmod>2019-05-16T17:00:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1300,7 +1307,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/category/operaciones.html</loc>
-<lastmod>2019-04-05T10:00:00-00:15</lastmod>
+<lastmod>2019-05-16T17:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1322,6 +1329,34 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://www.linuxsysadmin.ml/category/virtualizacion.html</loc>
 <lastmod>2016-05-23T08:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/tag/docker.html</loc>
+<lastmod>2019-05-16T17:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/tag/docker-compose.html</loc>
+<lastmod>2019-05-16T17:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/tag/swarm.html</loc>
+<lastmod>2019-05-16T17:00:00-00:15</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://www.linuxsysadmin.ml/tag/docker-app.html</loc>
+<lastmod>2019-05-16T17:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1455,13 +1490,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://www.linuxsysadmin.ml/tag/livecd.html</loc>
 <lastmod>2019-04-05T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://www.linuxsysadmin.ml/tag/docker.html</loc>
-<lastmod>2019-02-19T19:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1685,13 +1713,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tag/traefik.html</loc>
-<lastmod>2018-10-29T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://www.linuxsysadmin.ml/tag/swarm.html</loc>
 <lastmod>2018-10-29T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -2140,13 +2161,6 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/tag/tunel.html</loc>
-<lastmod>2018-02-12T10:00:00-00:15</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://www.linuxsysadmin.ml/tag/docker-compose.html</loc>
 <lastmod>2018-02-12T10:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
@@ -3372,7 +3386,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://www.linuxsysadmin.ml/author/gerard.html</loc>
-<lastmod>2019-05-06T10:00:00-00:15</lastmod>
+<lastmod>2019-05-16T17:00:00-00:15</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
