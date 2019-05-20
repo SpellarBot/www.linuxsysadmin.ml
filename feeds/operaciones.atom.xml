@@ -1,5 +1,191 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-05-16T17:00:00+02:00</updated><entry><title>Generando ficheros docker-compose parametrizables con docker-app</title><link href="https://www.linuxsysadmin.ml/2019/05/generando-ficheros-docker-compose-parametrizables-con-docker-app.html" rel="alternate"></link><published>2019-05-16T17:00:00+02:00</published><updated>2019-05-16T17:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-05-16:/2019/05/generando-ficheros-docker-compose-parametrizables-con-docker-app.html</id><summary type="html">&lt;p&gt;Casi siempre he utilizado &lt;strong&gt;docker-compose&lt;/strong&gt; en mi local, y eso me ayudó mucho cuando empecé a usar &lt;strong&gt;Docker Swarm&lt;/strong&gt;. El fichero &lt;code&gt;docker-compose.yml&lt;/code&gt; varía un poco en cada entorno y cada vez que se modifica se degrada respecto al original, por no mencionar el problema de mantener actualizadas las copias …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Casi siempre he utilizado &lt;strong&gt;docker-compose&lt;/strong&gt; en mi local, y eso me ayudó mucho cuando empecé a usar &lt;strong&gt;Docker Swarm&lt;/strong&gt;. El fichero &lt;code&gt;docker-compose.yml&lt;/code&gt; varía un poco en cada entorno y cada vez que se modifica se degrada respecto al original, por no mencionar el problema de mantener actualizadas las copias.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Linux Sysadmin - Operaciones</title><link href="https://www.linuxsysadmin.ml/" rel="alternate"></link><link href="https://www.linuxsysadmin.ml/feeds/operaciones.atom.xml" rel="self"></link><id>https://www.linuxsysadmin.ml/</id><updated>2019-05-20T14:00:00+02:00</updated><entry><title>Haciendo backups con BorgBackup</title><link href="https://www.linuxsysadmin.ml/2019/05/haciendo-backups-con-borgbackup.html" rel="alternate"></link><published>2019-05-20T14:00:00+02:00</published><updated>2019-05-20T14:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-05-20:/2019/05/haciendo-backups-con-borgbackup.html</id><summary type="html">&lt;p&gt;Es un hecho inmutable que los desastres con nuestros datos ocurren; da igual lo cuidadosos que seamos, o si el servicio se autoreplica. En algún momento puede perderse información por un fallo imprevisto, o puede que sea necesario restablecer un punto conocido, para buscar errores o para cumplir imperativos legales …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Es un hecho inmutable que los desastres con nuestros datos ocurren; da igual lo cuidadosos que seamos, o si el servicio se autoreplica. En algún momento puede perderse información por un fallo imprevisto, o puede que sea necesario restablecer un punto conocido, para buscar errores o para cumplir imperativos legales.&lt;/p&gt;
+&lt;p&gt;De hecho, hacer un &lt;em&gt;backup&lt;/em&gt; o una copia de respaldo es uno de los primeros requisitos cuando se trata de poner algo en producción, y fruto de esta necesidad han nacido muchas iniciativas que tratan de cubrirlas. Una de estas soluciones es &lt;strong&gt;BorgBackup&lt;/strong&gt;, y sus funcionalidades atrajeron mi atención desde el principio. Más información en &lt;a href="https://borgbackup.readthedocs.io/en/stable/"&gt;su página web&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Un caso de ejemplo&lt;/h2&gt;
+&lt;p&gt;Supongamos que tenemos un máquina de la que necesitamos copias de seguridad, a la que llamaremos &lt;strong&gt;client&lt;/strong&gt;, y un servidor de &lt;em&gt;backup&lt;/em&gt; llamado &lt;strong&gt;bakserver&lt;/strong&gt;. Cada uno de estos servidores tiene lo siguiente:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;bakserver&lt;/strong&gt; &amp;rarr; &lt;strong&gt;borgbackup&lt;/strong&gt; y SSH servidor&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;client&lt;/strong&gt; &amp;rarr; &lt;strong&gt;borgbackup&lt;/strong&gt; y SSH cliente&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: El paquete &lt;strong&gt;borgbackup&lt;/strong&gt; está disponible en los repositorios de las distribuciones principales, a veces como &lt;strong&gt;borgbackup&lt;/strong&gt; y otras como &lt;strong&gt;borg&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Puesto que &lt;strong&gt;borgbackup&lt;/strong&gt; funciona usando el protocolo SSH, hemos habilitado en acceso sin claves por comodidad y con vistas a una futura automatización.&lt;/p&gt;
+&lt;p&gt;En el servidor &lt;strong&gt;client&lt;/strong&gt; tenemos una serie de carpetas que queremos guardar; concretamente, la carpeta &lt;code&gt;bin/&lt;/code&gt;, &lt;code&gt;tools/&lt;/code&gt; y &lt;code&gt;wallpapers/&lt;/code&gt;, por poner un ejemplo.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ ls
+bin         tools       wallpapers
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Para ello, vamos a utilizar &lt;strong&gt;borgbackup&lt;/strong&gt; desde la máquina cliente &lt;strong&gt;client&lt;/strong&gt;, que envía su respaldo al servidor central &lt;strong&gt;bakserver&lt;/strong&gt;, usando el usuario &lt;em&gt;borg&lt;/em&gt; que previamente hemos utilizado.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AVISO&lt;/strong&gt;: Todos los comandos se ejecutan en la máquina cliente, siendo el servidor un simple proveedor de disco a través de SSH. Esto evita poner servicios adicionales en cada máquina.&lt;/p&gt;
+&lt;h3&gt;Creando y borrando backups&lt;/h3&gt;
+&lt;p&gt;Vamos a empezar creando el espacio de &lt;em&gt;backups&lt;/em&gt; en ma máquina remota, que utilizando jerga de &lt;strong&gt;borgbackup&lt;/strong&gt;, se llama &lt;strong&gt;repositorio&lt;/strong&gt;. Para no complicar innecesariamente el artículo, no voy a utilizar encriptación ninguna.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ borg init --encryption&lt;span class="o"&gt;=&lt;/span&gt;none borg@bakserver:clientrepo
+Using a pure-python msgpack! This will result in lower performance.
+Remote: Using a pure-python msgpack! This will result in lower performance.
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este &lt;strong&gt;repositorio&lt;/strong&gt; se crean &lt;strong&gt;archivos&lt;/strong&gt;, que no son otra cosa que los diferentes &lt;em&gt;backups&lt;/em&gt; que vamos haciendo. Hacer un &lt;em&gt;backup&lt;/em&gt; es bastante simple, con la única complicación de saber la URL destino; la documentación ayuda en este punto.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ borg create --stats borg@bakserver:clientrepo::initial bin/ tools/ wallpapers/
+Using a pure-python msgpack! This will result in lower performance.
+Remote: Using a pure-python msgpack! This will result in lower performance.
+------------------------------------------------------------------------------
+Archive name: initial
+Archive fingerprint: 8c7050a1639a8c9e40403b0791879027c16c75d5deabe93bc2af006036a4505c
+Time &lt;span class="o"&gt;(&lt;/span&gt;start&lt;span class="o"&gt;)&lt;/span&gt;: Mon, &lt;span class="m"&gt;2019&lt;/span&gt;-05-06 &lt;span class="m"&gt;10&lt;/span&gt;:21:29
+Time &lt;span class="o"&gt;(&lt;/span&gt;end&lt;span class="o"&gt;)&lt;/span&gt;:   Mon, &lt;span class="m"&gt;2019&lt;/span&gt;-05-06 &lt;span class="m"&gt;10&lt;/span&gt;:21:29
+Duration: &lt;span class="m"&gt;0&lt;/span&gt;.89 seconds
+Number of files: &lt;span class="m"&gt;6&lt;/span&gt;
+Utilization of max. archive size: &lt;span class="m"&gt;0&lt;/span&gt;%
+------------------------------------------------------------------------------
+                       Original size      Compressed size    Deduplicated size
+This archive:               &lt;span class="m"&gt;34&lt;/span&gt;.57 MB             &lt;span class="m"&gt;34&lt;/span&gt;.71 MB             &lt;span class="m"&gt;34&lt;/span&gt;.71 MB
+All archives:               &lt;span class="m"&gt;34&lt;/span&gt;.57 MB             &lt;span class="m"&gt;34&lt;/span&gt;.71 MB             &lt;span class="m"&gt;34&lt;/span&gt;.71 MB
+
+                       Unique chunks         Total chunks
+Chunk index:                      &lt;span class="m"&gt;21&lt;/span&gt;                   &lt;span class="m"&gt;21&lt;/span&gt;
+------------------------------------------------------------------------------
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y con esto tenemos nuestro backup completo, cosa que podemos verificar listando los &lt;strong&gt;archivos&lt;/strong&gt; en nuestro &lt;strong&gt;repositorio&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ borg list borg@bakserver:clientrepo
+Using a pure-python msgpack! This will result in lower performance.
+Remote: Using a pure-python msgpack! This will result in lower performance.
+initial                              Mon, &lt;span class="m"&gt;2019&lt;/span&gt;-05-06 &lt;span class="m"&gt;10&lt;/span&gt;:23:11 &lt;span class="o"&gt;[&lt;/span&gt;de00f6579345eccae5163d7ba5705a93790cbb0a6e451c7114462572e99fcc1b&lt;span class="o"&gt;]&lt;/span&gt;
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Una de las funcionalidades más útiles de &lt;strong&gt;borgbackup&lt;/strong&gt; es que hace &lt;em&gt;backups&lt;/em&gt; incrementales de forma muy eficiente, evitando duplicar ficheros que no cambien. Esto es lo que podemos ver si repetimos el mismo &lt;em&gt;backup&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ borg create --stats borg@bakserver:clientrepo::initial_v2 bin/ tools/ wallpapers/
+Using a pure-python msgpack! This will result in lower performance.
+Remote: Using a pure-python msgpack! This will result in lower performance.
+------------------------------------------------------------------------------
+Archive name: initial_v2
+Archive fingerprint: 6b8b1b34e434ab45aa038e81ad7dc9cabe7da2554c9fd5ce659b1a8351c93166
+Time &lt;span class="o"&gt;(&lt;/span&gt;start&lt;span class="o"&gt;)&lt;/span&gt;: Mon, &lt;span class="m"&gt;2019&lt;/span&gt;-05-06 &lt;span class="m"&gt;10&lt;/span&gt;:23:50
+Time &lt;span class="o"&gt;(&lt;/span&gt;end&lt;span class="o"&gt;)&lt;/span&gt;:   Mon, &lt;span class="m"&gt;2019&lt;/span&gt;-05-06 &lt;span class="m"&gt;10&lt;/span&gt;:23:50
+Duration: &lt;span class="m"&gt;0&lt;/span&gt;.47 seconds
+Number of files: &lt;span class="m"&gt;6&lt;/span&gt;
+Utilization of max. archive size: &lt;span class="m"&gt;0&lt;/span&gt;%
+------------------------------------------------------------------------------
+                       Original size      Compressed size    Deduplicated size
+This archive:               &lt;span class="m"&gt;34&lt;/span&gt;.57 MB             &lt;span class="m"&gt;34&lt;/span&gt;.71 MB                &lt;span class="m"&gt;450&lt;/span&gt; B
+All archives:               &lt;span class="m"&gt;69&lt;/span&gt;.14 MB             &lt;span class="m"&gt;69&lt;/span&gt;.41 MB             &lt;span class="m"&gt;34&lt;/span&gt;.71 MB
+
+                       Unique chunks         Total chunks
+Chunk index:                      &lt;span class="m"&gt;22&lt;/span&gt;                   &lt;span class="m"&gt;42&lt;/span&gt;
+------------------------------------------------------------------------------
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El &lt;em&gt;backup&lt;/em&gt; que acabamos de hacer tiene un tamaño de 35mb, pero solo ocupa 450 bytes en el repositorio. Esto es así porque los ficheros identicos se referencian, en vez de duplicarse.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ borg list borg@bakserver:clientrepo
+Using a pure-python msgpack! This will result in lower performance.
+Remote: Using a pure-python msgpack! This will result in lower performance.
+initial                              Mon, &lt;span class="m"&gt;2019&lt;/span&gt;-05-06 &lt;span class="m"&gt;10&lt;/span&gt;:23:11 &lt;span class="o"&gt;[&lt;/span&gt;de00f6579345eccae5163d7ba5705a93790cbb0a6e451c7114462572e99fcc1b&lt;span class="o"&gt;]&lt;/span&gt;
+initial_v2                           Mon, &lt;span class="m"&gt;2019&lt;/span&gt;-05-06 &lt;span class="m"&gt;10&lt;/span&gt;:23:50 &lt;span class="o"&gt;[&lt;/span&gt;6b8b1b34e434ab45aa038e81ad7dc9cabe7da2554c9fd5ce659b1a8351c93166&lt;span class="o"&gt;]&lt;/span&gt;
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;De la misma forma que creamos &lt;em&gt;backups&lt;/em&gt;, podemos eliminarlos. Esta es una opción no habitual, ya que &lt;strong&gt;borgbackup&lt;/strong&gt; ofrece la función de retención de &lt;em&gt;backups&lt;/em&gt; antiguos, con el comando &lt;code&gt;borg prune&lt;/code&gt;. Borrar un &lt;strong&gt;archivo&lt;/strong&gt; es tan simple como indicar el &lt;strong&gt;archivo&lt;/strong&gt; a borrar:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ borg delete borg@bakserver:clientrepo::initial_v2
+Using a pure-python msgpack! This will result in lower performance.
+Remote: Using a pure-python msgpack! This will result in lower performance.
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Y por supuesto, solo nos quedaría el &lt;em&gt;backup&lt;/em&gt; inicial, tras el borrado del segundo &lt;em&gt;backup&lt;/em&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ borg list borg@bakserver:clientrepo
+Using a pure-python msgpack! This will result in lower performance.
+Remote: Using a pure-python msgpack! This will result in lower performance.
+initial                              Mon, &lt;span class="m"&gt;2019&lt;/span&gt;-05-06 &lt;span class="m"&gt;10&lt;/span&gt;:23:11 &lt;span class="o"&gt;[&lt;/span&gt;de00f6579345eccae5163d7ba5705a93790cbb0a6e451c7114462572e99fcc1b&lt;span class="o"&gt;]&lt;/span&gt;
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Si necesitamos una fichero comprimido de un &lt;strong&gt;archivo&lt;/strong&gt; concreto, podemos hacer un &lt;code&gt;borg export-tar&lt;/code&gt;, que intentará darnos el fichero con un formato adecuado al nombre del fichero de salida indicado.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ borg export-tar borg@bakserver:clientrepo::initial initial.tar.gz
+Using a pure-python msgpack! This will result in lower performance.
+Remote: Using a pure-python msgpack! This will result in lower performance.
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ ls
+bin             initial.tar.gz  tools           wallpapers
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;En este caso, el fichero &lt;code&gt;initial.tar.gz&lt;/code&gt; estará comprimido con &lt;strong&gt;gzip&lt;/strong&gt;, cosa que &lt;strong&gt;borgbackup&lt;/strong&gt; ha deducido de la extensión &lt;code&gt;.tar.gz&lt;/code&gt;.&lt;/p&gt;
+&lt;h3&gt;Un escenario de recuperación&lt;/h3&gt;
+&lt;p&gt;Vamos a cometer un error a propósito, no muy diferente del que podría hacer un usuario descuidado; borraremos todo lo que hay en nuestra carpeta personal.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ rm * -R
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Entonces recibiremos la visita del susodicho usuario con sus quejas habituales e indicando que "no ha hecho nada". Nada que hacer, excepto de tirar de &lt;em&gt;backup&lt;/em&gt;. Le ofrecemos al usuario el listado de &lt;em&gt;backups&lt;/em&gt; de los que disponemos, rezando para que alguno le valga.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ borg list borg@bakserver:clientrepo
+Using a pure-python msgpack! This will result in lower performance.
+Remote: Using a pure-python msgpack! This will result in lower performance.
+initial                              Mon, &lt;span class="m"&gt;2019&lt;/span&gt;-05-06 &lt;span class="m"&gt;10&lt;/span&gt;:23:11 &lt;span class="o"&gt;[&lt;/span&gt;de00f6579345eccae5163d7ba5705a93790cbb0a6e451c7114462572e99fcc1b&lt;span class="o"&gt;]&lt;/span&gt;
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Le convencemos de restablecer el &lt;em&gt;backup&lt;/em&gt; &lt;code&gt;initial&lt;/code&gt;, ya que no tenemos otro, y efectuamos la restauración con &lt;code&gt;borg extract&lt;/code&gt;. Así de fácil:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ borg extract borg@bakserver:clientrepo::initial
+Using a pure-python msgpack! This will result in lower performance.
+Remote: Using a pure-python msgpack! This will result in lower performance.
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ ls
+bin         tools       wallpapers
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Otra opción es que se necesite restaurar el &lt;em&gt;backup&lt;/em&gt; en otra carpeta o en otra máquina. También es posible.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ mkdir justtoinspect
+client:~$ &lt;span class="nb"&gt;cd&lt;/span&gt; justtoinspect/
+client:~/justtoinspect$ borg extract borg@bakserver:clientrepo::initial
+Using a pure-python msgpack! This will result in lower performance.
+Remote: Using a pure-python msgpack! This will result in lower performance.
+client:~/justtoinspect$ ls
+bin         tools       wallpapers
+client:~/justtoinspect$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Otras consideraciones&lt;/h3&gt;
+&lt;p&gt;Si necesitamos hacer un poco de limpieza eliminando el &lt;strong&gt;repositorio&lt;/strong&gt;, es posible:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;client:~$ borg delete borg@bakserver:clientrepo
+Using a pure-python msgpack! This will result in lower performance.
+Remote: Using a pure-python msgpack! This will result in lower performance.
+You requested to completely DELETE the repository *including* all archives it contains:
+initial                              Mon, &lt;span class="m"&gt;2019&lt;/span&gt;-05-06 &lt;span class="m"&gt;10&lt;/span&gt;:23:11 &lt;span class="o"&gt;[&lt;/span&gt;de00f6579345eccae5163d7ba5705a93790cbb0a6e451c7114462572e99fcc1b&lt;span class="o"&gt;]&lt;/span&gt;
+Type &lt;span class="s1"&gt;&amp;#39;YES&amp;#39;&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; you understand this and want to &lt;span class="k"&gt;continue&lt;/span&gt;: YES
+client:~$ 
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;El punto flaco de esta solución es que se ejecuta a petición. Para hacer estos &lt;em&gt;backups&lt;/em&gt; de forma automatizada necesitaremos poner algo de lógica de nuestra parte:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Poner un &lt;em&gt;script&lt;/em&gt; en una tarea &lt;strong&gt;cron&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Lanzar el &lt;em&gt;backup&lt;/em&gt;, ya sea manualmente o usando algo como &lt;strong&gt;ansible&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;TRUCO&lt;/strong&gt;: En todos los casos podemos poner una capa extra para simplificar el proceso, como por ejemplo &lt;a href="https://torsion.org/borgmatic/"&gt;borgmatic&lt;/a&gt;, que se encarga de simplificar nuestras líneas de comandos (&lt;em&gt;backup&lt;/em&gt; y &lt;em&gt;prune&lt;/em&gt;) utilizando un fichero de configuración simple.&lt;/p&gt;</content><category term="backup"></category><category term="borgbackup"></category><category term="ssh"></category></entry><entry><title>Generando ficheros docker-compose parametrizables con docker-app</title><link href="https://www.linuxsysadmin.ml/2019/05/generando-ficheros-docker-compose-parametrizables-con-docker-app.html" rel="alternate"></link><published>2019-05-16T17:00:00+02:00</published><updated>2019-05-16T17:00:00+02:00</updated><author><name>Gerard</name></author><id>tag:www.linuxsysadmin.ml,2019-05-16:/2019/05/generando-ficheros-docker-compose-parametrizables-con-docker-app.html</id><summary type="html">&lt;p&gt;Casi siempre he utilizado &lt;strong&gt;docker-compose&lt;/strong&gt; en mi local, y eso me ayudó mucho cuando empecé a usar &lt;strong&gt;Docker Swarm&lt;/strong&gt;. El fichero &lt;code&gt;docker-compose.yml&lt;/code&gt; varía un poco en cada entorno y cada vez que se modifica se degrada respecto al original, por no mencionar el problema de mantener actualizadas las copias …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Casi siempre he utilizado &lt;strong&gt;docker-compose&lt;/strong&gt; en mi local, y eso me ayudó mucho cuando empecé a usar &lt;strong&gt;Docker Swarm&lt;/strong&gt;. El fichero &lt;code&gt;docker-compose.yml&lt;/code&gt; varía un poco en cada entorno y cada vez que se modifica se degrada respecto al original, por no mencionar el problema de mantener actualizadas las copias.&lt;/p&gt;
 &lt;p&gt;Luego vienen los destrozos, con compañeros que hacen desaparecer pedazos de fichero, especialmente la lista completa de variables de entorno necesarias. Por eso es necesario mantener un &lt;code&gt;docker-compose.yml&lt;/code&gt; único como si de una plantilla se tratara, y proveer alguna forma de sobreescribir los parámetros propios de cada entorno.&lt;/p&gt;
 &lt;p&gt;Vamos a suponer para este artículo que tenemos un &lt;em&gt;webservice&lt;/em&gt; en un contenedor. Por brevedad voy a utilizar un servidor que responda solamente con un texto parametrizable.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;gerard@atlantis:~/workspace/dockerapp$ cat docker-compose.yml 
